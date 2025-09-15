@@ -1,0 +1,64 @@
+name: my_auto_guide
+description: "A new Flutter project."
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.9.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  supabase_flutter: ^2.10.0
+  dotted_border: ^3.1.0 
+  url_launcher: ^6.3.0
+  youtube_player_iframe: ^4.0.4
+  webview_flutter: ^4.8.0
+  file_picker: ^8.0.0
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/car.png
+    - assets/google.png
+    - assets/facebook.png
+    - assets/apple.png
+    - assets/bg_pattern.png
+    - assets/logos/yamaha_logo.png
+    - assets/logos/suzuki_logo.png
+    - assets/logos/bmw_logo.png
+    - assets/logos/kawa_logo.png
+    - assets/logos/honda_logo.png
+    - assets/logos/ducati_logo.png
+    - assets/logos/ktm_logo.png
+    - assets/logos/bajaj_logo.png
+    - assets/bus.png
+    - assets/furgon.png
+    - assets/lineasfondo.png
+    - assets/motos/yamaha/fz25.png
+    - assets/motos/yamaha/mt15.png
+    - assets/motos/yamaha/r15.png
+    - assets/motos/yamaha/cripton.png
+    - assets/motos/yamaha/fz2.0.png
+    - assets/motos/yamaha/nmax.png
+    - assets/motos/yamaha/XTZ150.png
+    - assets/motos/suzuki/gixxer150.png
+    - assets/motos/suzuki/gixxersf150.png
+    - assets/motos/bmw/g310r.png
+    - assets/motos/bmw/g310gs.png
+    - assets/motos/bmw/f900r.png
+    - assets/motos/kawasaki/z400.png
+    - assets/motos/kawasaki/ninja400.png
+    - assets/motos/kawasaki/ninja650.png
+    - assets/motos/kawasaki/versys650.png
