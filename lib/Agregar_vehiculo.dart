@@ -128,6 +128,42 @@ class _AgregarVehiculoScreenState extends State<AgregarVehiculoScreen> {
         'img': 'assets/motos/hero/Splendor-Xpro.png',
       },
       {'modelo': 'XOOM 110', 'img': 'assets/motos/hero/Xoom110.png'},
+      {'modelo': 'X PULSE 200 4V', 'img': 'assets/motos/hero/Xpulse2004v.png'},
+      {
+        'modelo': 'X PULSE 200 PRO 4V',
+        'img': 'assets/motos/hero/XpulsePro2004v.png',
+      },
+      {
+        'modelo': 'X PULSE 200 RALLY',
+        'img': 'assets/motos/hero/XpulseRally.png',
+      },
+    ],
+    'AKT': [
+      {'modelo': 'CR 250R ', 'img': 'assets/motos/akt/250R.png'},
+      {'modelo': 'CR4 150', 'img': 'assets/motos/akt/CR4_150.png'},
+      {'modelo': 'CR4 200', 'img': 'assets/motos/akt/CR4_200.png'},
+      {'modelo': 'NKD', 'img': 'assets/motos/akt/NKD.png'},
+      {'modelo': 'MAWI', 'img': 'assets/motos/akt/mawi.png'},
+      {'modelo': 'SPECIAL X', 'img': 'assets/motos/akt/AKT19O.png'},
+    ],
+    'KTM': [
+      {'modelo': 'DUKE 200 ', 'img': 'assets/motos/ktm/DUKE-200.png'},
+      {'modelo': 'DUKE 250', 'img': 'assets/motos/ktm/KTM-250-DUKE.png'},
+      {'modelo': 'DUKE 390', 'img': 'assets/motos/ktm/KTM-390-DUKE.png'},
+      {'modelo': 'DUKE 990', 'img': 'assets/motos/ktm/KTM-990-DUKE.png'},
+      {
+        'modelo': 'SUPER DUKE 1390',
+        'img': 'assets/motos/ktm/KTM1390superduke2025.png',
+      },
+      {
+        'modelo': 'ADVENTUR 250',
+        'img': 'assets/motos/ktm/KTM-250-Adventure.png',
+      },
+      {'modelo': 'ADVENTUR 390', 'img': 'assets/motos/ktm/KTM-390-adv.png'},
+      {
+        'modelo': 'ADVENTUR 390X',
+        'img': 'assets/motos/ktm/KTM-390-adventure.png',
+      },
     ],
   }; // PageView.builder consumirá la lista de la marca seleccionada.
 
@@ -142,6 +178,7 @@ class _AgregarVehiculoScreenState extends State<AgregarVehiculoScreen> {
     'BAJAJ': 'assets/logos/bajaj_logo.png',
     'DUCATI': 'assets/logos/ducati_logo.png',
     'HERO': 'assets/logos/hero_logo.png',
+    'AKT': 'assets/logos/akt_logo.png',
   }; // Las rutas deben existir en assets/logos/.
 
   // COLORES POR MARCA (personaliza a tu gusto)
@@ -155,6 +192,7 @@ class _AgregarVehiculoScreenState extends State<AgregarVehiculoScreen> {
     'KTM': Color(0xFFFF7B00), // naranja KTM
     'BAJAJ': Color(0xFF006EFF), // azul claro Bajaj
     'HERO': Color.fromARGB(255, 0, 0, 0),
+    'AKT': Color.fromARGB(255, 21, 54, 172),
   }; // Usa cualquier Color(Material) o hex ARGB para el resaltado.
 
   // Estado actual

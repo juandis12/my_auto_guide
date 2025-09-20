@@ -19,7 +19,7 @@ import 'package:open_filex/open_filex.dart'; // Nuevo paquete para abrir archivo
 import 'package:permission_handler/permission_handler.dart'; // Para permisos en Android
 import 'package:http/http.dart' as http; // Para descargar archivos
 import 'package:path_provider/path_provider.dart'; // Para rutas temporales
-import 'dart:io';
+
 import 'package:device_info_plus/device_info_plus.dart';
 
 enum DocType { soat, tecno, seguro, propiedad }

@@ -54,6 +54,7 @@ flutter:
     - assets/logos/ktm_logo.png
     - assets/logos/bajaj_logo.png
     - assets/logos/hero_logo.png
+    - assets/logos/akt_logo.png
     - assets/bus.png
     - assets/furgon.png
     - assets/lineasfondo.png
@@ -99,3 +100,27 @@ flutter:
     - assets/motos/hero/Hunk150xt.png
     - assets/motos/hero/hunk160r.png
     - assets/motos/hero/Hunk160R4v.png
+    - assets/motos/hero/Eco_Deluxe.png
+    - assets/motos/hero/ECO-T.png
+    - assets/motos/hero/Eco100.png
+    - assets/motos/hero/EcoDeluxeClasica.png
+    - assets/motos/hero/IgnitorXtech.png
+    - assets/motos/hero/Splendor-Xpro.png
+    - assets/motos/hero/Xoom110.png
+    - assets/motos/hero/XpulsePro2004v.png
+    - assets/motos/hero/XpulseRally.png
+    - assets/motos/hero/Xpulse2004v.png
+    - assets/motos/akt/250R.png
+    - assets/motos/akt/CR4_150.png
+    - assets/motos/akt/CR4_200.png
+    - assets/motos/akt/dinamicpro.png
+    - assets/motos/akt/NKD.png
+    - assets/motos/akt/mawi.png
+    - assets/motos/ktm/DUKE-200.png
+    - assets/motos/ktm/KTM-250-DUKE.png
+    - assets/motos/ktm/KTM-390-DUKE.png
+    - assets/motos/ktm/KTM-990-DUKE.png
+    - assets/motos/ktm/KTM1390superduke2025.png
+    - assets/motos/ktm/KTM-250-Adventure.png
+    - assets/motos/ktm/KTM-390-adv.png
+    - assets/motos/ktm/KTM-390-adventure.png
