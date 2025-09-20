@@ -39,6 +39,82 @@ class _AgregarVehiculoScreenState extends State<AgregarVehiculoScreen> {
       {'modelo': 'Ninja 400', 'img': 'assets/motos/kawasaki/ninja400.png'},
       {'modelo': 'Z 400', 'img': 'assets/motos/kawasaki/z400.png'},
     ],
+
+    'BAJAJ': [
+      {
+        'modelo': 'BOXER CT 100 KS',
+        'img': 'assets/motos/bajaj/boxer-ct100-ks.png',
+      },
+      {
+        'modelo': 'BOXER CT 100 ES',
+        'img': 'assets/motos/bajaj/boxer-ct100.png',
+      },
+      {
+        'modelo': 'BOXER CT 125 SPORT',
+        'img': 'assets/motos/bajaj/boxer-ct-125-sport.png',
+      },
+      {'modelo': 'BOXER 150 X', 'img': 'assets/motos/bajaj/boxer-150x.png'},
+      {'modelo': 'BOXER S', 'img': 'assets/motos/bajaj/boxer-s.png'},
+      {
+        'modelo': 'DISCOVER 125 SPORT',
+        'img': 'assets/motos/bajaj/discover-125.png',
+      },
+      {'modelo': 'DOMINAR 250', 'img': 'assets/motos/bajaj/Dominar-250.png'},
+      {
+        'modelo': 'DOMINAR 400',
+        'img': 'assets/motos/bajaj/Dominar-400-touring.png',
+      },
+      {
+        'modelo': 'DOMINAR 400 VOLCANO',
+        'img': 'assets/motos/bajaj/dominar400-volcano.png',
+      },
+      {'modelo': 'PULSAR N125', 'img': 'assets/motos/bajaj/pulsar-n125.png'},
+      {
+        'modelo': 'PULSAR N160 PRO',
+        'img': 'assets/motos/bajaj/pulsar-n160-pro.png',
+      },
+      {'modelo': 'PULSAR N160', 'img': 'assets/motos/bajaj/pulsar-n160.png'},
+      {'modelo': 'PULSAR N250', 'img': 'assets/motos/bajaj/Pulsar-N250.png'},
+      {
+        'modelo': 'PULSAR NS125 ',
+        'img': 'assets/motos/bajaj/pulsar-ns-125.png',
+      },
+      {
+        'modelo': 'PULSAR NS 160 FI ABS ',
+        'img': 'assets/motos/bajaj/pulsar-ns-160-fi-abs.png',
+      },
+      {
+        'modelo': 'PULSAR NS 16O',
+        'img': 'assets/motos/bajaj/pulsar-ns160-fi.png',
+      },
+      {
+        'modelo': 'PULSAR NS 200 UG',
+        'img': 'assets/motos/bajaj/pulsar-ns-200-ug.png',
+      },
+      {
+        'modelo': 'PULSAR NS 200 FI ABS',
+        'img': 'assets/motos/bajaj/pulsar-ns200-fi-abs.png',
+      },
+      {
+        'modelo': 'PULSAR NS 400z',
+        'img': 'assets/motos/bajaj/pulsar-ns400z.png',
+      },
+      {'modelo': 'PULSAR P 150 ', 'img': 'assets/motos/bajaj/Pulsar-p150.png'},
+      {
+        'modelo': 'PULSAR RS 200 FI ABS',
+        'img': 'assets/motos/bajaj/pulsar-rs200.png',
+      },
+      {
+        'modelo': 'PULSAR 200 PULSARMANIA',
+        'img': 'assets/motos/bajaj/pulsarmania.png',
+      },
+    ],
+    'HERO': [
+      {'modelo': 'HUNK 125 R', 'img': 'assets/motos/hero/Hunk125r.png'},
+      {'modelo': 'HUNK 150 XT', 'img': 'assets/motos/hero/Hunk150xt.png'},
+      {'modelo': 'HUNK 160 R', 'img': 'assets/motos/hero/hunk160r.png'},
+      {'modelo': 'HUNK 160 R 4V', 'img': 'assets/motos/hero/Hunk160R4v.png'},
+    ],
   }; // PageView.builder consumirá la lista de la marca seleccionada.
 
   // Logos para selección de marca
@@ -51,6 +127,7 @@ class _AgregarVehiculoScreenState extends State<AgregarVehiculoScreen> {
     'KTM': 'assets/logos/ktm_logo.png',
     'BAJAJ': 'assets/logos/bajaj_logo.png',
     'DUCATI': 'assets/logos/ducati_logo.png',
+    'HERO': 'assets/logos/hero_logo.png',
   }; // Las rutas deben existir en assets/logos/.
 
   // COLORES POR MARCA (personaliza a tu gusto)
@@ -63,6 +140,7 @@ class _AgregarVehiculoScreenState extends State<AgregarVehiculoScreen> {
     'DUCATI': Color(0xFFEB2A11), // rojo anaranjado Ducati
     'KTM': Color(0xFFFF7B00), // naranja KTM
     'BAJAJ': Color(0xFF006EFF), // azul claro Bajaj
+    'HERO': Color.fromARGB(255, 0, 0, 0),
   }; // Usa cualquier Color(Material) o hex ARGB para el resaltado.
 
   // Estado actual
@@ -241,7 +319,7 @@ class _AgregarVehiculoScreenState extends State<AgregarVehiculoScreen> {
                               selected: false,
                               onTap: null,
                             ),
-                            SizedBox(height: 8),
+                            SizedBox(height: 7),
                             _SideTab(text: 'Moto', selected: true, onTap: null),
                           ],
                         ),

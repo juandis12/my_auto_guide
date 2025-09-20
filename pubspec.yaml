@@ -18,6 +18,16 @@ dependencies:
   youtube_player_iframe: ^4.0.4
   webview_flutter: ^4.8.0
   file_picker: ^8.0.0
+  photo_view: ^0.14.0  # o la última estable
+  syncfusion_flutter_pdfviewer: ^31.1.18  # o la última estable
+  open_filex: ^4.0.0
+  http: ^1.5.0
+  path_provider: ^2.0.11
+  permission_handler: ^12.0.1
+  device_info_plus: ^11.5.0
+
+
+
 
 
 dev_dependencies:
@@ -43,6 +53,7 @@ flutter:
     - assets/logos/ducati_logo.png
     - assets/logos/ktm_logo.png
     - assets/logos/bajaj_logo.png
+    - assets/logos/hero_logo.png
     - assets/bus.png
     - assets/furgon.png
     - assets/lineasfondo.png
@@ -62,3 +73,29 @@ flutter:
     - assets/motos/kawasaki/ninja400.png
     - assets/motos/kawasaki/ninja650.png
     - assets/motos/kawasaki/versys650.png
+    - assets/motos/bajaj/boxer-ct100-ks.png
+    - assets/motos/bajaj/boxer-ct100.png
+    - assets/motos/bajaj/boxer-ct-125-sport.png
+    - assets/motos/bajaj/boxer-150x.png
+    - assets/motos/bajaj/boxer-s.png
+    - assets/motos/bajaj/discover-125.png
+    - assets/motos/bajaj/Dominar-250.png
+    - assets/motos/bajaj/Dominar-400-touring.png
+    - assets/motos/bajaj/dominar400-volcano.png
+    - assets/motos/bajaj/pulsar-n125.png
+    - assets/motos/bajaj/pulsar-n160-pro.png
+    - assets/motos/bajaj/pulsar-n160.png
+    - assets/motos/bajaj/Pulsar-N250.png
+    - assets/motos/bajaj/pulsar-ns-125.png
+    - assets/motos/bajaj/pulsar-ns160-fi.png
+    - assets/motos/bajaj/pulsar-ns-160-fi-abs.png
+    - assets/motos/bajaj/pulsar-ns-200-ug.png
+    - assets/motos/bajaj/pulsar-ns200-fi-abs.png
+    - assets/motos/bajaj/pulsar-ns400z.png
+    - assets/motos/bajaj/pulsarmania.png
+    - assets/motos/bajaj/Pulsar-p150.png
+    - assets/motos/bajaj/pulsar-rs200.png
+    - assets/motos/hero/Hunk125r.png
+    - assets/motos/hero/Hunk150xt.png
+    - assets/motos/hero/hunk160r.png
+    - assets/motos/hero/Hunk160R4v.png
