@@ -114,6 +114,20 @@ class _AgregarVehiculoScreenState extends State<AgregarVehiculoScreen> {
       {'modelo': 'HUNK 150 XT', 'img': 'assets/motos/hero/Hunk150xt.png'},
       {'modelo': 'HUNK 160 R', 'img': 'assets/motos/hero/hunk160r.png'},
       {'modelo': 'HUNK 160 R 4V', 'img': 'assets/motos/hero/Hunk160R4v.png'},
+      {'modelo': 'ECO DELUXE', 'img': 'assets/motos/hero/Eco_Deluxe.png'},
+      {'modelo': 'ECO T ', 'img': 'assets/motos/hero/ECO-T.png'},
+      {'modelo': 'ECO 100', 'img': 'assets/motos/hero/Eco100.png'},
+      {
+        'modelo': 'ECO DELUXE CLASICA',
+        'img': 'assets/motos/hero/EcoDeluxeClasica.png',
+      },
+      {'modelo': 'IGNITOR', 'img': 'assets/motos/hero/Ignitor.png'},
+      {'modelo': 'IGNITOR XTECH', 'img': 'assets/motos/hero/IgnitorXtech.png'},
+      {
+        'modelo': 'SPLENDOR X PRO',
+        'img': 'assets/motos/hero/Splendor-Xpro.png',
+      },
+      {'modelo': 'XOOM 110', 'img': 'assets/motos/hero/Xoom110.png'},
     ],
   }; // PageView.builder consumirá la lista de la marca seleccionada.
 
