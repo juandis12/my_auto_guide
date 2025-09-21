@@ -1,214 +1,73 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'inicio_app.dart';
-import 'Agregar_carro.dart'; // Asegura la ruta real de tu pantalla de inicio
+import 'Agregar_vehiculo.dart';
 
-class AgregarVehiculoScreen extends StatefulWidget {
-  const AgregarVehiculoScreen({Key? key}) : super(key: key);
+class AgregarCarroScreen extends StatefulWidget {
+  const AgregarCarroScreen({Key? key}) : super(key: key);
 
   @override
-  State<AgregarVehiculoScreen> createState() => _AgregarVehiculoScreenState();
+  State<AgregarCarroScreen> createState() => _AgregarCarroScreenState();
 }
 
-class _AgregarVehiculoScreenState extends State<AgregarVehiculoScreen> {
-  // Catálogo por marca (igual que tenías)
+class _AgregarCarroScreenState extends State<AgregarCarroScreen> {
+  // Catálogo de carros
   final Map<String, List<Map<String, String>>> catalogo = {
-    'YAMAHA': [
-      {'modelo': 'MT 15', 'img': 'assets/motos/yamaha/mt15.png'},
-      {'modelo': 'R15', 'img': 'assets/motos/yamaha/r15.png'},
-      {'modelo': 'FZ 25', 'img': 'assets/motos/yamaha/fz25.png'},
-      {'modelo': 'CRYPTON FI', 'img': 'assets/motos/yamaha/cripton.png'},
-      {'modelo': 'FZ 2.0', 'img': 'assets/motos/yamaha/fz2.0.png'},
-      {'modelo': 'N-MAX', 'img': 'assets/motos/yamaha/nmax.png'},
-      {'modelo': 'XTZ 150', 'img': 'assets/motos/yamaha/XTZ150.png'},
-    ],
-    'SUZUKI': [
-      {'modelo': 'Gixxer 150 FI', 'img': 'assets/motos/suzuki/gixxer150.png'},
+    'TOYOTA': [
+      {'modelo': 'Corolla', 'img': 'assets/carros/toyota/corolla.png'},
+      {'modelo': 'Hilux', 'img': 'assets/carros/toyota/hilux.png'},
+      {'modelo': 'YARIS', 'img': 'assets/carros/toyota/yaris.png'},
+      {'modelo': 'YARIS CROSS', 'img': 'assets/carros/toyota/yaris_cross.png'},
+      {'modelo': 'TUNDRA', 'img': 'assets/carros/toyota/tundra.png'},
       {
-        'modelo': 'Gixxer SF 150 FI',
-        'img': 'assets/motos/suzuki/gixxersf150.png',
+        'modelo': 'LAND CRUISER 300',
+        'img': 'assets/carros/toyota/landcruiser300.png',
+      },
+      {'modelo': 'HILUX CARGA', 'img': 'assets/carros/toyota/hiluxcarga.png'},
+      {'modelo': 'FORTUNER', 'img': 'assets/carros/toyota/fortuner.png'},
+      {
+        'modelo': 'COROLLA CROSS',
+        'img': 'assets/carros/toyota/corolla_cross.png',
+      },
+      {
+        'modelo': 'COROLLA CROSS GR-S',
+        'img': 'assets/carros/toyota/corolla_cross_gr-s.png',
       },
     ],
-    'BMW': [
-      {'modelo': 'G 310 R', 'img': 'assets/motos/bmw/g310r.png'},
-      {'modelo': 'G 310 GS', 'img': 'assets/motos/bmw/g310gs.png'},
-      {'modelo': 'F 900 R', 'img': 'assets/motos/bmw/f900r.png'},
+    'MAZDA': [
+      {'modelo': 'MAZDA 2 HATCHBACK', 'img': 'assets/carros/mazda/mazda2.png'},
+      {'modelo': 'MAZDA 2 SEDAN', 'img': 'assets/carros/mazda/mazda2sedan.png'},
+      {'modelo': 'MAZDA 3 SEDAN', 'img': 'assets/carros/mazda/mazda3.png'},
     ],
-    'KAWASAKI': [
-      {'modelo': 'VERSYS 650', 'img': 'assets/motos/kawasaki/versys650.png'},
-      {'modelo': 'Ninja 650', 'img': 'assets/motos/kawasaki/ninja650.png'},
-      {'modelo': 'Ninja 400', 'img': 'assets/motos/kawasaki/ninja400.png'},
-      {'modelo': 'Z 400', 'img': 'assets/motos/kawasaki/z400.png'},
+    'CHEVROLET': [
+      {'modelo': 'Onix', 'img': 'assets/carros/chevrolet/onix.png'},
+      {'modelo': 'Tracker', 'img': 'assets/carros/chevrolet/tracker.png'},
     ],
+  };
 
-    'BAJAJ': [
-      {
-        'modelo': 'BOXER CT 100 KS',
-        'img': 'assets/motos/bajaj/boxer-ct100-ks.png',
-      },
-      {
-        'modelo': 'BOXER CT 100 ES',
-        'img': 'assets/motos/bajaj/boxer-ct100.png',
-      },
-      {
-        'modelo': 'BOXER CT 125 SPORT',
-        'img': 'assets/motos/bajaj/boxer-ct-125-sport.png',
-      },
-      {'modelo': 'BOXER 150 X', 'img': 'assets/motos/bajaj/boxer-150x.png'},
-      {'modelo': 'BOXER S', 'img': 'assets/motos/bajaj/boxer-s.png'},
-      {
-        'modelo': 'DISCOVER 125 SPORT',
-        'img': 'assets/motos/bajaj/discover-125.png',
-      },
-      {'modelo': 'DOMINAR 250', 'img': 'assets/motos/bajaj/Dominar-250.png'},
-      {
-        'modelo': 'DOMINAR 400',
-        'img': 'assets/motos/bajaj/Dominar-400-touring.png',
-      },
-      {
-        'modelo': 'DOMINAR 400 VOLCANO',
-        'img': 'assets/motos/bajaj/dominar400-volcano.png',
-      },
-      {'modelo': 'PULSAR N125', 'img': 'assets/motos/bajaj/pulsar-n125.png'},
-      {
-        'modelo': 'PULSAR N160 PRO',
-        'img': 'assets/motos/bajaj/pulsar-n160-pro.png',
-      },
-      {'modelo': 'PULSAR N160', 'img': 'assets/motos/bajaj/pulsar-n160.png'},
-      {'modelo': 'PULSAR N250', 'img': 'assets/motos/bajaj/Pulsar-N250.png'},
-      {
-        'modelo': 'PULSAR NS125 ',
-        'img': 'assets/motos/bajaj/pulsar-ns-125.png',
-      },
-      {
-        'modelo': 'PULSAR NS 160 FI ABS ',
-        'img': 'assets/motos/bajaj/pulsar-ns-160-fi-abs.png',
-      },
-      {
-        'modelo': 'PULSAR NS 16O',
-        'img': 'assets/motos/bajaj/pulsar-ns160-fi.png',
-      },
-      {
-        'modelo': 'PULSAR NS 200 UG',
-        'img': 'assets/motos/bajaj/pulsar-ns-200-ug.png',
-      },
-      {
-        'modelo': 'PULSAR NS 200 FI ABS',
-        'img': 'assets/motos/bajaj/pulsar-ns200-fi-abs.png',
-      },
-      {
-        'modelo': 'PULSAR NS 400z',
-        'img': 'assets/motos/bajaj/pulsar-ns400z.png',
-      },
-      {'modelo': 'PULSAR P 150 ', 'img': 'assets/motos/bajaj/Pulsar-p150.png'},
-      {
-        'modelo': 'PULSAR RS 200 FI ABS',
-        'img': 'assets/motos/bajaj/pulsar-rs200.png',
-      },
-      {
-        'modelo': 'PULSAR 200 PULSARMANIA',
-        'img': 'assets/motos/bajaj/pulsarmania.png',
-      },
-    ],
-    'HERO': [
-      {'modelo': 'HUNK 125 R', 'img': 'assets/motos/hero/Hunk125r.png'},
-      {'modelo': 'HUNK 150 XT', 'img': 'assets/motos/hero/Hunk150xt.png'},
-      {'modelo': 'HUNK 160 R', 'img': 'assets/motos/hero/hunk160r.png'},
-      {'modelo': 'HUNK 160 R 4V', 'img': 'assets/motos/hero/Hunk160R4v.png'},
-      {'modelo': 'ECO DELUXE', 'img': 'assets/motos/hero/Eco_Deluxe.png'},
-      {'modelo': 'ECO T ', 'img': 'assets/motos/hero/ECO-T.png'},
-      {'modelo': 'ECO 100', 'img': 'assets/motos/hero/Eco100.png'},
-      {
-        'modelo': 'ECO DELUXE CLASICA',
-        'img': 'assets/motos/hero/EcoDeluxeClasica.png',
-      },
-      {'modelo': 'IGNITOR', 'img': 'assets/motos/hero/Ignitor.png'},
-      {'modelo': 'IGNITOR XTECH', 'img': 'assets/motos/hero/IgnitorXtech.png'},
-      {
-        'modelo': 'SPLENDOR X PRO',
-        'img': 'assets/motos/hero/Splendor-Xpro.png',
-      },
-      {'modelo': 'XOOM 110', 'img': 'assets/motos/hero/Xoom110.png'},
-      {'modelo': 'X PULSE 200 4V', 'img': 'assets/motos/hero/Xpulse2004v.png'},
-      {
-        'modelo': 'X PULSE 200 PRO 4V',
-        'img': 'assets/motos/hero/XpulsePro2004v.png',
-      },
-      {
-        'modelo': 'X PULSE 200 RALLY',
-        'img': 'assets/motos/hero/XpulseRally.png',
-      },
-    ],
-    'AKT': [
-      {'modelo': 'CR 250R ', 'img': 'assets/motos/akt/250R.png'},
-      {'modelo': 'CR4 150', 'img': 'assets/motos/akt/CR4_150.png'},
-      {'modelo': 'CR4 200', 'img': 'assets/motos/akt/CR4_200.png'},
-      {'modelo': 'NKD', 'img': 'assets/motos/akt/NKD.png'},
-      {'modelo': 'MAWI', 'img': 'assets/motos/akt/mawi.png'},
-      {'modelo': 'SPECIAL X', 'img': 'assets/motos/akt/AKT19O.png'},
-    ],
-    'KTM': [
-      {'modelo': 'DUKE 200 ', 'img': 'assets/motos/ktm/DUKE-200.png'},
-      {'modelo': 'DUKE 250', 'img': 'assets/motos/ktm/KTM-250-DUKE.png'},
-      {'modelo': 'DUKE 390', 'img': 'assets/motos/ktm/KTM-390-DUKE.png'},
-      {'modelo': 'DUKE 990', 'img': 'assets/motos/ktm/KTM-990-DUKE.png'},
-      {
-        'modelo': 'SUPER DUKE 1390',
-        'img': 'assets/motos/ktm/KTM1390superduke2025.png',
-      },
-      {
-        'modelo': 'ADVENTUR 250',
-        'img': 'assets/motos/ktm/KTM-250-Adventure.png',
-      },
-      {'modelo': 'ADVENTUR 390', 'img': 'assets/motos/ktm/KTM-390-adv.png'},
-      {
-        'modelo': 'ADVENTUR 390X',
-        'img': 'assets/motos/ktm/KTM-390-adventure.png',
-      },
-    ],
-  }; // PageView.builder consumirá la lista de la marca seleccionada.
-
-  // Logos para selección de marca
+  // Logos
   final Map<String, String> logos = const {
-    'YAMAHA': 'assets/logos/yamaha_logo.png',
-    'SUZUKI': 'assets/logos/suzuki_logo.png',
-    'BMW': 'assets/logos/bmw_logo.png',
-    'KAWASAKI': 'assets/logos/kawa_logo.png',
-    'HONDA': 'assets/logos/honda_logo.png',
-    'KTM': 'assets/logos/ktm_logo.png',
-    'BAJAJ': 'assets/logos/bajaj_logo.png',
-    'DUCATI': 'assets/logos/ducati_logo.png',
-    'HERO': 'assets/logos/hero_logo.png',
-    'AKT': 'assets/logos/akt_logo.png',
-  }; // Las rutas deben existir en assets/logos/.
+    'TOYOTA': 'assets/logos/toyota_logo.png',
+    'MAZDA': 'assets/logos/mazda_logo.png',
+    'CHEVROLET': 'assets/logos/chevrolet_logo.png',
+  };
 
-  // COLORES POR MARCA (personaliza a tu gusto)
+  // Colores
   final Map<String, Color> brandColors = const {
-    'YAMAHA': Color(0xFF0055CC), // azul Yamaha
-    'SUZUKI': Color(0xFFE30613), // rojo Suzuki
-    'BMW': Color(0xFF2A2A2A), // gris/negro BMW
-    'KAWASAKI': Color(0xFF00A651), // verde Kawasaki
-    'HONDA': Color(0xFFB30101), // rojo oscuro Honda
-    'DUCATI': Color(0xFFEB2A11), // rojo anaranjado Ducati
-    'KTM': Color(0xFFFF7B00), // naranja KTM
-    'BAJAJ': Color(0xFF006EFF), // azul claro Bajaj
-    'HERO': Color.fromARGB(255, 0, 0, 0),
-    'AKT': Color.fromARGB(255, 21, 54, 172),
-  }; // Usa cualquier Color(Material) o hex ARGB para el resaltado.
+    'TOYOTA': Color(0xFFEB0A1E),
+    'MAZDA': Color(0xFF1B1B1B),
+    'CHEVROLET': Color(0xFFFFC107),
+  };
 
-  // Estado actual
-  String marcaSeleccionada = 'YAMAHA';
+  String marcaSeleccionada = 'TOYOTA';
   int indexModelo = 0;
 
-  // Controlador del carrusel
   late PageController _page;
 
-  // Form
   final TextEditingController _kmsController = TextEditingController();
   final TextEditingController _modeloController = TextEditingController();
   final TextEditingController _apodoController = TextEditingController();
 
-  // Supabase
   final supabase = Supabase.instance.client;
 
   List<Map<String, String>> get modelosDeMarca =>
@@ -256,7 +115,7 @@ class _AgregarVehiculoScreenState extends State<AgregarVehiculoScreen> {
     );
   }
 
-  // Guardar en Supabase y navegar a inicio_app.dart
+  // Guardar en Supabase y navegar
   Future<void> _guardarVehiculo() async {
     final user = supabase.auth.currentUser;
     if (user == null) {
@@ -264,7 +123,7 @@ class _AgregarVehiculoScreenState extends State<AgregarVehiculoScreen> {
         context,
       ).showSnackBar(const SnackBar(content: Text('Debes iniciar sesión')));
       return;
-    } // usuario autenticado
+    }
 
     final kms = int.tryParse(_kmsController.text.trim()) ?? 0;
     final apodo = _apodoController.text.trim();
@@ -274,9 +133,10 @@ class _AgregarVehiculoScreenState extends State<AgregarVehiculoScreen> {
     final imagePath = modelosDeMarca.isEmpty
         ? ''
         : modelosDeMarca[indexModelo]['img']!;
+
     if (modelo.isEmpty || imagePath.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Selecciona una moto válida')),
+        const SnackBar(content: Text('Selecciona un carro válido')),
       );
       return;
     }
@@ -293,7 +153,7 @@ class _AgregarVehiculoScreenState extends State<AgregarVehiculoScreen> {
             'image_path': imagePath,
           })
           .select()
-          .single(); // devuelve la fila creada
+          .single();
 
       if (!mounted) return;
       Navigator.pushReplacement(
@@ -312,7 +172,6 @@ class _AgregarVehiculoScreenState extends State<AgregarVehiculoScreen> {
   @override
   Widget build(BuildContext context) {
     const double headerHeight = 240;
-
     final modeloActual = modelosDeMarca.isEmpty
         ? ''
         : modelosDeMarca[indexModelo]['modelo']!;
@@ -325,7 +184,7 @@ class _AgregarVehiculoScreenState extends State<AgregarVehiculoScreen> {
       ),
       body: Stack(
         children: [
-          // Fondo superior
+          // Fondo
           Positioned(
             top: 0,
             left: 0,
@@ -349,48 +208,49 @@ class _AgregarVehiculoScreenState extends State<AgregarVehiculoScreen> {
               children: [
                 const SizedBox(height: 6),
                 const Text(
-                  'Agrega Tu Vehiculo',
+                  'Agrega Tu Carro',
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 10),
 
-                // Header: tabs + carrusel por marca
+                // Header
                 SizedBox(
                   height: headerHeight,
                   width: double.infinity,
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Tabs verticales (decorativos)
+                      // Tabs
                       SizedBox(
                         height: headerHeight,
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            _SideTab(
+                            const _SideTab(
                               text: 'Carro',
+                              selected: true,
+                              onTap: null,
+                            ),
+                            const SizedBox(),
+                            _SideTab(
+                              text: 'Moto',
                               selected: false,
                               onTap: () {
                                 Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => AgregarCarroScreen(),
+                                    builder: (context) =>
+                                        const AgregarVehiculoScreen(),
                                   ),
                                 );
                               },
-                            ),
-                            const SizedBox(),
-                            const _SideTab(
-                              text: 'Moto',
-                              selected: true,
-                              onTap: null,
                             ),
                           ],
                         ),
                       ),
                       const SizedBox(width: 10),
 
-                      // Carrusel de modelos de la marca seleccionada
+                      // Carrusel
                       Expanded(
                         child: Stack(
                           children: [
@@ -410,7 +270,6 @@ class _AgregarVehiculoScreenState extends State<AgregarVehiculoScreen> {
                                 );
                               },
                             ),
-                            // Flechas
                             Positioned(
                               right: 6,
                               top: 6,
@@ -452,7 +311,7 @@ class _AgregarVehiculoScreenState extends State<AgregarVehiculoScreen> {
                 ),
                 const SizedBox(height: 12),
 
-                // Logos por marca con color de selección específico
+                // Logos
                 SizedBox(
                   height: 100,
                   child: ListView.separated(
@@ -518,7 +377,7 @@ class _AgregarVehiculoScreenState extends State<AgregarVehiculoScreen> {
                   controller: _kmsController,
                   decoration: const InputDecoration(
                     labelText: 'Cuantos kms tiene?',
-                    hintText: '6500',
+                    hintText: '25000',
                     border: OutlineInputBorder(),
                     isDense: true,
                   ),
@@ -530,7 +389,7 @@ class _AgregarVehiculoScreenState extends State<AgregarVehiculoScreen> {
                   controller: _modeloController,
                   decoration: const InputDecoration(
                     labelText: 'Modelo (año)',
-                    hintText: '2024',
+                    hintText: '2022',
                     border: OutlineInputBorder(),
                     isDense: true,
                   ),
@@ -542,7 +401,7 @@ class _AgregarVehiculoScreenState extends State<AgregarVehiculoScreen> {
                   controller: _apodoController,
                   decoration: const InputDecoration(
                     labelText: 'Apodo',
-                    hintText: 'Demon',
+                    hintText: 'Mi Nave',
                     border: OutlineInputBorder(),
                     isDense: true,
                   ),
@@ -561,7 +420,7 @@ class _AgregarVehiculoScreenState extends State<AgregarVehiculoScreen> {
                       ),
                       textStyle: const TextStyle(fontSize: 17),
                     ),
-                    child: const Text('Crear Vehiculo'),
+                    child: const Text('Crear Carro'),
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -574,7 +433,7 @@ class _AgregarVehiculoScreenState extends State<AgregarVehiculoScreen> {
   }
 }
 
-// Botón vertical de barra lateral (sin cambios de lógica)
+// Botón lateral
 class _SideTab extends StatelessWidget {
   final String text;
   final bool selected;

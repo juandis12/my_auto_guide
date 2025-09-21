@@ -55,6 +55,9 @@ flutter:
     - assets/logos/bajaj_logo.png
     - assets/logos/hero_logo.png
     - assets/logos/akt_logo.png
+    - assets/logos/toyota_logo.png
+    - assets/logos/mazda_logo.png
+    - assets/logos/chevrolet_logo.png
     - assets/bus.png
     - assets/furgon.png
     - assets/lineasfondo.png
@@ -124,3 +127,17 @@ flutter:
     - assets/motos/ktm/KTM-250-Adventure.png
     - assets/motos/ktm/KTM-390-adv.png
     - assets/motos/ktm/KTM-390-adventure.png
+    - assets/carros/toyota/corolla.png
+    - assets/carros/toyota/hilux.png
+    - assets/carros/toyota/yaris.png
+    - assets/carros/toyota/yaris_cross.png 
+    - assets/carros/toyota/tundra.png
+    - assets/carros/toyota/landcruiser300.png
+    - assets/carros/toyota/hiluxcarga.png
+    - assets/carros/toyota/fortuner.png
+    - assets/carros/toyota/corolla_cross.png
+    - assets/carros/toyota/corolla_cross_gr-s.png
+    - assets/carros/mazda/mazda2.png
+    - assets/carros/mazda/mazda2sedan.png
+    - assets/carros/mazda/mazda3.png
+
