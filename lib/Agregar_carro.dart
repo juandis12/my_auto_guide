@@ -40,8 +40,29 @@ class _AgregarCarroScreenState extends State<AgregarCarroScreen> {
       {'modelo': 'MAZDA 3 SEDAN', 'img': 'assets/carros/mazda/mazda3.png'},
     ],
     'CHEVROLET': [
-      {'modelo': 'Onix', 'img': 'assets/carros/chevrolet/onix.png'},
-      {'modelo': 'Tracker', 'img': 'assets/carros/chevrolet/tracker.png'},
+      {
+        'modelo': 'ONIX TURBO RS',
+        'img': 'assets/carros/chevrolet/jelly-onix-turbo-rs.png',
+      },
+      {
+        'modelo': 'ONIX PRIME HB',
+        'img': 'assets/carros/chevrolet/2022-tambien-onix-turbo-hb.png',
+      },
+      {
+        'modelo': 'ONIX TURBO SEDAN',
+        'img': 'assets/carros/chevrolet/2024-versiones-onix-turbo-ltz-at.png',
+      },
+      {'modelo': 'TRACKER RS', 'img': 'assets/carros/chevrolet/tracker-RS.png'},
+      {'modelo': 'BLAZER EV RS', 'img': 'assets/carros/chevrolet/BLAZEREV.png'},
+      {
+        'modelo': 'EQUINOX RS',
+        'img': 'assets/carros/chevrolet/equinox-rs-blazer-rs.png',
+      },
+      {'modelo': 'TRAVERSE RS', 'img': 'assets/carros/chevrolet/traverse.png'},
+      {'modelo': 'BLAZER RS', 'img': 'assets/carros/chevrolet/blazer-rs.png'},
+      {'modelo': 'MONTANA', 'img': 'assets/carros/chevrolet/Montana.png'},
+      {'modelo': 'COLORADO RS', 'img': 'assets/carros/chevrolet/colorado.png'},
+      {'modelo': 'SILVERADO', 'img': 'assets/carros/chevrolet/silverado.png'},
     ],
   };
 
