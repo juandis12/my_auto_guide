@@ -1,33 +1,34 @@
-import 'dart:math' as math;
+import 'dart:async';
 import 'dart:io';
-import 'dart:typed_data';
-import 'dart:async'; // unawaited
-import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'dart:math' as math;
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:photo_view/photo_view.dart'; // Visor imágenes
-import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart'; // Visor PDFs
-import 'login_screen.dart';
-import 'parametrizacion_mantenimientos.dart';
-import 'guia.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:open_filex/open_filex.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:open_filex/open_filex.dart'; // Nuevo paquete para abrir archivos
-import 'package:permission_handler/permission_handler.dart'; // Para permisos en Android
-import 'package:http/http.dart' as http; // Para descargar archivos
-import 'package:path_provider/path_provider.dart'; // Para rutas temporales
-
-import 'package:device_info_plus/device_info_plus.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
+import 'runt_webview.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'guia.dart';
+import 'package:webview_flutter/webview_flutter.dart';
+import 'package:webview_flutter_android/webview_flutter_android.dart';
+import 'login_screen.dart';
+import 'parametrizacion_mantenimientos.dart';
+import 'package:webview_flutter/webview_flutter.dart'
+    if (dart.library.io) 'package:webview_flutter/webview_flutter.dart';
 
 enum DocType { soat, tecno, seguro, propiedad }
 
 class InicioApp extends StatefulWidget {
   final String vehiculoId;
   const InicioApp({Key? key, required this.vehiculoId}) : super(key: key);
-
   @override
   State<InicioApp> createState() => _InicioAppState();
 }
@@ -51,12 +52,15 @@ class _InicioAppState extends State<InicioApp> {
   double _pctCadena = 0.0;
   double _pctFiltro = 0.0;
   double _pctAceite = 0.0;
+  double _pctSoat = 0.0;
+  double _pctTecno = 0.0;
   DateTime? _lastCadena, _lastFiltro, _lastAceite;
+  DateTime? _soatVence, _tecnoVence;
 
   String? _soatPath, _tecnoPath, _seguroPath, _propPath;
   String? _soatSigned, _tecnoSigned, _seguroSigned, _propSigned;
 
-  // Cache para URLs firmadas
+  // Cache de URLs firmadas
   final Map<String, (String url, DateTime expires)> _urlCache = {};
 
   String _docFolder(DocType type) => {
@@ -72,10 +76,8 @@ class _InicioAppState extends State<InicioApp> {
   Future<String> _signedUrlCachedFor(String path) async {
     final cached = _urlCache[path];
     if (cached != null && DateTime.now().isBefore(cached.$2)) {
-      debugPrint('URL cacheada para $path');
       return cached.$1;
     }
-    debugPrint('Generando nueva URL firmada para $path');
     final signed = await _signedUrlFor(path);
     final expires = DateTime.now().add(const Duration(seconds: 3500));
     _urlCache[path] = (signed, expires);
@@ -83,22 +85,11 @@ class _InicioAppState extends State<InicioApp> {
   }
 
   Future<String> _signedUrlFor(String path) async {
-    try {
-      final user = supabase.auth.currentUser;
-      if (user == null) {
-        debugPrint('ERROR: Usuario no autenticado para firmar URL');
-        throw Exception('Usuario no autenticado');
-      }
-      debugPrint('Firmando URL para path: $path');
-      final signed = await supabase.storage
-          .from(_docsBucket)
-          .createSignedUrl(path, 3600);
-      debugPrint('URL firmada generada: $signed');
-      return signed;
-    } catch (e) {
-      debugPrint('Error al firmar URL: $e');
-      rethrow;
+    final user = supabase.auth.currentUser;
+    if (user == null) {
+      throw Exception('Usuario no autenticado');
     }
+    return await supabase.storage.from(_docsBucket).createSignedUrl(path, 3600);
   }
 
   Color _colorFor(double v) {
@@ -114,6 +105,13 @@ class _InicioAppState extends State<InicioApp> {
     return restante.clamp(0.0, 1.0);
   }
 
+  double _pctVencimiento(DateTime? vence, int cicloDias) {
+    if (vence == null) return 0.0;
+    final diasRestantes = vence.difference(DateTime.now()).inDays;
+    final restante = diasRestantes / cicloDias;
+    return restante.clamp(0.0, 1.0);
+  }
+
   Future<Map<String, dynamic>> _cargar() async {
     final row = await supabase
         .from('vehiculos')
@@ -126,19 +124,12 @@ class _InicioAppState extends State<InicioApp> {
   }
 
   Future<void> _cerrarSesion() async {
-    try {
-      await supabase.auth.signOut();
-      if (!mounted) return;
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => const CarRentalLoginScreen()),
-        (route) => false,
-      );
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('No se pudo cerrar sesión: $e')));
-    }
+    await supabase.auth.signOut();
+    if (!mounted) return;
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => const CarRentalLoginScreen()),
+      (route) => false,
+    );
   }
 
   Future<void> _confirmarYEliminar(String id) async {
@@ -160,26 +151,18 @@ class _InicioAppState extends State<InicioApp> {
       ),
     );
     if (ok != true) return;
-
-    try {
-      await supabase.from('vehiculos').delete().eq('id', id);
-      if (!mounted) return;
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => const CarRentalLoginScreen()),
-        (route) => false,
-      );
-    } on PostgrestException catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('No se pudo eliminar: ${e.message}')),
-      );
-    }
+    await supabase.from('vehiculos').delete().eq('id', id);
+    if (!mounted) return;
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => const CarRentalLoginScreen()),
+      (route) => false,
+    );
   }
 
   void _abrirGuias() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => const GuiasScreen()),
+      MaterialPageRoute(builder: (_) => const GuiaScreen()),
     );
   }
 
@@ -209,6 +192,7 @@ class _InicioAppState extends State<InicioApp> {
           (res['vencFiltro'] == true) ||
           (res['vencAceite'] == true);
       if (vencido) {
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(
@@ -222,7 +206,6 @@ class _InicioAppState extends State<InicioApp> {
     }
   }
 
-  // Listar generando URLs firmadas (miniaturas + visor)
   Future<List<(String name, String url)>> _listDocsSigned(DocType type) async {
     try {
       final folder = _folderPath(type);
@@ -255,7 +238,7 @@ class _InicioAppState extends State<InicioApp> {
     try {
       final result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
-        allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png', 'webp', 'heic'],
+        allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png', 'webp', 'heic', 'gif'],
         withData: true,
       );
       if (result == null || result.files.isEmpty) return null;
@@ -298,6 +281,10 @@ class _InicioAppState extends State<InicioApp> {
     }
   }
 
+  Future<void> _deleteStorageFile(String path) async {
+    await supabase.storage.from(_docsBucket).remove([path]);
+  }
+
   Future<void> _openUrl(String url) async {
     final ok = await launchUrl(
       Uri.parse(url),
@@ -321,6 +308,7 @@ class _InicioAppState extends State<InicioApp> {
         return StatefulBuilder(
           builder: (ctx, setM) {
             Future<void> _refresh() async => setM(() {});
+            final folder = _folderPath(type);
             return SafeArea(
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -410,14 +398,17 @@ class _InicioAppState extends State<InicioApp> {
                                   l.endsWith('.jpg') ||
                                   l.endsWith('.jpeg') ||
                                   l.endsWith('.webp') ||
-                                  l.endsWith('.heic');
+                                  l.endsWith('.heic') ||
+                                  l.endsWith('.gif');
                               return InkWell(
                                 onTap: () {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (_) =>
-                                          DocumentViewerScreen(url: url),
+                                      builder: (_) => DocumentViewerScreen(
+                                        url: url,
+                                        fileName: name,
+                                      ),
                                     ),
                                   );
                                 },
@@ -478,6 +469,102 @@ class _InicioAppState extends State<InicioApp> {
                                             ),
                                           ),
                                         ),
+                                        Positioned(
+                                          top: 4,
+                                          right: 4,
+                                          child: Material(
+                                            color: Colors.black45,
+                                            borderRadius: BorderRadius.circular(
+                                              16,
+                                            ),
+                                            child: InkWell(
+                                              borderRadius:
+                                                  BorderRadius.circular(16),
+                                              onTap: () async {
+                                                final ok = await showDialog<bool>(
+                                                  context: context,
+                                                  builder: (_) => AlertDialog(
+                                                    title: const Text(
+                                                      'Eliminar archivo',
+                                                    ),
+                                                    content: Text(
+                                                      '¿Deseas eliminar "$name"?',
+                                                    ),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed: () =>
+                                                            Navigator.pop(
+                                                              context,
+                                                              false,
+                                                            ),
+                                                        child: const Text(
+                                                          'Cancelar',
+                                                        ),
+                                                      ),
+                                                      FilledButton(
+                                                        onPressed: () =>
+                                                            Navigator.pop(
+                                                              context,
+                                                              true,
+                                                            ),
+                                                        child: const Text(
+                                                          'Eliminar',
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                                if (ok == true) {
+                                                  final path = '$folder/$name';
+                                                  await _deleteStorageFile(
+                                                    path,
+                                                  );
+                                                  // Si este archivo era el asignado en cabecera, limpiar
+                                                  setState(() {
+                                                    final full = path;
+                                                    switch (type) {
+                                                      case DocType.soat:
+                                                        if (_soatPath == full) {
+                                                          _soatPath = null;
+                                                          _soatSigned = null;
+                                                        }
+                                                        break;
+                                                      case DocType.tecno:
+                                                        if (_tecnoPath ==
+                                                            full) {
+                                                          _tecnoPath = null;
+                                                          _tecnoSigned = null;
+                                                        }
+                                                        break;
+                                                      case DocType.seguro:
+                                                        if (_seguroPath ==
+                                                            full) {
+                                                          _seguroPath = null;
+                                                          _seguroSigned = null;
+                                                        }
+                                                        break;
+                                                      case DocType.propiedad:
+                                                        if (_propPath == full) {
+                                                          _propPath = null;
+                                                          _propSigned = null;
+                                                        }
+                                                        break;
+                                                    }
+                                                  });
+                                                  await _refresh();
+                                                }
+                                              },
+                                              child: const Padding(
+                                                padding: EdgeInsets.all(6),
+                                                child: Icon(
+                                                  Icons.delete,
+                                                  color: Colors.white,
+                                                  size: 16,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -499,6 +586,82 @@ class _InicioAppState extends State<InicioApp> {
     );
   }
 
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+
+  @override
+  void initState() {
+    super.initState();
+    _initTimezone().then((_) {
+      _initNotifications();
+    });
+  }
+
+  Future<void> _initTimezone() async {
+    tz.initializeTimeZones();
+    final String timeZoneName = await tz.local.name;
+    tz.setLocalLocation(tz.getLocation(timeZoneName));
+  }
+
+  Future<void> _initNotifications() async {
+    const AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+    const InitializationSettings initializationSettings =
+        InitializationSettings(android: initializationSettingsAndroid);
+    await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  }
+
+  Future<void> _showMaintenanceNotification(String tipo) async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+          'mantenimiento_channel',
+          'Mantenimientos',
+          channelDescription: 'Notificaciones de mantenimientos vencidos',
+          importance: Importance.max,
+          priority: Priority.high,
+          ticker: 'ticker',
+        );
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(
+      android: androidPlatformChannelSpecifics,
+    );
+    await flutterLocalNotificationsPlugin.show(
+      0,
+      '¡Mantenimiento requerido!',
+      'Debes realizar el mantenimiento de $tipo.',
+      platformChannelSpecifics,
+      payload: tipo,
+    );
+  }
+
+  Future<void> _scheduleMaintenanceNotification(
+    DateTime fechaVencimiento,
+    String tipo,
+  ) async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+          'mantenimiento_channel',
+          'Mantenimientos',
+          channelDescription: 'Notificaciones de mantenimientos vencidos',
+          importance: Importance.max,
+          priority: Priority.high,
+          ticker: 'ticker',
+        );
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(
+      android: androidPlatformChannelSpecifics,
+    );
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      tipo.hashCode,
+      '¡Mantenimiento requerido!',
+      'Debes realizar el mantenimiento de $tipo.',
+      tz.TZDateTime.from(fechaVencimiento, tz.local),
+      platformChannelSpecifics,
+      androidAllowWhileIdle: true,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+      matchDateTimeComponents: DateTimeComponents.dateAndTime,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final w = MediaQuery.of(context).size.width;
@@ -508,6 +671,81 @@ class _InicioAppState extends State<InicioApp> {
       w * 0.50,
       kSpecPillHeight * 3 + kSpecGap * 2,
     );
+
+    // Notificaciones si algún mantenimiento llega a 0%
+    if (_pctCadena == 0.0) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _showMaintenanceNotification('lubricación de cadena');
+      });
+    }
+    if (_pctFiltro == 0.0) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _showMaintenanceNotification('filtro de aire');
+      });
+    }
+    if (_pctAceite == 0.0) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _showMaintenanceNotification('cambio de aceite');
+      });
+    }
+
+    // Limpia notificaciones antiguas y programa nuevas para cada mantenimiento
+
+    void _programarNotificaciones() async {
+      // Lubricación de cadena
+      if (_lastCadena != null) {
+        final vencimientoCadena = _lastCadena!.add(const Duration(days: 15));
+        await flutterLocalNotificationsPlugin.cancel(
+          'lubricación de cadena'.hashCode,
+        );
+        if (vencimientoCadena.isAfter(DateTime.now())) {
+          _scheduleMaintenanceNotification(
+            vencimientoCadena,
+            'lubricación de cadena',
+          );
+        }
+      }
+      // Filtro de aire
+      if (_lastFiltro != null) {
+        final vencimientoFiltro = _lastFiltro!.add(const Duration(days: 90));
+        await flutterLocalNotificationsPlugin.cancel('filtro de aire'.hashCode);
+        if (vencimientoFiltro.isAfter(DateTime.now())) {
+          _scheduleMaintenanceNotification(vencimientoFiltro, 'filtro de aire');
+        }
+      }
+      // Cambio de aceite
+      if (_lastAceite != null) {
+        final vencimientoAceite = _lastAceite!.add(const Duration(days: 25));
+        await flutterLocalNotificationsPlugin.cancel(
+          'cambio de aceite'.hashCode,
+        );
+        if (vencimientoAceite.isAfter(DateTime.now())) {
+          _scheduleMaintenanceNotification(
+            vencimientoAceite,
+            'cambio de aceite',
+          );
+        }
+      }
+      // SOAT
+      if (_soatVence != null) {
+        await flutterLocalNotificationsPlugin.cancel('soat'.hashCode);
+        if (_soatVence!.isAfter(DateTime.now())) {
+          _scheduleMaintenanceNotification(_soatVence!, 'SOAT');
+        }
+      }
+      // Tecno
+      if (_tecnoVence != null) {
+        await flutterLocalNotificationsPlugin.cancel('tecno'.hashCode);
+        if (_tecnoVence!.isAfter(DateTime.now())) {
+          _scheduleMaintenanceNotification(_tecnoVence!, 'Tecno');
+        }
+      }
+    }
+
+    // Llama la función solo una vez por build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _programarNotificaciones();
+    });
 
     return Scaffold(
       appBar: AppBar(
@@ -551,7 +789,7 @@ class _InicioAppState extends State<InicioApp> {
           _seguroPath ??= v['seguro_path'] as String?;
           _propPath ??= v['propiedad_path'] as String?;
 
-          // Firmar URLs si aún no están firmadas
+          // Firmar URLs si aún no están
           if (_soatSigned == null && _soatPath != null) {
             WidgetsBinding.instance.addPostFrameCallback((_) async {
               final u = await _signedUrlCachedFor(_soatPath!);
@@ -619,6 +857,27 @@ class _InicioAppState extends State<InicioApp> {
             });
           }
 
+          // Establecer fechas de vencimiento y porcentajes para SOAT y Tecno
+          if (_soatVence == null && v['soat_vencimiento'] != null) {
+            final fechaSoatExtraida = DateTime.parse(v['soat_vencimiento']);
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              setState(() {
+                _soatVence = fechaSoatExtraida;
+                _pctSoat = _pctVencimiento(_soatVence, 365);
+              });
+            });
+          }
+
+          if (_tecnoVence == null && v['tecno_vencimiento'] != null) {
+            final fechaTecnoExtraida = DateTime.parse(v['tecno_vencimiento']);
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              setState(() {
+                _tecnoVence = fechaTecnoExtraida;
+                _pctTecno = _pctVencimiento(_tecnoVence, 365);
+              });
+            });
+          }
+
           return SingleChildScrollView(
             padding: const EdgeInsets.all(12),
             child: Column(
@@ -661,6 +920,22 @@ class _InicioAppState extends State<InicioApp> {
                         logoPath: logoPath,
                         modelo: modelo,
                         kms: kms,
+                      ),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          _IndicatorTile(
+                            title: 'SOAT',
+                            value: _pctSoat,
+                            color: _colorFor(_pctSoat),
+                          ),
+                          const SizedBox(width: 10),
+                          _IndicatorTile(
+                            title: 'Tecnomecánica',
+                            value: _pctTecno,
+                            color: _colorFor(_pctTecno),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -758,12 +1033,30 @@ class _InicioAppState extends State<InicioApp> {
                   text: 'Parametrización\nmantenimientos',
                   onTap: _abrirParametrizacion,
                 ),
-
                 const SizedBox(height: 8),
                 _GradientButton(
                   icon: Icons.menu_book,
                   text: 'Guía',
                   onTap: _abrirGuias,
+                ),
+                const SizedBox(height: 8),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => RuntWebViewScreen(
+                          placa: 'ABC123',
+                          cedula: '12345678',
+                          vehiculoId: '1',
+                        ),
+                      ),
+                    ).then((recargar) {
+                      if (recargar == true)
+                        setState(() {}); // Recarga los datos
+                    });
+                  },
+                  child: const Text('Consultar RUNT'),
                 ),
               ],
             ),
@@ -796,6 +1089,18 @@ class _MainHero extends StatelessWidget {
       w * 0.50,
       kSpecPillHeight * 3 + kSpecGap * 2,
     );
+
+    Widget buildVehicleImage() {
+      if (imagePath.isEmpty) {
+        return const Icon(Icons.motorcycle, size: 96, color: Colors.black26);
+      }
+      return Image.asset(
+        imagePath,
+        fit: BoxFit.contain,
+        errorBuilder: (_, __, ___) =>
+            const Icon(Icons.motorcycle, size: 96, color: Colors.black26),
+      );
+    }
 
     return SizedBox(
       height: heroHeight,
@@ -839,7 +1144,7 @@ class _MainHero extends StatelessWidget {
                       fit: BoxFit.cover,
                     ),
                   ),
-                  Center(child: Image.asset(imagePath, fit: BoxFit.contain)),
+                  Center(child: buildVehicleImage()),
                   if (logoPath != null)
                     Positioned(
                       top: 10,
@@ -937,7 +1242,7 @@ class _SpecPill extends StatelessWidget {
 
 class _DocTileInteractive extends StatelessWidget {
   final String title;
-  final String? url; // aquí llega la URL firmada para miniatura
+  final String? url; // URL firmada para miniatura
   final VoidCallback onTapUpload;
   final VoidCallback? onLongPressOpen;
   const _DocTileInteractive({
@@ -954,7 +1259,8 @@ class _DocTileInteractive extends StatelessWidget {
         lu.endsWith('.jpg') ||
         lu.endsWith('.jpeg') ||
         lu.endsWith('.webp') ||
-        lu.endsWith('.heic');
+        lu.endsWith('.heic') ||
+        lu.endsWith('.gif');
   }
 
   @override
@@ -1163,7 +1469,7 @@ class _DocumentViewerScreenState extends State<DocumentViewerScreen> {
   bool _isLoading = true;
   String? _error;
 
-  // Quita parámetros/tokens para que el nombre no sea demasiado largo
+  // Nombre de archivo legible
   String _getCleanFileName(String url) {
     String name = url.split('/').last;
     if (name.contains('?')) name = name.split('?').first;
@@ -1184,6 +1490,9 @@ class _DocumentViewerScreenState extends State<DocumentViewerScreen> {
 
   Future<File> _downloadFile(String url, String name) async {
     final res = await http.get(Uri.parse(url));
+    if (res.statusCode != 200) {
+      throw Exception('HTTP ${res.statusCode} al descargar $name');
+    }
     final dir = await getTemporaryDirectory();
     final file = File('${dir.path}/$name');
     await file.writeAsBytes(res.bodyBytes);
@@ -1212,53 +1521,7 @@ class _DocumentViewerScreenState extends State<DocumentViewerScreen> {
     }
   }
 
-  // Manejo de permisos: Android 11+ (manageExternalStorage) y <=10 (storage)
-  Future<bool> _checkPermission() async {
-    if (!Platform.isAndroid) return true;
-    final androidInfo = await DeviceInfoPlugin().androidInfo;
-    final sdk = androidInfo.version.sdkInt ?? 0;
-
-    if (sdk >= 30) {
-      if (await Permission.manageExternalStorage.isGranted) return true;
-      final st = await Permission.manageExternalStorage.request();
-      if (st.isGranted) return true;
-      if (st.isPermanentlyDenied && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text(
-              'Permiso denegado permanentemente. Configúralo en Ajustes.',
-            ),
-            action: SnackBarAction(
-              label: 'Abrir Ajustes',
-              onPressed: openAppSettings,
-            ),
-          ),
-        );
-      }
-      return false;
-    } else {
-      var st = await Permission.storage.status;
-      if (!st.isGranted) st = await Permission.storage.request();
-      if (st.isPermanentlyDenied && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text(
-              'Permiso denegado permanentemente. Configúralo en Ajustes.',
-            ),
-            action: SnackBarAction(
-              label: 'Abrir Ajustes',
-              onPressed: openAppSettings,
-            ),
-          ),
-        );
-        return false;
-      }
-      return st.isGranted;
-    }
-  }
-
   Future<void> _openFileExternal() async {
-    if (!await _checkPermission()) return;
     if (_localFile == null) return;
     final result = await OpenFilex.open(_localFile!.path);
     if (result.type != ResultType.done && mounted) {
@@ -1303,7 +1566,6 @@ class _DocumentViewerScreenState extends State<DocumentViewerScreen> {
               backgroundDecoration: const BoxDecoration(color: Colors.black),
             )
           : isPdf
-          // Uso correcto para archivo local
           ? SfPdfViewer.file(
               _localFile!,
               onDocumentLoadFailed: (details) {

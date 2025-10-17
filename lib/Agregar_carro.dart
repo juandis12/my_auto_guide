@@ -59,7 +59,7 @@ class _AgregarCarroScreenState extends State<AgregarCarroScreen> {
         'img': 'assets/carros/chevrolet/equinox-rs-blazer-rs.png',
       },
       {'modelo': 'TRAVERSE RS', 'img': 'assets/carros/chevrolet/traverse.png'},
-      {'modelo': 'BLAZER RS', 'img': 'assets/carros/chevrolet/blazer-rs.png'},
+      {'modelo': 'BLAZER RS', 'img': 'assets/carros/chevrolet/blazerrs.png'},
       {'modelo': 'MONTANA', 'img': 'assets/carros/chevrolet/Montana.png'},
       {'modelo': 'COLORADO RS', 'img': 'assets/carros/chevrolet/colorado.png'},
       {'modelo': 'SILVERADO', 'img': 'assets/carros/chevrolet/silverado.png'},

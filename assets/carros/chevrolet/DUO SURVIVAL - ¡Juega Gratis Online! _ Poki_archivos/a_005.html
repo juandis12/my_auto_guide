@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<script>
+		function loadSyncPixel(pixelUrl){
+			var avImgSync = document.createElement('img');
+			avImgSync.width = "1";
+			avImgSync.height = "1";
+			avImgSync.style.width = "0px";
+			avImgSync.style.height = "0px";
+			avImgSync.style.cssFloat = "left";
+			avImgSync.src = pixelUrl;
+			document.body.appendChild(avImgSync);	
+		}
+		
+		function loadSyncScript(pixelUrl){
+			var raSrcSync = document.createElement("script");
+			raSrcSync.src = pixelUrl;
+			raSrcSync.type = "text/javascript";
+			document.body.appendChild(raSrcSync);		
+		}
+		
+		function loadSyncIframe(pixelUrl){
+			var raIfSync = document.createElement("iframe");
+			raIfSync.src = pixelUrl;
+			raIfSync.setAttribute('frameborder','0');
+			raIfSync.setAttribute('scrolling','no');
+			raIfSync.setAttribute('width','0');
+			raIfSync.setAttribute('height','0');
+			document.body.appendChild(raIfSync);		
+		}	
+		</script>
+		</head>
+		<body>
+		<script>
+			loadSyncPixel('https://ap.lijit.com/pixel?gdpr=0&gdpr_consent=&redir=https%3A%2F%2Fsync.richaudience.com%2Fa566db6afba33978322ef47fa16ca6fe%2F%3Fgdpr%3D0%26euconsent%3D%26uid%3D$UID');
+
+			loadSyncIframe('https://ads.pubmatic.com/AdServer/js/user_sync.html?p=156538&gdpr=0&gdpr_consent=&predirect=https%3A%2F%2Fsync.richaudience.com%2Fa8c1b6a2754b510b088f624c91944bf3%2F%3Fgdpr%3D0%26euconsent%3D%26uid%3D');
+
+			loadSyncPixel('https://visitor-adpone.omnitagjs.com/visitor/bsync?uid=c05209c1b960e64d4699c73af4326d4b&name=adpone&gdpr=0&gdpr_consent=&url=https%3A%2F%2Fsync.richaudience.com%2F8794e6f6b403f691cc8dd13eaa9ab8ad%2F%3Fgdpr%3D0%26euconsent%3D%26uid%3D%5BBUYER_ID%5D');
+
+			loadSyncPixel('https://prebid.a-mo.net/cchain/0?gdpr=0&gdpr_consent=&us_privacy=&cb=https%3A%2F%2Fsync.richaudience.com%2Fd376ce9aa7c988dfccc93f3a6ea6a725%2F%3Fgdpr%3D{GDPR_APPLIES}%26euconsent%3D{TCF_CONSENT_STRING}%26uid%3D');
+
+		</script><img width="1" height="1" style="width: 0px; height: 0px; float: left;" src="a_data_005/Sin%2520t%25C3%25ADtulo_002.png"><iframe src="a_data_005/user_sync.html" frameborder="0" scrolling="no" width="0" height="0"></iframe><img width="1" height="1" style="width: 0px; height: 0px; float: left;" src="a_data_005/bsync"><img width="1" height="1" style="width: 0px; height: 0px; float: left;" src="a_data_005/Sin%20t%C3%ADtulo.png">
+	</body></html>

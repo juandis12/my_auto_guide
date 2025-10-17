@@ -145,7 +145,6 @@ class _AgregarVehiculoScreenState extends State<AgregarVehiculoScreen> {
       {'modelo': 'CR4 200', 'img': 'assets/motos/akt/CR4_200.png'},
       {'modelo': 'NKD', 'img': 'assets/motos/akt/NKD.png'},
       {'modelo': 'MAWI', 'img': 'assets/motos/akt/mawi.png'},
-      {'modelo': 'SPECIAL X', 'img': 'assets/motos/akt/AKT19O.png'},
     ],
     'KTM': [
       {'modelo': 'DUKE 200 ', 'img': 'assets/motos/ktm/DUKE-200.png'},
