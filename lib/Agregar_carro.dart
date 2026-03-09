@@ -4,7 +4,7 @@ import 'inicio_app.dart';
 import 'Agregar_vehiculo.dart';
 
 class AgregarCarroScreen extends StatefulWidget {
-  const AgregarCarroScreen({Key? key}) : super(key: key);
+  const AgregarCarroScreen({super.key});
 
   @override
   State<AgregarCarroScreen> createState() => _AgregarCarroScreenState();
@@ -461,11 +461,10 @@ class _SideTab extends StatelessWidget {
   final VoidCallback? onTap;
 
   const _SideTab({
-    Key? key,
     required this.text,
     required this.selected,
     this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

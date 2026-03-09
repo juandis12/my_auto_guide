@@ -1,0 +1,10 @@
+﻿Analyzing Agregar_vehiculo.dart...
+
+   info - Agregar_vehiculo.dart:1:1 - The file name 'Agregar_vehiculo.dart' isn't a lower_case_with_underscores identifier. Try changing the name to follow the lower_case_with_underscores style. - file_names
+   info - Agregar_vehiculo.dart:7:9 - Parameter 'key' could be a super parameter. Trying converting 'key' to a super parameter. - use_super_parameters
+   info - Agregar_vehiculo.dart:475:49 - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement. - deprecated_member_use
+   info - Agregar_vehiculo.dart:486:57 - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement. - deprecated_member_use
+   info - Agregar_vehiculo.dart:582:9 - Parameter 'key' could be a super parameter. Trying converting 'key' to a super parameter. - use_super_parameters
+   info - Agregar_vehiculo.dart:605:35 - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss. Try replacing the use of the deprecated member with the replacement. - deprecated_member_use
+
+6 issues found.

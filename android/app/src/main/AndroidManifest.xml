@@ -2,33 +2,32 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.my_auto_guide">
 
-    <!-- Permisos de red -->
+    <!-- Internet -->
     <uses-permission android:name="android.permission.INTERNET"/>
 
-    <!-- Almacenamiento (Android <= 10) -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+    <!-- Cámara -->
+    <uses-permission android:name="android.permission.CAMERA"/>
+
+    <!-- Android 13+ -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+
+    <!-- Android 12 y menores -->
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="29"/>
 
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-
-    <!-- Android 11+ (SDK 30+): gestionar todos los archivos -->
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/>
-
-    <!-- Visibilidad de intents que podrías usar para abrir ajustes de "Gestionar todos los archivos" -->
     <queries>
         <intent>
-            <action android:name="android.intent.action.MAIN" />
+            <action android:name="android.intent.action.MAIN"/>
         </intent>
+
         <intent>
-            <action android:name="android.settings.MANAGE_ALL_FILES_ACCESS_PERMISSION"/>
-        </intent>
-        <!-- Mantén tu intent existente si lo necesitas -->
-        <intent>
-            <action android:name="android.intent.action.PROCESS_TEXT" />
-            <data android:mimeType="text/plain" />
+            <action android:name="android.intent.action.PROCESS_TEXT"/>
+            <data android:mimeType="text/plain"/>
         </intent>
     </queries>
 
@@ -49,17 +48,19 @@
 
             <meta-data
                 android:name="io.flutter.embedding.android.NormalTheme"
-                android:resource="@style/NormalTheme" />
+                android:resource="@style/NormalTheme"/>
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+
         </activity>
 
         <meta-data
             android:name="flutterEmbedding"
-            android:value="2" />
+            android:value="2"/>
+
     </application>
 
 </manifest>

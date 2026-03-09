@@ -5,7 +5,7 @@ import 'Agregar_vehiculo.dart';
 import 'inicio_app.dart'; // pantalla de inicio
 
 class CarRentalLoginScreen extends StatefulWidget {
-  const CarRentalLoginScreen({Key? key}) : super(key: key);
+  const CarRentalLoginScreen({super.key});
 
   @override
   State<CarRentalLoginScreen> createState() => _CarRentalLoginScreenState();

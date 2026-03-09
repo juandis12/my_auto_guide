@@ -4,7 +4,7 @@ import 'inicio_app.dart';
 import 'Agregar_carro.dart'; // Asegura la ruta real de tu pantalla de inicio
 
 class AgregarVehiculoScreen extends StatefulWidget {
-  const AgregarVehiculoScreen({Key? key}) : super(key: key);
+  const AgregarVehiculoScreen({super.key});
 
   @override
   State<AgregarVehiculoScreen> createState() => _AgregarVehiculoScreenState();
@@ -580,11 +580,11 @@ class _SideTab extends StatelessWidget {
   final VoidCallback? onTap;
 
   const _SideTab({
-    Key? key,
+    super.key,
     required this.text,
     required this.selected,
     this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

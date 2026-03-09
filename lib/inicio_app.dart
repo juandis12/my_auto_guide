@@ -15,20 +15,15 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'runt_webview.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'guia.dart';
-import 'package:webview_flutter/webview_flutter.dart';
-import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'login_screen.dart';
 import 'parametrizacion_mantenimientos.dart';
-import 'package:webview_flutter/webview_flutter.dart'
-    if (dart.library.io) 'package:webview_flutter/webview_flutter.dart';
 
 enum DocType { soat, tecno, seguro, propiedad }
 
 class InicioApp extends StatefulWidget {
   final String vehiculoId;
-  const InicioApp({Key? key, required this.vehiculoId}) : super(key: key);
+  const InicioApp({super.key, required this.vehiculoId});
   @override
   State<InicioApp> createState() => _InicioAppState();
 }
@@ -307,7 +302,7 @@ class _InicioAppState extends State<InicioApp> {
       builder: (ctx) {
         return StatefulBuilder(
           builder: (ctx, setM) {
-            Future<void> _refresh() async => setM(() {});
+            Future<void> refresh() async => setM(() {});
             final folder = _folderPath(type);
             return SafeArea(
               child: Padding(
@@ -356,7 +351,7 @@ class _InicioAppState extends State<InicioApp> {
                                       break;
                                   }
                                 });
-                                await _refresh();
+                                await refresh();
                               }
                             },
                           ),
@@ -551,7 +546,7 @@ class _InicioAppState extends State<InicioApp> {
                                                         break;
                                                     }
                                                   });
-                                                  await _refresh();
+                                                  await refresh();
                                                 }
                                               },
                                               child: const Padding(
@@ -599,7 +594,7 @@ class _InicioAppState extends State<InicioApp> {
 
   Future<void> _initTimezone() async {
     tz.initializeTimeZones();
-    final String timeZoneName = await tz.local.name;
+    final String timeZoneName = tz.local.name;
     tz.setLocalLocation(tz.getLocation(timeZoneName));
   }
 
@@ -691,7 +686,7 @@ class _InicioAppState extends State<InicioApp> {
 
     // Limpia notificaciones antiguas y programa nuevas para cada mantenimiento
 
-    void _programarNotificaciones() async {
+    void programarNotificaciones() async {
       // Lubricación de cadena
       if (_lastCadena != null) {
         final vencimientoCadena = _lastCadena!.add(const Duration(days: 15));
@@ -744,7 +739,7 @@ class _InicioAppState extends State<InicioApp> {
 
     // Llama la función solo una vez por build
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _programarNotificaciones();
+      programarNotificaciones();
     });
 
     return Scaffold(
@@ -1052,8 +1047,9 @@ class _InicioAppState extends State<InicioApp> {
                         ),
                       ),
                     ).then((recargar) {
-                      if (recargar == true)
+                      if (recargar == true) {
                         setState(() {}); // Recarga los datos
+                      }
                     });
                   },
                   child: const Text('Consultar RUNT'),
@@ -1073,12 +1069,11 @@ class _MainHero extends StatelessWidget {
   final String modelo;
   final String kms;
   const _MainHero({
-    Key? key,
     required this.imagePath,
     required this.logoPath,
     required this.modelo,
     required this.kms,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -1170,7 +1165,7 @@ class _MainHero extends StatelessWidget {
 
 class _SectionTitle extends StatelessWidget {
   final String text;
-  const _SectionTitle(this.text, {Key? key}) : super(key: key);
+  const _SectionTitle(this.text);
   @override
   Widget build(BuildContext context) {
     return Text(
@@ -1189,12 +1184,11 @@ class _SpecPill extends StatelessWidget {
   final String value;
   final double height;
   const _SpecPill({
-    Key? key,
     required this.icon,
     required this.title,
     required this.value,
     required this.height,
-  }) : super(key: key);
+  });
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -1246,12 +1240,11 @@ class _DocTileInteractive extends StatelessWidget {
   final VoidCallback onTapUpload;
   final VoidCallback? onLongPressOpen;
   const _DocTileInteractive({
-    Key? key,
     required this.title,
     required this.url,
     required this.onTapUpload,
     this.onLongPressOpen,
-  }) : super(key: key);
+  });
 
   bool _isImageUrl(String u) {
     final lu = u.toLowerCase();
@@ -1336,11 +1329,10 @@ class _IndicatorTile extends StatelessWidget {
   final double value; // 0..1
   final Color color;
   const _IndicatorTile({
-    Key? key,
     required this.title,
     required this.value,
     required this.color,
-  }) : super(key: key);
+  });
   @override
   Widget build(BuildContext context) {
     final pct = (value * 100).round();
@@ -1396,11 +1388,10 @@ class _GradientButton extends StatelessWidget {
   final String text;
   final VoidCallback onTap;
   const _GradientButton({
-    Key? key,
     required this.icon,
     required this.text,
     required this.onTap,
-  }) : super(key: key);
+  });
   @override
   Widget build(BuildContext context) {
     return InkWell(

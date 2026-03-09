@@ -7,12 +7,12 @@ class ParametrizacionMantenimientosScreen extends StatefulWidget {
   final DateTime? lastFiltro;
   final DateTime? lastAceite;
   const ParametrizacionMantenimientosScreen({
-    Key? key,
+    super.key,
     required this.vehiculoId,
     this.lastCadena,
     this.lastFiltro,
     this.lastAceite,
-  }) : super(key: key);
+  });
 
   @override
   State<ParametrizacionMantenimientosScreen> createState() =>
@@ -46,8 +46,9 @@ class _ParametrizacionMantenimientosScreenState
       firstDate: DateTime(now.year - 5),
       lastDate: now,
     ); // selector recomendado [28]
-    if (picked != null)
+    if (picked != null) {
       onPicked(DateTime(picked.year, picked.month, picked.day));
+    }
   }
 
   double _pctRestante(DateTime? last, int cicloDias) {

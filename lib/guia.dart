@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:vision_gallery_saver/vision_gallery_saver.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // =============================================================
@@ -247,7 +247,7 @@ class _AccidenteScreenState extends State<AccidenteScreen> {
   Future<void> _guardarEnGaleria(File file) async {
     try {
       final Uint8List bytes = await file.readAsBytes();
-      final result = await ImageGallerySaver.saveImage(
+      final result = await VisionGallerySaver.saveImage(
         bytes,
         quality: 100,
         name: 'guia_${widget.tipo}_${DateTime.now().millisecondsSinceEpoch}',

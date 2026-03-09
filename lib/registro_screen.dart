@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class RegistroScreen extends StatefulWidget {
-  const RegistroScreen({Key? key}) : super(key: key);
+  const RegistroScreen({super.key});
 
   @override
   State<RegistroScreen> createState() => _RegistroScreenState();
@@ -383,9 +383,6 @@ class _RegistroScreenState extends State<RegistroScreen> {
                       onPressed: (isLoading || waitingForConfirm)
                           ? null
                           : signUp,
-                      child: isLoading
-                          ? const CircularProgressIndicator()
-                          : const Text('Registrarme'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color.fromARGB(255, 3, 88, 128),
                         foregroundColor: Colors.white,
@@ -394,6 +391,9 @@ class _RegistroScreenState extends State<RegistroScreen> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
+                      child: isLoading
+                          ? const CircularProgressIndicator()
+                          : const Text('Registrarme'),
                     ),
                   ),
                   const SizedBox(height: 22),
