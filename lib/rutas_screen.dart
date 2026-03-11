@@ -27,6 +27,8 @@
 //   - [_completarRuta]: Suma km recorridos al vehículo en Supabase.
 //   - [_finalizarManual]: Permite al usuario terminar la ruta manualmente.
 //   - [_cancelarRuta]: Resetea el estado y cancela la navegación.
+//   - [_Iniciarrecodidolibre]: Si lo presionas, la app seguirá tu ubicación y sumará los kilómetros que recorras directamente al kilometraje de tu vehículo en la base de datos, sin necesidad de que pongas un destino específico. .
+
 //
 // WIDGETS AUXILIARES:
 //   - [_InfoRow]: Fila de información en el diálogo de ruta completada.
@@ -47,6 +49,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
 class RutasScreen extends StatefulWidget {
   final String vehiculoId;
   final int kmsActuales;
@@ -61,9 +64,10 @@ class RutasScreen extends StatefulWidget {
   State<RutasScreen> createState() => _RutasScreenState();
 }
 
-enum _RouteState { idle, routeReady, navigating, completed }
+enum _RouteState { idle, routeReady, navigating, completed, freeTracking }
 
-class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin {
+class _RutasScreenState extends State<RutasScreen>
+    with TickerProviderStateMixin {
   final supabase = Supabase.instance.client;
   final MapController _mapCtrl = MapController();
   final TextEditingController _searchCtrl = TextEditingController();
@@ -205,7 +209,8 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
         final durSeconds = (route['duration'] as num).toDouble();
 
         final points = coords
-            .map((c) => LatLng((c[1] as num).toDouble(), (c[0] as num).toDouble()))
+            .map((c) =>
+                LatLng((c[1] as num).toDouble(), (c[0] as num).toDouble()))
             .toList();
 
         setState(() {
@@ -236,11 +241,16 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
   }
 
   // ─── INICIAR NAVEGACIÓN ─────────────────────────────────
-  void _iniciarNavegacion() {
+  void _iniciarNavegacion({bool isFree = false}) {
     setState(() {
-      _state = _RouteState.navigating;
+      _state = isFree ? _RouteState.freeTracking : _RouteState.navigating;
       _travelledPoints = [_currentPos!];
       _travelledDistanceKm = 0.0;
+      if (isFree) {
+        _destination = null;
+        _destinationName = 'Recorrido Libre';
+        _routePoints = [];
+      }
     });
 
     const locationSettings = LocationSettings(
@@ -287,8 +297,7 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
     try {
       await supabase
           .from('vehiculos')
-          .update({'kms': nuevoKm})
-          .eq('id', widget.vehiculoId);
+          .update({'kms': nuevoKm}).eq('id', widget.vehiculoId);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -313,7 +322,8 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
                 color: Colors.green.withOpacity(0.15),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.check_circle, color: Colors.green, size: 28),
+              child:
+                  const Icon(Icons.check_circle, color: Colors.green, size: 28),
             ),
             const SizedBox(width: 12),
             const Text('¡Ruta completada!'),
@@ -391,6 +401,12 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
     });
   }
 
+  // ─── INICIAR RECORRIDO LIBRE ────────────────────────────
+  void _iniciarRecorridoLibre() {
+    if (_currentPos == null) return;
+    _iniciarNavegacion(isFree: true);
+  }
+
   // ─── BUILD ──────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
@@ -417,7 +433,8 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
                   ),
                   children: [
                     TileLayer(
-                      urlTemplate: 'https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png',
+                      urlTemplate:
+                          'https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png',
                       userAgentPackageName: 'com.example.my_auto_guide',
                     ),
                     // Ruta trazada
@@ -480,7 +497,8 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: Colors.redAccent,
-                                border: Border.all(color: Colors.white, width: 3),
+                                border:
+                                    Border.all(color: Colors.white, width: 3),
                                 boxShadow: [
                                   BoxShadow(
                                     color: Colors.red.withOpacity(0.4),
@@ -508,7 +526,8 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
             right: 0,
             child: SafeArea(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 child: Column(
                   children: [
                     // Botón volver + barra búsqueda
@@ -571,12 +590,15 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
                               ),
                             ),
                           ),
-                        if (_state == _RouteState.navigating)
+                        if (_state == _RouteState.navigating ||
+                            _state == _RouteState.freeTracking)
                           Expanded(
                             child: Material(
                               elevation: 4,
                               borderRadius: BorderRadius.circular(30),
-                              color: Colors.green.shade600,
+                              color: _state == _RouteState.freeTracking
+                                  ? Colors.blueGrey.shade700
+                                  : Colors.green.shade600,
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 16,
@@ -584,12 +606,18 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
                                 ),
                                 child: Row(
                                   children: [
-                                    const Icon(Icons.navigation,
-                                        color: Colors.white, size: 20),
+                                    Icon(
+                                        _state == _RouteState.freeTracking
+                                            ? Icons.sensors
+                                            : Icons.navigation,
+                                        color: Colors.white,
+                                        size: 20),
                                     const SizedBox(width: 8),
                                     Expanded(
                                       child: Text(
-                                        'Navegando • ${_travelledDistanceKm.toStringAsFixed(1)} km',
+                                        _state == _RouteState.freeTracking
+                                            ? 'Modo Libre • ${_travelledDistanceKm.toStringAsFixed(1)} km'
+                                            : 'Navegando • ${_travelledDistanceKm.toStringAsFixed(1)} km',
                                         style: const TextStyle(
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold,
@@ -675,7 +703,10 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
             ),
 
           // === PANEL INFERIOR ===
-          if (_state == _RouteState.routeReady || _state == _RouteState.navigating)
+          if (_state == _RouteState.idle ||
+              _state == _RouteState.routeReady ||
+              _state == _RouteState.navigating ||
+              _state == _RouteState.freeTracking)
             Positioned(
               bottom: 0,
               left: 0,
@@ -709,61 +740,116 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
                         ),
                       ),
                       const SizedBox(height: 12),
-                      // Destino
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: Colors.red.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: const Icon(Icons.flag,
-                                color: Colors.redAccent, size: 20),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Text(
-                              _destinationName.length > 60
-                                  ? '${_destinationName.substring(0, 60)}...'
-                                  : _destinationName,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
+                      // Estado Idle: Botón Modo Libre
+                      if (_state == _RouteState.idle)
+                        SizedBox(
+                          width: double.infinity,
+                          child: FilledButton.icon(
+                            onPressed: _iniciarRecorridoLibre,
+                            icon: const Icon(Icons.play_arrow),
+                            label: const Text('Iniciar Recorrido Libre'),
+                            style: FilledButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              backgroundColor: Colors.blueGrey.shade700,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
                               ),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                        ],
-                      ),
-                      const SizedBox(height: 14),
-                      // Info ruta
-                      Row(
-                        children: [
-                          _InfoChip(
-                            icon: Icons.straighten,
-                            label: '${_routeDistanceKm.toStringAsFixed(1)} km',
-                            color: Colors.blue,
-                          ),
-                          const SizedBox(width: 12),
-                          _InfoChip(
-                            icon: Icons.access_time,
-                            label: '${_routeDurationMin.round()} min',
-                            color: Colors.orange,
-                          ),
-                          if (_state == _RouteState.navigating) ...[
-                            const SizedBox(width: 12),
-                            _InfoChip(
-                              icon: Icons.directions_bike,
-                              label:
-                                  '${_travelledDistanceKm.toStringAsFixed(1)} km',
-                              color: Colors.green,
+                        ),
+                      // Destino (solo si no es Modo Libre)
+                      if (_state != _RouteState.idle &&
+                          _state != _RouteState.freeTracking)
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.red.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: const Icon(Icons.flag,
+                                  color: Colors.redAccent, size: 20),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                _destinationName.length > 60
+                                    ? '${_destinationName.substring(0, 60)}...'
+                                    : _destinationName,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                           ],
-                        ],
-                      ),
-                      const SizedBox(height: 16),
+                        ),
+                      // Título Modo Libre
+                      if (_state == _RouteState.freeTracking)
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.blue.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: const Icon(Icons.sensors,
+                                  color: Colors.blue, size: 20),
+                            ),
+                            const SizedBox(width: 10),
+                            const Expanded(
+                              child: Text(
+                                'Seguimiento de Kilometraje Libre',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      if (_state != _RouteState.idle)
+                        const SizedBox(height: 14),
+                      // Info ruta
+                      if (_state != _RouteState.idle)
+                        Row(
+                          children: [
+                            if (_state != _RouteState.freeTracking)
+                              _InfoChip(
+                                icon: Icons.straighten,
+                                label:
+                                    '${_routeDistanceKm.toStringAsFixed(1)} km',
+                                color: Colors.blue,
+                              ),
+                            if (_state != _RouteState.freeTracking)
+                              const SizedBox(width: 12),
+                            if (_state != _RouteState.freeTracking)
+                              _InfoChip(
+                                icon: Icons.access_time,
+                                label: '${_routeDurationMin.round()} min',
+                                color: Colors.orange,
+                              ),
+                            if (_state == _RouteState.navigating ||
+                                _state == _RouteState.freeTracking) ...[
+                              if (_state != _RouteState.freeTracking)
+                                const SizedBox(width: 12),
+                              _InfoChip(
+                                icon: _state == _RouteState.freeTracking
+                                    ? Icons.add_road
+                                    : Icons.directions_bike,
+                                label:
+                                    '${_travelledDistanceKm.toStringAsFixed(1)} km',
+                                color: Colors.green,
+                              ),
+                            ],
+                          ],
+                        ),
+                      if (_state != _RouteState.idle)
+                        const SizedBox(height: 16),
                       // Botones
                       if (_state == _RouteState.routeReady)
                         Row(
@@ -785,7 +871,7 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
                             Expanded(
                               flex: 2,
                               child: FilledButton.icon(
-                                onPressed: _iniciarNavegacion,
+                                onPressed: () => _iniciarNavegacion(),
                                 icon: const Icon(Icons.navigation),
                                 label: const Text('Iniciar ruta'),
                                 style: FilledButton.styleFrom(
@@ -800,16 +886,16 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
                             ),
                           ],
                         ),
-                      if (_state == _RouteState.navigating)
+                      if (_state == _RouteState.navigating ||
+                          _state == _RouteState.freeTracking)
                         SizedBox(
                           width: double.infinity,
                           child: FilledButton.icon(
                             onPressed: _finalizarManual,
                             icon: const Icon(Icons.stop_circle),
-                            label: const Text('Finalizar ruta'),
+                            label: const Text('Finalizar recorrido'),
                             style: FilledButton.styleFrom(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 14),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
                               backgroundColor: Colors.redAccent,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(14),
@@ -824,7 +910,9 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
             ),
 
           // === BOTÓN MI UBICACIÓN ===
-          if (_state != _RouteState.navigating && _currentPos != null)
+          if ((_state != _RouteState.navigating &&
+                  _state != _RouteState.freeTracking) &&
+              _currentPos != null)
             Positioned(
               right: 16,
               bottom: _state == _RouteState.routeReady ? 220 : 24,
