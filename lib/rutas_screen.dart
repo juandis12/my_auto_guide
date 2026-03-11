@@ -255,7 +255,7 @@ class _RutasScreenState extends State<RutasScreen>
 
     const locationSettings = LocationSettings(
       accuracy: LocationAccuracy.high,
-      distanceFilter: 10, // metros
+      distanceFilter: 5, // metros para mayor sensibilidad en modo libre
     );
 
     _posStream = Geolocator.getPositionStream(
@@ -264,9 +264,11 @@ class _RutasScreenState extends State<RutasScreen>
       final newPos = LatLng(pos.latitude, pos.longitude);
       final lastPos = _travelledPoints.last;
 
-      // Calcular distancia recorrida
+      // Calcular distancia recorrida con mayor precisión
       const distance = Distance();
-      final segmentKm = distance.as(LengthUnit.Kilometer, lastPos, newPos);
+      // Usamos metros directamente para evitar redondeos de la librería a nivel de km
+      final segmentMeters = distance.as(LengthUnit.Meter, lastPos, newPos);
+      final segmentKm = segmentMeters / 1000.0;
 
       setState(() {
         _currentPos = newPos;
@@ -291,7 +293,21 @@ class _RutasScreenState extends State<RutasScreen>
   Future<void> _completarRuta() async {
     _posStream?.cancel();
     final kmsRecorridos = _travelledDistanceKm;
-    final nuevoKm = widget.kmsActuales + kmsRecorridos.round();
+    // Obtener los kms más actuales de la base de datos antes de sumar
+    // para evitar sobrescribir si hubo cambios externos o errores de estado
+    int kmsBase = widget.kmsActuales;
+    try {
+      final data = await supabase
+          .from('vehiculos')
+          .select('kms')
+          .eq('id', widget.vehiculoId)
+          .single();
+      kmsBase = data['kms'] as int;
+    } catch (_) {
+      // Si falla, usamos widget.kmsActuales como respaldo
+    }
+
+    final nuevoKm = kmsBase + kmsRecorridos.round();
 
     // Actualizar en Supabase
     try {
