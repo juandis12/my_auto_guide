@@ -1,3 +1,38 @@
+// =============================================================================
+// inicio_app.dart — PANTALLA PRINCIPAL (DASHBOARD)
+// =============================================================================
+//
+// Pantalla central de la aplicación. Muestra toda la información del vehículo
+// seleccionado y provee acceso a todas las funcionalidades.
+//
+// SECCIONES DE LA INTERFAZ:
+//   1. HEADER: Imagen del vehículo, marca, modelo, apodo y kilometraje.
+//   2. INDICADORES CIRCULARES: Porcentaje de vida útil restante para cada
+//      mantenimiento (cadena, filtro, aceite, SOAT, tecnomecánica).
+//      - Verde: >50% | Amarillo: 25-50% | Rojo: <25% | Rojo parpadeante: vencido.
+//   3. DOCUMENTOS: Grid de tarjetas (SOAT, Tecno, Seguro, T. Propiedad) donde
+//      el usuario sube archivos/imágenes a Supabase Storage y los visualiza.
+//   4. HERRAMIENTAS: Botones con gradiente para acceder a:
+//      - Parametrización de mantenimientos.
+//      - Consulta RUNT (WebView).
+//      - Guías de seguridad vial.
+//      - Navegación GPS (Rutas con OpenStreetMap).
+//
+// FUNCIONALIDADES CLAVE:
+//   - Carga datos del vehículo desde la tabla `vehiculos` de Supabase.
+//   - Calcula porcentajes de mantenimiento basados en fechas (last_cadena, etc.).
+//   - Programa notificaciones locales cuando un mantenimiento está por vencer.
+//   - Gestión de documentos: subir, ver, eliminar archivos en Supabase Storage.
+//   - Visor de PDF integrado (Syncfusion) y visor de imágenes (PhotoView).
+//   - Logout y cambio de vehículo.
+//
+// WIDGETS AUXILIARES:
+//   - [_CircularIndicator]: Indicador circular animado de mantenimiento.
+//   - [_GradientButton]: Botón con gradiente para la sección Herramientas.
+//   - [_DocumentCard]: Tarjeta de documento con estado visual.
+//
+// =============================================================================
+
 import 'dart:async';
 import 'dart:io';
 import 'dart:math' as math;

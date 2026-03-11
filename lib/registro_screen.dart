@@ -1,3 +1,22 @@
+// =============================================================================
+// registro_screen.dart — PANTALLA DE REGISTRO DE USUARIO
+// =============================================================================
+//
+// Permite crear una cuenta nueva en Supabase Auth con email y contraseña.
+// Características:
+//   - Formulario con campos: nombre, email, contraseña, confirmar contraseña.
+//   - Validación de coincidencia de contraseñas.
+//   - Envío de email de confirmación y monitoreo automático (polling cada 5s
+//     durante 60 segundos) para detectar cuándo el usuario confirma su correo.
+//   - Opción de reenviar correo de confirmación.
+//   - Manejo de caso «correo ya registrado» con reenvío automático.
+//   - Al confirmar, redirige de vuelta al login para iniciar sesión.
+//
+// Flujo de navegación:
+//   RegistroScreen → (confirma correo) → Navigator.pop() → login_screen.dart
+//
+// =============================================================================
+
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';

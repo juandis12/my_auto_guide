@@ -1,3 +1,25 @@
+// =============================================================================
+// runt_webview.dart — CONSULTA RUNT (WebView Embebido)
+// =============================================================================
+//
+// Pantalla que integra la página oficial del RUNT (Registro Único Nacional de
+// Tránsito de Colombia) dentro de la app mediante un WebView embebido.
+// Funcionalidades:
+//   - Carga la URL oficial: https://www.runt.com.co/consultaCiudadana/
+//   - Autocompleta los campos «Placa» y «Cédula» inyectando JavaScript.
+//   - Extrae las fechas de expedición y vencimiento del SOAT y la
+//     Revisión Técnico-Mecánica directamente del DOM de la página.
+//   - Guarda las fechas extraídas en la tabla `vehiculos` de Supabase.
+//   - Muestra los resultados en un Card flotante en la parte inferior.
+//
+// Métodos principales:
+//   - [consultarFechas]: Ejecuta scripts JS para buscar tablas de SOAT y
+//     Tecnomecánica en el DOM y extrae las fechas.
+//   - [guardarFechas]: Inserta/actualiza (upsert) las fechas en Supabase.
+//   - [getTextFromJs]: Ejecuta JS con reintentos cada 2s (máx. 10 intentos).
+//
+// =============================================================================
+
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';

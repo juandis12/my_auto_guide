@@ -1,7 +1,27 @@
+// =============================================================================
+// Agregar_vehiculo.dart — REGISTRO DE MOTOCICLETAS
+// =============================================================================
+//
+// Pantalla para agregar una nueva motocicleta al sistema. Incluye:
+//   - Catálogo visual de motos organizadas por marca (YAMAHA, SUZUKI, BMW,
+//     KAWASAKI, BAJAJ, HERO, AKT, KTM) con imágenes reales de cada modelo.
+//   - Carrusel deslizable (PageView) para seleccionar el modelo.
+//   - Selector horizontal de marcas con logos y colores personalizados.
+//   - Formulario con campos: kilometraje, modelo (año) y apodo del vehículo.
+//   - Tabs laterales «Carro / Moto» para alternar con [AgregarCarroScreen].
+//   - Guardado del vehículo en la tabla `vehiculos` de Supabase con los campos:
+//     user_id, marca, modelo, apodo, kms, image_path.
+//   - Al guardar, navega a [InicioApp] con el ID del vehículo creado.
+//
+// Widgets auxiliares:
+//   - [_SideTab]: Botón vertical rotado para los tabs «Carro / Moto».
+//
+// =============================================================================
+
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'inicio_app.dart';
-import 'Agregar_carro.dart'; // Asegura la ruta real de tu pantalla de inicio
+import 'Agregar_carro.dart';
 
 class AgregarVehiculoScreen extends StatefulWidget {
   const AgregarVehiculoScreen({super.key});

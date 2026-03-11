@@ -1,3 +1,43 @@
+// =============================================================================
+// rutas_screen.dart — NAVEGACIÓN GPS CON MAPA INTERACTIVO
+// =============================================================================
+//
+// Pantalla de navegación tipo Waze usando tecnologías 100% gratuitas:
+//   - Mapa: OpenStreetMap con tiles de CartoDB Voyager (alta calidad visual).
+//   - Geocodificación: Nominatim (búsqueda de direcciones y lugares).
+//   - Cálculo de ruta: OSRM (Open Source Routing Machine).
+//   - GPS: Plugin Geolocator para seguimiento en tiempo real.
+//
+// FLUJO DE USO:
+//   1. IDLE: Se muestra el mapa centrado en la ubicación actual del usuario.
+//      El usuario busca un destino en la barra de búsqueda.
+//   2. ROUTE_READY: Se traza la ruta óptima (línea azul).
+//      Se muestra distancia y tiempo estimado en el panel inferior.
+//   3. NAVIGATING: El GPS sigue al usuario en tiempo real.
+//      La ruta recorrida se marca en verde y se acumula distancia.
+//   4. COMPLETED: Al llegar al destino (o finalizar manualmente), se
+//      actualiza el kilometraje del vehículo en Supabase sumando los
+//      km recorridos.
+//
+// MÉTODOS PRINCIPALES:
+//   - [_obtenerUbicacion]: Solicita permisos GPS y obtiene la posición actual.
+//   - [_buscarDestino]: Llama a la API de Nominatim para buscar lugares.
+//   - [_trazarRuta]: Llama a la API de OSRM para calcular la ruta óptima.
+//   - [_iniciarNavegacion]: Escucha el stream del GPS y trackea el recorrido.
+//   - [_completarRuta]: Suma km recorridos al vehículo en Supabase.
+//   - [_finalizarManual]: Permite al usuario terminar la ruta manualmente.
+//   - [_cancelarRuta]: Resetea el estado y cancela la navegación.
+//
+// WIDGETS AUXILIARES:
+//   - [_InfoRow]: Fila de información en el diálogo de ruta completada.
+//   - [_InfoChip]: Chip con ícono para distancia, tiempo y km recorridos.
+//
+// Parámetros requeridos:
+//   - vehiculoId: ID del vehículo en Supabase para actualizar el kilometraje.
+//   - kmsActuales: Kilometraje actual del vehículo antes de iniciar la ruta.
+//
+// =============================================================================
+
 import 'dart:async';
 import 'dart:convert';
 
@@ -7,8 +47,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
-/// Pantalla de rutas con mapa tipo Waze (OpenStreetMap + OSRM gratuito).
 class RutasScreen extends StatefulWidget {
   final String vehiculoId;
   final int kmsActuales;
@@ -379,7 +417,7 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
                   ),
                   children: [
                     TileLayer(
-                      urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                      urlTemplate: 'https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png',
                       userAgentPackageName: 'com.example.my_auto_guide',
                     ),
                     // Ruta trazada

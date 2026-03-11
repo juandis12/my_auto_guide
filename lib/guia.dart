@@ -1,3 +1,31 @@
+// =============================================================================
+// guia.dart — GUÍAS DE SEGURIDAD VIAL Y VIDEO TUTORIALES
+// =============================================================================
+//
+// Módulo educativo y de apoyo para el usuario con dos secciones principales:
+//
+// 1. GUÍAS DE SEGURIDAD VIAL: Cuatro escenarios con pasos interactivos:
+//    - Accidente Leve (azul): Mantén calma, intercambia datos, documenta.
+//    - Accidente Grave (rojo): Llama emergencias, señaliza, coopera.
+//    - Clima Lluvioso (teal): Reduce velocidad, enciende luces, no inundes.
+//    - Viaje Largo (naranja): Revisa vehículo, descansa cada 2h, lleva kit.
+//    Cada guía tiene pasos que se pueden marcar como completados (checkbox)
+//    y la posibilidad de tomar fotos del incidente con la cámara.
+//    Los datos se guardan localmente con [SharedPreferences].
+//
+// 2. VIDEO TUTORIALES: Tarjetas con miniaturas de YouTube que al tocarlas
+//    abren el video en la app de YouTube. Incluye tutoriales de:
+//    - Cambio de aceite, revisión de líquidos, manejo de accidentes, etc.
+//
+// Widgets:
+//   - [GuiaScreen]: Pantalla principal con las opciones y videos.
+//   - [AccidenteScreen]: Pantalla de pasos interactivos con check y fotos.
+//   - [_OpcionCard]: Tarjeta de opción en la lista principal.
+//   - [_PasoCard]: Widget de cada paso con checkbox circular.
+//   - [_VideoTutorialCard]: Tarjeta con miniatura de YouTube y botón play.
+//
+// =============================================================================
+
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';

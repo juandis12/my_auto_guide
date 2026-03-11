@@ -1,3 +1,25 @@
+// =============================================================================
+// login_screen.dart — PANTALLA DE INICIO DE SESIÓN
+// =============================================================================
+//
+// Maneja la autenticación del usuario mediante email y contraseña usando
+// Supabase Auth. Incluye:
+//   - Login con email/contraseña.
+//   - Verificación automática de sesión previa (auto-login).
+//   - Recuperación de contraseña por correo.
+//   - Reenvío de correo de confirmación si la cuenta no está verificada.
+//   - Navegación post-login: si el usuario tiene vehículos registrados va a
+//     [InicioApp]; si no, va a [AgregarVehiculoScreen].
+//   - Botones decorativos de login social (Google, Facebook, Apple).
+//   - Enlace para navegar a la pantalla de registro [RegistroScreen].
+//
+// Flujo de navegación:
+//   CarRentalLoginScreen → InicioApp (si hay vehículos)
+//                        → AgregarVehiculoScreen (si no hay vehículos)
+//                        → RegistroScreen (si el usuario quiere registrarse)
+//
+// =============================================================================
+
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'registro_screen.dart';

@@ -1,3 +1,24 @@
+// =============================================================================
+// Agregar_carro.dart — REGISTRO DE AUTOMÓVILES
+// =============================================================================
+//
+// Pantalla para agregar un nuevo automóvil al sistema. Estructura idéntica
+// a [AgregarVehiculoScreen] (motos) pero con catálogo de carros.
+// Incluye:
+//   - Catálogo visual de carros por marca (TOYOTA, MAZDA, CHEVROLET) con
+//     imágenes reales de cada modelo.
+//   - Carrusel deslizable (PageView) para seleccionar el modelo.
+//   - Selector horizontal de marcas con logos y colores personalizados.
+//   - Formulario con campos: kilometraje, modelo (año) y apodo.
+//   - Tabs laterales «Carro / Moto» para alternar con [AgregarVehiculoScreen].
+//   - Guardado en la tabla `vehiculos` de Supabase.
+//   - Al guardar, navega a [InicioApp] con el ID del vehículo creado.
+//
+// Widgets auxiliares:
+//   - [_SideTab]: Botón vertical rotado para los tabs «Carro / Moto».
+//
+// =============================================================================
+
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'inicio_app.dart';

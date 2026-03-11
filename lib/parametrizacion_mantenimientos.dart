@@ -1,3 +1,27 @@
+// =============================================================================
+// parametrizacion_mantenimientos.dart — CONFIGURACIÓN DE MANTENIMIENTOS
+// =============================================================================
+//
+// Pantalla donde el usuario configura las fechas de los últimos mantenimientos
+// realizados a su vehículo. Los intervalos de vencimiento son:
+//
+//   - Lubricación de cadena: cada 15 días.
+//   - Filtro de aire: cada 90 días.
+//   - Cambio de aceite: cada 25 días.
+//   - SOAT: cada 365 días (1 año).
+//   - Tecnomecánica: cada 365 días (1 año).
+//
+// Al guardar, calcula el porcentaje restante de vida útil de cada
+// mantenimiento y detecta si alguno está vencido. Retorna los resultados
+// a [InicioApp] mediante Navigator.pop() para actualizar los indicadores
+// circulares y disparar las notificaciones de vencimiento.
+//
+// Base de datos:
+//   Columnas actualizadas en tabla `vehiculos`:
+//     last_cadena, last_filtro, last_aceite, last_soat, last_tecno
+//
+// =============================================================================
+
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
