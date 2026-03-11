@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:vision_gallery_saver/vision_gallery_saver.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 // =============================================================
 //                   GUIA DE CONDUCCIÓN Y ACCIDENTES
@@ -118,6 +119,41 @@ class GuiaScreen extends StatelessWidget {
                 ),
               );
             },
+          ),
+          const SizedBox(height: 30),
+          const Padding(
+            padding: EdgeInsets.only(left: 8.0, bottom: 15.0),
+            child: Text(
+              'Video Tutoriales',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+          ),
+          // Puedes poner más links de YouTube agregando más tarjetas _VideoTutorialCard aquí
+          // Solo pega el link completo de YouTube en el campo 'url'
+          const _VideoTutorialCard(
+            url: 'https://youtu.be/C0AkRhAwKzU?si=xKcXHaK218qjJUdI',
+            titulo: 'Cómo cambiar el aceite',
+          ),
+          const _VideoTutorialCard(
+            url: 'https://youtu.be/8DAbvfPURz8?si=AZdWU7bOeVxROT-z',
+            titulo: 'Revisión de líquidos y niveles del vehículo',
+          ),
+          const _VideoTutorialCard(
+            url: 'https://youtu.be/j3EqmPwY9oc?si=_hNNHQbjpUZitlAb',
+            titulo: 'Qué hacer en caso de accidente de tránsito',
+          ),
+          const _VideoTutorialCard(
+            url: 'https://youtu.be/r6VAKTDIggY?si=hJSTIJySLm5wCSzW',
+            titulo: 'Como Lubricar Las Guayas De La Motocicleta Hazlo Tu Mismo',
+          ),
+          const _VideoTutorialCard(
+            url: 'https://youtu.be/xAnMqIzCSdQ?si=UF4rbwTA_HgYk6DV',
+            titulo:
+                'Cambio o Purga del Liquido de Frenos de Moto - Freno Delantero',
           ),
         ],
       ),
@@ -253,8 +289,7 @@ class _AccidenteScreenState extends State<AccidenteScreen> {
         name: 'guia_${widget.tipo}_${DateTime.now().millisecondsSinceEpoch}',
       );
 
-      final bool success =
-          (result is Map &&
+      final bool success = (result is Map &&
               (result['isSuccess'] == true || result['success'] == true)) ||
           (result == true);
       ScaffoldMessenger.of(context).showSnackBar(
@@ -287,10 +322,10 @@ class _AccidenteScreenState extends State<AccidenteScreen> {
           widget.tipo == 'leve'
               ? 'Accidente Leve'
               : widget.tipo == 'grave'
-              ? 'Accidente Grave'
-              : widget.tipo == 'lluvia'
-              ? 'Conducción con Lluvia'
-              : 'Viaje Largo',
+                  ? 'Accidente Grave'
+                  : widget.tipo == 'lluvia'
+                      ? 'Conducción con Lluvia'
+                      : 'Viaje Largo',
         ),
         backgroundColor: Colors.white,
         elevation: 0.5,
@@ -452,6 +487,127 @@ class _PasoCard extends StatelessWidget {
             contenidoExtra!,
           ],
         ],
+      ),
+    );
+  }
+}
+
+// =============================================================
+//               TARJETA DE VIDEO TUTORIAL
+// =============================================================
+class _VideoTutorialCard extends StatelessWidget {
+  final String url; // Pega aquí el link completo de YouTube
+  final String titulo;
+
+  const _VideoTutorialCard({
+    required this.url,
+    required this.titulo,
+  });
+
+  /// Extrae el ID del video de cualquier formato de URL de YouTube
+  static String extraerVideoId(String url) {
+    final uri = Uri.tryParse(url);
+    if (uri == null) return url;
+
+    // Formato corto: youtu.be/VIDEO_ID
+    if (uri.host.contains('youtu.be')) {
+      return uri.pathSegments.isNotEmpty ? uri.pathSegments.first : url;
+    }
+
+    // Formato largo: youtube.com/watch?v=VIDEO_ID
+    if (uri.host.contains('youtube.com')) {
+      return uri.queryParameters['v'] ?? url;
+    }
+
+    return url;
+  }
+
+  Future<void> _abrirVideo() async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final videoId = extraerVideoId(url);
+    // YouTube ofrece miniaturas en esta URL
+    final thumbnailUrl = 'https://img.youtube.com/vi/$videoId/hqdefault.jpg';
+
+    return Card(
+      elevation: 2,
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: _abrirVideo,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Miniatura del video con botón de play
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                Image.network(
+                  thumbnailUrl,
+                  height: 200,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    height: 200,
+                    color: Colors.grey[300],
+                    child: const Icon(Icons.video_library,
+                        size: 60, color: Colors.grey),
+                  ),
+                ),
+                // Botón de play
+                Container(
+                  width: 64,
+                  height: 64,
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: const Icon(
+                    Icons.play_arrow_rounded,
+                    color: Colors.white,
+                    size: 40,
+                  ),
+                ),
+              ],
+            ),
+            // Título del video
+            Padding(
+              padding: const EdgeInsets.all(14.0),
+              child: Row(
+                children: [
+                  const Icon(Icons.play_circle_fill,
+                      color: Colors.red, size: 24),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      titulo,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ),
+                  const Icon(Icons.open_in_new, color: Colors.grey, size: 18),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

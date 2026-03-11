@@ -15,6 +15,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'runt_webview.dart';
+import 'rutas_screen.dart';
 import 'guia.dart';
 import 'login_screen.dart';
 import 'parametrizacion_mantenimientos.dart';
@@ -152,6 +153,22 @@ class _InicioAppState extends State<InicioApp> {
       context,
       MaterialPageRoute(builder: (_) => const GuiaScreen()),
     );
+  }
+
+  void _abrirRutas(int kmsActuales) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => RutasScreen(
+          vehiculoId: widget.vehiculoId,
+          kmsActuales: kmsActuales,
+        ),
+      ),
+    ).then((recargar) {
+      if (recargar == true) {
+        setState(() {}); // Recargar datos para ver kms actualizados
+      }
+    });
   }
 
   Future<void> _abrirParametrizacion() async {
@@ -1005,6 +1022,12 @@ class _InicioAppState extends State<InicioApp> {
                     });
                   },
                   child: const Text('Consultar RUNT'),
+                ),
+                const SizedBox(height: 8),
+                _GradientButton(
+                  icon: Icons.route,
+                  text: 'Rutas',
+                  onTap: () => _abrirRutas(int.tryParse(kms) ?? 0),
                 ),
               ],
             ),
