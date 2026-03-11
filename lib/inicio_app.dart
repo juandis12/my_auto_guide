@@ -49,21 +49,21 @@ class _InicioAppState extends State<InicioApp> {
   double _pctAceite = 0.0;
   double _pctSoat = 0.0;
   double _pctTecno = 0.0;
-  DateTime? _lastCadena, _lastFiltro, _lastAceite;
-  DateTime? _soatVence, _tecnoVence;
+  DateTime? _lastCadena, _lastFiltro, _lastAceite, _lastSoat, _lastTecno;
 
   String? _soatPath, _tecnoPath, _seguroPath, _propPath;
   String? _soatSigned, _tecnoSigned, _seguroSigned, _propSigned;
 
   // Cache de URLs firmadas
   final Map<String, (String url, DateTime expires)> _urlCache = {};
+  bool _notificacionesProcesadas = false;
 
   String _docFolder(DocType type) => {
-    DocType.soat: 'soat',
-    DocType.tecno: 'tecno',
-    DocType.seguro: 'seguro',
-    DocType.propiedad: 'propiedad',
-  }[type]!;
+        DocType.soat: 'soat',
+        DocType.tecno: 'tecno',
+        DocType.seguro: 'seguro',
+        DocType.propiedad: 'propiedad',
+      }[type]!;
 
   String _folderPath(DocType type) =>
       '${widget.vehiculoId}/${_docFolder(type)}';
@@ -100,18 +100,11 @@ class _InicioAppState extends State<InicioApp> {
     return restante.clamp(0.0, 1.0);
   }
 
-  double _pctVencimiento(DateTime? vence, int cicloDias) {
-    if (vence == null) return 0.0;
-    final diasRestantes = vence.difference(DateTime.now()).inDays;
-    final restante = diasRestantes / cicloDias;
-    return restante.clamp(0.0, 1.0);
-  }
-
   Future<Map<String, dynamic>> _cargar() async {
     final row = await supabase
         .from('vehiculos')
         .select(
-          'marca, modelo, apodo, kms, image_path, last_cadena, last_filtro, last_aceite, soat_path, tecno_path, seguro_path, propiedad_path',
+          'marca, modelo, apodo, kms, image_path, last_cadena, last_filtro, last_aceite, last_soat, last_tecno, soat_path, tecno_path, seguro_path, propiedad_path',
         )
         .eq('id', widget.vehiculoId)
         .single();
@@ -170,6 +163,8 @@ class _InicioAppState extends State<InicioApp> {
           lastCadena: _lastCadena,
           lastFiltro: _lastFiltro,
           lastAceite: _lastAceite,
+          lastSoat: _lastSoat,
+          lastTecno: _lastTecno,
         ),
       ),
     );
@@ -178,14 +173,20 @@ class _InicioAppState extends State<InicioApp> {
         _lastCadena = res['lastCadena'] as DateTime?;
         _lastFiltro = res['lastFiltro'] as DateTime?;
         _lastAceite = res['lastAceite'] as DateTime?;
+        _lastSoat = res['lastSoat'] as DateTime?;
+        _lastTecno = res['lastTecno'] as DateTime?;
         _pctCadena = (res['pctCadena'] as double?) ?? 0.0;
         _pctFiltro = (res['pctFiltro'] as double?) ?? 0.0;
         _pctAceite = (res['pctAceite'] as double?) ?? 0.0;
+        _pctSoat = (res['pctSoat'] as double?) ?? 0.0;
+        _pctTecno = (res['pctTecno'] as double?) ?? 0.0;
+        _notificacionesProcesadas = false;
       });
-      final bool vencido =
-          (res['vencCadena'] == true) ||
+      final bool vencido = (res['vencCadena'] == true) ||
           (res['vencFiltro'] == true) ||
-          (res['vencAceite'] == true);
+          (res['vencAceite'] == true) ||
+          (res['vencSoat'] == true) ||
+          (res['vencTecno'] == true);
       if (vencido) {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
@@ -204,9 +205,7 @@ class _InicioAppState extends State<InicioApp> {
   Future<List<(String name, String url)>> _listDocsSigned(DocType type) async {
     try {
       final folder = _folderPath(type);
-      final objs = await supabase.storage
-          .from(_docsBucket)
-          .list(
+      final objs = await supabase.storage.from(_docsBucket).list(
             path: folder,
             searchOptions: const SearchOptions(
               limit: 100,
@@ -245,9 +244,7 @@ class _InicioAppState extends State<InicioApp> {
       final folder = _folderPath(type);
       final path = '$folder/$ts.$ext';
 
-      await supabase.storage
-          .from(_docsBucket)
-          .uploadBinary(
+      await supabase.storage.from(_docsBucket).uploadBinary(
             path,
             bytes,
             fileOptions: const FileOptions(upsert: false),
@@ -379,17 +376,16 @@ class _InicioAppState extends State<InicioApp> {
                             physics: const NeverScrollableScrollPhysics(),
                             gridDelegate:
                                 const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 3,
-                                  mainAxisSpacing: 10,
-                                  crossAxisSpacing: 10,
-                                  childAspectRatio: 1,
-                                ),
+                              crossAxisCount: 3,
+                              mainAxisSpacing: 10,
+                              crossAxisSpacing: 10,
+                              childAspectRatio: 1,
+                            ),
                             itemCount: files.length,
                             itemBuilder: (ctx, i) {
                               final (name, url) = files[i];
                               final l = url.toLowerCase();
-                              final isImg =
-                                  l.endsWith('.png') ||
+                              final isImg = l.endsWith('.png') ||
                                   l.endsWith('.jpg') ||
                                   l.endsWith('.jpeg') ||
                                   l.endsWith('.webp') ||
@@ -426,14 +422,14 @@ class _InicioAppState extends State<InicioApp> {
                                             fit: BoxFit.cover,
                                             errorBuilder:
                                                 (context, error, stackTrace) {
-                                                  return const Center(
-                                                    child: Icon(
-                                                      Icons.broken_image,
-                                                      color: Colors.grey,
-                                                      size: 36,
-                                                    ),
-                                                  );
-                                                },
+                                              return const Center(
+                                                child: Icon(
+                                                  Icons.broken_image,
+                                                  color: Colors.grey,
+                                                  size: 36,
+                                                ),
+                                              );
+                                            },
                                           )
                                         else
                                           const Center(
@@ -476,7 +472,8 @@ class _InicioAppState extends State<InicioApp> {
                                               borderRadius:
                                                   BorderRadius.circular(16),
                                               onTap: () async {
-                                                final ok = await showDialog<bool>(
+                                                final ok =
+                                                    await showDialog<bool>(
                                                   context: context,
                                                   builder: (_) => AlertDialog(
                                                     title: const Text(
@@ -489,9 +486,9 @@ class _InicioAppState extends State<InicioApp> {
                                                       TextButton(
                                                         onPressed: () =>
                                                             Navigator.pop(
-                                                              context,
-                                                              false,
-                                                            ),
+                                                          context,
+                                                          false,
+                                                        ),
                                                         child: const Text(
                                                           'Cancelar',
                                                         ),
@@ -499,9 +496,9 @@ class _InicioAppState extends State<InicioApp> {
                                                       FilledButton(
                                                         onPressed: () =>
                                                             Navigator.pop(
-                                                              context,
-                                                              true,
-                                                            ),
+                                                          context,
+                                                          true,
+                                                        ),
                                                         child: const Text(
                                                           'Eliminar',
                                                         ),
@@ -609,13 +606,13 @@ class _InicioAppState extends State<InicioApp> {
   Future<void> _showMaintenanceNotification(String tipo) async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
-          'mantenimiento_channel',
-          'Mantenimientos',
-          channelDescription: 'Notificaciones de mantenimientos vencidos',
-          importance: Importance.max,
-          priority: Priority.high,
-          ticker: 'ticker',
-        );
+      'mantenimiento_channel',
+      'Mantenimientos',
+      channelDescription: 'Notificaciones de mantenimientos vencidos',
+      importance: Importance.max,
+      priority: Priority.high,
+      ticker: 'ticker',
+    );
     const NotificationDetails platformChannelSpecifics = NotificationDetails(
       android: androidPlatformChannelSpecifics,
     );
@@ -634,13 +631,13 @@ class _InicioAppState extends State<InicioApp> {
   ) async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
-          'mantenimiento_channel',
-          'Mantenimientos',
-          channelDescription: 'Notificaciones de mantenimientos vencidos',
-          importance: Importance.max,
-          priority: Priority.high,
-          ticker: 'ticker',
-        );
+      'mantenimiento_channel',
+      'Mantenimientos',
+      channelDescription: 'Notificaciones de mantenimientos vencidos',
+      importance: Importance.max,
+      priority: Priority.high,
+      ticker: 'ticker',
+    );
     const NotificationDetails platformChannelSpecifics = NotificationDetails(
       android: androidPlatformChannelSpecifics,
     );
@@ -667,80 +664,32 @@ class _InicioAppState extends State<InicioApp> {
       kSpecPillHeight * 3 + kSpecGap * 2,
     );
 
-    // Notificaciones si algún mantenimiento llega a 0%
-    if (_pctCadena == 0.0) {
+    if (!_notificacionesProcesadas &&
+        (_lastCadena != null ||
+            _lastFiltro != null ||
+            _lastAceite != null ||
+            _lastSoat != null ||
+            _lastTecno != null)) {
+      _notificacionesProcesadas = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _showMaintenanceNotification('lubricación de cadena');
+        void checkAndSchedule(String tipo, DateTime? last, int days) async {
+          if (last == null) return;
+          final vencimiento = last.add(Duration(days: days));
+          await flutterLocalNotificationsPlugin.cancel(tipo.hashCode);
+          if (vencimiento.isAfter(DateTime.now())) {
+            _scheduleMaintenanceNotification(vencimiento, tipo);
+          } else {
+            _showMaintenanceNotification(tipo);
+          }
+        }
+
+        checkAndSchedule('lubricación de cadena', _lastCadena, 15);
+        checkAndSchedule('filtro de aire', _lastFiltro, 90);
+        checkAndSchedule('cambio de aceite', _lastAceite, 25);
+        checkAndSchedule('SOAT', _lastSoat, 365);
+        checkAndSchedule('Tecnomecánica', _lastTecno, 365);
       });
     }
-    if (_pctFiltro == 0.0) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _showMaintenanceNotification('filtro de aire');
-      });
-    }
-    if (_pctAceite == 0.0) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _showMaintenanceNotification('cambio de aceite');
-      });
-    }
-
-    // Limpia notificaciones antiguas y programa nuevas para cada mantenimiento
-
-    void programarNotificaciones() async {
-      // Lubricación de cadena
-      if (_lastCadena != null) {
-        final vencimientoCadena = _lastCadena!.add(const Duration(days: 15));
-        await flutterLocalNotificationsPlugin.cancel(
-          'lubricación de cadena'.hashCode,
-        );
-        if (vencimientoCadena.isAfter(DateTime.now())) {
-          _scheduleMaintenanceNotification(
-            vencimientoCadena,
-            'lubricación de cadena',
-          );
-        }
-      }
-      // Filtro de aire
-      if (_lastFiltro != null) {
-        final vencimientoFiltro = _lastFiltro!.add(const Duration(days: 90));
-        await flutterLocalNotificationsPlugin.cancel('filtro de aire'.hashCode);
-        if (vencimientoFiltro.isAfter(DateTime.now())) {
-          _scheduleMaintenanceNotification(vencimientoFiltro, 'filtro de aire');
-        }
-      }
-      // Cambio de aceite
-      if (_lastAceite != null) {
-        final vencimientoAceite = _lastAceite!.add(const Duration(days: 25));
-        await flutterLocalNotificationsPlugin.cancel(
-          'cambio de aceite'.hashCode,
-        );
-        if (vencimientoAceite.isAfter(DateTime.now())) {
-          _scheduleMaintenanceNotification(
-            vencimientoAceite,
-            'cambio de aceite',
-          );
-        }
-      }
-      // SOAT
-      if (_soatVence != null) {
-        await flutterLocalNotificationsPlugin.cancel('soat'.hashCode);
-        if (_soatVence!.isAfter(DateTime.now())) {
-          _scheduleMaintenanceNotification(_soatVence!, 'SOAT');
-        }
-      }
-      // Tecno
-      if (_tecnoVence != null) {
-        await flutterLocalNotificationsPlugin.cancel('tecno'.hashCode);
-        if (_tecnoVence!.isAfter(DateTime.now())) {
-          _scheduleMaintenanceNotification(_tecnoVence!, 'Tecno');
-        }
-      }
-    }
-
-    // Llama la función solo una vez por build
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      programarNotificaciones();
-    });
 
     return Scaffold(
       appBar: AppBar(
@@ -852,23 +801,26 @@ class _InicioAppState extends State<InicioApp> {
             });
           }
 
-          // Establecer fechas de vencimiento y porcentajes para SOAT y Tecno
-          if (_soatVence == null && v['soat_vencimiento'] != null) {
-            final fechaSoatExtraida = DateTime.parse(v['soat_vencimiento']);
+          final ds =
+              v['last_soat'] != null ? DateTime.parse(v['last_soat']) : null;
+          final dt =
+              v['last_tecno'] != null ? DateTime.parse(v['last_tecno']) : null;
+
+          if (_lastSoat == null && ds != null) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (!mounted) return;
               setState(() {
-                _soatVence = fechaSoatExtraida;
-                _pctSoat = _pctVencimiento(_soatVence, 365);
+                _lastSoat = ds;
+                _pctSoat = _pctRestante(ds, 365);
               });
             });
           }
-
-          if (_tecnoVence == null && v['tecno_vencimiento'] != null) {
-            final fechaTecnoExtraida = DateTime.parse(v['tecno_vencimiento']);
+          if (_lastTecno == null && dt != null) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (!mounted) return;
               setState(() {
-                _tecnoVence = fechaTecnoExtraida;
-                _pctTecno = _pctVencimiento(_tecnoVence, 365);
+                _lastTecno = dt;
+                _pctTecno = _pctRestante(dt, 365);
               });
             });
           }
@@ -1548,49 +1500,52 @@ class _DocumentViewerScreenState extends State<DocumentViewerScreen> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : (_error != null)
-          ? Center(
-              child: Text(_error!, style: const TextStyle(color: Colors.red)),
-            )
-          : isImage
-          ? PhotoView(
-              imageProvider: FileImage(_localFile!),
-              backgroundDecoration: const BoxDecoration(color: Colors.black),
-            )
-          : isPdf
-          ? SfPdfViewer.file(
-              _localFile!,
-              onDocumentLoadFailed: (details) {
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Error cargando PDF: ${details.error}'),
-                    ),
-                  );
-                }
-              },
-            )
-          : Center(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.insert_drive_file,
-                      size: 80,
-                      color: Colors.grey,
-                    ),
-                    const SizedBox(height: 20),
-                    const Text('No se puede mostrar este archivo.'),
-                    const SizedBox(height: 10),
-                    ElevatedButton(
-                      onPressed: _openFileExternal,
-                      child: const Text('Abrir archivo'),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+              ? Center(
+                  child:
+                      Text(_error!, style: const TextStyle(color: Colors.red)),
+                )
+              : isImage
+                  ? PhotoView(
+                      imageProvider: FileImage(_localFile!),
+                      backgroundDecoration:
+                          const BoxDecoration(color: Colors.black),
+                    )
+                  : isPdf
+                      ? SfPdfViewer.file(
+                          _localFile!,
+                          onDocumentLoadFailed: (details) {
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                      'Error cargando PDF: ${details.error}'),
+                                ),
+                              );
+                            }
+                          },
+                        )
+                      : Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(20),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  Icons.insert_drive_file,
+                                  size: 80,
+                                  color: Colors.grey,
+                                ),
+                                const SizedBox(height: 20),
+                                const Text('No se puede mostrar este archivo.'),
+                                const SizedBox(height: 10),
+                                ElevatedButton(
+                                  onPressed: _openFileExternal,
+                                  child: const Text('Abrir archivo'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
     );
   }
 }

@@ -6,12 +6,16 @@ class ParametrizacionMantenimientosScreen extends StatefulWidget {
   final DateTime? lastCadena;
   final DateTime? lastFiltro;
   final DateTime? lastAceite;
+  final DateTime? lastSoat;
+  final DateTime? lastTecno;
   const ParametrizacionMantenimientosScreen({
     super.key,
     required this.vehiculoId,
     this.lastCadena,
     this.lastFiltro,
     this.lastAceite,
+    this.lastSoat,
+    this.lastTecno,
   });
 
   @override
@@ -26,6 +30,8 @@ class _ParametrizacionMantenimientosScreenState
   DateTime? _cadena;
   DateTime? _filtro;
   DateTime? _aceite;
+  DateTime? _soat;
+  DateTime? _tecno;
 
   @override
   void initState() {
@@ -33,6 +39,8 @@ class _ParametrizacionMantenimientosScreenState
     _cadena = widget.lastCadena;
     _filtro = widget.lastFiltro;
     _aceite = widget.lastAceite;
+    _soat = widget.lastSoat;
+    _tecno = widget.lastTecno;
   }
 
   Future<void> _pickDate(
@@ -53,9 +61,8 @@ class _ParametrizacionMantenimientosScreenState
 
   double _pctRestante(DateTime? last, int cicloDias) {
     if (last == null) return 0.0;
-    final dias = DateTime.now()
-        .difference(last)
-        .inDays; // días entre fechas [23]
+    final dias =
+        DateTime.now().difference(last).inDays; // días entre fechas [23]
     final restante = 1.0 - (dias / cicloDias);
     return restante.clamp(0.0, 1.0);
   }
@@ -78,6 +85,8 @@ class _ParametrizacionMantenimientosScreenState
             'last_cadena': _cadena == null ? null : _fmt(_cadena),
             'last_filtro': _filtro == null ? null : _fmt(_filtro),
             'last_aceite': _aceite == null ? null : _fmt(_aceite),
+            'last_soat': _soat == null ? null : _fmt(_soat),
+            'last_tecno': _tecno == null ? null : _fmt(_tecno),
           })
           .eq('id', widget.vehiculoId)
           .select(); // confirma actualización [18][21]
@@ -86,12 +95,18 @@ class _ParametrizacionMantenimientosScreenState
         'lastCadena': _cadena,
         'lastFiltro': _filtro,
         'lastAceite': _aceite,
+        'lastSoat': _soat,
+        'lastTecno': _tecno,
         'pctCadena': _pctRestante(_cadena, 15),
         'pctFiltro': _pctRestante(_filtro, 90),
         'pctAceite': _pctRestante(_aceite, 25),
+        'pctSoat': _pctRestante(_soat, 365),
+        'pctTecno': _pctRestante(_tecno, 365),
         'vencCadena': _vencido(_cadena, 15),
         'vencFiltro': _vencido(_filtro, 90),
         'vencAceite': _vencido(_aceite, 25),
+        'vencSoat': _vencido(_soat, 365),
+        'vencTecno': _vencido(_tecno, 365),
       }; // retorna para actualizar UI [23][24]
 
       if (!mounted) return;
@@ -145,6 +160,32 @@ class _ParametrizacionMantenimientosScreenState
               onPressed: () => _pickDate(
                 (d) => setState(() => _aceite = d),
                 initial: _aceite,
+              ),
+              child: const Text('Elegir'),
+            ),
+          ),
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.health_and_safety),
+            title: const Text('Último SOAT'),
+            subtitle: Text(_soat == null ? 'Sin seleccionar' : _fmt(_soat)),
+            trailing: FilledButton(
+              onPressed: () => _pickDate(
+                (d) => setState(() => _soat = d),
+                initial: _soat,
+              ),
+              child: const Text('Elegir'),
+            ),
+          ),
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.car_crash),
+            title: const Text('Última Técnico-Mecánica'),
+            subtitle: Text(_tecno == null ? 'Sin seleccionar' : _fmt(_tecno)),
+            trailing: FilledButton(
+              onPressed: () => _pickDate(
+                (d) => setState(() => _tecno = d),
+                initial: _tecno,
               ),
               child: const Text('Elegir'),
             ),
