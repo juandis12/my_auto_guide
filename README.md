@@ -59,4 +59,8 @@ Para poner en marcha esta aplicación en tu propia máquina:
 
 ## 📝 Contribuciones y Notas
 
+<<<<<<< HEAD
 Este repositorio contiene todo lo necesario para escalar una infraestructura de administración mecánica y vehicular orientada al usuario final. La arquitectura del proyecto está pensada para ser fácil de extender mediante componentes como `webview`, servicios locales (notificaciones) o validadores del lado de la nube (Supabase).
+=======
+Este repositorio contiene todo lo necesario para escalar una infraestructura de administración mecánica y vehicular orientada al usuario final. La arquitectura del proyecto está pensada para ser fácil de extender mediante componentes como `webview`, servicios locales (notificaciones) o validadores del lado de la nube (Supabase).
+>>>>>>> 0e678bb65c2b224901201066ae5861891d0bc1d4
