@@ -49,6 +49,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../core/services/supabase_service.dart';
 
 class RutasScreen extends StatefulWidget {
   final String vehiculoId;
@@ -68,7 +69,7 @@ enum _RouteState { idle, routeReady, navigating, completed, freeTracking }
 
 class _RutasScreenState extends State<RutasScreen>
     with TickerProviderStateMixin {
-  final supabase = Supabase.instance.client;
+  final SupabaseClient supabase = SupabaseService().client;
   final MapController _mapCtrl = MapController();
   final TextEditingController _searchCtrl = TextEditingController();
 
@@ -162,6 +163,7 @@ class _RutasScreenState extends State<RutasScreen>
       final res = await http.get(url, headers: {
         'User-Agent': 'MyAutoGuide/1.0',
       });
+      if (!mounted) return;
       if (res.statusCode == 200) {
         final data = json.decode(res.body) as List;
         setState(() {
@@ -201,6 +203,7 @@ class _RutasScreenState extends State<RutasScreen>
         '?overview=full&geometries=geojson&steps=true',
       );
       final res = await http.get(url);
+      if (!mounted) return;
       if (res.statusCode == 200) {
         final data = json.decode(res.body);
         final route = data['routes'][0];
@@ -297,12 +300,7 @@ class _RutasScreenState extends State<RutasScreen>
     // para evitar sobrescribir si hubo cambios externos o errores de estado
     int kmsBase = widget.kmsActuales;
     try {
-      final data = await supabase
-          .from('vehiculos')
-          .select('kms')
-          .eq('id', widget.vehiculoId)
-          .single();
-      kmsBase = data['kms'] as int;
+      kmsBase = await SupabaseService().getVehicleMileage(widget.vehiculoId);
     } catch (_) {
       // Si falla, usamos widget.kmsActuales como respaldo
     }
@@ -311,9 +309,7 @@ class _RutasScreenState extends State<RutasScreen>
 
     // Actualizar en Supabase
     try {
-      await supabase
-          .from('vehiculos')
-          .update({'kms': nuevoKm}).eq('id', widget.vehiculoId);
+      await SupabaseService().updateVehicleKms(widget.vehiculoId, nuevoKm);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

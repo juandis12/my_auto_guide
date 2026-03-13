@@ -20,12 +20,12 @@
 //
 // =============================================================================
 
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'registro_screen.dart';
-import 'Agregar_vehiculo.dart';
-import 'inicio_app.dart'; // pantalla de inicio
+import '../vehicles/presentation/Agregar_vehiculo.dart';
+import '../vehicles/presentation/inicio_app.dart';
+import '../../core/services/supabase_service.dart';
 
 class CarRentalLoginScreen extends StatefulWidget {
   const CarRentalLoginScreen({super.key});
@@ -35,7 +35,7 @@ class CarRentalLoginScreen extends StatefulWidget {
 }
 
 class _CarRentalLoginScreenState extends State<CarRentalLoginScreen> {
-  final SupabaseClient supabase = Supabase.instance.client;
+  final SupabaseClient supabase = SupabaseService().client;
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -66,10 +66,10 @@ class _CarRentalLoginScreenState extends State<CarRentalLoginScreen> {
     try {
       final List data = await supabase
           .from('vehiculos')
-          .select('id') // solo id, más eficiente [2]
-          .eq('user_id', user.id) // filas del usuario [4]
+          .select('id')
+          .eq('user_id', user.id)
           .order('created_at', ascending: false)
-          .limit(1); // máximo 1 fila [3]
+          .limit(1);
 
       if (!mounted) return;
       if (data.isNotEmpty) {
@@ -106,7 +106,7 @@ class _CarRentalLoginScreenState extends State<CarRentalLoginScreen> {
 
       if (res.session != null && res.user != null) {
         if (!mounted) return;
-        await _goToDestination(); // reutiliza la misma verificación [2][3]
+        await _goToDestination();
       }
     } on AuthException catch (e) {
       final msg = (e.message ?? '').toLowerCase();
@@ -126,7 +126,7 @@ class _CarRentalLoginScreenState extends State<CarRentalLoginScreen> {
                   await supabase.auth.resend(
                     type: OtpType.signup,
                     email: emailController.text.trim(),
-                  ); // reenvía confirmación [1]
+                  );
                   if (!mounted) return;
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
@@ -172,7 +172,7 @@ class _CarRentalLoginScreenState extends State<CarRentalLoginScreen> {
     try {
       await supabase.auth.resetPasswordForEmail(
         email,
-      ); // restablecer contraseña [1]
+      );
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

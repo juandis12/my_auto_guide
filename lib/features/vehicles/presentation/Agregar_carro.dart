@@ -23,6 +23,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'inicio_app.dart';
 import 'Agregar_vehiculo.dart';
+import '../../../core/services/supabase_service.dart';
 
 class AgregarCarroScreen extends StatefulWidget {
   const AgregarCarroScreen({super.key});
@@ -184,18 +185,14 @@ class _AgregarCarroScreenState extends State<AgregarCarroScreen> {
     }
 
     try {
-      final row = await supabase
-          .from('vehiculos')
-          .insert({
-            'user_id': user.id,
-            'marca': marcaSeleccionada,
-            'modelo': modelo,
-            'apodo': apodo,
-            'kms': kms,
-            'image_path': imagePath,
-          })
-          .select()
-          .single();
+      final row = await SupabaseService().createVehicle(
+        userId: user.id,
+        marca: marcaSeleccionada,
+        modelo: modelo,
+        apodo: apodo,
+        kms: kms,
+        imagePath: imagePath,
+      );
 
       if (!mounted) return;
       Navigator.pushReplacement(

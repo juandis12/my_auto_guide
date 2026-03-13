@@ -24,6 +24,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../core/services/supabase_service.dart';
 
 class ParametrizacionMantenimientosScreen extends StatefulWidget {
   final String vehiculoId;
@@ -49,7 +50,6 @@ class ParametrizacionMantenimientosScreen extends StatefulWidget {
 
 class _ParametrizacionMantenimientosScreenState
     extends State<ParametrizacionMantenimientosScreen> {
-  final supabase = Supabase.instance.client;
 
   DateTime? _cadena;
   DateTime? _filtro;
@@ -103,17 +103,13 @@ class _ParametrizacionMantenimientosScreenState
 
   Future<void> _guardar() async {
     try {
-      await supabase
-          .from('vehiculos')
-          .update({
-            'last_cadena': _cadena == null ? null : _fmt(_cadena),
-            'last_filtro': _filtro == null ? null : _fmt(_filtro),
-            'last_aceite': _aceite == null ? null : _fmt(_aceite),
-            'last_soat': _soat == null ? null : _fmt(_soat),
-            'last_tecno': _tecno == null ? null : _fmt(_tecno),
-          })
-          .eq('id', widget.vehiculoId)
-          .select(); // confirma actualización [18][21]
+      await SupabaseService().updateMaintenanceDates(widget.vehiculoId, {
+        'last_cadena': _cadena == null ? null : _fmt(_cadena),
+        'last_filtro': _filtro == null ? null : _fmt(_filtro),
+        'last_aceite': _aceite == null ? null : _fmt(_aceite),
+        'last_soat': _soat == null ? null : _fmt(_soat),
+        'last_tecno': _tecno == null ? null : _fmt(_tecno),
+      });
 
       final result = {
         'lastCadena': _cadena,

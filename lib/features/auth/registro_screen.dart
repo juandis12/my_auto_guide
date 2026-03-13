@@ -64,6 +64,7 @@ class _RegistroScreenState extends State<RegistroScreen> {
         email: emailController.text.trim(),
         password: password,
       );
+      if (!mounted) return;
 
       // 2) Aviso con opción de reenviar
       if (!mounted) return;
@@ -168,6 +169,7 @@ class _RegistroScreenState extends State<RegistroScreen> {
             email: email,
             password: password,
           );
+          if (!mounted) return;
           if (res.session != null && res.user != null) {
             t.cancel();
             if (!mounted) return;

@@ -33,26 +33,26 @@
 //
 // =============================================================================
 
-import 'dart:async';
-import 'dart:io';
-import 'dart:math' as math;
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:dotted_border/dotted_border.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:open_filex/open_filex.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:photo_view/photo_view.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:photo_view/photo_view.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:timezone/data/latest.dart' as tz;
-import 'package:timezone/timezone.dart' as tz;
-import 'runt_webview.dart';
-import 'rutas_screen.dart';
-import 'guia.dart';
-import 'login_screen.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:dotted_border/dotted_border.dart';
+import 'package:open_filex/open_filex.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:http/http.dart' as http;
+import 'dart:io';
+import 'dart:async';
+import 'dart:math' as math;
+
+import '../../../core/services/notification_service.dart';
+import '../../../core/services/supabase_service.dart';
+import '../../../shared/widgets/runt_webview.dart';
+import '../../navigation/rutas_screen.dart';
+import '../../guides/guia.dart';
+import '../../auth/login_screen.dart';
 import 'parametrizacion_mantenimientos.dart';
 
 enum DocType { soat, tecno, seguro, propiedad }
@@ -110,6 +110,7 @@ class _InicioAppState extends State<InicioApp> {
       return cached.$1;
     }
     final signed = await _signedUrlFor(path);
+    if (!mounted) return '';
     final expires = DateTime.now().add(const Duration(seconds: 3500));
     _urlCache[path] = (signed, expires);
     return signed;
@@ -137,6 +138,7 @@ class _InicioAppState extends State<InicioApp> {
   }
 
   Future<Map<String, dynamic>> _cargar() async {
+    if (!mounted) return {};
     final row = await supabase
         .from('vehiculos')
         .select(
@@ -308,11 +310,10 @@ class _InicioAppState extends State<InicioApp> {
         DocType.seguro: 'seguro_path',
         DocType.propiedad: 'propiedad_path',
       }[type]!;
-      await supabase
+      await SupabaseService().client
           .from('vehiculos')
           .update({col: path})
-          .eq('id', widget.vehiculoId)
-          .select();
+          .eq('id', widget.vehiculoId);
 
       return path;
     } on StorageException catch (e) {
@@ -630,80 +631,10 @@ class _InicioAppState extends State<InicioApp> {
     );
   }
 
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
-
   @override
   void initState() {
     super.initState();
-    _initTimezone().then((_) {
-      _initNotifications();
-    });
-  }
-
-  Future<void> _initTimezone() async {
-    tz.initializeTimeZones();
-    final String timeZoneName = tz.local.name;
-    tz.setLocalLocation(tz.getLocation(timeZoneName));
-  }
-
-  Future<void> _initNotifications() async {
-    const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
-    const InitializationSettings initializationSettings =
-        InitializationSettings(android: initializationSettingsAndroid);
-    await flutterLocalNotificationsPlugin.initialize(initializationSettings);
-  }
-
-  Future<void> _showMaintenanceNotification(String tipo) async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
-      'mantenimiento_channel',
-      'Mantenimientos',
-      channelDescription: 'Notificaciones de mantenimientos vencidos',
-      importance: Importance.max,
-      priority: Priority.high,
-      ticker: 'ticker',
-    );
-    const NotificationDetails platformChannelSpecifics = NotificationDetails(
-      android: androidPlatformChannelSpecifics,
-    );
-    await flutterLocalNotificationsPlugin.show(
-      0,
-      '¡Mantenimiento requerido!',
-      'Debes realizar el mantenimiento de $tipo.',
-      platformChannelSpecifics,
-      payload: tipo,
-    );
-  }
-
-  Future<void> _scheduleMaintenanceNotification(
-    DateTime fechaVencimiento,
-    String tipo,
-  ) async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
-      'mantenimiento_channel',
-      'Mantenimientos',
-      channelDescription: 'Notificaciones de mantenimientos vencidos',
-      importance: Importance.max,
-      priority: Priority.high,
-      ticker: 'ticker',
-    );
-    const NotificationDetails platformChannelSpecifics = NotificationDetails(
-      android: androidPlatformChannelSpecifics,
-    );
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-      tipo.hashCode,
-      '¡Mantenimiento requerido!',
-      'Debes realizar el mantenimiento de $tipo.',
-      tz.TZDateTime.from(fechaVencimiento, tz.local),
-      platformChannelSpecifics,
-      androidAllowWhileIdle: true,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
-      matchDateTimeComponents: DateTimeComponents.dateAndTime,
-    );
+    // La inicialización de TZ y notificaciones ya se realiza en main.dart
   }
 
   @override
@@ -727,11 +658,19 @@ class _InicioAppState extends State<InicioApp> {
         void checkAndSchedule(String tipo, DateTime? last, int days) async {
           if (last == null) return;
           final vencimiento = last.add(Duration(days: days));
-          await flutterLocalNotificationsPlugin.cancel(tipo.hashCode);
           if (vencimiento.isAfter(DateTime.now())) {
-            _scheduleMaintenanceNotification(vencimiento, tipo);
+            await NotificationService().showMaintenanceNotification(
+              id: tipo.hashCode,
+              title: '¡Mantenimiento requerido!',
+              body: 'Debes realizar el mantenimiento de $tipo.',
+              scheduledDate: vencimiento,
+            );
           } else {
-            _showMaintenanceNotification(tipo);
+            await NotificationService().showMaintenanceNotification(
+              id: 0,
+              title: '¡Mantenimiento requerido!',
+              body: 'Debes realizar el mantenimiento de $tipo.',
+            );
           }
         }
 
