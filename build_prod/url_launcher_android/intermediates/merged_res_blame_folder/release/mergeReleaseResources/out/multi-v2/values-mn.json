@@ -1,0 +1,82 @@
+{
+    "logs": [
+        {
+            "outputFile": "io.flutter.plugins.urllauncher.url_launcher_android-release-27:/values-mn/values-mn.xml",
+            "map": [
+                {
+                    "source": "D:\\gradle_home\\caches\\8.12\\transforms\\071918798833ad8f8a3cad7a9089f648\\transformed\\core-1.17.0\\res\\values-mn\\values-mn.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,153,255,356,454,559,671,790",
+                        "endColumns": "97,101,100,97,104,111,118,100",
+                        "endOffsets": "148,250,351,449,554,666,785,886"
+                    },
+                    "to": {
+                        "startLines": "2,3,4,5,6,7,8,13",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,153,255,356,454,559,671,1212",
+                        "endColumns": "97,101,100,97,104,111,118,100",
+                        "endOffsets": "148,250,351,449,554,666,785,1308"
+                    }
+                },
+                {
+                    "source": "D:\\gradle_home\\caches\\8.12\\transforms\\d5ba8a3f3d18f4b413ccbb814eeac7c7\\transformed\\browser-1.9.0\\res\\values-mn\\values-mn.xml",
+                    "from": {
+                        "startLines": "2,3,4,5",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "55,160,264,369",
+                        "endColumns": "104,103,104,107",
+                        "endOffsets": "155,259,364,472"
+                    },
+                    "to": {
+                        "startLines": "9,10,11,12",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "790,895,999,1104",
+                        "endColumns": "104,103,104,107",
+                        "endOffsets": "890,994,1099,1207"
+                    }
+                }
+            ]
+        },
+        {
+            "outputFile": "io.flutter.plugins.urllauncher.url_launcher_android-mergeReleaseResources-25:/values-mn/values-mn.xml",
+            "map": [
+                {
+                    "source": "D:\\gradle_home\\caches\\8.12\\transforms\\071918798833ad8f8a3cad7a9089f648\\transformed\\core-1.17.0\\res\\values-mn\\values-mn.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,153,255,356,454,559,671,790",
+                        "endColumns": "97,101,100,97,104,111,118,100",
+                        "endOffsets": "148,250,351,449,554,666,785,886"
+                    },
+                    "to": {
+                        "startLines": "2,3,4,5,6,7,8,13",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,153,255,356,454,559,671,1212",
+                        "endColumns": "97,101,100,97,104,111,118,100",
+                        "endOffsets": "148,250,351,449,554,666,785,1308"
+                    }
+                },
+                {
+                    "source": "D:\\gradle_home\\caches\\8.12\\transforms\\d5ba8a3f3d18f4b413ccbb814eeac7c7\\transformed\\browser-1.9.0\\res\\values-mn\\values-mn.xml",
+                    "from": {
+                        "startLines": "2,3,4,5",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "55,160,264,369",
+                        "endColumns": "104,103,104,107",
+                        "endOffsets": "155,259,364,472"
+                    },
+                    "to": {
+                        "startLines": "9,10,11,12",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "790,895,999,1104",
+                        "endColumns": "104,103,104,107",
+                        "endOffsets": "890,994,1099,1207"
+                    }
+                }
+            ]
+        }
+    ]
+}

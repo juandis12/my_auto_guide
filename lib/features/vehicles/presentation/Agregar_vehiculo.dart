@@ -5,16 +5,8 @@
 // Pantalla para agregar una nueva motocicleta al sistema. Incluye:
 //   - Catálogo visual de motos organizadas por marca (YAMAHA, SUZUKI, BMW,
 //     KAWASAKI, BAJAJ, HERO, AKT, KTM) con imágenes reales de cada modelo.
-//   - Carrusel deslizable (PageView) para seleccionar el modelo.
-//   - Selector horizontal de marcas con logos y colores personalizados.
-//   - Formulario con campos: kilometraje, modelo (año) y apodo del vehículo.
-//   - Tabs laterales «Carro / Moto» para alternar con [AgregarCarroScreen].
-//   - Guardado del vehículo en la tabla `vehiculos` de Supabase con los campos:
-//     user_id, marca, modelo, apodo, kms, image_path.
-//   - Al guardar, navega a [InicioApp] con el ID del vehículo creado.
-//
-// Widgets auxiliares:
-//   - [_SideTab]: Botón vertical rotado para los tabs «Carro / Moto».
+//   - Formulario con campos adaptables a temas claro/oscuro.
+//   - Guardado en Supabase con navegación a [InicioApp].
 //
 // =============================================================================
 
@@ -32,7 +24,6 @@ class AgregarVehiculoScreen extends StatefulWidget {
 }
 
 class _AgregarVehiculoScreenState extends State<AgregarVehiculoScreen> {
-  // Catálogo por marca (igual que tenías)
   final Map<String, List<Map<String, String>>> catalogo = {
     'YAMAHA': [
       {'modelo': 'MT 15', 'img': 'assets/motos/yamaha/mt15.png'},
@@ -47,7 +38,7 @@ class _AgregarVehiculoScreenState extends State<AgregarVehiculoScreen> {
       {'modelo': 'Gixxer 150 FI', 'img': 'assets/motos/suzuki/gixxer150.png'},
       {
         'modelo': 'Gixxer SF 150 FI',
-        'img': 'assets/motos/suzuki/gixxersf150.png',
+        'img': 'assets/motos/suzuki/gixxersf150.png'
       },
     ],
     'BMW': [
@@ -61,174 +52,83 @@ class _AgregarVehiculoScreenState extends State<AgregarVehiculoScreen> {
       {'modelo': 'Ninja 400', 'img': 'assets/motos/kawasaki/ninja400.png'},
       {'modelo': 'Z 400', 'img': 'assets/motos/kawasaki/z400.png'},
     ],
-
     'BAJAJ': [
       {
         'modelo': 'BOXER CT 100 KS',
-        'img': 'assets/motos/bajaj/boxer-ct100-ks.png',
+        'img': 'assets/motos/bajaj/boxer-ct100-ks.png'
       },
       {
         'modelo': 'BOXER CT 100 ES',
-        'img': 'assets/motos/bajaj/boxer-ct100.png',
+        'img': 'assets/motos/bajaj/boxer-ct100.png'
       },
       {
         'modelo': 'BOXER CT 125 SPORT',
-        'img': 'assets/motos/bajaj/boxer-ct-125-sport.png',
+        'img': 'assets/motos/bajaj/boxer-ct-125-sport.png'
       },
       {'modelo': 'BOXER 150 X', 'img': 'assets/motos/bajaj/boxer-150x.png'},
-      {'modelo': 'BOXER S', 'img': 'assets/motos/bajaj/boxer-s.png'},
-      {
-        'modelo': 'DISCOVER 125 SPORT',
-        'img': 'assets/motos/bajaj/discover-125.png',
-      },
-      {'modelo': 'DOMINAR 250', 'img': 'assets/motos/bajaj/Dominar-250.png'},
       {
         'modelo': 'DOMINAR 400',
-        'img': 'assets/motos/bajaj/Dominar-400-touring.png',
-      },
-      {
-        'modelo': 'DOMINAR 400 VOLCANO',
-        'img': 'assets/motos/bajaj/dominar400-volcano.png',
-      },
-      {'modelo': 'PULSAR N125', 'img': 'assets/motos/bajaj/pulsar-n125.png'},
-      {
-        'modelo': 'PULSAR N160 PRO',
-        'img': 'assets/motos/bajaj/pulsar-n160-pro.png',
-      },
-      {'modelo': 'PULSAR N160', 'img': 'assets/motos/bajaj/pulsar-n160.png'},
-      {'modelo': 'PULSAR N250', 'img': 'assets/motos/bajaj/Pulsar-N250.png'},
-      {
-        'modelo': 'PULSAR NS125 ',
-        'img': 'assets/motos/bajaj/pulsar-ns-125.png',
-      },
-      {
-        'modelo': 'PULSAR NS 160 FI ABS ',
-        'img': 'assets/motos/bajaj/pulsar-ns-160-fi-abs.png',
-      },
-      {
-        'modelo': 'PULSAR NS 16O',
-        'img': 'assets/motos/bajaj/pulsar-ns160-fi.png',
-      },
-      {
-        'modelo': 'PULSAR NS 200 UG',
-        'img': 'assets/motos/bajaj/pulsar-ns-200-ug.png',
+        'img': 'assets/motos/bajaj/Dominar-400-touring.png'
       },
       {
         'modelo': 'PULSAR NS 200 FI ABS',
-        'img': 'assets/motos/bajaj/pulsar-ns200-fi-abs.png',
-      },
-      {
-        'modelo': 'PULSAR NS 400z',
-        'img': 'assets/motos/bajaj/pulsar-ns400z.png',
-      },
-      {'modelo': 'PULSAR P 150 ', 'img': 'assets/motos/bajaj/Pulsar-p150.png'},
-      {
-        'modelo': 'PULSAR RS 200 FI ABS',
-        'img': 'assets/motos/bajaj/pulsar-rs200.png',
-      },
-      {
-        'modelo': 'PULSAR 200 PULSARMANIA',
-        'img': 'assets/motos/bajaj/pulsarmania.png',
+        'img': 'assets/motos/bajaj/pulsar-ns200-fi-abs.png'
       },
     ],
     'HERO': [
-      {'modelo': 'HUNK 125 R', 'img': 'assets/motos/hero/Hunk125r.png'},
-      {'modelo': 'HUNK 150 XT', 'img': 'assets/motos/hero/Hunk150xt.png'},
       {'modelo': 'HUNK 160 R', 'img': 'assets/motos/hero/hunk160r.png'},
-      {'modelo': 'HUNK 160 R 4V', 'img': 'assets/motos/hero/Hunk160R4v.png'},
-      {'modelo': 'ECO DELUXE', 'img': 'assets/motos/hero/Eco_Deluxe.png'},
-      {'modelo': 'ECO T ', 'img': 'assets/motos/hero/ECO-T.png'},
-      {'modelo': 'ECO 100', 'img': 'assets/motos/hero/Eco100.png'},
-      {
-        'modelo': 'ECO DELUXE CLASICA',
-        'img': 'assets/motos/hero/EcoDeluxeClasica.png',
-      },
-      {'modelo': 'IGNITOR', 'img': 'assets/motos/hero/Ignitor.png'},
       {'modelo': 'IGNITOR XTECH', 'img': 'assets/motos/hero/IgnitorXtech.png'},
-      {
-        'modelo': 'SPLENDOR X PRO',
-        'img': 'assets/motos/hero/Splendor-Xpro.png',
-      },
-      {'modelo': 'XOOM 110', 'img': 'assets/motos/hero/Xoom110.png'},
       {'modelo': 'X PULSE 200 4V', 'img': 'assets/motos/hero/Xpulse2004v.png'},
-      {
-        'modelo': 'X PULSE 200 PRO 4V',
-        'img': 'assets/motos/hero/XpulsePro2004v.png',
-      },
-      {
-        'modelo': 'X PULSE 200 RALLY',
-        'img': 'assets/motos/hero/XpulseRally.png',
-      },
     ],
     'AKT': [
-      {'modelo': 'CR 250R ', 'img': 'assets/motos/akt/250R.png'},
-      {'modelo': 'CR4 150', 'img': 'assets/motos/akt/CR4_150.png'},
-      {'modelo': 'CR4 200', 'img': 'assets/motos/akt/CR4_200.png'},
       {'modelo': 'NKD', 'img': 'assets/motos/akt/NKD.png'},
-      {'modelo': 'MAWI', 'img': 'assets/motos/akt/mawi.png'},
+      {'modelo': 'CR4 150', 'img': 'assets/motos/akt/CR4_150.png'},
     ],
     'KTM': [
-      {'modelo': 'DUKE 200 ', 'img': 'assets/motos/ktm/DUKE-200.png'},
-      {'modelo': 'DUKE 250', 'img': 'assets/motos/ktm/KTM-250-DUKE.png'},
+      {'modelo': 'DUKE 200', 'img': 'assets/motos/ktm/DUKE-200.png'},
       {'modelo': 'DUKE 390', 'img': 'assets/motos/ktm/KTM-390-DUKE.png'},
-      {'modelo': 'DUKE 990', 'img': 'assets/motos/ktm/KTM-990-DUKE.png'},
-      {
-        'modelo': 'SUPER DUKE 1390',
-        'img': 'assets/motos/ktm/KTM1390superduke2025.png',
-      },
-      {
-        'modelo': 'ADVENTUR 250',
-        'img': 'assets/motos/ktm/KTM-250-Adventure.png',
-      },
       {'modelo': 'ADVENTUR 390', 'img': 'assets/motos/ktm/KTM-390-adv.png'},
+    ],
+    'VICTORI': [
       {
-        'modelo': 'ADVENTUR 390X',
-        'img': 'assets/motos/ktm/KTM-390-adventure.png',
+        'modelo': 'VENOM 150',
+        'img': 'assets/motos/victori/victori_venom_150.png'
       },
     ],
-  }; // PageView.builder consumirá la lista de la marca seleccionada.
+  };
 
-  // Logos para selección de marca
   final Map<String, String> logos = const {
     'YAMAHA': 'assets/logos/yamaha_logo.png',
     'SUZUKI': 'assets/logos/suzuki_logo.png',
     'BMW': 'assets/logos/bmw_logo.png',
     'KAWASAKI': 'assets/logos/kawa_logo.png',
-    'HONDA': 'assets/logos/honda_logo.png',
     'KTM': 'assets/logos/ktm_logo.png',
     'BAJAJ': 'assets/logos/bajaj_logo.png',
-    'DUCATI': 'assets/logos/ducati_logo.png',
     'HERO': 'assets/logos/hero_logo.png',
     'AKT': 'assets/logos/akt_logo.png',
-  }; // Las rutas deben existir en assets/logos/.
+    'VICTORI': 'assets/logos/victori_logo.png',
+  };
 
-  // COLORES POR MARCA (personaliza a tu gusto)
   final Map<String, Color> brandColors = const {
-    'YAMAHA': Color(0xFF0055CC), // azul Yamaha
-    'SUZUKI': Color(0xFFE30613), // rojo Suzuki
-    'BMW': Color(0xFF2A2A2A), // gris/negro BMW
-    'KAWASAKI': Color(0xFF00A651), // verde Kawasaki
-    'HONDA': Color(0xFFB30101), // rojo oscuro Honda
-    'DUCATI': Color(0xFFEB2A11), // rojo anaranjado Ducati
-    'KTM': Color(0xFFFF7B00), // naranja KTM
-    'BAJAJ': Color(0xFF006EFF), // azul claro Bajaj
-    'HERO': Color.fromARGB(255, 0, 0, 0),
+    'YAMAHA': Color(0xFF0055CC),
+    'SUZUKI': Color(0xFFE30613),
+    'BMW': Color(0xFF2A2A2A),
+    'KAWASAKI': Color(0xFF00A651),
+    'KTM': Color(0xFFFF7B00),
+    'BAJAJ': Color(0xFF006EFF),
+    'HERO': Colors.black,
     'AKT': Color.fromARGB(255, 21, 54, 172),
-  }; // Usa cualquier Color(Material) o hex ARGB para el resaltado.
+    'VICTORI': Color.fromARGB(255, 203, 167, 61),
+  };
 
-  // Estado actual
   String marcaSeleccionada = 'YAMAHA';
   int indexModelo = 0;
-
-  // Controlador del carrusel
   late PageController _page;
 
-  // Form
   final TextEditingController _kmsController = TextEditingController();
   final TextEditingController _modeloController = TextEditingController();
   final TextEditingController _apodoController = TextEditingController();
 
-  // Supabase
   final supabase = Supabase.instance.client;
 
   List<Map<String, String>> get modelosDeMarca =>
@@ -258,48 +158,16 @@ class _AgregarVehiculoScreenState extends State<AgregarVehiculoScreen> {
     });
   }
 
-  void _irSiguiente() {
-    final next = (indexModelo + 1).clamp(0, modelosDeMarca.length - 1);
-    _page.animateToPage(
-      next,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    );
-  }
-
-  void _irAnterior() {
-    final prev = (indexModelo - 1).clamp(0, modelosDeMarca.length - 1);
-    _page.animateToPage(
-      prev,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    );
-  }
-
-  // Guardar en Supabase y navegar a inicio_app.dart
   Future<void> _guardarVehiculo() async {
     final user = supabase.auth.currentUser;
-    if (user == null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Debes iniciar sesión')));
-      return;
-    } // usuario autenticado
+    if (user == null) return;
 
     final kms = int.tryParse(_kmsController.text.trim()) ?? 0;
     final apodo = _apodoController.text.trim();
-    final modelo = modelosDeMarca.isEmpty
-        ? ''
-        : modelosDeMarca[indexModelo]['modelo']!;
-    final imagePath = modelosDeMarca.isEmpty
-        ? ''
-        : modelosDeMarca[indexModelo]['img']!;
-    if (modelo.isEmpty || imagePath.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Selecciona una moto válida')),
-      );
-      return;
-    }
+    final modelo =
+        modelosDeMarca.isEmpty ? '' : modelosDeMarca[indexModelo]['modelo']!;
+    final imagePath =
+        modelosDeMarca.isEmpty ? '' : modelosDeMarca[indexModelo]['img']!;
 
     try {
       final row = await SupabaseService().createVehicle(
@@ -315,33 +183,26 @@ class _AgregarVehiculoScreenState extends State<AgregarVehiculoScreen> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) => InicioApp(vehiculoId: row['id'] as String),
-        ),
+            builder: (_) => InicioApp(vehiculoId: row['id'] as String)),
       );
     } on PostgrestException catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error al guardar: ${e.message}')));
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Error: ${e.message}')));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     const double headerHeight = 240;
-
-    final modeloActual = modelosDeMarca.isEmpty
-        ? ''
-        : modelosDeMarca[indexModelo]['modelo']!;
+    final modeloActual =
+        modelosDeMarca.isEmpty ? '' : modelosDeMarca[indexModelo]['modelo']!;
 
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: 0,
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-      ),
+          toolbarHeight: 0, elevation: 0, backgroundColor: Colors.transparent),
       body: Stack(
         children: [
-          // Fondo superior
           Positioned(
             top: 0,
             left: 0,
@@ -357,129 +218,82 @@ class _AgregarVehiculoScreenState extends State<AgregarVehiculoScreen> {
               ),
             ),
           ),
-          // Contenido
           SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 10),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 6),
-                const Text(
-                  'Agrega Tu Vehiculo',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                Text(
+                  'Mi Garaje',
+                  style: TextStyle(
+                    fontFamily: 'Outfit',
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white
+                        : Colors.black87,
+                  ),
                 ),
-                const SizedBox(height: 10),
-
-                // Header: tabs + carrusel por marca
+                Text(
+                  'Registra tu vehículo para empezar',
+                  style: TextStyle(
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white70
+                        : Colors.black54,
+                    fontSize: 16,
+                  ),
+                ),
+                const SizedBox(height: 12),
                 SizedBox(
                   height: headerHeight,
-                  width: double.infinity,
                   child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Tabs verticales (decorativos)
-                      SizedBox(
-                        height: headerHeight,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            _SideTab(
-                              text: 'Carro',
-                              selected: false,
-                              onTap: () {
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => AgregarCarroScreen(),
-                                  ),
-                                );
-                              },
-                            ),
-                            const SizedBox(),
-                            const _SideTab(
-                              text: 'Moto',
-                              selected: true,
-                              onTap: null,
-                            ),
-                          ],
-                        ),
+                      Column(
+                        children: [
+                          _SideTab(
+                            text: 'Carro',
+                            selected: false,
+                            onTap: () => Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) =>
+                                        const AgregarCarroScreen())),
+                          ),
+                          const _SideTab(text: 'Moto', selected: true),
+                        ],
                       ),
                       const SizedBox(width: 10),
-
-                      // Carrusel de modelos de la marca seleccionada
                       Expanded(
-                        child: Stack(
-                          children: [
-                            PageView.builder(
-                              controller: _page,
-                              itemCount: modelosDeMarca.length,
-                              onPageChanged: (i) =>
-                                  setState(() => indexModelo = i),
-                              itemBuilder: (context, i) {
-                                final img = modelosDeMarca[i]['img']!;
-                                return Center(
-                                  child: Image.asset(
-                                    img,
-                                    fit: BoxFit.contain,
-                                    height: double.infinity,
-                                  ),
-                                );
-                              },
-                            ),
-                            // Flechas
-                            Positioned(
-                              right: 6,
-                              top: 6,
-                              child: IconButton(
-                                onPressed: _irSiguiente,
-                                icon: const Icon(Icons.chevron_right),
-                                color: Colors.black54,
-                                style: IconButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                ),
-                              ),
-                            ),
-                            Positioned(
-                              left: 6,
-                              top: 6,
-                              child: IconButton(
-                                onPressed: _irAnterior,
-                                icon: const Icon(Icons.chevron_left),
-                                color: Colors.black54,
-                                style: IconButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ],
+                        child: PageView.builder(
+                          controller: _page,
+                          itemCount: modelosDeMarca.length,
+                          onPageChanged: (i) => setState(() => indexModelo = i),
+                          itemBuilder: (context, i) {
+                            final img = modelosDeMarca[i]['img']!;
+                            return Hero(
+                              tag: 'vehicle_main_image', 
+                              child: Image.asset(img, fit: BoxFit.contain),
+                            );
+                          },
                         ),
                       ),
                     ],
                   ),
                 ),
-
                 const SizedBox(height: 10),
-                Text(
-                  modeloActual,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                ),
+                Text(modeloActual,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 18)),
                 const SizedBox(height: 12),
-
-                // Logos por marca con color de selección específico
                 SizedBox(
                   height: 100,
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.symmetric(horizontal: 6),
+                    itemCount: logos.length,
+                    separatorBuilder: (_, __) => const SizedBox(width: 14),
                     itemBuilder: (context, index) {
                       final marca = logos.keys.elementAt(index);
                       final selected = marcaSeleccionada == marca;
-                      final logoPath = logos[marca]!;
-                      final highlight = brandColors[marca] ?? Colors.blue;
-
                       return GestureDetector(
                         onTap: () => _cambiarMarca(marca),
                         child: Column(
@@ -489,81 +303,37 @@ class _AgregarVehiculoScreenState extends State<AgregarVehiculoScreen> {
                               height: 64,
                               decoration: BoxDecoration(
                                 color: selected
-                                    ? highlight.withOpacity(0.10)
+                                    ? (brandColors[marca] ?? Colors.blue)
+                                        .withOpacity(0.1)
                                     : Colors.white,
                                 borderRadius: BorderRadius.circular(14),
                                 border: Border.all(
-                                  color: selected
-                                      ? highlight
-                                      : Colors.grey.shade300,
-                                  width: selected ? 2.5 : 2,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.06),
-                                    blurRadius: 6,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
+                                    color: selected
+                                        ? (brandColors[marca] ?? Colors.blue)
+                                        : Colors.grey.shade300,
+                                    width: 2),
                               ),
                               padding: const EdgeInsets.all(6),
-                              child: Image.asset(logoPath, fit: BoxFit.contain),
+                              child: Image.asset(logos[marca]!,
+                                  fit: BoxFit.contain),
                             ),
-                            const SizedBox(height: 6),
-                            Text(
-                              marca,
-                              style: Theme.of(context).textTheme.labelMedium
-                                  ?.copyWith(
+                            Text(marca,
+                                style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: selected
-                                        ? highlight
-                                        : Colors.black87,
-                                  ),
-                            ),
+                                        ? (brandColors[marca] ?? Colors.blue)
+                                        : Colors.black54)),
                           ],
                         ),
                       );
                     },
-                    separatorBuilder: (_, __) => const SizedBox(width: 14),
-                    itemCount: logos.length,
                   ),
                 ),
-
                 const SizedBox(height: 16),
-                TextFormField(
-                  controller: _kmsController,
-                  decoration: const InputDecoration(
-                    labelText: 'Cuantos kms tiene?',
-                    hintText: '6500',
-                    border: OutlineInputBorder(),
-                    isDense: true,
-                  ),
-                  keyboardType: TextInputType.number,
-                ),
-
-                const SizedBox(height: 14),
-                TextFormField(
-                  controller: _modeloController,
-                  decoration: const InputDecoration(
-                    labelText: 'Modelo (año)',
-                    hintText: '2024',
-                    border: OutlineInputBorder(),
-                    isDense: true,
-                  ),
-                  keyboardType: TextInputType.number,
-                ),
-
-                const SizedBox(height: 14),
-                TextFormField(
-                  controller: _apodoController,
-                  decoration: const InputDecoration(
-                    labelText: 'Apodo',
-                    hintText: 'Demon',
-                    border: OutlineInputBorder(),
-                    isDense: true,
-                  ),
-                ),
-
+                _buildField(_kmsController, 'Kilometraje', Icons.speed),
+                _buildField(
+                    _modeloController, 'Modelo (Año)', Icons.calendar_today),
+                _buildField(_apodoController, 'Apodo', Icons.edit),
                 const SizedBox(height: 18),
                 SizedBox(
                   width: double.infinity,
@@ -571,16 +341,14 @@ class _AgregarVehiculoScreenState extends State<AgregarVehiculoScreen> {
                   child: ElevatedButton(
                     onPressed: _guardarVehiculo,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
+                      backgroundColor: const Color(0xFF035880),
+                      foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      textStyle: const TextStyle(fontSize: 17),
+                          borderRadius: BorderRadius.circular(8)),
                     ),
-                    child: const Text('Crear Vehiculo'),
+                    child: const Text('Crear Vehículo'),
                   ),
                 ),
-                const SizedBox(height: 20),
               ],
             ),
           ),
@@ -588,56 +356,65 @@ class _AgregarVehiculoScreenState extends State<AgregarVehiculoScreen> {
       ),
     );
   }
+
+  Widget _buildField(
+      TextEditingController controller, String label, IconData icon) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 14),
+      decoration: BoxDecoration(
+        color: Theme.of(context).brightness == Brightness.dark
+            ? Colors.white.withOpacity(0.05)
+            : Colors.black.withOpacity(0.03),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.white10
+                : Colors.black12),
+      ),
+      child: TextField(
+        controller: controller,
+        style: TextStyle(
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.white
+                : Colors.black87),
+        decoration: InputDecoration(
+          labelText: label,
+          prefixIcon: Icon(icon, color: const Color(0xFF035880)),
+          border: InputBorder.none,
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        ),
+      ),
+    );
+  }
 }
 
-// Botón vertical de barra lateral (sin cambios de lógica)
 class _SideTab extends StatelessWidget {
   final String text;
   final bool selected;
   final VoidCallback? onTap;
-
-  const _SideTab({
-    super.key,
-    required this.text,
-    required this.selected,
-    this.onTap,
-  });
+  const _SideTab({required this.text, required this.selected, this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    final bg = selected ? Colors.blue : Colors.white;
-    final fg = selected ? Colors.white : Colors.black87;
-
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 40,
-        height: 120,
+        width: 35,
+        height: 100,
+        margin: const EdgeInsets.only(bottom: 4),
         decoration: BoxDecoration(
-          color: bg,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Colors.blue.shade200),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.06),
-              blurRadius: 6,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          color: selected ? const Color(0xFF035880) : Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: const Color(0xFF035880).withOpacity(0.3)),
         ),
-        child: Center(
-          child: RotatedBox(
+        child: RotatedBox(
             quarterTurns: 3,
-            child: Text(
-              text,
-              style: TextStyle(
-                color: fg,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 0.5,
-              ),
-            ),
-          ),
-        ),
+            child: Center(
+                child: Text(text,
+                    style: TextStyle(
+                        color: selected ? Colors.white : Colors.black87,
+                        fontWeight: FontWeight.bold)))),
       ),
     );
   }

@@ -1,0 +1,224 @@
+import 'dart:async';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/foundation.dart';
+import '../services/database.dart';
+import '../services/supabase_service.dart';
+
+class SyncService {
+  static final SyncService _instance = SyncService._internal();
+  factory SyncService() => _instance;
+  SyncService._internal();
+
+  final AppDatabase _db = AppDatabase();
+  final SupabaseService _supabase = SupabaseService();
+  final Connectivity _connectivity = Connectivity();
+
+  StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
+  Timer? _syncTimer;
+
+  void initialize() {
+    // Escuchar cambios en conectividad
+    _connectivitySubscription = _connectivity.onConnectivityChanged.listen((results) {
+      final List<ConnectivityResult> connectivityResults = results;
+      final ConnectivityResult result = connectivityResults.isNotEmpty
+          ? connectivityResults.first
+          : ConnectivityResult.none;
+      if (result != ConnectivityResult.none) {
+        // Hay conexión, intentar sincronizar
+        syncPendingData();
+      }
+    });
+
+    // También verificar periódicamente (cada 30 segundos)
+    _syncTimer = Timer.periodic(const Duration(seconds: 30), (timer) async {
+      final List<ConnectivityResult> results = await _connectivity.checkConnectivity();
+      final ConnectivityResult result =
+          results.isNotEmpty ? results.first : ConnectivityResult.none;
+      if (result != ConnectivityResult.none) {
+        await syncPendingData();
+      }
+    });
+  }
+
+  void dispose() {
+    _connectivitySubscription?.cancel();
+    _syncTimer?.cancel();
+  }
+
+  Future<bool> hasInternetConnection() async {
+    try {
+      final List<ConnectivityResult> results = await _connectivity.checkConnectivity();
+      final ConnectivityResult result =
+          results.isNotEmpty ? results.first : ConnectivityResult.none;
+      if (result == ConnectivityResult.none) return false;
+
+      // Verificar conectividad real haciendo una petición simple
+      final response = await _supabase.client
+          .from('vehiculos')
+          .select('id')
+          .limit(1);
+
+      return response.isNotEmpty;
+    } catch (e) {
+      debugPrint('Error checking internet: $e');
+      return false;
+    }
+  }
+
+  Future<void> syncPendingData() async {
+    final results = await _connectivity.checkConnectivity();
+    final result = results.isNotEmpty ? results.first : ConnectivityResult.none;
+    if (result == ConnectivityResult.none) return;
+
+    try {
+      // Sincronizar rutas pendientes
+      await _syncPendingRoutes();
+
+      // Sincronizar actualizaciones de kms pendientes
+      await _syncPendingKmsUpdates();
+
+      debugPrint('Sincronización completada exitosamente');
+    } catch (e) {
+      debugPrint('Error en sincronización: $e');
+    }
+  }
+
+  Future<void> _syncPendingRoutes() async {
+    final pendingRoutes = await _db.getPendingRoutes();
+
+    for (final route in pendingRoutes) {
+      try {
+        await _supabase.saveRoute(
+          vehicleId: route['vehicleId'],
+          origin: route['originName'],
+          destination: route['destinationName'],
+          distance: route['distanceKm'],
+          durationSeconds: route['durationSeconds'],
+          fuelEstimated: route['consumoGalones'],
+          costEstimated: route['costoEstimado'],
+        );
+
+        // Marcar como sincronizada
+        await _db.markRouteAsSynced(route['id']);
+        debugPrint('Ruta sincronizada: ${route['id']}');
+      } catch (e) {
+        debugPrint('Error sincronizando ruta ${route['id']}: $e');
+        // Si falla, dejar para el próximo intento
+      }
+    }
+  }
+
+  Future<void> _syncPendingKmsUpdates() async {
+    final pendingUpdates = await _db.getPendingKmsUpdates();
+    debugPrint('Pendientes KMS updates: ${pendingUpdates.length}');
+
+    for (final update in pendingUpdates) {
+      try {
+        // Asegurar que kmsToAdd sea un número
+        final kmsToAddRaw = update['kmsToAdd'];
+        final kmsToAdd = kmsToAddRaw is int
+            ? kmsToAddRaw
+            : int.tryParse(kmsToAddRaw?.toString() ?? '') ?? 0;
+
+        // Obtener kms actuales del vehículo
+        final currentKms = await _supabase.getVehicleMileage(update['vehicleId']);
+        final newKms = currentKms + kmsToAdd;
+
+        // Actualizar en Supabase
+        await _supabase.updateVehicleKms(update['vehicleId'], newKms);
+
+        // Marcar como sincronizada
+        await _db.markKmsUpdateAsSynced(update['id']);
+        debugPrint('KMS update sincronizado: ${update['id']}');
+      } catch (e) {
+        debugPrint('Error sincronizando KMS update ${update['id']}: $e');
+        // Si falla, dejar para el próximo intento
+      }
+    }
+  }
+
+  // Método para guardar ruta de forma offline-first
+  Future<void> saveRouteOfflineFirst({
+    required String userId,
+    required String vehicleId,
+    required String originName,
+    required String destinationName,
+    required double distanceKm,
+    required int durationSeconds,
+    required double consumoGalones,
+    required double costoEstimado,
+  }) async {
+    final routeData = {
+      'userId': userId,
+      'vehicleId': vehicleId,
+      'originName': originName,
+      'destinationName': destinationName,
+      'distanceKm': distanceKm,
+      'durationSeconds': durationSeconds,
+      'consumoGalones': consumoGalones,
+      'costoEstimado': costoEstimado,
+      'fecha': DateTime.now().toIso8601String(),
+      'synced': 0
+    };
+
+    // Guardar localmente primero
+    await _db.insertPendingRoute(routeData);
+
+    // Intentar sincronizar inmediatamente si hay internet
+    if (await hasInternetConnection()) {
+      try {
+        await _supabase.saveRoute(
+          vehicleId: vehicleId,
+          origin: originName,
+          destination: destinationName,
+          distance: distanceKm,
+          durationSeconds: durationSeconds,
+          fuelEstimated: consumoGalones,
+          costEstimated: costoEstimado,
+        );
+
+        // Marcar como sincronizada
+        final routes = await _db.getPendingRoutes();
+        for (final route in routes) {
+          if (route['vehicleId'] == vehicleId &&
+              route['distanceKm'] == distanceKm &&
+              route['fecha'] == routeData['fecha']) {
+            await _db.markRouteAsSynced(route['id']);
+            break;
+          }
+        }
+      } catch (e) {
+        debugPrint('Error sincronizando ruta inmediatamente: $e');
+        // Queda pendiente para sincronización posterior
+      }
+    }
+  }
+
+  // Método para actualizar KMS de forma offline-first
+  Future<void> updateVehicleKmsOfflineFirst(String vehicleId, int kmsToAdd) async {
+    // Guardar localmente primero
+    await _db.insertPendingKmsUpdate(vehicleId, kmsToAdd);
+
+    // Intentar sincronizar inmediatamente si hay internet
+    if (await hasInternetConnection()) {
+      try {
+        final currentKms = await _supabase.getVehicleMileage(vehicleId);
+        final newKms = currentKms + kmsToAdd;
+        await _supabase.updateVehicleKms(vehicleId, newKms);
+
+        // Marcar como sincronizada
+        final updates = await _db.getPendingKmsUpdates();
+        for (final update in updates) {
+          if (update['vehicleId'] == vehicleId && update['kmsToAdd'] == kmsToAdd) {
+            await _db.markKmsUpdateAsSynced(update['id']);
+            debugPrint('KMS update sincronizado inmediatamente: ${update['id']}');
+            break;
+          }
+        }
+      } catch (e) {
+        debugPrint('Error sincronizando KMS update inmediatamente: $e');
+        // Queda pendiente para sincronización posterior
+      }
+    }
+  }
+}

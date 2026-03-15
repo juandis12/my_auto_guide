@@ -26,6 +26,7 @@ import 'registro_screen.dart';
 import '../vehicles/presentation/Agregar_vehiculo.dart';
 import '../vehicles/presentation/inicio_app.dart';
 import '../../core/services/supabase_service.dart';
+import '../../core/logic/performance_guard.dart';
 
 class CarRentalLoginScreen extends StatefulWidget {
   const CarRentalLoginScreen({super.key});
@@ -195,7 +196,13 @@ class _CarRentalLoginScreenState extends State<CarRentalLoginScreen> {
       body: Stack(
         children: [
           Positioned.fill(
-            child: Image.asset('assets/bg_pattern.png', fit: BoxFit.cover),
+            child: Image.asset(
+              'assets/bg_pattern.png',
+              fit: BoxFit.cover,
+              cacheWidth: PerformanceGuard().isLowEnd
+                  ? 400
+                  : null, // Reducir carga de textura
+            ),
           ),
           Center(
             child: SingleChildScrollView(
@@ -205,92 +212,200 @@ class _CarRentalLoginScreenState extends State<CarRentalLoginScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Image.asset('assets/car.png', height: 180),
-                  const SizedBox(height: 20),
                   const Text(
                     'Car Rental',
                     style: TextStyle(
-                      fontFamily: 'Montserrat',
+                      fontFamily: 'Outfit', // Usando la nueva fuente Outfit
                       fontWeight: FontWeight.bold,
-                      fontSize: 28,
-                      color: Color.fromARGB(255, 0, 0, 0),
+                      fontSize: 32,
+                      letterSpacing: 1.2,
+                      color: Colors.white,
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 8),
                   Text(
                     'Viajar, Amar un coche',
                     style: TextStyle(
                       fontSize: 16,
-                      color: const Color.fromARGB(
-                        255,
-                        0,
-                        0,
-                        0,
-                      ).withOpacity(0.85),
+                      letterSpacing: 0.5,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white.withOpacity(0.7)
+                          : Colors.black.withOpacity(0.7),
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 24),
-                  TextField(
-                    controller: emailController,
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Colors.white.withOpacity(0.9),
-                      labelText: 'E-mail',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
+                  const SizedBox(height: 40),
+
+                  // Campos de entrada con Glassmorphism suave
+                  PerformanceGuard.adaptiveBlur(
+                    borderRadius: BorderRadius.circular(16),
+                    fallbackColor:
+                        Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white.withOpacity(0.08)
+                            : Colors.black.withOpacity(0.05),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.transparent,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.white.withOpacity(0.1)
+                                    : Colors.black.withOpacity(0.1)),
+                      ),
+                      child: TextField(
+                        controller: emailController,
+                        style: TextStyle(
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black87),
+                        decoration: InputDecoration(
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 18),
+                          labelText: 'E-mail',
+                          labelStyle: TextStyle(
+                              color: Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? Colors.white.withOpacity(0.6)
+                                  : Colors.black.withOpacity(0.6)),
+                          border: InputBorder.none,
+                          prefixIcon: Icon(Icons.email_outlined,
+                              color: Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? Colors.white.withOpacity(0.6)
+                                  : Colors.black.withOpacity(0.6)),
+                        ),
+                        keyboardType: TextInputType.emailAddress,
                       ),
                     ),
-                    keyboardType: TextInputType.emailAddress,
                   ),
-                  const SizedBox(height: 18),
-                  TextField(
-                    controller: passwordController,
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Colors.white.withOpacity(0.9),
-                      labelText: 'Contraseña',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
+                  const SizedBox(height: 16),
+                  PerformanceGuard.adaptiveBlur(
+                    borderRadius: BorderRadius.circular(16),
+                    fallbackColor:
+                        Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white.withOpacity(0.08)
+                            : Colors.black.withOpacity(0.05),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.transparent,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.white.withOpacity(0.1)
+                                    : Colors.black.withOpacity(0.1)),
+                      ),
+                      child: TextField(
+                        controller: passwordController,
+                        style: TextStyle(
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black87),
+                        decoration: InputDecoration(
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 18),
+                          labelText: 'Contraseña',
+                          labelStyle: TextStyle(
+                              color: Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? Colors.white.withOpacity(0.6)
+                                  : Colors.black.withOpacity(0.6)),
+                          border: InputBorder.none,
+                          prefixIcon: Icon(Icons.lock_outline,
+                              color: Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? Colors.white.withOpacity(0.6)
+                                  : Colors.black.withOpacity(0.6)),
+                        ),
+                        obscureText: true,
                       ),
                     ),
-                    obscureText: true,
                   ),
                   const SizedBox(height: 12),
                   Row(
                     children: [
-                      Checkbox(
-                        value: rememberMe,
-                        onChanged: (value) =>
-                            setState(() => rememberMe = value ?? false),
+                      Theme(
+                        data: ThemeData(
+                            unselectedWidgetColor:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.white.withOpacity(0.5)
+                                    : Colors.black.withOpacity(0.3)),
+                        child: Checkbox(
+                          value: rememberMe,
+                          checkColor: Colors.white,
+                          activeColor: const Color(0xFF035880),
+                          onChanged: (value) =>
+                              setState(() => rememberMe = value ?? false),
+                        ),
                       ),
-                      const Text(
+                      Text(
                         'Recuerdame',
-                        style: TextStyle(color: Colors.black),
+                        style: TextStyle(
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.white.withOpacity(0.7)
+                                    : Colors.black.withOpacity(0.7)),
                       ),
                       const Spacer(),
                       TextButton(
                         onPressed: sendPasswordReset,
-                        child: const Text(
+                        child: Text(
                           'Recuperar contraseña',
                           style: TextStyle(
-                            color: Color.fromARGB(255, 3, 88, 128),
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.white.withOpacity(0.7)
+                                    : const Color(0xFF035880),
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
-                  SizedBox(
+                  const SizedBox(height: 16),
+
+                  // Botón Iniciar Sesión con gradiente armonizado
+                  Container(
                     width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      gradient: PerformanceGuard().isLowEnd
+                          ? null
+                          : const LinearGradient(
+                              colors: [Color(0xFF035880), Color(0xFF023E5A)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                      color: PerformanceGuard().isLowEnd
+                          ? const Color(0xFF035880)
+                          : null,
+                      boxShadow: [
+                        if (!PerformanceGuard().isLowEnd)
+                          BoxShadow(
+                            color: const Color(0xFF035880).withOpacity(0.3),
+                            blurRadius: 20,
+                            offset: const Offset(0, 10),
+                          ),
+                      ],
+                    ),
                     child: ElevatedButton(
                       onPressed: isLoading ? null : signIn,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(255, 3, 88, 128),
+                        backgroundColor: Colors.transparent,
+                        shadowColor: Colors.transparent,
                         foregroundColor: Colors.white,
-                        textStyle: const TextStyle(fontSize: 18),
+                        padding: const EdgeInsets.symmetric(vertical: 18),
+                        textStyle: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1,
+                        ),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(16),
                         ),
                       ),
                       child: isLoading
@@ -305,70 +420,120 @@ class _CarRentalLoginScreenState extends State<CarRentalLoginScreen> {
                           : const Text('Iniciar Sesión'),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 30),
                   Row(
-                    children: const [
+                    children: [
                       Expanded(
-                        child: Divider(color: Color.fromARGB(137, 0, 0, 0)),
+                        child: Divider(
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.white.withOpacity(0.2)
+                                    : Colors.black.withOpacity(0.1)),
                       ),
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Text(
                           'Ingresa con',
-                          style: TextStyle(color: Color.fromARGB(179, 0, 0, 0)),
+                          style: TextStyle(
+                              color: Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? Colors.white.withOpacity(0.5)
+                                  : Colors.black.withOpacity(0.5)),
                         ),
                       ),
                       Expanded(
-                        child: Divider(color: Color.fromARGB(137, 0, 0, 0)),
+                        child: Divider(
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.white.withOpacity(0.2)
+                                    : Colors.black.withOpacity(0.1)),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 20),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      IconButton(
-                        icon: Image.asset('assets/google.png'),
-                        iconSize: 40,
-                        onPressed: () {},
-                      ),
-                      IconButton(
-                        icon: Image.asset('assets/facebook.png'),
-                        iconSize: 40,
-                        onPressed: () {},
-                      ),
-                      IconButton(
-                        icon: Image.asset('assets/apple.png'),
-                        iconSize: 40,
-                        onPressed: () {},
-                      ),
+                      _SocialButton(icon: 'assets/google.png', onTap: () {}),
+                      const SizedBox(width: 24),
+                      _SocialButton(icon: 'assets/facebook.png', onTap: () {}),
+                      const SizedBox(width: 24),
+                      _SocialButton(icon: 'assets/apple.png', onTap: () {}),
                     ],
                   ),
-                  const SizedBox(height: 22),
-                  Center(
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const RegistroScreen(),
-                          ),
-                        );
-                      },
-                      child: const Text(
-                        '¿Aún no tienes cuenta? Registrarme',
+                  const SizedBox(height: 30),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const RegistroScreen()),
+                      );
+                    },
+                    child: RichText(
+                      text: TextSpan(
+                        text: '¿Aún no tienes cuenta? ',
                         style: TextStyle(
-                          color: Color.fromARGB(255, 3, 88, 128),
-                        ),
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.white.withOpacity(0.6)
+                                    : Colors.black.withOpacity(0.6)),
+                        children: [
+                          TextSpan(
+                            text: 'Registrarme',
+                            style: TextStyle(
+                              color: Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? Colors.white
+                                  : const Color(0xFF035880),
+                              fontWeight: FontWeight.bold,
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                  const SizedBox(height: 22),
+                  const SizedBox(height: 40),
                 ],
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _SocialButton extends StatelessWidget {
+  final String icon;
+  final VoidCallback onTap;
+  const _SocialButton({required this.icon, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Colors.white.withOpacity(0.05)
+              : Colors.black.withOpacity(0.03),
+          shape: BoxShape.circle,
+          border: Border.all(
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white.withOpacity(0.1)
+                  : Colors.black.withOpacity(0.1)),
+          boxShadow: [
+            if (!PerformanceGuard().isLowEnd)
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 10,
+              )
+          ],
+        ),
+        child: Image.asset(icon, height: 28),
       ),
     );
   }

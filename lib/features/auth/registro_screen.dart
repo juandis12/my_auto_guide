@@ -20,6 +20,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../core/logic/performance_guard.dart';
 
 class RegistroScreen extends StatefulWidget {
   const RegistroScreen({super.key});
@@ -46,12 +47,37 @@ class _RegistroScreenState extends State<RegistroScreen> {
   Timer? _timer;
 
   Future<void> signUp() async {
+    final nombre = nombreController.text.trim();
+    final email = emailController.text.trim();
     final password = passwordController.text.trim();
     final confirmPassword = confirmPasswordController.text.trim();
 
+    // Validaciones de entrada
+    if (nombre.length < 2) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Por favor, ingresa un nombre válido.')),
+      );
+      return;
+    }
+
+    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    if (!emailRegex.hasMatch(email)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Formato de correo electrónico no válido.')),
+      );
+      return;
+    }
+
+    if (password.length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('La contraseña debe tener al menos 6 caracteres.')),
+      );
+      return;
+    }
+
     if (password != confirmPassword) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Las contraseñas no coinciden')),
+        const SnackBar(content: Text('Las contraseñas no coinciden.')),
       );
       return;
     }
@@ -240,7 +266,11 @@ class _RegistroScreenState extends State<RegistroScreen> {
       body: Stack(
         children: [
           Positioned.fill(
-            child: Image.asset('assets/bg_pattern.png', fit: BoxFit.cover),
+            child: Image.asset(
+              'assets/bg_pattern.png', 
+              fit: BoxFit.cover,
+              cacheWidth: PerformanceGuard().isLowEnd ? 400 : null,
+            ),
           ),
           Center(
             child: SingleChildScrollView(
@@ -249,15 +279,19 @@ class _RegistroScreenState extends State<RegistroScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Image.asset('assets/car.png', height: 180),
+                  Image.asset(
+                    'assets/car.png', 
+                    height: 180,
+                    cacheHeight: PerformanceGuard().isLowEnd ? 180 : null,
+                  ),
                   const SizedBox(height: 20),
-                  const Text(
+                  Text(
                     'Registrarme',
                     style: TextStyle(
                       fontFamily: 'Montserrat',
                       fontWeight: FontWeight.bold,
                       fontSize: 28,
-                      color: Color.fromARGB(255, 0, 0, 0),
+                      color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -266,12 +300,9 @@ class _RegistroScreenState extends State<RegistroScreen> {
                     'Crea tu cuenta',
                     style: TextStyle(
                       fontSize: 16,
-                      color: const Color.fromARGB(
-                        255,
-                        0,
-                        0,
-                        0,
-                      ).withOpacity(0.85),
+                      color: Theme.of(context).brightness == Brightness.dark 
+                          ? Colors.white70 
+                          : Colors.black.withOpacity(0.85),
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -283,21 +314,31 @@ class _RegistroScreenState extends State<RegistroScreen> {
                       padding: const EdgeInsets.all(12),
                       margin: const EdgeInsets.only(bottom: 16),
                       decoration: BoxDecoration(
-                        color: Colors.blue.shade50,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.blue.shade200),
+                        color: Theme.of(context).brightness == Brightness.dark 
+                            ? Colors.blue.withOpacity(0.1) 
+                            : Colors.blue.shade50,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: Theme.of(context).brightness == Brightness.dark 
+                              ? Colors.blue.withOpacity(0.3) 
+                              : Colors.blue.shade200
+                        ),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                           Text(
                             'Confirma tu correo para continuar',
-                            style: theme.textTheme.titleMedium,
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.blue.shade900,
+                            ),
                           ),
                           const SizedBox(height: 6),
                           Text(
                             'Tiempo restante: $secondsLeft s',
-                            style: theme.textTheme.bodyMedium,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: Theme.of(context).brightness == Brightness.dark ? Colors.white70 : Colors.blue.shade700,
+                            ),
                           ),
                           const SizedBox(height: 10),
                           Row(
@@ -343,58 +384,34 @@ class _RegistroScreenState extends State<RegistroScreen> {
                       ),
                     ),
 
-                  TextField(
+                  _buildRegistrarTextField(
                     controller: nombreController,
+                    label: 'Nombre',
+                    icon: Icons.person_outline,
                     enabled: !waitingForConfirm,
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Colors.white.withOpacity(0.9),
-                      labelText: 'Nombre',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
                   ),
-                  const SizedBox(height: 18),
-                  TextField(
+                  const SizedBox(height: 14),
+                  _buildRegistrarTextField(
                     controller: emailController,
+                    label: 'E-mail',
+                    icon: Icons.email_outlined,
                     enabled: !waitingForConfirm || canSwitchEmail,
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Colors.white.withOpacity(0.9),
-                      labelText: 'E-mail',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
                     keyboardType: TextInputType.emailAddress,
                   ),
-                  const SizedBox(height: 18),
-                  TextField(
+                  const SizedBox(height: 14),
+                  _buildRegistrarTextField(
                     controller: passwordController,
+                    label: 'Contraseña',
+                    icon: Icons.lock_outline,
                     enabled: !waitingForConfirm || canSwitchEmail,
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Colors.white.withOpacity(0.9),
-                      labelText: 'Contraseña',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
                     obscureText: true,
                   ),
-                  const SizedBox(height: 18),
-                  TextField(
+                  const SizedBox(height: 14),
+                  _buildRegistrarTextField(
                     controller: confirmPasswordController,
+                    label: 'Confirmar Contraseña',
+                    icon: Icons.lock_reset_outlined,
                     enabled: !waitingForConfirm || canSwitchEmail,
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Colors.white.withOpacity(0.9),
-                      labelText: 'Confirmar Contraseña',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
                     obscureText: true,
                   ),
                   const SizedBox(height: 16),
@@ -407,6 +424,7 @@ class _RegistroScreenState extends State<RegistroScreen> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color.fromARGB(255, 3, 88, 128),
                         foregroundColor: Colors.white,
+                        elevation: PerformanceGuard().isLowEnd ? 0 : 2, // Eliminar elevación en gama baja
                         textStyle: const TextStyle(fontSize: 18),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
@@ -423,6 +441,41 @@ class _RegistroScreenState extends State<RegistroScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildRegistrarTextField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    bool enabled = true,
+    bool obscureText = false,
+    TextInputType keyboardType = TextInputType.text,
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? Colors.white.withOpacity(0.08) : Colors.white.withOpacity(0.9),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isDark ? Colors.white.withOpacity(0.2) : Colors.black.withOpacity(0.1),
+        ),
+        boxShadow: const [], // No shadows in entry fields for performance
+      ),
+      child: TextField(
+        controller: controller,
+        enabled: enabled,
+        obscureText: obscureText,
+        keyboardType: keyboardType,
+        style: TextStyle(color: isDark ? Colors.white : Colors.black87),
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: TextStyle(color: isDark ? Colors.white70 : Colors.black54),
+          prefixIcon: Icon(icon, color: isDark ? Colors.white70 : const Color(0xFF035880)),
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        ),
       ),
     );
   }

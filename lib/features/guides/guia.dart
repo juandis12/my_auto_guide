@@ -27,11 +27,9 @@
 // =============================================================================
 
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:vision_gallery_saver/vision_gallery_saver.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -43,27 +41,35 @@ class GuiaScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Scaffold(
+      backgroundColor: isDark ? const Color(0xFF121212) : const Color(0xFFF5F7FA),
       appBar: AppBar(
-        title: const Text('Guía de Seguridad Vial'),
-        backgroundColor: Colors.white,
-        elevation: 0.5,
-        foregroundColor: Colors.black87,
+        title: const Text(
+          'Guía de Seguridad Vial',
+          style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 0.5),
+        ),
+        backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        elevation: 0,
+        centerTitle: true,
+        foregroundColor: isDark ? Colors.white : Colors.black87,
       ),
       body: ListView(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         children: [
           _OpcionCard(
-            icon: Icons.car_crash,
+            icon: Icons.car_crash_outlined,
             titulo: 'Accidente Leve',
-            color: Colors.blueAccent,
+            subtitulo: 'Gestión de incidentes menores',
+            color: const Color(0xFF42A5F5), // Azul armónico
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (_) => const AccidenteScreen(
                     tipo: 'leve',
-                    color: Colors.blueAccent,
+                    color: Color(0xFF42A5F5),
                     pasos: [
                       'Mantén la calma y verifica que todos estén bien.',
                       'Muévete a un lugar seguro para evitar otro accidente.',
@@ -78,16 +84,17 @@ class GuiaScreen extends StatelessWidget {
             },
           ),
           _OpcionCard(
-            icon: Icons.warning_rounded,
+            icon: Icons.warning_amber_rounded,
             titulo: 'Accidente Grave',
-            color: Colors.redAccent,
+            subtitulo: 'Protocolo de emergencia crítica',
+            color: const Color(0xFFFF7043), // Naranja-rojo armónico
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (_) => const AccidenteScreen(
                     tipo: 'grave',
-                    color: Colors.redAccent,
+                    color: Color(0xFFFF7043),
                     pasos: [
                       'Mantén la calma y evalúa tu seguridad.',
                       'Llama a los servicios de emergencia de inmediato.',
@@ -102,16 +109,17 @@ class GuiaScreen extends StatelessWidget {
             },
           ),
           _OpcionCard(
-            icon: Icons.cloud,
+            icon: Icons.umbrella_outlined,
             titulo: 'Clima Lluvioso',
-            color: Colors.teal,
+            subtitulo: 'Consejos para asfalto mojado',
+            color: const Color(0xFF26A69A), // Teal armónico
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (_) => const AccidenteScreen(
                     tipo: 'lluvia',
-                    color: Colors.teal,
+                    color: Color(0xFF26A69A),
                     pasos: [
                       'Reduce la velocidad y aumenta la distancia de seguridad.',
                       'Enciende las luces bajas para mayor visibilidad.',
@@ -125,63 +133,68 @@ class GuiaScreen extends StatelessWidget {
             },
           ),
           _OpcionCard(
-            icon: Icons.route,
+            icon: Icons.map_outlined,
             titulo: 'Viaje Largo',
-            color: Colors.orangeAccent,
+            subtitulo: 'Preparación para carretera',
+            color: const Color(0xFFFFA726), // Ámbar armónico
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (_) => const AccidenteScreen(
                     tipo: 'viaje',
-                    color: Colors.orangeAccent,
+                    color: Color(0xFFFFA726),
                     pasos: [
-                      'Verifica el estado del vehículo antes de salir (luces, frenos, llantas).',
+                      'Verifica el estado del vehículo antes de salir.',
                       'Asegúrate de descansar bien antes del viaje.',
-                      'Planea tus paradas cada 2 horas para estirarte y descansar.',
+                      'Planea tus paradas cada 2 horas.',
                       'Lleva agua, botiquín, y herramientas básicas.',
-                      'Usa cinturón de seguridad siempre y evita distracciones.',
-                      'Mantente atento al clima y condiciones de la carretera.',
+                      'Usa cinturón de seguridad siempre.',
+                      'Mantente atento al clima y condiciones.',
                     ],
                   ),
                 ),
               );
             },
           ),
-          const SizedBox(height: 30),
-          const Padding(
-            padding: EdgeInsets.only(left: 8.0, bottom: 15.0),
-            child: Text(
-              'Video Tutoriales',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
+          const SizedBox(height: 32),
+          Padding(
+            padding: const EdgeInsets.only(left: 4.0, bottom: 16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Video Tutoriales',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white : Colors.black87,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                Container(
+                  margin: const EdgeInsets.only(top: 4),
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF035880),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ],
             ),
           ),
-          // Puedes poner más links de YouTube agregando más tarjetas _VideoTutorialCard aquí
-          // Solo pega el link completo de YouTube en el campo 'url'
           const _VideoTutorialCard(
             url: 'https://youtu.be/C0AkRhAwKzU?si=xKcXHaK218qjJUdI',
             titulo: 'Cómo cambiar el aceite',
           ),
           const _VideoTutorialCard(
             url: 'https://youtu.be/8DAbvfPURz8?si=AZdWU7bOeVxROT-z',
-            titulo: 'Revisión de líquidos y niveles del vehículo',
+            titulo: 'Revisión de líquidos y niveles',
           ),
           const _VideoTutorialCard(
             url: 'https://youtu.be/j3EqmPwY9oc?si=_hNNHQbjpUZitlAb',
-            titulo: 'Qué hacer en caso de accidente de tránsito',
-          ),
-          const _VideoTutorialCard(
-            url: 'https://youtu.be/r6VAKTDIggY?si=hJSTIJySLm5wCSzW',
-            titulo: 'Como Lubricar Las Guayas De La Motocicleta Hazlo Tu Mismo',
-          ),
-          const _VideoTutorialCard(
-            url: 'https://youtu.be/xAnMqIzCSdQ?si=UF4rbwTA_HgYk6DV',
-            titulo:
-                'Cambio o Purga del Liquido de Frenos de Moto - Freno Delantero',
+            titulo: 'Qué hacer en caso de accidente',
           ),
         ],
       ),
@@ -189,39 +202,88 @@ class GuiaScreen extends StatelessWidget {
   }
 }
 
-// -------------------------------------------------------------
-// Tarjeta de opciones principales
-// -------------------------------------------------------------
 class _OpcionCard extends StatelessWidget {
   final IconData icon;
   final String titulo;
+  final String subtitulo;
   final Color color;
   final VoidCallback onTap;
 
   const _OpcionCard({
     required this.icon,
     required this.titulo,
+    required this.subtitulo,
     required this.color,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 2,
-      margin: const EdgeInsets.symmetric(vertical: 10),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: color.withOpacity(0.15),
-          child: Icon(icon, color: color),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(isDark ? 0.3 : 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(icon, color: color, size: 28),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        titulo,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: isDark ? Colors.white : Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        subtitulo,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: isDark ? Colors.white60 : Colors.black54,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  Icons.arrow_forward_ios,
+                  size: 16,
+                  color: isDark ? Colors.white24 : Colors.black12,
+                ),
+              ],
+            ),
+          ),
         ),
-        title: Text(
-          titulo,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        trailing: const Icon(Icons.chevron_right),
-        onTap: onTap,
       ),
     );
   }
@@ -307,35 +369,6 @@ class _AccidenteScreenState extends State<AccidenteScreen> {
     await _guardarDatos();
   }
 
-  // ------------------ GUARDAR EN GALERÍA ------------------
-  Future<void> _guardarEnGaleria(File file) async {
-    try {
-      final Uint8List bytes = await file.readAsBytes();
-      final result = await VisionGallerySaver.saveImage(
-        bytes,
-        quality: 100,
-        name: 'guia_${widget.tipo}_${DateTime.now().millisecondsSinceEpoch}',
-      );
-
-      final bool success = (result is Map &&
-              (result['isSuccess'] == true || result['success'] == true)) ||
-          (result == true);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            success
-                ? 'Imagen guardada en galería ✅'
-                : 'No se pudo guardar la imagen',
-          ),
-        ),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error al guardar imagen: $e')));
-    }
-  }
-
   // ------------------ MARCAR PASO ------------------
   void _togglePaso(int index) async {
     setState(() => pasosCompletos[index] = !pasosCompletos[index]);
@@ -344,7 +377,11 @@ class _AccidenteScreenState extends State<AccidenteScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryColor = widget.color.withOpacity(0.9);
+
     return Scaffold(
+      backgroundColor: isDark ? const Color(0xFF121212) : const Color(0xFFF5F7FA),
       appBar: AppBar(
         title: Text(
           widget.tipo == 'leve'
@@ -354,90 +391,165 @@ class _AccidenteScreenState extends State<AccidenteScreen> {
                   : widget.tipo == 'lluvia'
                       ? 'Conducción con Lluvia'
                       : 'Viaje Largo',
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
-        backgroundColor: Colors.white,
-        elevation: 0.5,
-        foregroundColor: Colors.black87,
+        centerTitle: true,
+        backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        elevation: 0,
+        foregroundColor: isDark ? Colors.white : Colors.black87,
       ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(20),
-        itemCount: widget.pasos.length,
-        itemBuilder: (context, index) {
-          final esFotoPaso = widget.pasos[index].contains('fotos');
-          return _PasoCard(
-            titulo: widget.pasos[index],
-            color: widget.color,
-            completado: pasosCompletos[index],
-            onToggle: () => _togglePaso(index),
-            contenidoExtra: esFotoPaso
-                ? Column(
-                    children: [
-                      const SizedBox(height: 10),
-                      ElevatedButton.icon(
-                        onPressed: _tomarFoto,
-                        icon: const Icon(Icons.camera_alt),
-                        label: const Text('Tomar Foto'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: widget.color,
-                          foregroundColor: Colors.white,
+      body: CustomScrollView(
+        physics: const BouncingScrollPhysics(),
+        slivers: [
+          // Banner informativo superior
+          SliverToBoxAdapter(
+            child: Container(
+              margin: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [primaryColor, primaryColor.withOpacity(0.7)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: primaryColor.withOpacity(0.3),
+                    blurRadius: 15,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                   Icon(
+                    widget.tipo == 'grave' ? Icons.emergency : Icons.info_outline,
+                    color: Colors.white,
+                    size: 40,
+                  ),
+                  const SizedBox(width: 16),
+                  const Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Guía de Acción',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 10),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: List.generate(_imagenes.length, (i) {
-                          final img = _imagenes[i];
-                          return Stack(
+                        SizedBox(height: 4),
+                        Text(
+                          'Sigue estos pasos para gestionar la situación correctamente.',
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          
+          // Lista de pasos
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            sliver: SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  final esFotoPaso = widget.pasos[index].contains('fotos');
+                  return _PasoCard(
+                    titulo: widget.pasos[index],
+                    color: primaryColor,
+                    completado: pasosCompletos[index],
+                    onToggle: () => _togglePaso(index),
+                    index: index + 1,
+                    contenidoExtra: esFotoPaso
+                        ? Column(
                             children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
-                                child: Image.file(
-                                  img,
-                                  width: 100,
-                                  height: 100,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                              Positioned(
-                                right: 0,
-                                top: 0,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.black54,
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      IconButton(
-                                        icon: const Icon(
-                                          Icons.download,
-                                          color: Colors.white,
-                                          size: 18,
-                                        ),
-                                        onPressed: () => _guardarEnGaleria(img),
-                                      ),
-                                      IconButton(
-                                        icon: const Icon(
-                                          Icons.delete,
-                                          color: Colors.redAccent,
-                                          size: 18,
-                                        ),
-                                        onPressed: () => _eliminarFoto(i),
-                                      ),
-                                    ],
+                              const SizedBox(height: 16),
+                              SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton.icon(
+                                  onPressed: _tomarFoto,
+                                  icon: const Icon(Icons.camera_alt_outlined),
+                                  label: const Text('Tomar Evidencia Fotográfica'),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: primaryColor,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(vertical: 14),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    elevation: 0,
                                   ),
                                 ),
                               ),
+                              if (_imagenes.isNotEmpty) ...[
+                                const SizedBox(height: 16),
+                                SizedBox(
+                                  height: 120,
+                                  child: ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: _imagenes.length,
+                                    itemBuilder: (context, i) {
+                                      final img = _imagenes[i];
+                                      return Padding(
+                                        padding: const EdgeInsets.only(right: 12),
+                                        child: Stack(
+                                          children: [
+                                            ClipRRect(
+                                              borderRadius: BorderRadius.circular(12),
+                                              child: Image.file(
+                                                img,
+                                                width: 120,
+                                                height: 120,
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                            Positioned(
+                                              right: 4,
+                                              top: 4,
+                                              child: InkWell(
+                                                onTap: () => _eliminarFoto(i),
+                                                child: Container(
+                                                  padding: const EdgeInsets.all(4),
+                                                  decoration: const BoxDecoration(
+                                                    color: Colors.white,
+                                                    shape: BoxShape.circle,
+                                                  ),
+                                                  child: const Icon(
+                                                    Icons.close,
+                                                    size: 16,
+                                                    color: Colors.red,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
                             ],
-                          );
-                        }),
-                      ),
-                    ],
-                  )
-                : null,
-          );
-        },
+                          )
+                        : null,
+                  );
+                },
+                childCount: widget.pasos.length,
+              ),
+            ),
+          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 40)),
+        ],
       ),
     );
   }
@@ -452,69 +564,94 @@ class _PasoCard extends StatelessWidget {
   final bool completado;
   final VoidCallback onToggle;
   final Widget? contenidoExtra;
+  final int index;
 
   const _PasoCard({
     required this.titulo,
     required this.color,
     required this.completado,
     required this.onToggle,
+    required this.index,
     this.contenidoExtra,
   });
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
-      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        boxShadow: const [
+        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
           BoxShadow(
-            color: Color(0x11000000),
-            blurRadius: 4,
-            offset: Offset(0, 2),
+            color: Colors.black.withOpacity(isDark ? 0.3 : 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
+        border: Border.all(
+          color: completado ? color.withOpacity(0.3) : Colors.transparent,
+          width: 1.5,
+        ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              GestureDetector(
-                onTap: onToggle,
-                child: Container(
-                  width: 24,
-                  height: 24,
-                  margin: const EdgeInsets.only(right: 12),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: color, width: 2),
-                    color: completado ? color : Colors.transparent,
-                  ),
-                  child: completado
-                      ? const Icon(Icons.check, size: 16, color: Colors.white)
-                      : null,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onToggle,
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 28,
+                      height: 28,
+                      decoration: BoxDecoration(
+                        color: completado ? color : color.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Center(
+                        child: completado
+                            ? const Icon(Icons.check, size: 18, color: Colors.white)
+                            : Text(
+                                '$index',
+                                style: TextStyle(
+                                  color: color,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                              ),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Text(
+                        titulo,
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                          color: isDark ? Colors.white : Colors.black87,
+                          decoration: completado ? TextDecoration.lineThrough : null,
+                          decorationColor: color.withOpacity(0.5),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              Expanded(
-                child: Text(
-                  titulo,
-                  style: TextStyle(
-                    color: color,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 15,
-                  ),
-                ),
-              ),
-            ],
+                if (contenidoExtra != null) ...[
+                  const SizedBox(height: 4),
+                  contenidoExtra!,
+                ],
+              ],
+            ),
           ),
-          if (contenidoExtra != null) ...[
-            const SizedBox(height: 10),
-            contenidoExtra!,
-          ],
-        ],
+        ),
       ),
     );
   }
@@ -598,7 +735,7 @@ class _VideoTutorialCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.3),
+                        color: Colors.black.withOpacity(0.3),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),

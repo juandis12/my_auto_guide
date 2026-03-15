@@ -1,0 +1,31 @@
+<variant
+    name="release"
+    package="io.flutter.plugins.webviewflutter"
+    minSdkVersion="19"
+    targetSdkVersion="19"
+    mergedManifest="D:\my_auto_guide\build_prod\webview_flutter_android\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml"
+    manifestMergeReport="D:\my_auto_guide\build_prod\webview_flutter_android\outputs\logs\manifest-merger-release-report.txt"
+    proguardFiles="D:\my_auto_guide\build_prod\webview_flutter_android\intermediates\default_proguard_files\global\proguard-android.txt-8.9.1"
+    partialResultsDir="D:\my_auto_guide\build_prod\webview_flutter_android\intermediates\lint_partial_results\release\lintAnalyzeRelease\out">
+  <buildFeatures
+      namespacing="REQUIRED"/>
+  <sourceProviders>
+    <sourceProvider
+        manifests="src\main\AndroidManifest.xml"
+        javaDirectories="src\main\java;src\release\java;src\main\kotlin;src\release\kotlin"
+        resDirectories="src\main\res;src\release\res"
+        assetsDirectories="src\main\assets;src\release\assets"/>
+  </sourceProviders>
+  <testSourceProviders>
+  </testSourceProviders>
+  <testFixturesSourceProviders>
+  </testFixturesSourceProviders>
+  <artifact
+      classOutputs="D:\my_auto_guide\build_prod\webview_flutter_android\intermediates\javac\release\compileReleaseJavaWithJavac\classes;D:\my_auto_guide\build_prod\webview_flutter_android\intermediates\compile_r_class_jar\release\generateReleaseRFile\R.jar"
+      type="MAIN"
+      applicationId="io.flutter.plugins.webviewflutter"
+      generatedSourceFolders="D:\my_auto_guide\build_prod\webview_flutter_android\generated\ap_generated_sources\release\out"
+      generatedResourceFolders="D:\my_auto_guide\build_prod\webview_flutter_android\generated\res\resValues\release"
+      desugaredMethodsFiles="D:\gradle_home\caches\8.12\transforms\eab1b7b116ee7862f64f36f507528a11\transformed\D8BackportedDesugaredMethods.txt">
+  </artifact>
+</variant>

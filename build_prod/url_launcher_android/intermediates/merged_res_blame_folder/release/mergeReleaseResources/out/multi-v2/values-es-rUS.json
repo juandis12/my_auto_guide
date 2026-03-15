@@ -1,0 +1,82 @@
+{
+    "logs": [
+        {
+            "outputFile": "io.flutter.plugins.urllauncher.url_launcher_android-release-27:/values-es-rUS/values-es-rUS.xml",
+            "map": [
+                {
+                    "source": "D:\\gradle_home\\caches\\8.12\\transforms\\071918798833ad8f8a3cad7a9089f648\\transformed\\core-1.17.0\\res\\values-es-rUS\\values-es-rUS.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,154,256,356,454,561,667,787",
+                        "endColumns": "98,101,99,97,106,105,119,100",
+                        "endOffsets": "149,251,351,449,556,662,782,883"
+                    },
+                    "to": {
+                        "startLines": "2,3,4,5,6,7,8,13",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,154,256,356,454,561,667,1219",
+                        "endColumns": "98,101,99,97,106,105,119,100",
+                        "endOffsets": "149,251,351,449,556,662,782,1315"
+                    }
+                },
+                {
+                    "source": "D:\\gradle_home\\caches\\8.12\\transforms\\d5ba8a3f3d18f4b413ccbb814eeac7c7\\transformed\\browser-1.9.0\\res\\values-es-rUS\\values-es-rUS.xml",
+                    "from": {
+                        "startLines": "2,3,4,5",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "55,164,266,381",
+                        "endColumns": "108,101,114,105",
+                        "endOffsets": "159,261,376,482"
+                    },
+                    "to": {
+                        "startLines": "9,10,11,12",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "787,896,998,1113",
+                        "endColumns": "108,101,114,105",
+                        "endOffsets": "891,993,1108,1214"
+                    }
+                }
+            ]
+        },
+        {
+            "outputFile": "io.flutter.plugins.urllauncher.url_launcher_android-mergeReleaseResources-25:/values-es-rUS/values-es-rUS.xml",
+            "map": [
+                {
+                    "source": "D:\\gradle_home\\caches\\8.12\\transforms\\071918798833ad8f8a3cad7a9089f648\\transformed\\core-1.17.0\\res\\values-es-rUS\\values-es-rUS.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,154,256,356,454,561,667,787",
+                        "endColumns": "98,101,99,97,106,105,119,100",
+                        "endOffsets": "149,251,351,449,556,662,782,883"
+                    },
+                    "to": {
+                        "startLines": "2,3,4,5,6,7,8,13",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,154,256,356,454,561,667,1219",
+                        "endColumns": "98,101,99,97,106,105,119,100",
+                        "endOffsets": "149,251,351,449,556,662,782,1315"
+                    }
+                },
+                {
+                    "source": "D:\\gradle_home\\caches\\8.12\\transforms\\d5ba8a3f3d18f4b413ccbb814eeac7c7\\transformed\\browser-1.9.0\\res\\values-es-rUS\\values-es-rUS.xml",
+                    "from": {
+                        "startLines": "2,3,4,5",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "55,164,266,381",
+                        "endColumns": "108,101,114,105",
+                        "endOffsets": "159,261,376,482"
+                    },
+                    "to": {
+                        "startLines": "9,10,11,12",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "787,896,998,1113",
+                        "endColumns": "108,101,114,105",
+                        "endOffsets": "891,993,1108,1214"
+                    }
+                }
+            ]
+        }
+    ]
+}

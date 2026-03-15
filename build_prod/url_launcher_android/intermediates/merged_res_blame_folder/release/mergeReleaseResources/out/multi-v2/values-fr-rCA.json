@@ -1,0 +1,82 @@
+{
+    "logs": [
+        {
+            "outputFile": "io.flutter.plugins.urllauncher.url_launcher_android-mergeReleaseResources-25:/values-fr-rCA/values-fr-rCA.xml",
+            "map": [
+                {
+                    "source": "D:\\gradle_home\\caches\\8.12\\transforms\\d5ba8a3f3d18f4b413ccbb814eeac7c7\\transformed\\browser-1.9.0\\res\\values-fr-rCA\\values-fr-rCA.xml",
+                    "from": {
+                        "startLines": "2,3,4,5",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "55,162,264,383",
+                        "endColumns": "106,101,118,104",
+                        "endOffsets": "157,259,378,483"
+                    },
+                    "to": {
+                        "startLines": "9,10,11,12",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "778,885,987,1106",
+                        "endColumns": "106,101,118,104",
+                        "endOffsets": "880,982,1101,1206"
+                    }
+                },
+                {
+                    "source": "D:\\gradle_home\\caches\\8.12\\transforms\\071918798833ad8f8a3cad7a9089f648\\transformed\\core-1.17.0\\res\\values-fr-rCA\\values-fr-rCA.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,153,255,354,456,560,664,778",
+                        "endColumns": "97,101,98,101,103,103,113,100",
+                        "endOffsets": "148,250,349,451,555,659,773,874"
+                    },
+                    "to": {
+                        "startLines": "2,3,4,5,6,7,8,13",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,153,255,354,456,560,664,1211",
+                        "endColumns": "97,101,98,101,103,103,113,100",
+                        "endOffsets": "148,250,349,451,555,659,773,1307"
+                    }
+                }
+            ]
+        },
+        {
+            "outputFile": "io.flutter.plugins.urllauncher.url_launcher_android-release-27:/values-fr-rCA/values-fr-rCA.xml",
+            "map": [
+                {
+                    "source": "D:\\gradle_home\\caches\\8.12\\transforms\\d5ba8a3f3d18f4b413ccbb814eeac7c7\\transformed\\browser-1.9.0\\res\\values-fr-rCA\\values-fr-rCA.xml",
+                    "from": {
+                        "startLines": "2,3,4,5",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "55,162,264,383",
+                        "endColumns": "106,101,118,104",
+                        "endOffsets": "157,259,378,483"
+                    },
+                    "to": {
+                        "startLines": "9,10,11,12",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "778,885,987,1106",
+                        "endColumns": "106,101,118,104",
+                        "endOffsets": "880,982,1101,1206"
+                    }
+                },
+                {
+                    "source": "D:\\gradle_home\\caches\\8.12\\transforms\\071918798833ad8f8a3cad7a9089f648\\transformed\\core-1.17.0\\res\\values-fr-rCA\\values-fr-rCA.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,153,255,354,456,560,664,778",
+                        "endColumns": "97,101,98,101,103,103,113,100",
+                        "endOffsets": "148,250,349,451,555,659,773,874"
+                    },
+                    "to": {
+                        "startLines": "2,3,4,5,6,7,8,13",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,153,255,354,456,560,664,1211",
+                        "endColumns": "97,101,98,101,103,103,113,100",
+                        "endOffsets": "148,250,349,451,555,659,773,1307"
+                    }
+                }
+            ]
+        }
+    ]
+}

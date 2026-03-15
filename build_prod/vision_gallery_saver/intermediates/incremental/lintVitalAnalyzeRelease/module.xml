@@ -1,0 +1,19 @@
+<lint-module
+    format="1"
+    dir="C:\Users\juand\AppData\Local\Pub\Cache\hosted\pub.dev\vision_gallery_saver-3.1.1\android"
+    name=":vision_gallery_saver"
+    type="LIBRARY"
+    maven="com.thenoumandev.vision_gallery_saver:vision_gallery_saver:1.0-SNAPSHOT"
+    agpVersion="8.9.1"
+    buildFolder="D:\my_auto_guide\build_prod\vision_gallery_saver"
+    bootClassPath="C:\Users\juand\AppData\Local\Android\sdk\platforms\android-34\android.jar;C:\Users\juand\AppData\Local\Android\sdk\build-tools\35.0.0\core-lambda-stubs.jar"
+    javaSourceLevel="17"
+    compileTarget="android-34"
+    neverShrinking="true">
+  <lintOptions
+      abortOnError="true"
+      absolutePaths="true"
+      checkReleaseBuilds="true"
+      explainIssues="true"/>
+  <variant name="release"/>
+</lint-module>

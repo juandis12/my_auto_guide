@@ -140,23 +140,6 @@ class _AgregarCarroScreenState extends State<AgregarCarroScreen> {
     });
   }
 
-  void _irSiguiente() {
-    final next = (indexModelo + 1).clamp(0, modelosDeMarca.length - 1);
-    _page.animateToPage(
-      next,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    );
-  }
-
-  void _irAnterior() {
-    final prev = (indexModelo - 1).clamp(0, modelosDeMarca.length - 1);
-    _page.animateToPage(
-      prev,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    );
-  }
 
   // Guardar en Supabase y navegar
   Future<void> _guardarVehiculo() async {
@@ -217,13 +200,9 @@ class _AgregarCarroScreenState extends State<AgregarCarroScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: 0,
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-      ),
+          toolbarHeight: 0, elevation: 0, backgroundColor: Colors.transparent),
       body: Stack(
         children: [
-          // Fondo
           Positioned(
             top: 0,
             left: 0,
@@ -239,129 +218,82 @@ class _AgregarCarroScreenState extends State<AgregarCarroScreen> {
               ),
             ),
           ),
-          // Contenido
           SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 10),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 6),
-                const Text(
-                  'Agrega Tu Carro',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                Text(
+                  'Mi Garaje',
+                  style: TextStyle(
+                    fontFamily: 'Outfit',
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white
+                        : Colors.black87,
+                  ),
                 ),
-                const SizedBox(height: 10),
-
-                // Header
+                Text(
+                  'Registra tu vehículo para empezar',
+                  style: TextStyle(
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white70
+                        : Colors.black54,
+                    fontSize: 16,
+                  ),
+                ),
+                const SizedBox(height: 12),
                 SizedBox(
                   height: headerHeight,
-                  width: double.infinity,
                   child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Tabs
-                      SizedBox(
-                        height: headerHeight,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const _SideTab(
-                              text: 'Carro',
-                              selected: true,
-                              onTap: null,
-                            ),
-                            const SizedBox(),
-                            _SideTab(
-                              text: 'Moto',
-                              selected: false,
-                              onTap: () {
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const AgregarVehiculoScreen(),
-                                  ),
-                                );
-                              },
-                            ),
-                          ],
-                        ),
+                      Column(
+                        children: [
+                          const _SideTab(text: 'Carro', selected: true),
+                          _SideTab(
+                            text: 'Moto',
+                            selected: false,
+                            onTap: () => Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) =>
+                                        const AgregarVehiculoScreen())),
+                          ),
+                        ],
                       ),
                       const SizedBox(width: 10),
-
-                      // Carrusel
                       Expanded(
-                        child: Stack(
-                          children: [
-                            PageView.builder(
-                              controller: _page,
-                              itemCount: modelosDeMarca.length,
-                              onPageChanged: (i) =>
-                                  setState(() => indexModelo = i),
-                              itemBuilder: (context, i) {
-                                final img = modelosDeMarca[i]['img']!;
-                                return Center(
-                                  child: Image.asset(
-                                    img,
-                                    fit: BoxFit.contain,
-                                    height: double.infinity,
-                                  ),
-                                );
-                              },
-                            ),
-                            Positioned(
-                              right: 6,
-                              top: 6,
-                              child: IconButton(
-                                onPressed: _irSiguiente,
-                                icon: const Icon(Icons.chevron_right),
-                                color: Colors.black54,
-                                style: IconButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                ),
-                              ),
-                            ),
-                            Positioned(
-                              left: 6,
-                              top: 6,
-                              child: IconButton(
-                                onPressed: _irAnterior,
-                                icon: const Icon(Icons.chevron_left),
-                                color: Colors.black54,
-                                style: IconButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ],
+                        child: PageView.builder(
+                          controller: _page,
+                          itemCount: modelosDeMarca.length,
+                          onPageChanged: (i) => setState(() => indexModelo = i),
+                          itemBuilder: (context, i) {
+                            final img = modelosDeMarca[i]['img']!;
+                            return Hero(
+                              tag: 'vehicle_main_image',
+                              child: Image.asset(img, fit: BoxFit.contain),
+                            );
+                          },
                         ),
                       ),
                     ],
                   ),
                 ),
-
                 const SizedBox(height: 10),
-                Text(
-                  modeloActual,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                ),
+                Text(modeloActual,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 18)),
                 const SizedBox(height: 12),
-
-                // Logos
                 SizedBox(
                   height: 100,
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.symmetric(horizontal: 6),
+                    itemCount: logos.length,
+                    separatorBuilder: (_, __) => const SizedBox(width: 14),
                     itemBuilder: (context, index) {
                       final marca = logos.keys.elementAt(index);
                       final selected = marcaSeleccionada == marca;
-                      final logoPath = logos[marca]!;
-                      final highlight = brandColors[marca] ?? Colors.blue;
-
                       return GestureDetector(
                         onTap: () => _cambiarMarca(marca),
                         child: Column(
@@ -371,81 +303,37 @@ class _AgregarCarroScreenState extends State<AgregarCarroScreen> {
                               height: 64,
                               decoration: BoxDecoration(
                                 color: selected
-                                    ? highlight.withOpacity(0.10)
+                                    ? (brandColors[marca] ?? Colors.blue)
+                                        .withOpacity(0.1)
                                     : Colors.white,
                                 borderRadius: BorderRadius.circular(14),
                                 border: Border.all(
-                                  color: selected
-                                      ? highlight
-                                      : Colors.grey.shade300,
-                                  width: selected ? 2.5 : 2,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.06),
-                                    blurRadius: 6,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
+                                    color: selected
+                                        ? (brandColors[marca] ?? Colors.blue)
+                                        : Colors.grey.shade300,
+                                    width: 2),
                               ),
                               padding: const EdgeInsets.all(6),
-                              child: Image.asset(logoPath, fit: BoxFit.contain),
+                              child: Image.asset(logos[marca]!,
+                                  fit: BoxFit.contain),
                             ),
-                            const SizedBox(height: 6),
-                            Text(
-                              marca,
-                              style: Theme.of(context).textTheme.labelMedium
-                                  ?.copyWith(
+                            Text(marca,
+                                style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: selected
-                                        ? highlight
-                                        : Colors.black87,
-                                  ),
-                            ),
+                                        ? (brandColors[marca] ?? Colors.blue)
+                                        : Colors.black54)),
                           ],
                         ),
                       );
                     },
-                    separatorBuilder: (_, __) => const SizedBox(width: 14),
-                    itemCount: logos.length,
                   ),
                 ),
-
                 const SizedBox(height: 16),
-                TextFormField(
-                  controller: _kmsController,
-                  decoration: const InputDecoration(
-                    labelText: 'Cuantos kms tiene?',
-                    hintText: '25000',
-                    border: OutlineInputBorder(),
-                    isDense: true,
-                  ),
-                  keyboardType: TextInputType.number,
-                ),
-
-                const SizedBox(height: 14),
-                TextFormField(
-                  controller: _modeloController,
-                  decoration: const InputDecoration(
-                    labelText: 'Modelo (año)',
-                    hintText: '2022',
-                    border: OutlineInputBorder(),
-                    isDense: true,
-                  ),
-                  keyboardType: TextInputType.number,
-                ),
-
-                const SizedBox(height: 14),
-                TextFormField(
-                  controller: _apodoController,
-                  decoration: const InputDecoration(
-                    labelText: 'Apodo',
-                    hintText: 'Mi Nave',
-                    border: OutlineInputBorder(),
-                    isDense: true,
-                  ),
-                ),
-
+                _buildField(_kmsController, 'Kilometraje', Icons.speed),
+                _buildField(
+                    _modeloController, 'Modelo (Año)', Icons.calendar_today),
+                _buildField(_apodoController, 'Apodo', Icons.edit),
                 const SizedBox(height: 18),
                 SizedBox(
                   width: double.infinity,
@@ -453,16 +341,14 @@ class _AgregarCarroScreenState extends State<AgregarCarroScreen> {
                   child: ElevatedButton(
                     onPressed: _guardarVehiculo,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
+                      backgroundColor: const Color(0xFF035880),
+                      foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      textStyle: const TextStyle(fontSize: 17),
+                          borderRadius: BorderRadius.circular(8)),
                     ),
                     child: const Text('Crear Carro'),
                   ),
                 ),
-                const SizedBox(height: 20),
               ],
             ),
           ),
@@ -470,55 +356,65 @@ class _AgregarCarroScreenState extends State<AgregarCarroScreen> {
       ),
     );
   }
+
+  Widget _buildField(
+      TextEditingController controller, String label, IconData icon) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 14),
+      decoration: BoxDecoration(
+        color: Theme.of(context).brightness == Brightness.dark
+            ? Colors.white.withOpacity(0.05)
+            : Colors.black.withOpacity(0.03),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.white10
+                : Colors.black12),
+      ),
+      child: TextField(
+        controller: controller,
+        style: TextStyle(
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.white
+                : Colors.black87),
+        decoration: InputDecoration(
+          labelText: label,
+          prefixIcon: Icon(icon, color: const Color(0xFF035880)),
+          border: InputBorder.none,
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        ),
+      ),
+    );
+  }
 }
 
-// Botón lateral
 class _SideTab extends StatelessWidget {
   final String text;
   final bool selected;
   final VoidCallback? onTap;
-
-  const _SideTab({
-    required this.text,
-    required this.selected,
-    this.onTap,
-  });
+  const _SideTab({required this.text, required this.selected, this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    final bg = selected ? Colors.blue : Colors.white;
-    final fg = selected ? Colors.white : Colors.black87;
-
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 40,
-        height: 120,
+        width: 35,
+        height: 100,
+        margin: const EdgeInsets.only(bottom: 4),
         decoration: BoxDecoration(
-          color: bg,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Colors.blue.shade200),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.06),
-              blurRadius: 6,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          color: selected ? const Color(0xFF035880) : Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: const Color(0xFF035880).withOpacity(0.3)),
         ),
-        child: Center(
-          child: RotatedBox(
+        child: RotatedBox(
             quarterTurns: 3,
-            child: Text(
-              text,
-              style: TextStyle(
-                color: fg,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 0.5,
-              ),
-            ),
-          ),
-        ),
+            child: Center(
+                child: Text(text,
+                    style: TextStyle(
+                        color: selected ? Colors.white : Colors.black87,
+                        fontWeight: FontWeight.bold)))),
       ),
     );
   }

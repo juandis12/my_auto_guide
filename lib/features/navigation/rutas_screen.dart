@@ -42,6 +42,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -50,6 +51,9 @@ import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/services/supabase_service.dart';
+import '../../../core/logic/vehicle_performance_logic.dart';
+import '../../../core/services/sync_service.dart';
+import 'presentation/historial_rutas_screen.dart';
 
 class RutasScreen extends StatefulWidget {
   final String vehiculoId;
@@ -83,6 +87,12 @@ class _RutasScreenState extends State<RutasScreen>
   double _routeDistanceKm = 0.0;
   double _routeDurationMin = 0.0;
   double _travelledDistanceKm = 0.0;
+  DateTime? _navStartTime;
+
+  // Datos Vehículo
+  String _vehicleModel = '';
+  bool _isCar = false;
+  final String _originName = 'Ubicación Actual';
 
   // Búsqueda
   List<Map<String, dynamic>> _searchResults = [];
@@ -91,11 +101,29 @@ class _RutasScreenState extends State<RutasScreen>
   // Tracking
   StreamSubscription<Position>? _posStream;
   bool _isLoadingRoute = false;
+  bool _showSuccessOverlay = false;
 
   @override
   void initState() {
     super.initState();
     _obtenerUbicacion();
+    _cargarInfoVehiculo();
+  }
+
+  Future<void> _cargarInfoVehiculo() async {
+    try {
+      final data = await supabase
+          .from('vehiculos')
+          .select('modelo, marca')
+          .eq('id', widget.vehiculoId)
+          .single();
+      setState(() {
+        final marca = (data['marca'] as String? ?? '').toUpperCase();
+        _vehicleModel = data['modelo'] ?? 'Moto Genérica';
+        // Determinar si es carro basado en la marca (Toyota, Mazda, Chevrolet son carros en este catálogo)
+        _isCar = marca == 'TOYOTA' || marca == 'MAZDA' || marca == 'CHEVROLET';
+      });
+    } catch (_) {}
   }
 
   @override
@@ -243,12 +271,46 @@ class _RutasScreenState extends State<RutasScreen>
     }
   }
 
+  // ─── HISTORIAL / RECENT ROUTES (UX Mejorada) ─────────────────────────
+  Future<void> _openRouteHistory() async {
+    final selected = await Navigator.of(context).push<Map<String, dynamic>>(
+      MaterialPageRoute(
+        builder: (_) => HistorialRutasScreen(vehiculoId: widget.vehiculoId),
+      ),
+    );
+    if (selected != null) {
+      final destino = (selected['destino_name'] as String?) ?? '';
+      if (destino.isNotEmpty) {
+        await _goToDestinationName(destino);
+      }
+    }
+  }
+
+  Future<void> _goToDestinationName(String name) async {
+    if (name.isEmpty) return;
+
+    // Mostrar en la barra de búsqueda y trazar ruta automáticamente
+    _searchCtrl.text = name;
+    await _buscarDestino(name);
+
+    if (_searchResults.isNotEmpty) {
+      _seleccionarDestino(_searchResults.first);
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('No se encontró la ubicación para "$name"')),
+        );
+      }
+    }
+  }
+
   // ─── INICIAR NAVEGACIÓN ─────────────────────────────────
   void _iniciarNavegacion({bool isFree = false}) {
     setState(() {
       _state = isFree ? _RouteState.freeTracking : _RouteState.navigating;
       _travelledPoints = [_currentPos!];
       _travelledDistanceKm = 0.0;
+      _navStartTime = DateTime.now();
       if (isFree) {
         _destination = null;
         _destinationName = 'Recorrido Libre';
@@ -296,30 +358,59 @@ class _RutasScreenState extends State<RutasScreen>
   Future<void> _completarRuta() async {
     _posStream?.cancel();
     final kmsRecorridos = _travelledDistanceKm;
-    // Obtener los kms más actuales de la base de datos antes de sumar
-    // para evitar sobrescribir si hubo cambios externos o errores de estado
-    int kmsBase = widget.kmsActuales;
-    try {
-      kmsBase = await SupabaseService().getVehicleMileage(widget.vehiculoId);
-    } catch (_) {
-      // Si falla, usamos widget.kmsActuales como respaldo
+
+    // Obtener userId
+    final userId = supabase.auth.currentUser?.id;
+    if (userId == null) {
+      debugPrint('Error: Usuario no autenticado');
+      return;
     }
 
-    final nuevoKm = kmsBase + kmsRecorridos.round();
+    // Calcular duración
+    final durationSec = _navStartTime != null
+        ? DateTime.now().difference(_navStartTime!).inSeconds
+        : 0;
 
-    // Actualizar en Supabase
+    // Calcular consumo y costo
+    final galones = VehiclePerformanceLogic.estimateFuelConsumption(
+        kmsRecorridos, _vehicleModel,
+        isCar: _isCar);
+    final costo = VehiclePerformanceLogic.estimateFuelCost(galones);
+
+    // Usar SyncService para guardar offline-first
     try {
-      await SupabaseService().updateVehicleKms(widget.vehiculoId, nuevoKm);
+      // Guardar ruta offline-first
+      await SyncService().saveRouteOfflineFirst(
+        userId: userId,
+        vehicleId: widget.vehiculoId,
+        originName: _originName,
+        destinationName: _destinationName,
+        distanceKm: kmsRecorridos,
+        durationSeconds: durationSec,
+        consumoGalones: galones,
+        costoEstimado: costo,
+      );
+
+      // Actualizar KMS offline-first
+      await SyncService().updateVehicleKmsOfflineFirst(
+        widget.vehiculoId,
+        kmsRecorridos.round()
+      );
+
+      debugPrint('Ruta guardada exitosamente (offline-first)');
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error actualizando km: $e')),
-        );
-      }
+      debugPrint('Error guardando ruta offline: $e');
+      // Aun si falla, mostrar el diálogo de éxito ya que se guardó localmente
     }
 
-    if (!mounted) return;
-    setState(() => _state = _RouteState.completed);
+    setState(() {
+      _state = _RouteState.completed;
+      _showSuccessOverlay = true;
+    });
+
+    // Pequeño delay para la animación de éxito antes del diálogo
+    await Future.delayed(const Duration(milliseconds: 2000));
+    if (mounted) setState(() => _showSuccessOverlay = false);
 
     showDialog(
       context: context,
@@ -338,7 +429,14 @@ class _RutasScreenState extends State<RutasScreen>
                   const Icon(Icons.check_circle, color: Colors.green, size: 28),
             ),
             const SizedBox(width: 12),
-            const Text('¡Ruta completada!'),
+            Text(
+              '¡Ruta completada!',
+              style: TextStyle(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.white
+                    : Colors.black87,
+              ),
+            ),
           ],
         ),
         content: Column(
@@ -352,8 +450,20 @@ class _RutasScreenState extends State<RutasScreen>
             const SizedBox(height: 8),
             _InfoRow(
               icon: Icons.speed,
-              label: 'Nuevo kilometraje',
-              value: '${nuevoKm.round()} km',
+              label: 'Kilómetros recorridos',
+              value: '${kmsRecorridos.round()} km',
+            ),
+            const Divider(height: 24),
+            _InfoRow(
+              icon: Icons.local_gas_station,
+              label: 'Consumo estimado',
+              value: '${galones.toStringAsFixed(2)} gal',
+            ),
+            const SizedBox(height: 8),
+            _InfoRow(
+              icon: Icons.payments,
+              label: 'Costo estimado',
+              value: '\$${costo.toStringAsFixed(0)} COP',
             ),
           ],
         ),
@@ -445,88 +555,99 @@ class _RutasScreenState extends State<RutasScreen>
                   ),
                   children: [
                     TileLayer(
-                      urlTemplate:
-                          'https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png',
+                      urlTemplate: Theme.of(context).brightness ==
+                              Brightness.dark
+                          ? 'https://basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}@2x.png'
+                          : 'https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png',
                       userAgentPackageName: 'com.example.my_auto_guide',
+                      tileDisplay: const TileDisplay
+                          .fadeIn(), // Mejora visual y de performance
                     ),
                     // Ruta trazada
                     if (_routePoints.isNotEmpty)
-                      PolylineLayer(
-                        polylines: [
-                          Polyline(
-                            points: _routePoints,
-                            strokeWidth: 5,
-                            color: Colors.blue.withOpacity(0.6),
-                          ),
-                        ],
+                      RepaintBoundary(
+                        child: PolylineLayer(
+                          polylines: [
+                            Polyline(
+                              points: _routePoints,
+                              strokeWidth: 5,
+                              color: Colors.blue.withOpacity(0.6),
+                            ),
+                          ],
+                        ),
                       ),
                     // Recorrido en navegación
                     if (_travelledPoints.length > 1)
-                      PolylineLayer(
-                        polylines: [
-                          Polyline(
-                            points: _travelledPoints,
-                            strokeWidth: 6,
-                            color: Colors.green,
-                          ),
-                        ],
+                      RepaintBoundary(
+                        child: PolylineLayer(
+                          polylines: [
+                            Polyline(
+                              points: _travelledPoints,
+                              strokeWidth: 6,
+                              color: Colors.green,
+                            ),
+                          ],
+                        ),
                       ),
                     // Marcadores
-                    MarkerLayer(
-                      markers: [
-                        // Posición actual
-                        Marker(
-                          point: _currentPos!,
-                          width: 50,
-                          height: 50,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.blue,
-                              border: Border.all(color: Colors.white, width: 3),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.blue.withOpacity(0.4),
-                                  blurRadius: 10,
-                                  spreadRadius: 3,
-                                ),
-                              ],
-                            ),
-                            child: const Icon(
-                              Icons.navigation,
-                              color: Colors.white,
-                              size: 22,
-                            ),
-                          ),
-                        ),
-                        // Destino
-                        if (_destination != null)
+                    RepaintBoundary(
+                      child: MarkerLayer(
+                        markers: [
+                          // Posición actual
                           Marker(
-                            point: _destination!,
+                            point: _currentPos!,
                             width: 50,
                             height: 50,
                             child: Container(
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: Colors.redAccent,
+                                color: Colors.blue,
                                 border:
                                     Border.all(color: Colors.white, width: 3),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.red.withOpacity(0.4),
+                                    color: Colors.blue.withOpacity(0.4),
                                     blurRadius: 10,
                                     spreadRadius: 3,
                                   ),
                                 ],
                               ),
                               child: const Icon(
-                                Icons.flag,
+                                Icons.navigation,
                                 color: Colors.white,
                                 size: 22,
                               ),
                             ),
                           ),
-                      ],
+                          // Destino
+                          if (_destination != null)
+                            Marker(
+                              point: _destination!,
+                              width: 50,
+                              height: 50,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.redAccent,
+                                  border:
+                                      Border.all(color: Colors.white, width: 3),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.red.withOpacity(0.4),
+                                      blurRadius: 10,
+                                      spreadRadius: 3,
+                                    ),
+                                  ],
+                                ),
+                                child: const Icon(
+                                  Icons.flag,
+                                  color: Colors.white,
+                                  size: 22,
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -548,14 +669,37 @@ class _RutasScreenState extends State<RutasScreen>
                         Material(
                           elevation: 4,
                           shape: const CircleBorder(),
-                          color: Colors.white,
+                          color: Theme.of(context).cardColor,
                           child: InkWell(
                             customBorder: const CircleBorder(),
                             onTap: () => Navigator.pop(context),
-                            child: const Padding(
-                              padding: EdgeInsets.all(10),
-                              child: Icon(Icons.arrow_back, size: 22),
+                            child: Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: Icon(
+                                Icons.arrow_back,
+                                size: 22,
+                                color: Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black87,
+                              ),
                             ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        // Botón rápido para ver historial y repetir rutas
+                        Material(
+                          elevation: 4,
+                          shape: const CircleBorder(),
+                          color: Theme.of(context).cardColor,
+                          child: IconButton(
+                            icon: const Icon(Icons.history),
+                            tooltip: 'Historial de rutas',
+                            color: Theme.of(context).brightness ==
+                                    Brightness.dark
+                                ? Colors.white
+                                : Colors.black87,
+                            onPressed: _openRouteHistory,
                           ),
                         ),
                         const SizedBox(width: 8),
@@ -565,12 +709,30 @@ class _RutasScreenState extends State<RutasScreen>
                             child: Material(
                               elevation: 4,
                               borderRadius: BorderRadius.circular(30),
-                              color: Colors.white,
+                              color: Theme.of(context).cardColor,
                               child: TextField(
                                 controller: _searchCtrl,
+                                style: TextStyle(
+                                  color: Theme.of(context).brightness ==
+                                          Brightness.dark
+                                      ? Colors.white
+                                      : Colors.black87,
+                                ),
                                 decoration: InputDecoration(
                                   hintText: 'Buscar destino...',
-                                  prefixIcon: const Icon(Icons.search),
+                                  hintStyle: TextStyle(
+                                    color: Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? Colors.white54
+                                        : Colors.black54,
+                                  ),
+                                  prefixIcon: Icon(
+                                    Icons.search,
+                                    color: Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? Colors.white70
+                                        : Colors.blueGrey,
+                                  ),
                                   suffixIcon: _isSearching
                                       ? const Padding(
                                           padding: EdgeInsets.all(12),
@@ -585,6 +747,11 @@ class _RutasScreenState extends State<RutasScreen>
                                       : _searchCtrl.text.isNotEmpty
                                           ? IconButton(
                                               icon: const Icon(Icons.clear),
+                                              color: Theme.of(context)
+                                                          .brightness ==
+                                                      Brightness.dark
+                                                  ? Colors.white70
+                                                  : Colors.blueGrey,
                                               onPressed: () {
                                                 _searchCtrl.clear();
                                                 setState(
@@ -649,7 +816,7 @@ class _RutasScreenState extends State<RutasScreen>
                         margin: const EdgeInsets.only(top: 4, left: 48),
                         constraints: const BoxConstraints(maxHeight: 250),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: Theme.of(context).cardColor,
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(
@@ -683,7 +850,13 @@ class _RutasScreenState extends State<RutasScreen>
                                 name,
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(fontSize: 13),
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: Theme.of(context).brightness ==
+                                          Brightness.dark
+                                      ? Colors.white
+                                      : Colors.black87,
+                                ),
                               ),
                               onTap: () => _seleccionarDestino(place),
                             );
@@ -725,7 +898,7 @@ class _RutasScreenState extends State<RutasScreen>
               right: 0,
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).cardColor,
                   borderRadius:
                       const BorderRadius.vertical(top: Radius.circular(24)),
                   boxShadow: [
@@ -747,7 +920,9 @@ class _RutasScreenState extends State<RutasScreen>
                         width: 40,
                         height: 4,
                         decoration: BoxDecoration(
-                          color: Colors.grey.shade300,
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white24
+                              : Colors.grey.shade300,
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),
@@ -931,13 +1106,25 @@ class _RutasScreenState extends State<RutasScreen>
               child: FloatingActionButton(
                 mini: true,
                 heroTag: 'myLocation',
-                backgroundColor: Colors.white,
+                backgroundColor: Theme.of(context).cardColor,
                 onPressed: () {
                   if (_currentPos != null) {
                     _mapCtrl.move(_currentPos!, 16);
                   }
                 },
-                child: const Icon(Icons.my_location, color: Colors.blue),
+                child: Icon(Icons.my_location,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.blueAccent
+                        : Colors.blue),
+              ),
+            ),
+
+          // OVERLAY DE ÉXITO ANIMADO (Micro-animación Premium)
+          if (_showSuccessOverlay)
+            Positioned.fill(
+              child: Container(
+                color: Colors.black54,
+                child: const _SuccessCheckmark(),
               ),
             ),
         ],
@@ -999,15 +1186,127 @@ class _InfoRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icon, color: Colors.blueGrey, size: 20),
+        Icon(icon,
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.blueAccent
+                : Colors.blueGrey,
+            size: 20),
         const SizedBox(width: 10),
-        Text(label, style: const TextStyle(fontSize: 14)),
+        Text(label,
+            style: TextStyle(
+              fontSize: 14,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white70
+                  : Colors.black87,
+            )),
         const Spacer(),
         Text(
           value,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 14,
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.white
+                : Colors.black87,
+          ),
         ),
       ],
     );
   }
+}
+
+// ─── WIDGET DE ÉXITO ANIMADO ─────────────────────────────
+class _SuccessCheckmark extends StatefulWidget {
+  const _SuccessCheckmark();
+
+  @override
+  State<_SuccessCheckmark> createState() => _SuccessCheckmarkState();
+}
+
+class _SuccessCheckmarkState extends State<_SuccessCheckmark>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scale;
+  late Animation<double> _check;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1000));
+    _scale = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+          parent: _controller,
+          curve: const Interval(0.0, 0.6, curve: Curves.elasticOut)),
+    );
+    _check = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+          parent: _controller,
+          curve: const Interval(0.4, 1.0, curve: Curves.easeInOut)),
+    );
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: ScaleTransition(
+        scale: _scale,
+        child: Container(
+          width: 140,
+          height: 140,
+          decoration: const BoxDecoration(
+            color: Colors.green,
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(color: Colors.black26, blurRadius: 20, spreadRadius: 5)
+            ],
+          ),
+          child: AnimatedBuilder(
+            animation: _check,
+            builder: (context, child) {
+              return CustomPaint(
+                painter: _CheckPainter(_check.value),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _CheckPainter extends CustomPainter {
+  final double progress;
+  _CheckPainter(this.progress);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.white
+      ..strokeWidth = 10
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+
+    final path = ui.Path();
+    path.moveTo(size.width * 0.28, size.height * 0.52);
+    path.lineTo(size.width * 0.45, size.height * 0.7);
+    path.lineTo(size.width * 0.72, size.height * 0.38);
+
+    final pathMetrics = path.computeMetrics();
+    if (pathMetrics.isNotEmpty) {
+      final metric = pathMetrics.first;
+      final extractPath = metric.extractPath(0, metric.length * progress);
+      canvas.drawPath(extractPath, paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }

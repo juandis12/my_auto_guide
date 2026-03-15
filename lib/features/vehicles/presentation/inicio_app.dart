@@ -25,11 +25,7 @@
 //   - Gestión de documentos: subir, ver, eliminar archivos en Supabase Storage.
 //   - Visor de PDF integrado (Syncfusion) y visor de imágenes (PhotoView).
 //   - Logout y cambio de vehículo.
-//
-// WIDGETS AUXILIARES:
-//   - [_CircularIndicator]: Indicador circular animado de mantenimiento.
-//   - [_GradientButton]: Botón con gradiente para la sección Herramientas.
-//   - [_DocumentCard]: Tarjeta de documento con estado visual.
+//   - [NUEVO] Gamificación: Niveles de usuario y medallas de calidad.
 //
 // =============================================================================
 
@@ -45,15 +41,20 @@ import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'dart:async';
-import 'dart:math' as math;
 
 import '../../../core/services/notification_service.dart';
 import '../../../core/services/supabase_service.dart';
+import '../../../core/logic/vehicle_health_logic.dart';
+import '../../../core/theme/brand_theme.dart';
 import '../../../shared/widgets/runt_webview.dart';
 import '../../navigation/rutas_screen.dart';
 import '../../guides/guia.dart';
 import '../../auth/login_screen.dart';
 import 'parametrizacion_mantenimientos.dart';
+import '../../expenses/presentation/gastos_screen.dart';
+import '../../../core/logic/fuel_efficiency_logic.dart';
+import '../../navigation/presentation/historial_rutas_screen.dart';
+import '../../../core/logic/performance_guard.dart';
 
 enum DocType { soat, tecno, seguro, propiedad }
 
@@ -90,7 +91,17 @@ class _InicioAppState extends State<InicioApp> {
   String? _soatPath, _tecnoPath, _seguroPath, _propPath;
   String? _soatSigned, _tecnoSigned, _seguroSigned, _propSigned;
 
-  // Cache de URLs firmadas
+  // Métricas Semanales
+  double _weeklyDist = 0.0;
+  double _weeklyFuel = 0.0;
+  double _weeklyCost = 0.0;
+  int _totalRoutes = 0;
+  bool _loadingWeekly = false;
+  List<Map<String, dynamic>> _predictions = [];
+  double _efficiencyScore = 0.0;
+  double _savingsCOP = 0.0;
+
+  Map<String, dynamic>? _cachedVehicleData;
   final Map<String, (String url, DateTime expires)> _urlCache = {};
   bool _notificacionesProcesadas = false;
 
@@ -124,10 +135,14 @@ class _InicioAppState extends State<InicioApp> {
     return await supabase.storage.from(_docsBucket).createSignedUrl(path, 3600);
   }
 
-  Color _colorFor(double v) {
-    if (v < 0.20) return Colors.red;
-    if (v < 0.50) return Colors.amber;
-    return Colors.green;
+  Color _colorFor(double pct) {
+    if (pct < 0.2) {
+      return const Color(0xFFFF5252).withOpacity(0.8);
+    }
+    if (pct < 0.5) {
+      return const Color(0xFFFFAB40).withOpacity(0.8);
+    }
+    return const Color(0xFF69F0AE).withOpacity(0.8);
   }
 
   double _pctRestante(DateTime? last, int cicloDias) {
@@ -139,14 +154,23 @@ class _InicioAppState extends State<InicioApp> {
 
   Future<Map<String, dynamic>> _cargar() async {
     if (!mounted) return {};
-    final row = await supabase
-        .from('vehiculos')
-        .select(
-          'marca, modelo, apodo, kms, image_path, last_cadena, last_filtro, last_aceite, last_soat, last_tecno, soat_path, tecno_path, seguro_path, propiedad_path',
-        )
-        .eq('id', widget.vehiculoId)
-        .single();
-    return row;
+    if (_cachedVehicleData != null) {
+      return _cachedVehicleData!;
+    }
+    try {
+      final row = await supabase
+          .from('vehiculos')
+          .select(
+            'marca, modelo, apodo, kms, image_path, last_cadena, last_filtro, last_aceite, last_soat, last_tecno, soat_path, tecno_path, seguro_path, propiedad_path',
+          )
+          .eq('id', widget.vehiculoId)
+          .single();
+      _cachedVehicleData = row;
+      return row;
+    } catch (e) {
+      debugPrint('Error cargando datos del vehículo: $e');
+      return {};
+    }
   }
 
   Future<void> _cerrarSesion() async {
@@ -203,9 +227,20 @@ class _InicioAppState extends State<InicioApp> {
       ),
     ).then((recargar) {
       if (recargar == true) {
-        setState(() {}); // Recargar datos para ver kms actualizados
+        setState(() {
+          _cachedVehicleData = null;
+        });
       }
     });
+  }
+
+  void _abrirHistorialRutas() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => HistorialRutasScreen(vehiculoId: widget.vehiculoId),
+      ),
+    );
   }
 
   Future<void> _abrirParametrizacion() async {
@@ -235,6 +270,7 @@ class _InicioAppState extends State<InicioApp> {
         _pctSoat = (res['pctSoat'] as double?) ?? 0.0;
         _pctTecno = (res['pctTecno'] as double?) ?? 0.0;
         _notificacionesProcesadas = false;
+        _cachedVehicleData = null; // Forzar recarga de ISH y gamificación
       });
       final bool vencido = (res['vencCadena'] == true) ||
           (res['vencFiltro'] == true) ||
@@ -245,9 +281,8 @@ class _InicioAppState extends State<InicioApp> {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text(
-              'Hay mantenimientos vencidos, realizar cuanto antes.',
-            ),
+            content:
+                Text('Hay mantenimientos vencidos, realizar cuanto antes.'),
             backgroundColor: Colors.redAccent,
             duration: Duration(seconds: 4),
           ),
@@ -272,12 +307,7 @@ class _InicioAppState extends State<InicioApp> {
         return (o.name, signed);
       });
       return await Future.wait(futures);
-    } on StorageException catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error al listar: ${e.message}')),
-        );
-      }
+    } catch (e) {
       return [];
     }
   }
@@ -310,16 +340,16 @@ class _InicioAppState extends State<InicioApp> {
         DocType.seguro: 'seguro_path',
         DocType.propiedad: 'propiedad_path',
       }[type]!;
-      await SupabaseService().client
+      await supabase
           .from('vehiculos')
-          .update({col: path})
-          .eq('id', widget.vehiculoId);
+          .update({col: path}).eq('id', widget.vehiculoId);
 
+      _cachedVehicleData = null;
       return path;
-    } on StorageException catch (e) {
+    } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('No se pudo subir: ${e.message}')),
+          SnackBar(content: Text('No se pudo subir: $e')),
         );
       }
       return null;
@@ -331,10 +361,8 @@ class _InicioAppState extends State<InicioApp> {
   }
 
   Future<void> _openUrl(String url) async {
-    final ok = await launchUrl(
-      Uri.parse(url),
-      mode: LaunchMode.externalApplication,
-    );
+    final ok =
+        await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
     if (!ok && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('No se pudo abrir el archivo')),
@@ -364,13 +392,9 @@ class _InicioAppState extends State<InicioApp> {
                     children: [
                       Row(
                         children: [
-                          Text(
-                            'Documentos: $titulo',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
+                          Text('Documentos: $titulo',
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
                           const Spacer(),
                           FilledButton.icon(
                             icon: const Icon(Icons.add),
@@ -378,9 +402,8 @@ class _InicioAppState extends State<InicioApp> {
                             onPressed: () async {
                               final newPath = await _uploadDoc(type);
                               if (newPath != null && mounted) {
-                                final signed = await _signedUrlCachedFor(
-                                  newPath,
-                                );
+                                final signed =
+                                    await _signedUrlCachedFor(newPath);
                                 setState(() {
                                   switch (type) {
                                     case DocType.soat:
@@ -437,28 +460,17 @@ class _InicioAppState extends State<InicioApp> {
                             itemCount: files.length,
                             itemBuilder: (ctx, i) {
                               final (name, url) = files[i];
-                              final l = url.toLowerCase();
-                              final isImg = l.endsWith('.png') ||
-                                  l.endsWith('.jpg') ||
-                                  l.endsWith('.jpeg') ||
-                                  l.endsWith('.webp') ||
-                                  l.endsWith('.heic') ||
-                                  l.endsWith('.gif');
+                              final isImg =
+                                  url.toLowerCase().contains('.jpg') ||
+                                      url.toLowerCase().contains('.png') ||
+                                      url.toLowerCase().contains('.jpeg');
                               return InkWell(
-                                onTap: () {
-                                  Navigator.push(
+                                onTap: () => Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (_) => DocumentViewerScreen(
-                                        url: url,
-                                        fileName: name,
-                                      ),
-                                    ),
-                                  );
-                                },
-                                onLongPress: () {
-                                  unawaited(_openUrl(url));
-                                },
+                                        builder: (_) => DocumentViewerScreen(
+                                            url: url, fileName: name))),
+                                onLongPress: () => unawaited(_openUrl(url)),
                                 child: Container(
                                   decoration: BoxDecoration(
                                     border: Border.all(color: Colors.black12),
@@ -470,28 +482,12 @@ class _InicioAppState extends State<InicioApp> {
                                       fit: StackFit.expand,
                                       children: [
                                         if (isImg)
-                                          Image.network(
-                                            url,
-                                            fit: BoxFit.cover,
-                                            errorBuilder:
-                                                (context, error, stackTrace) {
-                                              return const Center(
-                                                child: Icon(
-                                                  Icons.broken_image,
-                                                  color: Colors.grey,
-                                                  size: 36,
-                                                ),
-                                              );
-                                            },
-                                          )
+                                          Image.network(url, fit: BoxFit.cover)
                                         else
                                           const Center(
-                                            child: Icon(
-                                              Icons.picture_as_pdf,
-                                              color: Colors.redAccent,
-                                              size: 36,
-                                            ),
-                                          ),
+                                              child: Icon(Icons.picture_as_pdf,
+                                                  color: Colors.redAccent,
+                                                  size: 36)),
                                         Positioned(
                                           left: 4,
                                           right: 4,
@@ -499,18 +495,13 @@ class _InicioAppState extends State<InicioApp> {
                                           child: Container(
                                             color: Colors.black54,
                                             padding: const EdgeInsets.symmetric(
-                                              horizontal: 4,
-                                              vertical: 2,
-                                            ),
-                                            child: Text(
-                                              name,
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: const TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 10,
-                                              ),
-                                            ),
+                                                horizontal: 4, vertical: 2),
+                                            child: Text(name,
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 10)),
                                           ),
                                         ),
                                         Positioned(
@@ -518,9 +509,8 @@ class _InicioAppState extends State<InicioApp> {
                                           right: 4,
                                           child: Material(
                                             color: Colors.black45,
-                                            borderRadius: BorderRadius.circular(
-                                              16,
-                                            ),
+                                            borderRadius:
+                                                BorderRadius.circular(16),
                                             child: InkWell(
                                               borderRadius:
                                                   BorderRadius.circular(16),
@@ -530,83 +520,49 @@ class _InicioAppState extends State<InicioApp> {
                                                   context: context,
                                                   builder: (_) => AlertDialog(
                                                     title: const Text(
-                                                      'Eliminar archivo',
-                                                    ),
+                                                        'Eliminar archivo'),
                                                     content: Text(
-                                                      '¿Deseas eliminar "$name"?',
-                                                    ),
+                                                        '¿Deseas eliminar "$name"?'),
                                                     actions: [
                                                       TextButton(
-                                                        onPressed: () =>
-                                                            Navigator.pop(
-                                                          context,
-                                                          false,
-                                                        ),
-                                                        child: const Text(
-                                                          'Cancelar',
-                                                        ),
-                                                      ),
+                                                          onPressed: () =>
+                                                              Navigator.pop(
+                                                                  context,
+                                                                  false),
+                                                          child: const Text(
+                                                              'Cancelar')),
                                                       FilledButton(
-                                                        onPressed: () =>
-                                                            Navigator.pop(
-                                                          context,
-                                                          true,
-                                                        ),
-                                                        child: const Text(
-                                                          'Eliminar',
-                                                        ),
-                                                      ),
+                                                          onPressed: () =>
+                                                              Navigator.pop(
+                                                                  context,
+                                                                  true),
+                                                          child: const Text(
+                                                              'Eliminar')),
                                                     ],
                                                   ),
                                                 );
                                                 if (ok == true) {
                                                   final path = '$folder/$name';
                                                   await _deleteStorageFile(
-                                                    path,
-                                                  );
-                                                  // Si este archivo era el asignado en cabecera, limpiar
+                                                      path);
                                                   setState(() {
-                                                    final full = path;
-                                                    switch (type) {
-                                                      case DocType.soat:
-                                                        if (_soatPath == full) {
-                                                          _soatPath = null;
-                                                          _soatSigned = null;
-                                                        }
-                                                        break;
-                                                      case DocType.tecno:
-                                                        if (_tecnoPath ==
-                                                            full) {
-                                                          _tecnoPath = null;
-                                                          _tecnoSigned = null;
-                                                        }
-                                                        break;
-                                                      case DocType.seguro:
-                                                        if (_seguroPath ==
-                                                            full) {
-                                                          _seguroPath = null;
-                                                          _seguroSigned = null;
-                                                        }
-                                                        break;
-                                                      case DocType.propiedad:
-                                                        if (_propPath == full) {
-                                                          _propPath = null;
-                                                          _propSigned = null;
-                                                        }
-                                                        break;
+                                                    if (_soatPath == path) {
+                                                      _soatPath = null;
+                                                      _soatSigned = null;
+                                                    }
+                                                    if (_tecnoPath == path) {
+                                                      _tecnoPath = null;
+                                                      _tecnoSigned = null;
                                                     }
                                                   });
                                                   await refresh();
                                                 }
                                               },
                                               child: const Padding(
-                                                padding: EdgeInsets.all(6),
-                                                child: Icon(
-                                                  Icons.delete,
-                                                  color: Colors.white,
-                                                  size: 16,
-                                                ),
-                                              ),
+                                                  padding: EdgeInsets.all(6),
+                                                  child: Icon(Icons.delete,
+                                                      color: Colors.white,
+                                                      size: 16)),
                                             ),
                                           ),
                                         ),
@@ -634,19 +590,89 @@ class _InicioAppState extends State<InicioApp> {
   @override
   void initState() {
     super.initState();
-    // La inicialización de TZ y notificaciones ya se realiza en main.dart
+    unawaited(_cargarWeeklyStats());
+  }
+
+  Future<void> _cargarWeeklyStats() async {
+    if (!mounted) return;
+    try {
+      if (mounted) setState(() => _loadingWeekly = true);
+      final stats = await SupabaseService().getWeeklyStats(widget.vehiculoId);
+      final totalHistory =
+          await SupabaseService().getRouteHistory(widget.vehiculoId);
+      final totalR = totalHistory.length;
+
+      double d = 0, f = 0, c = 0;
+      for (var s in stats) {
+        d += (s['distancia_km'] as num?)?.toDouble() ?? 0.0;
+        f += (s['consumo_galones'] as num?)?.toDouble() ?? 0.0;
+        c += (s['costo_estimado'] as num?)?.toDouble() ?? 0.0;
+      }
+
+      List<Map<String, dynamic>> preds = [];
+      if (stats.isNotEmpty) {
+        if (_lastAceite != null) {
+          preds.add(VehicleHealthLogic.predictMaintenance(
+              item: 'Aceite',
+              lastDate: _lastAceite,
+              baseDays: 25,
+              routeHistory: stats));
+        }
+        if (_lastFiltro != null) {
+          preds.add(VehicleHealthLogic.predictMaintenance(
+              item: 'Filtro',
+              lastDate: _lastFiltro,
+              baseDays: 90,
+              routeHistory: stats));
+        }
+        if (_lastCadena != null) {
+          preds.add(VehicleHealthLogic.predictMaintenance(
+              item: 'Cadena',
+              lastDate: _lastCadena,
+              baseDays: 15,
+              routeHistory: stats));
+        }
+      }
+
+      final vehicleData = await _cargar();
+      final modelName = vehicleData['modelo'] as String? ?? '';
+      final isCar = (vehicleData['marca'] as String? ?? '')
+              .toUpperCase()
+              .contains('CARRO') ||
+          (vehicleData['apodo'] as String? ?? '')
+              .toUpperCase()
+              .contains('CARRO');
+
+      final efficiency = FuelEfficiencyLogic.calculateEfficiencyScore(
+          actualKm: d,
+          actualFuelGallons: f,
+          modelName: modelName,
+          isCar: isCar);
+      final savings = FuelEfficiencyLogic.calculateSavings(
+          actualKm: d,
+          actualFuelGallons: f,
+          modelName: modelName,
+          isCar: isCar);
+
+      if (mounted) {
+        setState(() {
+          _weeklyDist = d;
+          _weeklyFuel = f;
+          _weeklyCost = c;
+          _totalRoutes = totalR;
+          _predictions = preds;
+          _efficiencyScore = efficiency;
+          _savingsCOP = savings;
+          _loadingWeekly = false;
+        });
+      }
+    } catch (_) {
+      if (mounted) setState(() => _loadingWeekly = false);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final w = MediaQuery.of(context).size.width;
-    const double kSpecPillHeight = 112;
-    const double kSpecGap = 8;
-    final double heroHeight = math.max(
-      w * 0.50,
-      kSpecPillHeight * 3 + kSpecGap * 2,
-    );
-
     if (!_notificacionesProcesadas &&
         (_lastCadena != null ||
             _lastFiltro != null ||
@@ -659,18 +685,15 @@ class _InicioAppState extends State<InicioApp> {
           if (last == null) return;
           final vencimiento = last.add(Duration(days: days));
           if (vencimiento.isAfter(DateTime.now())) {
+            // Antes de programar, intentamos asegurarnos del permiso de alarmas exactas.
+            await NotificationService().ensureExactAlarmsEnabled(context);
+
             await NotificationService().showMaintenanceNotification(
-              id: tipo.hashCode,
-              title: '¡Mantenimiento requerido!',
-              body: 'Debes realizar el mantenimiento de $tipo.',
-              scheduledDate: vencimiento,
-            );
-          } else {
-            await NotificationService().showMaintenanceNotification(
-              id: 0,
-              title: '¡Mantenimiento requerido!',
-              body: 'Debes realizar el mantenimiento de $tipo.',
-            );
+                id: tipo.hashCode,
+                title: '¡Mantenimiento requerido!',
+                body: 'Debes realizar el mantenimiento de $tipo.',
+                scheduledDate: vencimiento,
+                context: context);
           }
         }
 
@@ -687,15 +710,13 @@ class _InicioAppState extends State<InicioApp> {
         title: const Text('Inicio'),
         actions: [
           IconButton(
-            tooltip: 'Eliminar vehículo',
-            icon: const Icon(Icons.delete),
-            onPressed: () => _confirmarYEliminar(widget.vehiculoId),
-          ),
+              tooltip: 'Eliminar vehículo',
+              icon: const Icon(Icons.delete),
+              onPressed: () => _confirmarYEliminar(widget.vehiculoId)),
           IconButton(
-            tooltip: 'Cerrar sesión',
-            icon: const Icon(Icons.logout),
-            onPressed: _cerrarSesion,
-          ),
+              tooltip: 'Cerrar sesión',
+              icon: const Icon(Icons.logout),
+              onPressed: _cerrarSesion),
         ],
       ),
       body: FutureBuilder<Map<String, dynamic>>(
@@ -704,9 +725,7 @@ class _InicioAppState extends State<InicioApp> {
           if (s.connectionState != ConnectionState.done) {
             return const Center(child: CircularProgressIndicator());
           }
-          if (s.hasError) {
-            return Center(child: Text('Error: ${s.error}'));
-          }
+          if (s.hasError) return Center(child: Text('Error: ${s.error}'));
           if (!s.hasData) {
             return const Center(child: Text('No se encontró el vehículo'));
           }
@@ -714,43 +733,37 @@ class _InicioAppState extends State<InicioApp> {
           final v = s.data!;
           final marca = (v['marca'] as String? ?? '').toUpperCase();
           final modelo = v['modelo'] as String? ?? '';
-          final apodo = v['apodo'] as String? ?? '';
+          final apodo = v['apodo'] as String? ?? 'Mi Vehículo';
           final kms = v['kms']?.toString() ?? '0';
           final imagePath = v['image_path'] as String? ?? '';
-          final logoPath = brandLogos[marca];
 
           _soatPath ??= v['soat_path'] as String?;
           _tecnoPath ??= v['tecno_path'] as String?;
           _seguroPath ??= v['seguro_path'] as String?;
           _propPath ??= v['propiedad_path'] as String?;
 
-          // Firmar URLs si aún no están
           if (_soatSigned == null && _soatPath != null) {
             WidgetsBinding.instance.addPostFrameCallback((_) async {
               final u = await _signedUrlCachedFor(_soatPath!);
-              if (!mounted) return;
-              setState(() => _soatSigned = u);
+              if (mounted) setState(() => _soatSigned = u);
             });
           }
           if (_tecnoSigned == null && _tecnoPath != null) {
             WidgetsBinding.instance.addPostFrameCallback((_) async {
               final u = await _signedUrlCachedFor(_tecnoPath!);
-              if (!mounted) return;
-              setState(() => _tecnoSigned = u);
+              if (mounted) setState(() => _tecnoSigned = u);
             });
           }
           if (_seguroSigned == null && _seguroPath != null) {
             WidgetsBinding.instance.addPostFrameCallback((_) async {
               final u = await _signedUrlCachedFor(_seguroPath!);
-              if (!mounted) return;
-              setState(() => _seguroSigned = u);
+              if (mounted) setState(() => _seguroSigned = u);
             });
           }
           if (_propSigned == null && _propPath != null) {
             WidgetsBinding.instance.addPostFrameCallback((_) async {
               final u = await _signedUrlCachedFor(_propPath!);
-              if (!mounted) return;
-              setState(() => _propSigned = u);
+              if (mounted) setState(() => _propSigned = u);
             });
           }
 
@@ -763,246 +776,293 @@ class _InicioAppState extends State<InicioApp> {
           final da = v['last_aceite'] != null
               ? DateTime.parse(v['last_aceite'])
               : null;
-
-          if (_lastCadena == null && dc != null) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (!mounted) return;
-              setState(() {
-                _lastCadena = dc;
-                _pctCadena = _pctRestante(dc, 15);
-              });
-            });
-          }
-          if (_lastFiltro == null && df != null) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (!mounted) return;
-              setState(() {
-                _lastFiltro = df;
-                _pctFiltro = _pctRestante(df, 90);
-              });
-            });
-          }
-          if (_lastAceite == null && da != null) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (!mounted) return;
-              setState(() {
-                _lastAceite = da;
-                _pctAceite = _pctRestante(da, 25);
-              });
-            });
-          }
-
           final ds =
               v['last_soat'] != null ? DateTime.parse(v['last_soat']) : null;
           final dt =
               v['last_tecno'] != null ? DateTime.parse(v['last_tecno']) : null;
 
+          if (_lastCadena == null && dc != null) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted) {
+                setState(() {
+                  _lastCadena = dc;
+                  _pctCadena = _pctRestante(dc, 15);
+                });
+              }
+            });
+          }
+          if (_lastFiltro == null && df != null) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted) {
+                setState(() {
+                  _lastFiltro = df;
+                  _pctFiltro = _pctRestante(df, 90);
+                });
+              }
+            });
+          }
+          if (_lastAceite == null && da != null) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted) {
+                setState(() {
+                  _lastAceite = da;
+                  _pctAceite = _pctRestante(da, 25);
+                });
+              }
+            });
+          }
           if (_lastSoat == null && ds != null) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (!mounted) return;
-              setState(() {
-                _lastSoat = ds;
-                _pctSoat = _pctRestante(ds, 365);
-              });
+              if (mounted) {
+                setState(() {
+                  _lastSoat = ds;
+                  _pctSoat = _pctRestante(ds, 365);
+                });
+              }
             });
           }
           if (_lastTecno == null && dt != null) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (!mounted) return;
-              setState(() {
-                _lastTecno = dt;
-                _pctTecno = _pctRestante(dt, 365);
-              });
+              if (mounted) {
+                setState(() {
+                  _lastTecno = dt;
+                  _pctTecno = _pctRestante(dt, 365);
+                });
+              }
             });
           }
 
+          final bTheme = BrandTheme.getTheme(marca);
+          final logoPath = brandLogos[marca.toUpperCase()];
+
+          final double currentHealthIndex =
+              VehicleHealthLogic.calculateHealthIndex(
+            pctCadena: _pctCadena,
+            pctFiltro: _pctFiltro,
+            pctAceite: _pctAceite,
+            pctSoat: _pctSoat,
+            pctTecno: _pctTecno,
+          );
+
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.08),
-                        blurRadius: 16,
-                        offset: const Offset(0, 6),
-                      ),
-                    ],
+                _StaggeredFadeIn(
+                  delay: const Duration(milliseconds: 100),
+                  child: _MainHero(
+                    imagePath: imagePath,
+                    logoPath: logoPath,
+                    modelo: modelo,
+                    kms: kms,
+                    brandTheme: bTheme,
+                    healthIndex: currentHealthIndex,
                   ),
+                ),
+                const SizedBox(height: 24),
+                _StaggeredFadeIn(
+                  delay: const Duration(milliseconds: 200),
+                  child: _AchievementsCard(
+                    healthIndex: currentHealthIndex,
+                    routeCount: _totalRoutes,
+                    pctCadena: _pctCadena,
+                    pctFiltro: _pctFiltro,
+                    pctAceite: _pctAceite,
+                    pctSoat: _pctSoat,
+                    pctTecno: _pctTecno,
+                    brandTheme: bTheme,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                _StaggeredFadeIn(
+                  delay: const Duration(milliseconds: 300),
+                  child: RepaintBoundary(
+                    child: PerformanceGuard.adaptiveBlur(
+                      borderRadius: BorderRadius.circular(24),
+                      fallbackColor:
+                          Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white.withOpacity(0.08)
+                              : Colors.black.withOpacity(0.03),
+                      child: Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                            color: Colors.transparent,
+                            borderRadius: BorderRadius.circular(24),
+                            border: Border.all(
+                                color: bTheme.primaryColor.withOpacity(0.1))),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const _SectionTitle('Documentos Legales'),
+                            const SizedBox(height: 16),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                _DocTileInteractive(
+                                    title: 'SOAT',
+                                    url: _soatSigned,
+                                    onTapUpload: () => unawaited(
+                                        _openDocManager(DocType.soat, 'SOAT')),
+                                    onLongPressOpen: _soatSigned == null
+                                        ? null
+                                        : () =>
+                                            unawaited(_openUrl(_soatSigned!))),
+                                _DocTileInteractive(
+                                    title: 'Tecno',
+                                    url: _tecnoSigned,
+                                    onTapUpload: () => unawaited(
+                                        _openDocManager(
+                                            DocType.tecno, 'Tecno')),
+                                    onLongPressOpen: _tecnoSigned == null
+                                        ? null
+                                        : () =>
+                                            unawaited(_openUrl(_tecnoSigned!))),
+                                _DocTileInteractive(
+                                    title: 'Seguro',
+                                    url: _seguroSigned,
+                                    onTapUpload: () => unawaited(
+                                        _openDocManager(
+                                            DocType.seguro, 'Seguro')),
+                                    onLongPressOpen: _seguroSigned == null
+                                        ? null
+                                        : () => unawaited(
+                                            _openUrl(_seguroSigned!))),
+                                _DocTileInteractive(
+                                    title: 'T. Propied',
+                                    url: _propSigned,
+                                    onTapUpload: () => unawaited(
+                                        _openDocManager(DocType.propiedad,
+                                            'Tarjeta de Propiedad')),
+                                    onLongPressOpen: _propSigned == null
+                                        ? null
+                                        : () =>
+                                            unawaited(_openUrl(_propSigned!))),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                _StaggeredFadeIn(
+                  delay: const Duration(milliseconds: 400),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        marca,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Colors.black54,
-                        ),
-                      ),
-                      Text(
-                        '$modelo - $apodo',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 22,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      _MainHero(
-                        imagePath: imagePath,
-                        logoPath: logoPath,
-                        modelo: modelo,
-                        kms: kms,
-                      ),
+                      const _SectionTitle('Estado de Mantenimiento y Trámites'),
                       const SizedBox(height: 12),
-                      Row(
-                        children: [
-                          _IndicatorTile(
-                            title: 'SOAT',
-                            value: _pctSoat,
-                            color: _colorFor(_pctSoat),
-                          ),
-                          const SizedBox(width: 10),
-                          _IndicatorTile(
-                            title: 'Tecnomecánica',
-                            value: _pctTecno,
-                            color: _colorFor(_pctTecno),
-                          ),
-                        ],
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        physics: const BouncingScrollPhysics(),
+                        child: Row(
+                          children: [
+                            _IndicatorTile(
+                                title: 'Cadena',
+                                value: _pctCadena,
+                                color: _colorFor(_pctCadena)),
+                            const SizedBox(width: 12),
+                            _IndicatorTile(
+                                title: 'Filtro Aire',
+                                value: _pctFiltro,
+                                color: _colorFor(_pctFiltro)),
+                            const SizedBox(width: 12),
+                            _IndicatorTile(
+                                title: 'Aceite',
+                                value: _pctAceite,
+                                color: _colorFor(_pctAceite)),
+                            const SizedBox(width: 12),
+                            _IndicatorTile(
+                                title: 'SOAT',
+                                value: _pctSoat,
+                                color: _colorFor(_pctSoat)),
+                            const SizedBox(width: 12),
+                            _IndicatorTile(
+                                title: 'Tecno',
+                                value: _pctTecno,
+                                color: _colorFor(_pctTecno)),
+                          ],
+                        ),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 16),
-                const _SectionTitle('Documentos'),
-                const SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _DocTileInteractive(
-                      title: 'SOAT',
-                      url: _soatSigned,
-                      onTapUpload: () {
-                        unawaited(_openDocManager(DocType.soat, 'SOAT'));
-                      },
-                      onLongPressOpen: _soatSigned == null
-                          ? null
-                          : () {
-                              unawaited(_openUrl(_soatSigned!));
-                            },
-                    ),
-                    _DocTileInteractive(
-                      title: 'Tecno',
-                      url: _tecnoSigned,
-                      onTapUpload: () {
-                        unawaited(_openDocManager(DocType.tecno, 'Tecno'));
-                      },
-                      onLongPressOpen: _tecnoSigned == null
-                          ? null
-                          : () {
-                              unawaited(_openUrl(_tecnoSigned!));
-                            },
-                    ),
-                    _DocTileInteractive(
-                      title: 'Seguro',
-                      url: _seguroSigned,
-                      onTapUpload: () {
-                        unawaited(_openDocManager(DocType.seguro, 'Seguro'));
-                      },
-                      onLongPressOpen: _seguroSigned == null
-                          ? null
-                          : () {
-                              unawaited(_openUrl(_seguroSigned!));
-                            },
-                    ),
-                    _DocTileInteractive(
-                      title: 'T. Propied',
-                      url: _propSigned,
-                      onTapUpload: () {
-                        unawaited(
-                          _openDocManager(
-                            DocType.propiedad,
-                            'Tarjeta de Propiedad',
-                          ),
-                        );
-                      },
-                      onLongPressOpen: _propSigned == null
-                          ? null
-                          : () {
-                              unawaited(_openUrl(_propSigned!));
-                            },
-                    ),
-                  ],
+                const SizedBox(height: 24),
+                _StaggeredFadeIn(
+                  delay: const Duration(milliseconds: 500),
+                  child: _WeeklyInsightCard(
+                    pctCadena: _pctCadena,
+                    pctFiltro: _pctFiltro,
+                    pctAceite: _pctAceite,
+                    pctSoat: _pctSoat,
+                    pctTecno: _pctTecno,
+                    brandTheme: bTheme,
+                    weeklyDist: _weeklyDist,
+                    weeklyFuel: _weeklyFuel,
+                    weeklyCost: _weeklyCost,
+                    efficiencyScore: _efficiencyScore,
+                    savingsCOP: _savingsCOP,
+                    isLoading: _loadingWeekly,
+                    predictions: _predictions,
+                  ),
                 ),
-                const SizedBox(height: 16),
-                const _SectionTitle('Indicadores'),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    _IndicatorTile(
-                      title: 'Lubricación de cadena',
-                      value: _pctCadena,
-                      color: _colorFor(_pctCadena),
-                    ),
-                    const SizedBox(width: 10),
-                    _IndicatorTile(
-                      title: 'Filtro de aire',
-                      value: _pctFiltro,
-                      color: _colorFor(_pctFiltro),
-                    ),
-                    const SizedBox(width: 10),
-                    _IndicatorTile(
-                      title: 'Cambio de aceite',
-                      value: _pctAceite,
-                      color: _colorFor(_pctAceite),
-                    ),
-                  ],
+                const SizedBox(height: 24),
+                _StaggeredFadeIn(
+                  delay: const Duration(milliseconds: 600),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const _SectionTitle('Herramientas y Servicios'),
+                      const SizedBox(height: 12),
+                      _GradientButton(
+                          icon: Icons.map_rounded,
+                          text: 'Navegación GPS',
+                          onTap: () => _abrirRutas(int.tryParse(kms) ?? 0),
+                          brandTheme: bTheme),
+                      const SizedBox(height: 12),
+                      _GradientButton(
+                          icon: Icons.menu_book_rounded,
+                          text: 'Guía y Manuales',
+                          onTap: _abrirGuias,
+                          brandTheme: bTheme),
+                      const SizedBox(height: 12),
+                      _GradientButton(
+                          icon: Icons.settings_suggest_rounded,
+                          text: 'Gestionar Mantenimientos',
+                          onTap: _abrirParametrizacion,
+                          brandTheme: bTheme),
+                      const SizedBox(height: 12),
+                      _GradientButton(
+                          icon: Icons.account_balance_wallet_rounded,
+                          text: 'Gestión de Gastos',
+                          onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => GastosScreen(
+                                      vehiculoId: widget.vehiculoId,
+                                      apodo: apodo,
+                                      marcaModelo: '$marca $modelo',
+                                      brandLogoPath: brandLogos[marca],
+                                      vehicleImagePath: imagePath))),
+                          brandTheme: bTheme),
+                      const SizedBox(height: 12),
+                      _GradientButton(
+                          icon: Icons.search_rounded,
+                          text: 'Consultar RUNT',
+                          onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => RuntWebViewScreen(
+                                      placa: 'ABC123',
+                                      cedula: '12345678',
+                                      vehiculoId: widget.vehiculoId))),
+                          brandTheme: bTheme),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 16),
-                const _SectionTitle('Herramientas'),
-                const SizedBox(height: 8),
-                _GradientButton(
-                  icon: Icons.settings_suggest,
-                  text: 'Parametrización\nmantenimientos',
-                  onTap: _abrirParametrizacion,
-                ),
-                const SizedBox(height: 8),
-                _GradientButton(
-                  icon: Icons.menu_book,
-                  text: 'Guía',
-                  onTap: _abrirGuias,
-                ),
-                const SizedBox(height: 8),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => RuntWebViewScreen(
-                          placa: 'ABC123',
-                          cedula: '12345678',
-                          vehiculoId: '1',
-                        ),
-                      ),
-                    ).then((recargar) {
-                      if (recargar == true) {
-                        setState(() {}); // Recarga los datos
-                      }
-                    });
-                  },
-                  child: const Text('Consultar RUNT'),
-                ),
-                const SizedBox(height: 8),
-                _GradientButton(
-                  icon: Icons.route,
-                  text: 'Rutas',
-                  onTap: () => _abrirRutas(int.tryParse(kms) ?? 0),
-                ),
+                const SizedBox(height: 40),
               ],
             ),
           );
@@ -1017,93 +1077,106 @@ class _MainHero extends StatelessWidget {
   final String? logoPath;
   final String modelo;
   final String kms;
-  const _MainHero({
-    required this.imagePath,
-    required this.logoPath,
-    required this.modelo,
-    required this.kms,
-  });
+  final BrandTheme brandTheme;
+  final double healthIndex;
+
+  const _MainHero(
+      {required this.imagePath,
+      required this.logoPath,
+      required this.modelo,
+      required this.kms,
+      required this.brandTheme,
+      required this.healthIndex});
 
   @override
   Widget build(BuildContext context) {
-    final w = MediaQuery.of(context).size.width;
-    const double kSpecPillHeight = 112;
-    const double kSpecGap = 8;
-    final double heroHeight = math.max(
-      w * 0.50,
-      kSpecPillHeight * 3 + kSpecGap * 2,
-    );
-
-    Widget buildVehicleImage() {
-      if (imagePath.isEmpty) {
-        return const Icon(Icons.motorcycle, size: 96, color: Colors.black26);
-      }
-      return Image.asset(
-        imagePath,
-        fit: BoxFit.contain,
-        errorBuilder: (_, __, ___) =>
-            const Icon(Icons.motorcycle, size: 96, color: Colors.black26),
-      );
-    }
-
-    return SizedBox(
-      height: heroHeight,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        gradient: PerformanceGuard().isLowEnd
+            ? null
+            : LinearGradient(
+                colors: isDark
+                    ? [brandTheme.primaryColor.withOpacity(0.1), Colors.black12]
+                    : [brandTheme.primaryColor.withOpacity(0.05), Colors.white],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight),
+        color: PerformanceGuard().isLowEnd
+            ? (isDark ? Colors.grey[900] : Colors.grey[100])
+            : null,
+      ),
+      child: Stack(
         children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              _SpecPill(
-                icon: Icons.public,
-                title: 'Kilometraje',
-                value: '$kms km',
-                height: kSpecPillHeight,
-              ),
-              const SizedBox(height: kSpecGap),
-              const _SpecPill(
-                icon: Icons.event_seat,
-                title: 'Asientos',
-                value: '2 Personas',
-                height: kSpecPillHeight,
-              ),
-              const SizedBox(height: kSpecGap),
-              _SpecPill(
-                icon: Icons.calendar_month,
-                title: 'Linea',
-                value: modelo,
-                height: kSpecPillHeight,
-              ),
-            ],
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(14),
-              child: Stack(
-                children: [
-                  Positioned.fill(
-                    child: Image.asset(
-                      'assets/lineasfondo.png',
-                      fit: BoxFit.cover,
-                    ),
+          Positioned(
+              right: -20,
+              bottom: -20,
+              child: Icon(Icons.motorcycle,
+                  size: 200, color: brandTheme.primaryColor.withOpacity(0.05))),
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      if (logoPath != null)
+                        Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                boxShadow: [
+                                  if (!PerformanceGuard().isLowEnd)
+                                    BoxShadow(
+                                        color: Colors.black.withOpacity(0.05),
+                                        blurRadius: 10)
+                                ]),
+                            child: Image.asset(logoPath!,
+                                height: 30,
+                                fit: BoxFit.contain,
+                                cacheHeight: 60)),
+                      const SizedBox(height: 16),
+                      Text(modelo,
+                          style: const TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: -0.5)),
+                      const SizedBox(height: 4),
+                      Text(
+                          '${int.tryParse(kms)?.toString().replaceAllMapped(RegExp(r"(\d{1,3})(?=(\d{3})+(?!\d))"), (Match m) => "${m[1]}.") ?? kms} KM',
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: isDark ? Colors.white70 : Colors.black54,
+                              letterSpacing: 0.5)),
+                      const SizedBox(height: 8),
+                      _HealthBar(
+                          healthIndex: healthIndex, brandTheme: brandTheme),
+                      const SizedBox(height: 4),
+                      Text(VehicleHealthLogic.getVehicleStatus(healthIndex),
+                          style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: brandTheme.primaryColor)),
+                    ],
                   ),
-                  Center(child: buildVehicleImage()),
-                  if (logoPath != null)
-                    Positioned(
-                      top: 10,
-                      right: 10,
-                      child: CircleAvatar(
-                        radius: 16,
-                        backgroundColor: Colors.white,
-                        child: Padding(
-                          padding: const EdgeInsets.all(2.0),
-                          child: Image.asset(logoPath!, fit: BoxFit.contain),
-                        ),
-                      ),
-                    ),
-                ],
-              ),
+                ),
+                Expanded(
+                    flex: 4,
+                    child: Hero(
+                        tag: 'vehicle_main_image',
+                        child: imagePath.isNotEmpty
+                            ? Image.asset(imagePath,
+                                fit: BoxFit.contain, cacheWidth: 800)
+                            : Icon(Icons.motorcycle,
+                                size: 100,
+                                color:
+                                    brandTheme.primaryColor.withOpacity(0.2)))),
+              ],
             ),
           ),
         ],
@@ -1112,222 +1185,436 @@ class _MainHero extends StatelessWidget {
   }
 }
 
+class _HealthBar extends StatelessWidget {
+  final double healthIndex;
+  final BrandTheme brandTheme;
+  const _HealthBar({required this.healthIndex, required this.brandTheme});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          const Text('ISH',
+              style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey)),
+          Text('${healthIndex.toInt()}%',
+              style:
+                  const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+        ]),
+        const SizedBox(height: 4),
+        Container(
+          height: 6,
+          width: 120,
+          decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(10)),
+          child: FractionallySizedBox(
+              alignment: Alignment.centerLeft,
+              widthFactor: healthIndex / 100,
+              child: Container(
+                  decoration: BoxDecoration(
+                      gradient: PerformanceGuard().isLowEnd
+                          ? null
+                          : LinearGradient(colors: [
+                              brandTheme.primaryColor,
+                              brandTheme.primaryColor.withOpacity(0.6)
+                            ]),
+                      color: PerformanceGuard().isLowEnd
+                          ? brandTheme.primaryColor
+                          : null,
+                      borderRadius: BorderRadius.circular(10)))),
+        ),
+      ],
+    );
+  }
+}
+
+class _WeeklyInsightCard extends StatelessWidget {
+  final double pctCadena,
+      pctFiltro,
+      pctAceite,
+      pctSoat,
+      pctTecno,
+      weeklyDist,
+      weeklyFuel,
+      weeklyCost,
+      efficiencyScore,
+      savingsCOP;
+  final BrandTheme brandTheme;
+  final bool isLoading;
+  final List<Map<String, dynamic>> predictions;
+
+  const _WeeklyInsightCard(
+      {required this.pctCadena,
+      required this.pctFiltro,
+      required this.pctAceite,
+      required this.pctSoat,
+      required this.pctTecno,
+      required this.brandTheme,
+      required this.weeklyDist,
+      required this.weeklyFuel,
+      required this.weeklyCost,
+      required this.efficiencyScore,
+      required this.savingsCOP,
+      required this.predictions,
+      this.isLoading = false});
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final healthIndex = VehicleHealthLogic.calculateHealthIndex(
+        pctCadena: pctCadena,
+        pctFiltro: pctFiltro,
+        pctAceite: pctAceite,
+        pctSoat: pctSoat,
+        pctTecno: pctTecno);
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+          color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: brandTheme.primaryColor.withOpacity(0.1)),
+          boxShadow: [
+            if (!PerformanceGuard().isLowEnd)
+              BoxShadow(
+                  color: Colors.black.withOpacity(isDark ? 0.3 : 0.08),
+                  blurRadius: 24,
+                  offset: const Offset(0, 8))
+          ]),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(children: [
+            Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                    color: brandTheme.primaryColor.withOpacity(0.1),
+                    shape: BoxShape.circle),
+                child: Icon(Icons.insights_rounded,
+                    color: brandTheme.primaryColor, size: 22)),
+            const SizedBox(width: 12),
+            Expanded(
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                  Text('Resumen de los últimos 7 días',
+                      style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: isDark ? Colors.white54 : Colors.black54)),
+                  Text(VehicleHealthLogic.getVehicleStatus(healthIndex),
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 18)),
+                ])),
+            if (isLoading)
+              const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2)),
+          ]),
+          const SizedBox(height: 20),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            _StatItem(
+                label: 'Distancia',
+                value: '${weeklyDist.toStringAsFixed(1)} km',
+                icon: Icons.route_outlined,
+                color: Colors.blue),
+            _StatItem(
+                label: 'Consumo',
+                value: '${weeklyFuel.toStringAsFixed(1)} gal',
+                icon: Icons.local_gas_station_rounded,
+                color: Colors.orange),
+            _StatItem(
+                label: 'Gasto',
+                value: '\$${(weeklyCost / 1000).toStringAsFixed(1)}k',
+                icon: Icons.payments_rounded,
+                color: Colors.green),
+          ]),
+          const Divider(height: 32),
+          Row(children: [
+            Expanded(
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                  Row(children: [
+                    Icon(Icons.eco_rounded,
+                        color: efficiencyScore >= 95
+                            ? Colors.green
+                            : Colors.orange,
+                        size: 16),
+                    const SizedBox(width: 6),
+                    Text(
+                        FuelEfficiencyLogic.getEfficiencyLabel(efficiencyScore),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 13))
+                  ]),
+                  const SizedBox(height: 8),
+                  Stack(children: [
+                    Container(
+                        height: 8,
+                        decoration: BoxDecoration(
+                            color: isDark
+                                ? Colors.white10
+                                : Colors.black.withOpacity(0.05),
+                            borderRadius: BorderRadius.circular(4))),
+                    FractionallySizedBox(
+                        widthFactor: (efficiencyScore / 120).clamp(0.01, 1.0),
+                        child: Container(
+                            height: 8,
+                            decoration: BoxDecoration(
+                                gradient: LinearGradient(colors: [
+                                  Colors.green.shade300,
+                                  Colors.green.shade600
+                                ]),
+                                borderRadius: BorderRadius.circular(4))))
+                  ]),
+                ])),
+            const SizedBox(width: 24),
+            Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+              Text(savingsCOP >= 0 ? 'Ahorro Real' : 'Sobre-costo',
+                  style: TextStyle(
+                      fontSize: 10,
+                      color: isDark ? Colors.white54 : Colors.black54)),
+              Text(
+                  '${savingsCOP >= 0 ? '+' : ''}\$${(savingsCOP / 1000).toStringAsFixed(1)}k',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color:
+                          savingsCOP >= 0 ? Colors.green : Colors.redAccent)),
+            ]),
+          ]),
+          if (predictions.isNotEmpty) ...[
+            const Divider(height: 32),
+            _ProactivePredictionsCard(predictions: predictions)
+          ],
+          const Divider(height: 32),
+          Row(children: [
+            Expanded(
+                child: Text(VehicleHealthLogic.getWeeklySummary(healthIndex),
+                    style: TextStyle(
+                        height: 1.4,
+                        fontSize: 13,
+                        color: isDark ? Colors.white70 : Colors.black87))),
+            IconButton(
+                onPressed: () {
+                  final state =
+                      context.findAncestorStateOfType<_InicioAppState>();
+                  state?._abrirHistorialRutas();
+                },
+                icon: Icon(Icons.history_toggle_off_rounded,
+                    color: brandTheme.primaryColor)),
+          ]),
+        ],
+      ),
+    );
+  }
+}
+
+class _StatItem extends StatelessWidget {
+  final String label, value;
+  final IconData icon;
+  final Color color;
+  const _StatItem(
+      {required this.label,
+      required this.value,
+      required this.icon,
+      required this.color});
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Column(children: [
+      Icon(icon, color: color, size: 20),
+      const SizedBox(height: 6),
+      Text(value,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+      Text(label,
+          style: TextStyle(
+              fontSize: 10, color: isDark ? Colors.white54 : Colors.black54))
+    ]);
+  }
+}
+
+class _ProactivePredictionsCard extends StatelessWidget {
+  final List<Map<String, dynamic>> predictions;
+  const _ProactivePredictionsCard({required this.predictions});
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Row(children: [
+        Icon(Icons.auto_graph_rounded, size: 16, color: Colors.purple[400]),
+        const SizedBox(width: 8),
+        const Text('Diagnóstico Predictivo (IA)',
+            style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold))
+      ]),
+      const SizedBox(height: 12),
+      ...predictions.map((p) {
+        final days = p['days'] as int? ?? 0;
+        final item = p['item'] as String;
+        final status = p['status'] as String;
+        final color = days <= 7
+            ? Colors.redAccent
+            : (days <= 20 ? Colors.orangeAccent : Colors.purpleAccent);
+        return Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Row(children: [
+              Container(
+                  width: 4,
+                  height: 30,
+                  decoration: BoxDecoration(
+                      color: color, borderRadius: BorderRadius.circular(2))),
+              const SizedBox(width: 12),
+              Expanded(
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                    Text(
+                        status == 'Proyectado'
+                            ? 'Próximo servicio de $item: est. $days días'
+                            : '$item: $status',
+                        style: const TextStyle(
+                            fontSize: 12, fontWeight: FontWeight.w500)),
+                    if (status == 'Proyectado')
+                      Text(
+                          'Basado en recorrido diario de ${(p['kmPerDay'] as double).toStringAsFixed(1)} km',
+                          style: TextStyle(
+                              fontSize: 10,
+                              color: isDark ? Colors.white38 : Colors.black38))
+                  ])),
+              Icon(Icons.chevron_right,
+                  size: 14, color: isDark ? Colors.white24 : Colors.black12),
+            ]));
+      }),
+    ]);
+  }
+}
+
 class _SectionTitle extends StatelessWidget {
   final String text;
   const _SectionTitle(this.text);
   @override
   Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: const TextStyle(
-        fontWeight: FontWeight.bold,
-        color: Colors.black87,
-      ),
-    );
-  }
-}
-
-class _SpecPill extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String value;
-  final double height;
-  const _SpecPill({
-    required this.icon,
-    required this.title,
-    required this.value,
-    required this.height,
-  });
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: height,
-      width: 86,
-      child: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.06),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: Colors.blueGrey, size: 18),
-            const SizedBox(height: 6),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 10, color: Colors.black54),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              value,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        ),
-      ),
-    );
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Text(text.toUpperCase(),
+        style: TextStyle(
+            fontWeight: FontWeight.w900,
+            fontSize: 13,
+            letterSpacing: 1.2,
+            color: isDark ? Colors.white54 : Colors.black45));
   }
 }
 
 class _DocTileInteractive extends StatelessWidget {
   final String title;
-  final String? url; // URL firmada para miniatura
+  final String? url;
   final VoidCallback onTapUpload;
   final VoidCallback? onLongPressOpen;
-  const _DocTileInteractive({
-    required this.title,
-    required this.url,
-    required this.onTapUpload,
-    this.onLongPressOpen,
-  });
-
-  bool _isImageUrl(String u) {
-    final lu = u.toLowerCase();
-    return lu.endsWith('.png') ||
-        lu.endsWith('.jpg') ||
-        lu.endsWith('.jpeg') ||
-        lu.endsWith('.webp') ||
-        lu.endsWith('.heic') ||
-        lu.endsWith('.gif');
-  }
-
+  const _DocTileInteractive(
+      {required this.title,
+      required this.url,
+      required this.onTapUpload,
+      this.onLongPressOpen});
   @override
   Widget build(BuildContext context) {
-    Widget content;
-    if (url == null) {
-      content = const Icon(Icons.cloud_upload, size: 18, color: Colors.blue);
-    } else if (_isImageUrl(url!)) {
-      content = ClipRRect(
-        borderRadius: BorderRadius.circular(8),
-        child: Image.network(
-          url!,
-          fit: BoxFit.cover,
-          width: 28,
-          height: 28,
-          errorBuilder: (_, __, ___) => const Icon(
-            Icons.image_not_supported,
-            size: 20,
-            color: Colors.grey,
-          ),
-        ),
-      );
-    } else {
-      content = const Icon(
-        Icons.picture_as_pdf,
-        size: 20,
-        color: Colors.redAccent,
-      );
-    }
-    return GestureDetector(
-      onTap: onTapUpload,
-      onLongPress: onLongPressOpen,
-      child: DottedBorder(
-        options: const RoundedRectDottedBorderOptions(
-          dashPattern: [6, 4],
-          strokeWidth: 1.6,
-          radius: Radius.circular(12),
-          color: Colors.blueGrey,
-          padding: EdgeInsets.all(0),
-        ),
-        child: Container(
-          width: 64,
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-          child: Column(
-            children: [
-              Container(
-                width: 28,
-                height: 28,
-                decoration: BoxDecoration(
-                  color: Colors.blue.withOpacity(0.08),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Center(child: content),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                title,
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 11),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+    Widget content = url == null
+        ? const Icon(Icons.cloud_upload, size: 18, color: Colors.blue)
+        : (url!.toLowerCase().contains('.jpg') ||
+                url!.toLowerCase().contains('.png')
+            ? ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.network(url!,
+                    fit: BoxFit.cover,
+                    width: 28,
+                    height: 28,
+                    cacheWidth: 100,
+                    errorBuilder: (_, __, ___) => const Icon(
+                        Icons.image_not_supported,
+                        size: 20,
+                        color: Colors.grey)))
+            : const Icon(Icons.picture_as_pdf,
+                size: 20, color: Colors.redAccent));
+    return _ScaleButton(
+        onTap: onTapUpload,
+        onLongPress: onLongPressOpen,
+        child: DottedBorder(
+            options: const RoundedRectDottedBorderOptions(
+                dashPattern: [6, 4],
+                strokeWidth: 1.6,
+                radius: Radius.circular(12),
+                color: Colors.blueGrey,
+                padding: EdgeInsets.all(0)),
+            child: Container(
+                width: 64,
+                padding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                child: Column(children: [
+                  Container(
+                      width: 28,
+                      height: 28,
+                      decoration: BoxDecoration(
+                          color: Colors.blue.withOpacity(0.08),
+                          borderRadius: BorderRadius.circular(8)),
+                      child: Center(child: content)),
+                  const SizedBox(height: 6),
+                  Text(title,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 11),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis)
+                ]))));
   }
 }
 
 class _IndicatorTile extends StatelessWidget {
   final String title;
-  final double value; // 0..1
+  final double value;
   final Color color;
-  const _IndicatorTile({
-    required this.title,
-    required this.value,
-    required this.color,
-  });
+  const _IndicatorTile(
+      {required this.title, required this.value, required this.color});
   @override
   Widget build(BuildContext context) {
-    final pct = (value * 100).round();
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: Colors.grey.shade300),
-        ),
-        child: Column(
-          children: [
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 11),
-            ),
-            const SizedBox(height: 8),
-            SizedBox(
-              height: 56,
-              width: 56,
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  CircularProgressIndicator(
-                    value: value,
-                    strokeWidth: 6,
-                    backgroundColor: Colors.grey.shade200,
-                    valueColor: AlwaysStoppedAnimation<Color>(color),
-                  ),
-                  Center(
-                    child: Text(
-                      '$pct%',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+      width: 100,
+      decoration: BoxDecoration(
+          color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+              color: isDark
+                  ? Colors.white.withOpacity(0.1)
+                  : Colors.white.withOpacity(0.2))),
+      child: Column(children: [
+        Text(title,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: isDark ? Colors.white70 : Colors.black87)),
+        const SizedBox(height: 12),
+        SizedBox(
+            height: 50,
+            width: 50,
+            child: Stack(fit: StackFit.expand, children: [
+              CircularProgressIndicator(
+                  value: value,
+                  strokeWidth: 6,
+                  backgroundColor:
+                      isDark ? Colors.white10 : Colors.black.withOpacity(0.05),
+                  valueColor: AlwaysStoppedAnimation<Color>(color)),
+              Center(
+                  child: Text('${(value * 100).round()}%',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                          color: isDark ? Colors.white : Colors.black)))
+            ]))
+      ]),
     );
   }
 }
@@ -1336,70 +1623,47 @@ class _GradientButton extends StatelessWidget {
   final IconData icon;
   final String text;
   final VoidCallback onTap;
-  const _GradientButton({
-    required this.icon,
-    required this.text,
-    required this.onTap,
-  });
+  final BrandTheme? brandTheme;
+  const _GradientButton(
+      {required this.icon,
+      required this.text,
+      required this.onTap,
+      this.brandTheme});
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(14),
-      onTap: onTap,
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(14),
-          gradient: const LinearGradient(
-            colors: [Color(0xFF66A6FF), Color(0xFF6E8EF5)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x406E8EF5),
-              blurRadius: 12,
-              offset: Offset(0, 6),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 38,
-              height: 38,
-              decoration: BoxDecoration(
-                color: Colors.white24,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Icon(icon, color: Colors.white),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                text,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            const Icon(Icons.chevron_right, color: Colors.white),
-          ],
-        ),
-      ),
-    );
+    final theme = brandTheme ?? BrandTheme.defaultTheme;
+    return _ScaleButton(
+        onTap: onTap,
+        child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                gradient: theme.gradient),
+            child: Row(children: [
+              Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(12)),
+                  child: Icon(icon, color: Colors.white, size: 22)),
+              const SizedBox(width: 16),
+              Expanded(
+                  child: Text(text,
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16))),
+              const Icon(Icons.arrow_forward_ios,
+                  color: Colors.white70, size: 16)
+            ])));
   }
 }
 
-// ====== VISOR EMBEBIDO ======
 class DocumentViewerScreen extends StatefulWidget {
   final String url;
   final String? fileName;
-
   const DocumentViewerScreen({super.key, required this.url, this.fileName});
-
   @override
   State<DocumentViewerScreen> createState() => _DocumentViewerScreenState();
 }
@@ -1408,68 +1672,25 @@ class _DocumentViewerScreenState extends State<DocumentViewerScreen> {
   File? _localFile;
   bool _isLoading = true;
   String? _error;
-
-  // Nombre de archivo legible
-  String _getCleanFileName(String url) {
-    String name = url.split('/').last;
-    if (name.contains('?')) name = name.split('?').first;
-    return name.isEmpty ? 'tempfile' : name;
-  }
-
-  bool _isImage(String u) {
-    final l = u.toLowerCase();
-    return l.endsWith('.png') ||
-        l.endsWith('.jpg') ||
-        l.endsWith('.jpeg') ||
-        l.endsWith('.gif') ||
-        l.endsWith('.webp') ||
-        l.endsWith('.heic');
-  }
-
-  bool _isPdf(String u) => u.toLowerCase().endsWith('.pdf');
-
-  Future<File> _downloadFile(String url, String name) async {
-    final res = await http.get(Uri.parse(url));
-    if (res.statusCode != 200) {
-      throw Exception('HTTP ${res.statusCode} al descargar $name');
-    }
-    final dir = await getTemporaryDirectory();
-    final file = File('${dir.path}/$name');
-    await file.writeAsBytes(res.bodyBytes);
-    return file;
-  }
-
   Future<void> _prepareFile() async {
-    setState(() {
-      _isLoading = true;
-      _error = null;
-    });
     try {
-      final name = widget.fileName ?? _getCleanFileName(widget.url);
-      final file = widget.url.startsWith('http')
-          ? await _downloadFile(widget.url, name)
-          : File(widget.url);
-      setState(() {
-        _localFile = file;
-        _isLoading = false;
-      });
+      final res = await http.get(Uri.parse(widget.url));
+      final dir = await getTemporaryDirectory();
+      final file = File('${dir.path}/${widget.fileName ?? "tempfile"}');
+      await file.writeAsBytes(res.bodyBytes);
+      if (mounted) {
+        setState(() {
+          _localFile = file;
+          _isLoading = false;
+        });
+      }
     } catch (e) {
-      setState(() {
-        _error = 'Error al cargar archivo: $e';
-        _isLoading = false;
-      });
-    }
-  }
-
-  Future<void> _openFileExternal() async {
-    if (_localFile == null) return;
-    final result = await OpenFilex.open(_localFile!.path);
-    if (result.type != ResultType.done && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('No se pudo abrir el archivo: ${result.message}'),
-        ),
-      );
+      if (mounted) {
+        setState(() {
+          _error = 'Error: $e';
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -1481,68 +1702,210 @@ class _DocumentViewerScreenState extends State<DocumentViewerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isImage = _isImage(widget.url);
-    final isPdf = _isPdf(widget.url);
-
+    final isImage = widget.url.toLowerCase().contains('.jpg') ||
+        widget.url.toLowerCase().contains('.png');
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.fileName ?? (isImage ? 'Imagen' : 'Documento')),
-        actions: [
-          IconButton(
+      appBar: AppBar(title: Text(widget.fileName ?? 'Visor'), actions: [
+        IconButton(
             icon: const Icon(Icons.open_in_new),
-            onPressed: _openFileExternal,
-          ),
-        ],
-      ),
+            onPressed: () async {
+              if (_localFile != null) OpenFilex.open(_localFile!.path);
+            })
+      ]),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : (_error != null)
-              ? Center(
-                  child:
-                      Text(_error!, style: const TextStyle(color: Colors.red)),
-                )
-              : isImage
-                  ? PhotoView(
-                      imageProvider: FileImage(_localFile!),
-                      backgroundDecoration:
-                          const BoxDecoration(color: Colors.black),
-                    )
-                  : isPdf
-                      ? SfPdfViewer.file(
-                          _localFile!,
-                          onDocumentLoadFailed: (details) {
-                            if (mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                      'Error cargando PDF: ${details.error}'),
-                                ),
-                              );
-                            }
-                          },
-                        )
-                      : Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(20),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(
-                                  Icons.insert_drive_file,
-                                  size: 80,
-                                  color: Colors.grey,
-                                ),
-                                const SizedBox(height: 20),
-                                const Text('No se puede mostrar este archivo.'),
-                                const SizedBox(height: 10),
-                                ElevatedButton(
-                                  onPressed: _openFileExternal,
-                                  child: const Text('Abrir archivo'),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
+          : (_error != null
+              ? Center(child: Text(_error!))
+              : (isImage
+                  ? PhotoView(imageProvider: FileImage(_localFile!))
+                  : SfPdfViewer.file(_localFile!))),
     );
+  }
+}
+
+class _StaggeredFadeIn extends StatefulWidget {
+  final Widget child;
+  final Duration delay;
+  const _StaggeredFadeIn({required this.child, required this.delay});
+  @override
+  State<_StaggeredFadeIn> createState() => _StaggeredFadeInState();
+}
+
+class _StaggeredFadeInState extends State<_StaggeredFadeIn> {
+  bool _show = false;
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(widget.delay, () {
+      if (mounted) setState(() => _show = true);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedOpacity(
+        opacity: _show ? 1.0 : 0.0,
+        duration: const Duration(milliseconds: 600),
+        child: AnimatedContainer(
+            duration: const Duration(milliseconds: 600),
+            transform: Matrix4.translationValues(0, _show ? 0 : 30, 0),
+            child: widget.child));
+  }
+}
+
+class _ScaleButton extends StatefulWidget {
+  final Widget child;
+  final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
+  const _ScaleButton({required this.child, this.onTap, this.onLongPress});
+  @override
+  State<_ScaleButton> createState() => _ScaleButtonState();
+}
+
+class _ScaleButtonState extends State<_ScaleButton> {
+  bool _isPressed = false;
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+        onTapDown: (_) => setState(() => _isPressed = true),
+        onTapUp: (_) => setState(() => _isPressed = false),
+        onTapCancel: () => setState(() => _isPressed = false),
+        onTap: widget.onTap,
+        onLongPress: widget.onLongPress,
+        child: AnimatedScale(
+            scale: _isPressed ? 0.96 : 1.0,
+            duration: const Duration(milliseconds: 100),
+            child: widget.child));
+  }
+}
+
+// ─── WIDGETS DE GAMIFICACIÓN ─────────────────────────────
+
+class _AchievementsCard extends StatelessWidget {
+  final double healthIndex;
+  final int routeCount;
+  final double pctCadena, pctFiltro, pctAceite, pctSoat, pctTecno;
+  final BrandTheme brandTheme;
+  const _AchievementsCard(
+      {required this.healthIndex,
+      required this.routeCount,
+      required this.pctCadena,
+      required this.pctFiltro,
+      required this.pctAceite,
+      required this.pctSoat,
+      required this.pctTecno,
+      required this.brandTheme});
+
+  @override
+  Widget build(BuildContext context) {
+    final level = VehicleHealthLogic.getUserLevel(healthIndex);
+    final medallas = VehicleHealthLogic.getQualityCertifications(
+        pctCadena: pctCadena,
+        pctFiltro: pctFiltro,
+        pctAceite: pctAceite,
+        pctSoat: pctSoat,
+        pctTecno: pctTecno,
+        routeCount: routeCount);
+    return PerformanceGuard.adaptiveBlur(
+      borderRadius: BorderRadius.circular(24),
+      fallbackColor: Theme.of(context).brightness == Brightness.dark
+          ? Colors.white.withOpacity(0.05)
+          : Colors.black.withOpacity(0.02),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(24),
+            border:
+                Border.all(color: brandTheme.primaryColor.withOpacity(0.1))),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const _SectionTitle('Logros y Nivel'),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                      color: Color(int.parse(level['color'])).withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(12),
+                      border:
+                          Border.all(color: Color(int.parse(level['color'])))),
+                  child: Row(children: [
+                    Icon(Icons.workspace_premium,
+                        size: 16, color: Color(int.parse(level['color']))),
+                    const SizedBox(width: 6),
+                    Text('Nivel ${level['name']}',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Color(int.parse(level['color'])),
+                            fontSize: 12))
+                  ]),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            if (medallas.isEmpty)
+              const Text(
+                  'Aún no tienes medallas. ¡Mantén tu vehículo al día para ganarlas!',
+                  style: TextStyle(fontSize: 13, color: Colors.grey))
+            else
+              SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  physics: const BouncingScrollPhysics(),
+                  child: Row(
+                      children: medallas
+                          .map((m) => Padding(
+                              padding: const EdgeInsets.only(right: 12),
+                              child: _AchievementMedal(
+                                  icon: _getIconData(m['icon']),
+                                  label: m['label'],
+                                  color: Color(int.parse(m['color'])))))
+                          .toList())),
+          ],
+        ),
+      ),
+    );
+  }
+
+  IconData _getIconData(String name) {
+    switch (name) {
+      case 'verified':
+        return Icons.verified_user_rounded;
+      case 'gavel':
+        return Icons.gavel_rounded;
+      case 'settings_input_component':
+        return Icons.settings_applications_rounded;
+      case 'map':
+        return Icons.map_rounded;
+      default:
+        return Icons.star_rounded;
+    }
+  }
+}
+
+class _AchievementMedal extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+  const _AchievementMedal(
+      {required this.icon, required this.label, required this.color});
+  @override
+  Widget build(BuildContext context) {
+    return Column(children: [
+      Container(
+          width: 56,
+          height: 56,
+          decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              shape: BoxShape.circle,
+              border: Border.all(color: color.withOpacity(0.3), width: 2)),
+          child: Icon(icon, color: color, size: 28)),
+      const SizedBox(height: 8),
+      Text(label,
+          style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center),
+    ]);
   }
 }

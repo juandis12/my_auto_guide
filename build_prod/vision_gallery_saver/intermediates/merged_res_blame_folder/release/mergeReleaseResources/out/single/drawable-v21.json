@@ -1,0 +1,6 @@
+[
+    {
+        "merged": "com.thenoumandev.vision_gallery_saver-release-25:/drawable-v21/notification_action_background.xml",
+        "source": "com.thenoumandev.vision_gallery_saver-core-1.13.1-14:/drawable-v21/notification_action_background.xml"
+    }
+]
