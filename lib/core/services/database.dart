@@ -20,7 +20,7 @@ class AppDatabase {
     final path = join(documentsDirectory.path, 'my_auto_guide.db');
     return await openDatabase(
       path,
-      version: 2,  // Incrementado para incluir nuevas tablas
+      version: 2, // Incrementado para incluir nuevas tablas
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -133,7 +133,8 @@ class AppDatabase {
 
   Future<int> updateVehicle(int id, Map<String, dynamic> vehicle) async {
     final db = await database;
-    return await db.update('vehicles', vehicle, where: 'id = ?', whereArgs: [id]);
+    return await db
+        .update('vehicles', vehicle, where: 'id = ?', whereArgs: [id]);
   }
 
   Future<int> deleteVehicle(int id) async {
@@ -142,9 +143,11 @@ class AppDatabase {
   }
 
   // Métodos para Routes
-  Future<List<Map<String, dynamic>>> getRoutesForVehicle(String vehicleId) async {
+  Future<List<Map<String, dynamic>>> getRoutesForVehicle(
+      String vehicleId) async {
     final db = await database;
-    return await db.query('routes', where: 'vehicleId = ?', whereArgs: [vehicleId]);
+    return await db
+        .query('routes', where: 'vehicleId = ?', whereArgs: [vehicleId]);
   }
 
   Future<int> insertRoute(Map<String, dynamic> route) async {
@@ -153,9 +156,11 @@ class AppDatabase {
   }
 
   // Métodos para Expenses
-  Future<List<Map<String, dynamic>>> getExpensesForVehicle(String vehicleId) async {
+  Future<List<Map<String, dynamic>>> getExpensesForVehicle(
+      String vehicleId) async {
     final db = await database;
-    return await db.query('expenses', where: 'vehicleId = ?', whereArgs: [vehicleId]);
+    return await db
+        .query('expenses', where: 'vehicleId = ?', whereArgs: [vehicleId]);
   }
 
   Future<int> insertExpense(Map<String, dynamic> expense) async {
@@ -176,12 +181,14 @@ class AppDatabase {
 
   Future<List<Map<String, dynamic>>> getPendingRoutes() async {
     final db = await database;
-    return await db.query('pending_routes', where: 'synced = ?', whereArgs: [0]);
+    return await db
+        .query('pending_routes', where: 'synced = ?', whereArgs: [0]);
   }
 
   Future<int> markRouteAsSynced(int id) async {
     final db = await database;
-    return await db.update('pending_routes', {'synced': 1}, where: 'id = ?', whereArgs: [id]);
+    return await db.update('pending_routes', {'synced': 1},
+        where: 'id = ?', whereArgs: [id]);
   }
 
   Future<int> deletePendingRoute(int id) async {
@@ -202,16 +209,19 @@ class AppDatabase {
 
   Future<List<Map<String, dynamic>>> getPendingKmsUpdates() async {
     final db = await database;
-    return await db.query('pending_kms_updates', where: 'synced = ?', whereArgs: [0]);
+    return await db
+        .query('pending_kms_updates', where: 'synced = ?', whereArgs: [0]);
   }
 
   Future<int> markKmsUpdateAsSynced(int id) async {
     final db = await database;
-    return await db.update('pending_kms_updates', {'synced': 1}, where: 'id = ?', whereArgs: [id]);
+    return await db.update('pending_kms_updates', {'synced': 1},
+        where: 'id = ?', whereArgs: [id]);
   }
 
   Future<int> deletePendingKmsUpdate(int id) async {
     final db = await database;
-    return await db.delete('pending_kms_updates', where: 'id = ?', whereArgs: [id]);
+    return await db
+        .delete('pending_kms_updates', where: 'id = ?', whereArgs: [id]);
   }
 }

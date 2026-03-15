@@ -62,7 +62,8 @@ class _HistorialRutasScreenState extends State<HistorialRutasScreen> {
           : _history.isEmpty
               ? _buildEmptyState()
               : ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   itemCount: _history.length,
                   itemBuilder: (context, index) {
                     return GestureDetector(
@@ -88,7 +89,8 @@ class _HistorialRutasScreenState extends State<HistorialRutasScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.map_outlined, size: 80, color: Colors.grey.withOpacity(0.3)),
+          Icon(Icons.map_outlined,
+              size: 80, color: Colors.grey.withOpacity(0.3)),
           const SizedBox(height: 16),
           const Text(
             'Aún no tienes trayectos guardados',
@@ -116,7 +118,8 @@ class _RouteCard extends StatelessWidget {
     final hasCosto = route['costo_estimado'] != null;
 
     final kms = hasKms ? (route['distancia_km'] as num).toDouble() : 0.0;
-    final galones = hasGalones ? (route['consumo_galones'] as num).toDouble() : 0.0;
+    final galones =
+        hasGalones ? (route['consumo_galones'] as num).toDouble() : 0.0;
     final costo = hasCosto ? (route['costo_estimado'] as num).toDouble() : 0.0;
 
     DateTime fecha;
@@ -135,7 +138,9 @@ class _RouteCard extends StatelessWidget {
         color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05),
+          color: isDark
+              ? Colors.white.withOpacity(0.1)
+              : Colors.black.withOpacity(0.05),
         ),
         boxShadow: [
           if (!PerformanceGuard().isLowEnd)
@@ -153,10 +158,13 @@ class _RouteCard extends StatelessWidget {
             // Header: Fecha
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              color: isDark ? Colors.blue.withOpacity(0.1) : Colors.blue.withOpacity(0.05),
+              color: isDark
+                  ? Colors.blue.withOpacity(0.1)
+                  : Colors.blue.withOpacity(0.05),
               child: Row(
                 children: [
-                  Icon(Icons.calendar_today_rounded, size: 14, color: Colors.blue[400]),
+                  Icon(Icons.calendar_today_rounded,
+                      size: 14, color: Colors.blue[400]),
                   const SizedBox(width: 8),
                   Text(
                     '${fecha.day}/${fecha.month}/${fecha.year} - ${fecha.hour}:${fecha.minute.toString().padLeft(2, '0')}',
@@ -174,7 +182,10 @@ class _RouteCard extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
-                  _LocationRow(icon: Icons.circle_outlined, text: origen, color: Colors.grey),
+                  _LocationRow(
+                      icon: Icons.circle_outlined,
+                      text: origen,
+                      color: Colors.grey),
                   const Padding(
                     padding: EdgeInsets.only(left: 11),
                     child: Align(
@@ -182,7 +193,10 @@ class _RouteCard extends StatelessWidget {
                       child: DashedLineConnector(),
                     ),
                   ),
-                  _LocationRow(icon: Icons.location_on, text: destino, color: Colors.redAccent),
+                  _LocationRow(
+                      icon: Icons.location_on,
+                      text: destino,
+                      color: Colors.redAccent),
                   const Divider(height: 24),
                   // Métrica
                   Row(
@@ -195,13 +209,17 @@ class _RouteCard extends StatelessWidget {
                       ),
                       _Stat(
                         icon: Icons.local_gas_station_rounded,
-                        value: hasGalones ? '${galones.toStringAsFixed(2)} gal' : 'N/A',
+                        value: hasGalones
+                            ? '${galones.toStringAsFixed(2)} gal'
+                            : 'N/A',
                         label: 'Consumo',
                         color: Colors.orange,
                       ),
                       _Stat(
                         icon: Icons.payments_rounded,
-                        value: hasCosto ? '\$${(costo / 1000).toStringAsFixed(1)}k' : 'N/A',
+                        value: hasCosto
+                            ? '\$${(costo / 1000).toStringAsFixed(1)}k'
+                            : 'N/A',
                         label: 'Gasto',
                         color: Colors.green,
                       ),
@@ -221,7 +239,8 @@ class _LocationRow extends StatelessWidget {
   final IconData icon;
   final String text;
   final Color color;
-  const _LocationRow({required this.icon, required this.text, required this.color});
+  const _LocationRow(
+      {required this.icon, required this.text, required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -246,17 +265,26 @@ class _Stat extends StatelessWidget {
   final IconData icon;
   final String value, label;
   final Color? color;
-  const _Stat({required this.icon, required this.value, required this.label, this.color});
+  const _Stat(
+      {required this.icon,
+      required this.value,
+      required this.label,
+      this.color});
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       children: [
-        Icon(icon, size: 20, color: color ?? (isDark ? Colors.white70 : Colors.black54)),
+        Icon(icon,
+            size: 20,
+            color: color ?? (isDark ? Colors.white70 : Colors.black54)),
         const SizedBox(height: 4),
-        Text(value, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-        Text(label, style: TextStyle(fontSize: 10, color: isDark ? Colors.white38 : Colors.black38)),
+        Text(value,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+        Text(label,
+            style: TextStyle(
+                fontSize: 10, color: isDark ? Colors.white38 : Colors.black38)),
       ],
     );
   }
@@ -268,8 +296,9 @@ class DashedLineConnector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: List.generate(3, (index) => 
-        Container(
+      children: List.generate(
+        3,
+        (index) => Container(
           width: 1.5,
           height: 3,
           margin: const EdgeInsets.symmetric(vertical: 1.5),

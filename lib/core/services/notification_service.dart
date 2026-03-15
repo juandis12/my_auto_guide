@@ -18,11 +18,12 @@ class NotificationService {
 
   Future<void> init() async {
     tz_data.initializeTimeZones();
-    
+
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
-    
-    const InitializationSettings initializationSettings = InitializationSettings(
+
+    const InitializationSettings initializationSettings =
+        InitializationSettings(
       android: initializationSettingsAndroid,
     );
 
@@ -38,7 +39,8 @@ class NotificationService {
     if (!Platform.isAndroid) return true;
 
     try {
-      final can = await _platformChannel.invokeMethod<bool>('canScheduleExactAlarms');
+      final can =
+          await _platformChannel.invokeMethod<bool>('canScheduleExactAlarms');
       if (can == true) return true;
 
       // Mostrar diálogo explicando por qué se necesita permiso.
@@ -47,7 +49,7 @@ class NotificationService {
         builder: (ctx) => AlertDialog(
           title: const Text('Permiso de alarmas exactas'),
           content: const Text(
-              'Para que los recordatorios se disparen en el momento exacto, ' 
+              'Para que los recordatorios se disparen en el momento exacto, '
               'la app requiere permiso de alarmas exactas. ¿Quieres abrir los ajustes?'),
           actions: [
             TextButton(
@@ -86,7 +88,8 @@ class NotificationService {
     DateTime? scheduledDate,
     BuildContext? context,
   }) async {
-    const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+    const AndroidNotificationDetails androidDetails =
+        AndroidNotificationDetails(
       'mantenimiento_channel',
       'Mantenimientos',
       channelDescription: 'Recordatorios de mantenimiento de vehículos',
@@ -102,9 +105,8 @@ class NotificationService {
       // Si la fecha programada es en el pasado, no programar
       if (scheduledDate.isBefore(DateTime.now())) return;
 
-      final hasPermission = context != null
-          ? await ensureExactAlarmsEnabled(context)
-          : false;
+      final hasPermission =
+          context != null ? await ensureExactAlarmsEnabled(context) : false;
 
       try {
         await _notificationsPlugin.zonedSchedule(
@@ -150,14 +152,15 @@ class NotificationService {
   }) async {
     final scheduledDate = dueDate.subtract(const Duration(days: 5));
     // Si faltan menos de 5 días o ya venció, programar para hoy mismo si es posible
-    final notificationDate = scheduledDate.isBefore(DateTime.now()) 
-        ? DateTime.now().add(const Duration(minutes: 5)) 
+    final notificationDate = scheduledDate.isBefore(DateTime.now())
+        ? DateTime.now().add(const Duration(minutes: 5))
         : scheduledDate;
 
     await showMaintenanceNotification(
       id: id,
       title: '¡Aviso de Vencimiento!',
-      body: 'Tu $type vence en 5 días (${dueDate.day}/${dueDate.month}). ¡No olvides renovarlo!',
+      body:
+          'Tu $type vence en 5 días (${dueDate.day}/${dueDate.month}). ¡No olvides renovarlo!',
       scheduledDate: notificationDate,
     );
   }

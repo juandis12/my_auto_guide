@@ -17,25 +17,26 @@ Future<void> main() async {
 
   try {
 // 1. Cargar variables de entorno (dotenv)
-  try {
-    await dotenv.load(fileName: ".env");
-  } catch (e) {
-    debugPrint("Archivo .env no encontrado. Asegúrate de crearlo.");
-  }
+    try {
+      await dotenv.load(fileName: ".env");
+    } catch (e) {
+      debugPrint("Archivo .env no encontrado. Asegúrate de crearlo.");
+    }
 
-  // 2. Inicializar Sentry (solo si hay DSN configurado)
-  final sentryDsn = dotenv.get('SENTRY_DSN', fallback: '');
-  if (sentryDsn.isNotEmpty) {
-    await SentryFlutter.init(
-      (options) {
-        options.dsn = sentryDsn;
-        options.tracesSampleRate = 1.0;
-      },
-      appRunner: () => runApp(const MyApp()),
-    );
-  } else {
-    debugPrint('Sentry DSN no configurado. Saltando inicialización de Sentry.');
-    runApp(const MyApp());
+    // 2. Inicializar Sentry (solo si hay DSN configurado)
+    final sentryDsn = dotenv.get('SENTRY_DSN', fallback: '');
+    if (sentryDsn.isNotEmpty) {
+      await SentryFlutter.init(
+        (options) {
+          options.dsn = sentryDsn;
+          options.tracesSampleRate = 1.0;
+        },
+        appRunner: () => runApp(const MyApp()),
+      );
+    } else {
+      debugPrint(
+          'Sentry DSN no configurado. Saltando inicialización de Sentry.');
+      runApp(const MyApp());
     }
 
     // 2. Inicializar Supabase

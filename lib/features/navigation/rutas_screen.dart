@@ -393,9 +393,7 @@ class _RutasScreenState extends State<RutasScreen>
 
       // Actualizar KMS offline-first
       await SyncService().updateVehicleKmsOfflineFirst(
-        widget.vehiculoId,
-        kmsRecorridos.round()
-      );
+          widget.vehiculoId, kmsRecorridos.round());
 
       debugPrint('Ruta guardada exitosamente (offline-first)');
     } catch (e) {
@@ -695,10 +693,10 @@ class _RutasScreenState extends State<RutasScreen>
                           child: IconButton(
                             icon: const Icon(Icons.history),
                             tooltip: 'Historial de rutas',
-                            color: Theme.of(context).brightness ==
-                                    Brightness.dark
-                                ? Colors.white
-                                : Colors.black87,
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black87,
                             onPressed: _openRouteHistory,
                           ),
                         ),

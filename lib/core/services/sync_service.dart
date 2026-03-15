@@ -18,7 +18,8 @@ class SyncService {
 
   void initialize() {
     // Escuchar cambios en conectividad
-    _connectivitySubscription = _connectivity.onConnectivityChanged.listen((results) {
+    _connectivitySubscription =
+        _connectivity.onConnectivityChanged.listen((results) {
       final List<ConnectivityResult> connectivityResults = results;
       final ConnectivityResult result = connectivityResults.isNotEmpty
           ? connectivityResults.first
@@ -31,7 +32,8 @@ class SyncService {
 
     // También verificar periódicamente (cada 30 segundos)
     _syncTimer = Timer.periodic(const Duration(seconds: 30), (timer) async {
-      final List<ConnectivityResult> results = await _connectivity.checkConnectivity();
+      final List<ConnectivityResult> results =
+          await _connectivity.checkConnectivity();
       final ConnectivityResult result =
           results.isNotEmpty ? results.first : ConnectivityResult.none;
       if (result != ConnectivityResult.none) {
@@ -47,16 +49,15 @@ class SyncService {
 
   Future<bool> hasInternetConnection() async {
     try {
-      final List<ConnectivityResult> results = await _connectivity.checkConnectivity();
+      final List<ConnectivityResult> results =
+          await _connectivity.checkConnectivity();
       final ConnectivityResult result =
           results.isNotEmpty ? results.first : ConnectivityResult.none;
       if (result == ConnectivityResult.none) return false;
 
       // Verificar conectividad real haciendo una petición simple
-      final response = await _supabase.client
-          .from('vehiculos')
-          .select('id')
-          .limit(1);
+      final response =
+          await _supabase.client.from('vehiculos').select('id').limit(1);
 
       return response.isNotEmpty;
     } catch (e) {
@@ -121,7 +122,8 @@ class SyncService {
             : int.tryParse(kmsToAddRaw?.toString() ?? '') ?? 0;
 
         // Obtener kms actuales del vehículo
-        final currentKms = await _supabase.getVehicleMileage(update['vehicleId']);
+        final currentKms =
+            await _supabase.getVehicleMileage(update['vehicleId']);
         final newKms = currentKms + kmsToAdd;
 
         // Actualizar en Supabase
@@ -195,7 +197,8 @@ class SyncService {
   }
 
   // Método para actualizar KMS de forma offline-first
-  Future<void> updateVehicleKmsOfflineFirst(String vehicleId, int kmsToAdd) async {
+  Future<void> updateVehicleKmsOfflineFirst(
+      String vehicleId, int kmsToAdd) async {
     // Guardar localmente primero
     await _db.insertPendingKmsUpdate(vehicleId, kmsToAdd);
 
@@ -209,9 +212,11 @@ class SyncService {
         // Marcar como sincronizada
         final updates = await _db.getPendingKmsUpdates();
         for (final update in updates) {
-          if (update['vehicleId'] == vehicleId && update['kmsToAdd'] == kmsToAdd) {
+          if (update['vehicleId'] == vehicleId &&
+              update['kmsToAdd'] == kmsToAdd) {
             await _db.markKmsUpdateAsSynced(update['id']);
-            debugPrint('KMS update sincronizado inmediatamente: ${update['id']}');
+            debugPrint(
+                'KMS update sincronizado inmediatamente: ${update['id']}');
             break;
           }
         }

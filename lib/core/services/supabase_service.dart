@@ -19,7 +19,7 @@ class SupabaseService {
   Future<List<Map<String, dynamic>>> getVehicles() async {
     final userId = currentUser?.id;
     if (userId == null) return [];
-    
+
     return await client
         .from('vehiculos')
         .select()
@@ -78,7 +78,8 @@ class SupabaseService {
         .single();
   }
 
-  Future<void> updateMaintenanceDates(String vehicleId, Map<String, String?> dates) async {
+  Future<void> updateMaintenanceDates(
+      String vehicleId, Map<String, String?> dates) async {
     final userId = currentUser?.id;
     if (userId == null) return;
 
@@ -152,7 +153,8 @@ class SupabaseService {
     final userId = currentUser?.id;
     if (userId == null) return [];
 
-    final weekAgo = DateTime.now().subtract(const Duration(days: 7)).toIso8601String();
+    final weekAgo =
+        DateTime.now().subtract(const Duration(days: 7)).toIso8601String();
 
     return await client
         .from('rutas_historial')
@@ -201,7 +203,8 @@ class SupabaseService {
   }
 
   // --- Storage ---
-  Future<String> getSignedUrl(String bucket, String path, {int expiresIn = 3600}) async {
+  Future<String> getSignedUrl(String bucket, String path,
+      {int expiresIn = 3600}) async {
     return await client.storage.from(bucket).createSignedUrl(path, expiresIn);
   }
 }
