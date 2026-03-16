@@ -45,6 +45,7 @@ import 'dart:async';
 import '../../../core/services/notification_service.dart';
 import '../../../core/services/supabase_service.dart';
 import '../../../core/logic/vehicle_health_logic.dart';
+import '../../../core/logic/vehicle_ai_logic.dart';
 import '../../../core/theme/brand_theme.dart';
 import '../../../shared/widgets/runt_webview.dart';
 import '../../navigation/rutas_screen.dart';
@@ -98,6 +99,7 @@ class _InicioAppState extends State<InicioApp> {
   int _totalRoutes = 0;
   bool _loadingWeekly = false;
   List<Map<String, dynamic>> _predictions = [];
+  List<Map<String, dynamic>> _weeklyStats = []; // Nuevo campo para IA
   double _efficiencyScore = 0.0;
   double _savingsCOP = 0.0;
 
@@ -649,7 +651,7 @@ class _InicioAppState extends State<InicioApp> {
           actualFuelGallons: f,
           modelName: modelName,
           isCar: isCar);
-      final savings = FuelEfficiencyLogic.calculateSavings(
+      final aiStats = VehicleAILogic.calculateSmartSavings(
           actualKm: d,
           actualFuelGallons: f,
           modelName: modelName,
@@ -661,9 +663,10 @@ class _InicioAppState extends State<InicioApp> {
           _weeklyFuel = f;
           _weeklyCost = c;
           _totalRoutes = totalR;
+          _weeklyStats = stats;
           _predictions = preds;
           _efficiencyScore = efficiency;
-          _savingsCOP = savings;
+          _savingsCOP = aiStats['amount'];
           _loadingWeekly = false;
         });
       }
@@ -1005,8 +1008,11 @@ class _InicioAppState extends State<InicioApp> {
                     weeklyCost: _weeklyCost,
                     efficiencyScore: _efficiencyScore,
                     savingsCOP: _savingsCOP,
-                    isLoading: _loadingWeekly,
                     predictions: _predictions,
+                    stats: _weeklyStats, // Necesito asegurar que esta variable exista
+                    modelName: modelo,
+                    isCar: marca.contains('CARRO') || apodo.contains('CARRO'),
+                    isLoading: _loadingWeekly,
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -1248,6 +1254,9 @@ class _WeeklyInsightCard extends StatelessWidget {
   final BrandTheme brandTheme;
   final bool isLoading;
   final List<Map<String, dynamic>> predictions;
+  final List<Map<String, dynamic>> stats;
+  final String modelName;
+  final bool isCar;
 
   const _WeeklyInsightCard(
       {required this.pctCadena,
@@ -1262,6 +1271,9 @@ class _WeeklyInsightCard extends StatelessWidget {
       required this.efficiencyScore,
       required this.savingsCOP,
       required this.predictions,
+      required this.stats,
+      required this.modelName,
+      required this.isCar,
       this.isLoading = false});
 
   @override
@@ -1389,6 +1401,13 @@ class _WeeklyInsightCard extends StatelessWidget {
                           savingsCOP >= 0 ? Colors.green : Colors.redAccent)),
             ]),
           ]),
+          const Divider(height: 32),
+          // --- IA INSIGHTS SECTION ---
+          _AIInsightsPanel(
+            routeHistory: stats,
+            modelName: modelName,
+            isCar: isCar,
+          ),
           if (predictions.isNotEmpty) ...[
             const Divider(height: 32),
             _ProactivePredictionsCard(predictions: predictions)
@@ -1411,6 +1430,97 @@ class _WeeklyInsightCard extends StatelessWidget {
                     color: brandTheme.primaryColor)),
           ]),
         ],
+      ),
+    );
+  }
+}
+
+class _AIInsightsPanel extends StatelessWidget {
+  final List<Map<String, dynamic>> routeHistory;
+  final String modelName;
+  final bool isCar;
+
+  const _AIInsightsPanel({
+    required this.routeHistory,
+    required this.modelName,
+    required this.isCar,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final aiInsights = VehicleAILogic.analyzeJourneyPatterns(
+      routeHistory: routeHistory,
+      modelName: modelName,
+      isCar: isCar,
+    );
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.blueAccent.withOpacity(0.05) : Colors.blue.shade50,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.blueAccent.withOpacity(0.2)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.auto_awesome, color: Colors.blueAccent, size: 20),
+              const SizedBox(width: 8),
+              Text(
+                'Diagnóstico IA My Auto Guide',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                  color: isDark ? Colors.blue.shade200 : Colors.blue.shade800,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _AIBadge(label: 'Uso: ${aiInsights['intensity']}', color: Colors.orange),
+              _AIBadge(label: 'IA Care: ${aiInsights['careScore'].round()}%', color: Colors.blueAccent),
+              _AIBadge(label: 'Consistencia: ${aiInsights['consistency']}', color: Colors.green),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            aiInsights['advice'],
+            style: TextStyle(
+              fontSize: 13,
+              height: 1.4,
+              color: isDark ? Colors.white70 : Colors.black87,
+              fontStyle: FontStyle.italic,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AIBadge extends StatelessWidget {
+  final String label;
+  final Color color;
+  const _AIBadge({required this.label, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withOpacity(0.3)),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: color),
       ),
     );
   }

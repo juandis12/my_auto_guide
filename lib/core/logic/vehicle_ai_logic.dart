@@ -1,0 +1,101 @@
+import 'dart:math';
+import 'vehicle_performance_logic.dart';
+
+class VehicleAILogic {
+  /// Analiza patrones de conducción y genera "AI Insights".
+  /// Simula el procesamiento de telemetría para detectar irregularidades.
+  static Map<String, dynamic> analyzeJourneyPatterns({
+    required List<Map<String, dynamic>> routeHistory,
+    required String modelName,
+    bool isCar = false,
+  }) {
+    if (routeHistory.isEmpty) {
+      return {
+        'intensity': 'Baja',
+        'consistency': 'Pendiente',
+        'advice': 'Realiza más trayectos para activar el análisis de IA.',
+        'healthImpact': 0.0,
+      };
+    }
+
+    double totalKm = 0;
+    List<double> distances = [];
+
+    for (var route in routeHistory) {
+      final d = (route['distancia_km'] ?? route['distancia'] ?? 0.0) as num;
+      
+      totalKm += d.toDouble();
+      distances.add(d.toDouble());
+    }
+
+    // Análisis de consistencia (Desviación estándar de distancias)
+    double avgDist = totalKm / routeHistory.length;
+    double variance = distances.map((x) => pow(x - avgDist, 2)).reduce((a, b) => a + b) / distances.length;
+    double stdDev = sqrt(variance);
+
+    // Factor de intensidad (Basado en km/día promedio)
+    double kmPerDay = totalKm / 7; // Asumiendo última semana
+    String intensity = kmPerDay > 50 ? 'Alta' : (kmPerDay > 15 ? 'Media' : 'Baja');
+
+    // AI Advice dinámico
+    String advice = '';
+    if (stdDev > avgDist * 0.5) {
+      advice = 'Patrón de uso irregular detectado. Revisa la presión de llantas antes de viajes largos.';
+    } else if (intensity == 'Alta') {
+      advice = 'Uso intensivo detectado. Considera adelantar el cambio de aceite un 10%.';
+    } else {
+      advice = 'Conducción estable. El desgaste se mantiene dentro de los parámetros ideales.';
+    }
+
+    return {
+      'intensity': intensity,
+      'consistency': stdDev < (avgDist * 0.3) ? 'Alta' : 'Variable',
+      'advice': advice,
+      'healthImpact': intensity == 'Alta' ? -2.5 : 1.0,
+      'avgDailyKm': kmPerDay,
+      'careScore': _calculateCareScore(intensity, stdDev, avgDist),
+    };
+  }
+
+  static double _calculateCareScore(String intensity, double stdDev, double avgDist) {
+    double score = 100.0;
+    if (intensity == 'Alta') score -= 15;
+    if (stdDev > avgDist * 0.5) score -= 10;
+    return score.clamp(0.0, 100.0);
+  }
+
+  /// Calcula el ahorro real potenciado por IA (considerando variabilidad de precios).
+  static Map<String, dynamic> calculateSmartSavings({
+    required double actualKm,
+    required double actualFuelGallons,
+    required String modelName,
+    bool isCar = false,
+    double localPrice = 15500,
+  }) {
+    if (actualKm <= 0 || actualFuelGallons <= 0) {
+      return {'amount': 0.0, 'label': 'Sin ahorro registrado', 'isNegative': false};
+    }
+
+    final idealYield = VehiclePerformanceLogic.getKmPerGalon(modelName, isCar: isCar);
+    final idealFuel = actualKm / idealYield;
+    
+    final savingsGallons = idealFuel - actualFuelGallons;
+    final savingsMoney = savingsGallons * localPrice;
+
+    String label = '';
+    if (savingsMoney > 5000) {
+      label = '¡Excelente gestión! Has ahorrado combustible.';
+    } else if (savingsMoney < -5000) {
+      label = 'Consumo elevado. Revisa tu estilo de conducción.';
+    } else {
+      label = 'Consumo dentro del promedio esperado.';
+    }
+
+    return {
+      'amount': savingsMoney,
+      'label': label,
+      'isNegative': savingsMoney < 0,
+      'gallonsSaved': savingsGallons,
+    };
+  }
+}

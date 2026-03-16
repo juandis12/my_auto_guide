@@ -9,6 +9,8 @@ import 'core/services/notification_service.dart';
 import 'core/providers/auth_provider.dart';
 import 'core/providers/vehicle_provider.dart';
 import 'core/services/sync_service.dart';
+import 'core/services/background_nav_service.dart';
+import 'core/logic/app_widget_logic.dart';
 import 'features/auth/login_screen.dart';
 
 /// Función principal — punto de entrada de la aplicación.
@@ -53,6 +55,8 @@ Future<void> main() async {
     // 4. Inicializar Notificaciones y Zonas Horarias
     if (!kIsWeb) {
       await NotificationService().init();
+      await BackgroundNavService.initializeService();
+      await AppWidgetLogic.initializeWidgetInteraction();
     }
 
     // 5. ARRANCAR LA APLICACIÓN

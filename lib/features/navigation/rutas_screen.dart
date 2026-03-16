@@ -48,11 +48,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/services/supabase_service.dart';
 import '../../../core/logic/vehicle_performance_logic.dart';
 import '../../../core/services/sync_service.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'presentation/historial_rutas_screen.dart';
 
 class RutasScreen extends StatefulWidget {
@@ -107,7 +109,30 @@ class _RutasScreenState extends State<RutasScreen>
   void initState() {
     super.initState();
     _obtenerUbicacion();
+    _checkActiveService();
     _cargarInfoVehiculo();
+  }
+
+  Future<void> _checkActiveService() async {
+    final service = FlutterBackgroundService();
+    if (await service.isRunning()) {
+      // Reconectar al stream de actualizaciones
+      service.on('update').listen((event) {
+        if (!mounted) return;
+        final double lat = event?['lat'] ?? 0.0;
+        final double lng = event?['lng'] ?? 0.0;
+        final double distanceKm = event?['distance'] ?? 0.0;
+        
+        setState(() {
+          _currentPos = LatLng(lat, lng);
+          _travelledDistanceKm = distanceKm;
+          if (_travelledPoints.isEmpty || _travelledPoints.last != _currentPos) {
+             _travelledPoints.add(_currentPos!);
+          }
+          _state = _RouteState.freeTracking; // Asumimos modo libre por ahora si reconecta
+        });
+      });
+    }
   }
 
   Future<void> _cargarInfoVehiculo() async {
@@ -305,7 +330,17 @@ class _RutasScreenState extends State<RutasScreen>
   }
 
   // ─── INICIAR NAVEGACIÓN ─────────────────────────────────
-  void _iniciarNavegacion({bool isFree = false}) {
+  void _iniciarNavegacion({bool isFree = false}) async {
+    final service = FlutterBackgroundService();
+    
+    // Guardar ID del vehículo activo para el servicio
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('active_nav_vehicle_id', widget.vehiculoId);
+    
+    if (!(await service.isRunning())) {
+      await service.startService();
+    }
+
     setState(() {
       _state = isFree ? _RouteState.freeTracking : _RouteState.navigating;
       _travelledPoints = [_currentPos!];
@@ -318,35 +353,29 @@ class _RutasScreenState extends State<RutasScreen>
       }
     });
 
-    const locationSettings = LocationSettings(
-      accuracy: LocationAccuracy.high,
-      distanceFilter: 5, // metros para mayor sensibilidad en modo libre
-    );
-
-    _posStream = Geolocator.getPositionStream(
-      locationSettings: locationSettings,
-    ).listen((pos) {
-      final newPos = LatLng(pos.latitude, pos.longitude);
-      final lastPos = _travelledPoints.last;
-
-      // Calcular distancia recorrida con mayor precisión
-      const distance = Distance();
-      // Usamos metros directamente para evitar redondeos de la librería a nivel de km
-      final segmentMeters = distance.as(LengthUnit.Meter, lastPos, newPos);
-      final segmentKm = segmentMeters / 1000.0;
+    // Escuchar actualizaciones del servicio de fondo
+    service.on('update').listen((event) {
+      if (!mounted) return;
+      
+      final double lat = event?['lat'] ?? 0.0;
+      final double lng = event?['lng'] ?? 0.0;
+      final double distanceKm = event?['distance'] ?? 0.0;
+      
+      final newPos = LatLng(lat, lng);
 
       setState(() {
         _currentPos = newPos;
         _travelledPoints.add(newPos);
-        _travelledDistanceKm += segmentKm;
+        _travelledDistanceKm = distanceKm;
       });
 
-      // Centrar mapa en posición actual
+      // Centrar mapa
       _mapCtrl.move(newPos, _mapCtrl.camera.zoom);
 
-      // Verificar si llegó al destino (menos de 50 metros)
+      // Verificar llegada
       if (_destination != null) {
-        final distToEnd = distance.as(LengthUnit.Meter, newPos, _destination!);
+        const distanceCalc = Distance();
+        final distToEnd = distanceCalc.as(LengthUnit.Meter, newPos, _destination!);
         if (distToEnd < 50) {
           _completarRuta();
         }
@@ -356,7 +385,8 @@ class _RutasScreenState extends State<RutasScreen>
 
   // ─── COMPLETAR RUTA ─────────────────────────────────────
   Future<void> _completarRuta() async {
-    _posStream?.cancel();
+    final service = FlutterBackgroundService();
+    service.invoke('stopService');
     final kmsRecorridos = _travelledDistanceKm;
 
     // Obtener userId
@@ -507,7 +537,8 @@ class _RutasScreenState extends State<RutasScreen>
 
   // ─── CANCELAR ───────────────────────────────────────────
   void _cancelarRuta() {
-    _posStream?.cancel();
+    final service = FlutterBackgroundService();
+    service.invoke('stopService');
     setState(() {
       _state = _RouteState.idle;
       _destination = null;
