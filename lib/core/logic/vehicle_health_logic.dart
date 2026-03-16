@@ -116,10 +116,17 @@ class VehicleHealthLogic {
     final sevenDaysAgo = now.subtract(const Duration(days: 7));
     double totalKmLast7Days = 0;
     for (var route in routeHistory) {
-      if (route['fecha'] == null) continue;
-      final date = DateTime.parse(route['fecha']);
-      if (date.isAfter(sevenDaysAgo)) {
-        totalKmLast7Days += (route['distancia_km'] as num).toDouble();
+      final fechaRaw = route['fecha'] ?? route['created_at'];
+      if (fechaRaw == null) continue;
+      
+      final date = fechaRaw is DateTime 
+          ? fechaRaw 
+          : DateTime.tryParse(fechaRaw.toString());
+          
+      if (date != null && date.isAfter(sevenDaysAgo)) {
+        // Usar distancia_km (nuevo nombre) o distancia (antiguo)
+        final dist = (route['distancia_km'] ?? route['distancia'] ?? 0) as num;
+        totalKmLast7Days += dist.toDouble();
       }
     }
 

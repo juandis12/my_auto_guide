@@ -604,8 +604,9 @@ class _InicioAppState extends State<InicioApp> {
 
       double d = 0, f = 0, c = 0;
       for (var s in stats) {
-        d += (s['distancia_km'] as num?)?.toDouble() ?? 0.0;
-        f += (s['consumo_galones'] as num?)?.toDouble() ?? 0.0;
+        // Intentar nuevos nombres, fallback a antiguos
+        d += (s['distancia_km'] ?? s['distancia'] as num?)?.toDouble() ?? 0.0;
+        f += (s['consumo_galones'] ?? s['consumo_estimado'] as num?)?.toDouble() ?? 0.0;
         c += (s['costo_estimado'] as num?)?.toDouble() ?? 0.0;
       }
 

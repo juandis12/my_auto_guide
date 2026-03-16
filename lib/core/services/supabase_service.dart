@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SupabaseService {
@@ -101,34 +102,42 @@ class SupabaseService {
     required double costEstimated,
   }) async {
     final userId = currentUser?.id;
-    if (userId == null) return;
+    if (userId == null) {
+      debugPrint('SupabaseService: Error - Usuario no identificado para guardar ruta');
+      return;
+    }
 
+    // Unificar campos con la UI y añadir fecha explícita
     final data = {
       'user_id': userId,
       'vehiculo_id': vehicleId,
-      'origen': origin,
-      'destino': destination,
-      'distancia': distance,
-      'duracion': durationSeconds.toString(),
-      'consumo_estimado': fuelEstimated,
+      'origen_name': origin, // Cambio: origen -> origen_name
+      'destino_name': destination, // Cambio: destino -> destino_name
+      'distancia_km': distance, // Cambio: distancia -> distancia_km
+      'duracion_segundos': durationSeconds, // Cambio: duracion -> duracion_segundos (int)
+      'consumo_galones': fuelEstimated, // Cambio: consumo_estimado -> consumo_galones
       'costo_estimado': costEstimated,
+      'fecha': DateTime.now().toIso8601String(),
     };
+
+    debugPrint('SupabaseService: Enviando datos a Supabase - Historial de Ruta:');
+    debugPrint(' - Distancia: $distance km');
+    debugPrint(' - Consumo: $fuelEstimated gal');
+    debugPrint(' - Fecha: ${data['fecha']}');
+    debugPrint(' - Payload: $data');
 
     try {
       await client.from('rutas_historial').insert(data);
+      debugPrint('SupabaseService: Ruta guardada exitosamente en Supabase');
     } catch (e) {
+      debugPrint('SupabaseService: Error insertando ruta: $e');
       if (e is PostgrestException) {
-        if (e.message.contains('consumo_estimado')) {
-          final safeData = Map<String, dynamic>.from(data);
-          safeData.remove('consumo_estimado');
-          await client.from('rutas_historial').insert(safeData);
-          return;
-        }
-        // Manejar cualquier columna faltante
+        // Fallback dinámico si fallan columnas por cambios en el esquema
         final RegExp regExp = RegExp(r"Could not find the '(\w+)' column");
         final match = regExp.firstMatch(e.message);
         if (match != null) {
           final missingColumn = match.group(1);
+          debugPrint('SupabaseService: Reintentando sin la columna faltante: $missingColumn');
           final safeData = Map<String, dynamic>.from(data);
           safeData.remove(missingColumn);
           await client.from('rutas_historial').insert(safeData);

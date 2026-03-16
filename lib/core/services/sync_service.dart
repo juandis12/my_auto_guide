@@ -163,6 +163,10 @@ class SyncService {
       'synced': 0
     };
 
+    debugPrint('SyncService: Guardando ruta localmente (Offline-First)');
+    debugPrint(' - Distancia: $distanceKm km');
+    debugPrint(' - Fecha: ${routeData['fecha']}');
+
     // Guardar localmente primero
     await _db.insertPendingRoute(routeData);
 

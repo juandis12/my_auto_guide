@@ -110,20 +110,23 @@ class _RouteCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Columnas: origen_name, destino_name, distancia_km, duracion_segundos, consumo_galones, costo_estimado, fecha
-    final origen = route['origen_name'] ?? 'Ubicación desconocida';
-    final destino = route['destino_name'] ?? 'Destino desconocido';
-    final hasKms = route['distancia_km'] != null;
-    final hasGalones = route['consumo_galones'] != null;
-    final hasCosto = route['costo_estimado'] != null;
+    // Columnas unificadas: origen_name, destino_name, distancia_km, duracion_segundos, consumo_galones, costo_estimado, fecha
+    final origen = route['origen_name'] ?? route['origen'] ?? 'Ubicación desconocida';
+    final destino = route['destino_name'] ?? route['destino'] ?? 'Destino desconocido';
+    
+    // Soporte para nombres nuevos y antiguos
+    final num? distRaw = route['distancia_km'] ?? route['distancia'];
+    final num? fuelRaw = route['consumo_galones'] ?? route['consumo_estimado'];
+    final num? costRaw = route['costo_estimado'];
 
-    final kms = hasKms ? (route['distancia_km'] as num).toDouble() : 0.0;
-    final galones =
-        hasGalones ? (route['consumo_galones'] as num).toDouble() : 0.0;
-    final costo = hasCosto ? (route['costo_estimado'] as num).toDouble() : 0.0;
+    final kms = distRaw?.toDouble() ?? 0.0;
+    final galones = fuelRaw?.toDouble() ?? 0.0;
+    final costo = costRaw?.toDouble() ?? 0.0;
 
     DateTime fecha;
-    final fechaRaw = route['fecha'];
+    // Priorizar 'fecha' explícita, luego 'created_at' de Supabase
+    final fechaRaw = route['fecha'] ?? route['created_at'];
+    
     if (fechaRaw is String) {
       fecha = DateTime.tryParse(fechaRaw)?.toLocal() ?? DateTime.now();
     } else if (fechaRaw is DateTime) {
@@ -204,22 +207,22 @@ class _RouteCard extends StatelessWidget {
                     children: [
                       _Stat(
                         icon: Icons.route_outlined,
-                        value: hasKms ? '${kms.toStringAsFixed(1)} km' : 'N/A',
+                        value: kms > 0 ? '${kms.toStringAsFixed(1)} km' : '0.0 km',
                         label: 'Distancia',
                       ),
                       _Stat(
                         icon: Icons.local_gas_station_rounded,
-                        value: hasGalones
+                        value: galones > 0
                             ? '${galones.toStringAsFixed(2)} gal'
-                            : 'N/A',
+                            : '0.00 gal',
                         label: 'Consumo',
                         color: Colors.orange,
                       ),
                       _Stat(
                         icon: Icons.payments_rounded,
-                        value: hasCosto
+                        value: costo > 0
                             ? '\$${(costo / 1000).toStringAsFixed(1)}k'
-                            : 'N/A',
+                            : '\$0k',
                         label: 'Gasto',
                         color: Colors.green,
                       ),
