@@ -4,7 +4,9 @@ import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.app.PendingIntent;
 import android.widget.RemoteViews;
+import es.antonborri.home_widget.HomeWidgetBackgroundIntent;
 import es.antonborri.home_widget.HomeWidgetProvider;
 
 public class AppWidgetProvider extends HomeWidgetProvider {
@@ -21,8 +23,9 @@ public class AppWidgetProvider extends HomeWidgetProvider {
             views.setTextViewText(R.id.widget_button, isTracking ? "Detener" : "Iniciar Recorrido");
 
             // Configurar acción del botón
-            views.setOnClickPendingIntent(R.id.widget_button, 
-                getPendingIntent(context, "toggle_tracking"));
+            PendingIntent pendingIntent = HomeWidgetBackgroundIntent.getBroadcast(
+                context, Uri.parse("myAppWidget://toggle_tracking"));
+            views.setOnClickPendingIntent(R.id.widget_button, pendingIntent);
 
             appWidgetManager.updateAppWidget(appWidgetId, views);
         }
