@@ -17,9 +17,13 @@ class AuthProvider with ChangeNotifier {
 
   void _init() {
     _user = _supabaseService.currentUser;
-    _supabaseService.authStateChanges.listen((event) {
+    _supabaseService.authStateChanges.listen((event) async {
       _user = event.session?.user;
       notifyListeners();
+
+      if (event.event == AuthChangeEvent.signedIn || event.event == AuthChangeEvent.tokenRefreshed) {
+        await _supabaseService.registerFcmToken();
+      }
     });
   }
 
@@ -31,6 +35,7 @@ class AuthProvider with ChangeNotifier {
         email: email,
         password: password,
       );
+      await _supabaseService.registerFcmToken();
     } catch (e) {
       _isLoading = false;
       notifyListeners();
@@ -48,6 +53,7 @@ class AuthProvider with ChangeNotifier {
         email: email,
         password: password,
       );
+      await _supabaseService.registerFcmToken();
     } catch (e) {
       _isLoading = false;
       notifyListeners();

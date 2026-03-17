@@ -98,4 +98,53 @@ class VehicleAILogic {
       'gallonsSaved': savingsGallons,
     };
   }
+
+  /// Predice posibles fallos o daños basados en el kilometraje total y el perfil de uso.
+  static List<Map<String, dynamic>> predictUpcomingIssues({
+    required int totalKms,
+    required String intensity,
+  }) {
+    List<Map<String, dynamic>> issues = [];
+    
+    // Multiplicador de desgaste basado en intensidad
+    double wearFactor = intensity == 'Alta' ? 1.4 : (intensity == 'Media' ? 1.0 : 0.8);
+
+    // 1. Kit de Arrastre / Cadena (Periodo crítico cada 20,000km)
+    int chainLife = (totalKms % 20000);
+    if (chainLife > 17000 * (1/wearFactor)) {
+      issues.add({
+        'item': 'Kit de Arrastre',
+        'risk': 'Alto',
+        'reason': 'Kilometraje próximo al límite de vida útil técnica.',
+        'icon': 'settings_input_component',
+        'color': '0xFFF44336',
+      });
+    }
+
+    // 2. Pastillas de Freno (Periodo medio cada 12,000km)
+    int brakeLife = (totalKms % 12000);
+    if (brakeLife > 10000 * (1/wearFactor)) {
+      issues.add({
+        'item': 'Pastillas de Freno',
+        'risk': 'Medio',
+        'reason': 'Se detecta desgaste avanzado por fricción acumulada.',
+        'icon': 'eject',
+        'color': '0xFFFF9800',
+      });
+    }
+
+    // 3. Sistema de Inyección / Bujías (Periodo cada 15,000km cada vez más frecuente con intensidad alta)
+    int sparkLife = (totalKms % 15000);
+    if (sparkLife > 13000 * (1/wearFactor)) {
+      issues.add({
+        'item': 'Bujías / Inyección',
+        'risk': 'Medio',
+        'reason': 'Posible pérdida de eficiencia en la combustión detectada.',
+        'icon': 'bolt',
+        'color': '0xFFFF9800',
+      });
+    }
+
+    return issues;
+  }
 }

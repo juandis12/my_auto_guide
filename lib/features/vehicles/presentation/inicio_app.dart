@@ -44,6 +44,7 @@ import 'dart:async';
 
 import '../../../core/services/notification_service.dart';
 import '../../../core/services/supabase_service.dart';
+import '../../../core/logic/app_widget_logic.dart';
 import '../../../core/logic/vehicle_health_logic.dart';
 import '../../../core/logic/vehicle_ai_logic.dart';
 import '../../../core/theme/brand_theme.dart';
@@ -56,6 +57,7 @@ import '../../expenses/presentation/gastos_screen.dart';
 import '../../../core/logic/fuel_efficiency_logic.dart';
 import '../../navigation/presentation/historial_rutas_screen.dart';
 import '../../../core/logic/performance_guard.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 enum DocType { soat, tecno, seguro, propiedad }
 
@@ -175,6 +177,39 @@ class _InicioAppState extends State<InicioApp> {
     }
   }
 
+  Future<void> _syncHealthWidget() async {
+    await AppWidgetLogic.updateHealthWidget(
+      pctCadena: _pctCadena,
+      pctFiltro: _pctFiltro,
+      pctAceite: _pctAceite,
+      pctSoat: _pctSoat,
+      pctTecno: _pctTecno,
+    );
+  }
+
+  Future<void> _recalculateAI(Map<String, dynamic> v) async {
+    final int kms = v['kms'] ?? 0;
+    final marca = (v['marca'] as String? ?? '').toUpperCase();
+    final bool isCarLocal = marca == 'TOYOTA' || marca == 'MAZDA' || marca == 'CHEVROLET';
+
+    final stats = VehicleAILogic.analyzeJourneyPatterns(
+      routeHistory: _weeklyStats,
+      modelName: v['modelo'] ?? '',
+      isCar: isCarLocal,
+    );
+
+    final aiIssues = VehicleAILogic.predictUpcomingIssues(
+      totalKms: kms,
+      intensity: stats['intensity'] ?? 'Baja',
+    );
+
+    if (mounted) {
+      setState(() {
+        _predictions = aiIssues;
+      });
+    }
+  }
+
   Future<void> _cerrarSesion() async {
     await supabase.auth.signOut();
     if (!mounted) return;
@@ -274,6 +309,7 @@ class _InicioAppState extends State<InicioApp> {
         _notificacionesProcesadas = false;
         _cachedVehicleData = null; // Forzar recarga de ISH y gamificación
       });
+      unawaited(_syncHealthWidget());
       final bool vencido = (res['vencCadena'] == true) ||
           (res['vencFiltro'] == true) ||
           (res['vencAceite'] == true) ||
@@ -741,6 +777,10 @@ class _InicioAppState extends State<InicioApp> {
           final kms = v['kms']?.toString() ?? '0';
           final imagePath = v['image_path'] as String? ?? '';
 
+          if (_predictions.isEmpty && v['kms'] != null) {
+            WidgetsBinding.instance.addPostFrameCallback((_) => _recalculateAI(v));
+          }
+
           _soatPath ??= v['soat_path'] as String?;
           _tecnoPath ??= v['tecno_path'] as String?;
           _seguroPath ??= v['seguro_path'] as String?;
@@ -792,6 +832,7 @@ class _InicioAppState extends State<InicioApp> {
                   _lastCadena = dc;
                   _pctCadena = _pctRestante(dc, 15);
                 });
+                unawaited(_syncHealthWidget());
               }
             });
           }
@@ -835,6 +876,24 @@ class _InicioAppState extends State<InicioApp> {
               }
             });
           }
+
+          // Sincronizar TODOS los porcentajes al widget
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) unawaited(_syncHealthWidget());
+          });
+
+          // Verificar si la app se abrió desde el widget para auto-iniciar tracking
+          WidgetsBinding.instance.addPostFrameCallback((_) async {
+            if (!mounted) return;
+            final prefs = await SharedPreferences.getInstance();
+            final shouldStartTracking = prefs.getBool('widget_start_tracking') ?? false;
+            if (shouldStartTracking) {
+              await prefs.setBool('widget_start_tracking', false);
+              if (mounted) {
+                _abrirRutas(int.tryParse(kms) ?? 0);
+              }
+            }
+          });
 
           final bTheme = BrandTheme.getTheme(marca);
           final logoPath = brandLogos[marca.toUpperCase()];
@@ -1480,8 +1539,10 @@ class _AIInsightsPanel extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            crossAxisAlignment: WrapCrossAlignment.start,
             children: [
               _AIBadge(label: 'Uso: ${aiInsights['intensity']}', color: Colors.orange),
               _AIBadge(label: 'IA Care: ${aiInsights['careScore'].round()}%', color: Colors.blueAccent),

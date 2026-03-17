@@ -28,6 +28,21 @@ class NotificationService {
     );
 
     await _notificationsPlugin.initialize(initializationSettings);
+
+    // Crear canales específicos
+    if (Platform.isAndroid) {
+      const AndroidNotificationChannel navChannel = AndroidNotificationChannel(
+        'my_auto_guide_nav',
+        'Navegación y Rutas',
+        description: 'Notificaciones de seguimiento de rutas en tiempo real',
+        importance: Importance.low, // Baja porque se actualiza seguido y no queremos ruido
+      );
+
+      await _notificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()
+          ?.createNotificationChannel(navChannel);
+    }
   }
 
   /// Verifica si la app puede agendar alarmas exactas (Android 12+).

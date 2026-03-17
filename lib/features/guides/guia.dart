@@ -353,13 +353,21 @@ class _AccidenteScreenState extends State<AccidenteScreen> {
 
   // ------------------ TOMAR FOTO ------------------
   Future<void> _tomarFoto() async {
-    final XFile? foto = await _picker.pickImage(source: ImageSource.camera);
-    if (foto != null) {
-      final dir = await getApplicationDocumentsDirectory();
-      final path = '${dir.path}/${DateTime.now().millisecondsSinceEpoch}.jpg';
-      final file = await File(foto.path).copy(path);
-      setState(() => _imagenes.add(file));
-      await _guardarDatos();
+    try {
+      final XFile? foto = await _picker.pickImage(source: ImageSource.camera);
+      if (foto != null) {
+        final dir = await getApplicationDocumentsDirectory();
+        final path = '${dir.path}/${DateTime.now().millisecondsSinceEpoch}.jpg';
+        final file = await File(foto.path).copy(path);
+        setState(() => _imagenes.add(file));
+        await _guardarDatos();
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error al usar la cámara o guardar foto: $e')),
+        );
+      }
     }
   }
 

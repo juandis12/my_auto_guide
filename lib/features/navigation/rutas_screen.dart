@@ -55,6 +55,7 @@ import '../../../core/services/supabase_service.dart';
 import '../../../core/logic/vehicle_performance_logic.dart';
 import '../../../core/services/sync_service.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'presentation/historial_rutas_screen.dart';
 
 class RutasScreen extends StatefulWidget {
@@ -123,12 +124,20 @@ class _RutasScreenState extends State<RutasScreen>
         final double lng = event?['lng'] ?? 0.0;
         final double distanceKm = event?['distance'] ?? 0.0;
         
+        if (lat == 0.0 && lng == 0.0) return; // Ignorar coordenas nulas del GPS
+
         setState(() {
           _currentPos = LatLng(lat, lng);
           _travelledDistanceKm = distanceKm;
           if (_travelledPoints.isEmpty || _travelledPoints.last != _currentPos) {
              _travelledPoints.add(_currentPos!);
           }
+          
+          // Prevención de Out of Memory (OOM) en viajes muy largos
+          if (_travelledPoints.length > 5000) {
+            _travelledPoints.removeAt(0);
+          }
+
           _state = _RouteState.freeTracking; // Asumimos modo libre por ahora si reconecta
         });
       });
@@ -259,6 +268,11 @@ class _RutasScreenState extends State<RutasScreen>
       if (!mounted) return;
       if (res.statusCode == 200) {
         final data = json.decode(res.body);
+
+        if (data['routes'] == null || (data['routes'] as List).isEmpty) {
+          throw Exception('No se encontró una ruta válida hacia este destino.');
+        }
+
         final route = data['routes'][0];
         final coords = route['geometry']['coordinates'] as List;
         final distMeters = (route['distance'] as num).toDouble();
@@ -331,15 +345,38 @@ class _RutasScreenState extends State<RutasScreen>
 
   // ─── INICIAR NAVEGACIÓN ─────────────────────────────────
   void _iniciarNavegacion({bool isFree = false}) async {
+    // 1. Verificar permisos de notificaciones (Android 13+)
+    if (await Permission.notification.isDenied) {
+      await Permission.notification.request();
+    }
+
+    // 2. Verificar permisos de localización SIEMPRE (Requerido para background en algunos dispositivos)
+    if (await Permission.locationAlways.isDenied) {
+      await Permission.locationAlways.request();
+    }
+
     final service = FlutterBackgroundService();
     
     // Guardar ID del vehículo activo para el servicio
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('active_nav_vehicle_id', widget.vehiculoId);
     
-    if (!(await service.isRunning())) {
-      await service.startService();
+    try {
+      if (!(await service.isRunning())) {
+        await service.startService();
+        // Give service a moment to boot up before subscribing to its streams
+        await Future.delayed(const Duration(milliseconds: 800));
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error al iniciar servicio de fondo: $e')),
+        );
+      }
+      return;
     }
+
+    if (!mounted) return;
 
     setState(() {
       _state = isFree ? _RouteState.freeTracking : _RouteState.navigating;
@@ -353,6 +390,12 @@ class _RutasScreenState extends State<RutasScreen>
       }
     });
 
+    if (isFree) {
+       ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Modo Libre Iniciado: Rastreo GPS activado')),
+        );
+    }
+
     // Escuchar actualizaciones del servicio de fondo
     service.on('update').listen((event) {
       if (!mounted) return;
@@ -361,11 +404,19 @@ class _RutasScreenState extends State<RutasScreen>
       final double lng = event?['lng'] ?? 0.0;
       final double distanceKm = event?['distance'] ?? 0.0;
       
+      if (lat == 0.0 && lng == 0.0) return; // Rechazar coordenadas inválidas
+      
       final newPos = LatLng(lat, lng);
 
       setState(() {
         _currentPos = newPos;
         _travelledPoints.add(newPos);
+        
+        // Límite de puntos para evitar Crash por OOM (Out Of Memory)
+        if (_travelledPoints.length > 5000) {
+          _travelledPoints.removeAt(0);
+        }
+
         _travelledDistanceKm = distanceKm;
       });
 

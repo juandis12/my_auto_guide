@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import '../services/database.dart';
@@ -55,11 +56,10 @@ class SyncService {
           results.isNotEmpty ? results.first : ConnectivityResult.none;
       if (result == ConnectivityResult.none) return false;
 
-      // Verificar conectividad real haciendo una petición simple
-      final response =
-          await _supabase.client.from('vehiculos').select('id').limit(1);
-
-      return response.isNotEmpty;
+      // Verificar conectividad real haciendo un ping DNS rápido sin llamadas HTTP a Supabase
+      final lookup = await InternetAddress.lookup('google.com')
+          .timeout(const Duration(seconds: 3));
+      return lookup.isNotEmpty && lookup[0].rawAddress.isNotEmpty;
     } catch (e) {
       debugPrint('Error checking internet: $e');
       return false;
@@ -77,6 +77,9 @@ class SyncService {
 
       // Sincronizar actualizaciones de kms pendientes
       await _syncPendingKmsUpdates();
+
+      // Sincronizar gastos pendientes
+      await _syncPendingExpenses();
 
       debugPrint('Sincronización completada exitosamente');
     } catch (e) {
@@ -135,6 +138,28 @@ class SyncService {
       } catch (e) {
         debugPrint('Error sincronizando KMS update ${update['id']}: $e');
         // Si falla, dejar para el próximo intento
+      }
+    }
+  }
+
+  Future<void> _syncPendingExpenses() async {
+    final pendingExpenses = await _db.getPendingExpenses();
+    debugPrint('Pendientes Expenses updates: ${pendingExpenses.length}');
+
+    for (final expense in pendingExpenses) {
+      try {
+        await _supabase.addExpense(
+          vehicleId: expense['vehicleId'],
+          categoria: expense['categoria'],
+          monto: expense['monto'],
+          descripcion: expense['descripcion'],
+        );
+
+        // Marcar como sincronizada
+        await _db.markExpenseAsSynced(expense['id']);
+        debugPrint('Gasto sincronizado: ${expense['id']}');
+      } catch (e) {
+        debugPrint('Error sincronizando gasto ${expense['id']}: $e');
       }
     }
   }
@@ -227,6 +252,39 @@ class SyncService {
       } catch (e) {
         debugPrint('Error sincronizando KMS update inmediatamente: $e');
         // Queda pendiente para sincronización posterior
+      }
+    }
+  }
+
+  // Método para guardar gasto de forma offline-first
+  Future<void> saveExpenseOfflineFirst({
+    required String userId,
+    required String vehicleId,
+    required String categoria,
+    required double monto,
+    String? descripcion,
+  }) async {
+    final expenseData = {
+      'userId': userId,
+      'vehicleId': vehicleId,
+      'categoria': categoria,
+      'monto': monto,
+      'descripcion': descripcion ?? '',
+      'fecha': DateTime.now().toIso8601String(),
+      'synced': 0
+    };
+
+    debugPrint('SyncService: Guardando gasto localmente (Offline-First)');
+
+    // Guardar localmente primero
+    await _db.insertPendingExpense(expenseData);
+
+    // Intentar sincronizar inmediatamente si hay internet
+    if (await hasInternetConnection()) {
+      try {
+        await _syncPendingExpenses();
+      } catch (e) {
+        debugPrint('Error sincronizando gasto inmediatamente: $e');
       }
     }
   }

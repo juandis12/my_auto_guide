@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class SupabaseService {
   static final SupabaseService _instance = SupabaseService._internal();
@@ -14,6 +15,36 @@ class SupabaseService {
 
   Future<void> signOut() async {
     await client.auth.signOut();
+  }
+
+  // --- Push Notifications (Firebase Cloud Messaging) ---
+  Future<void> registerFcmToken() async {
+    final userId = currentUser?.id;
+    if (userId == null) return;
+
+    try {
+      final token = await FirebaseMessaging.instance.getToken();
+      if (token != null) {
+        // Guardamos o actualizamos en la tabla perfiles
+        await client.from('perfiles').upsert({
+          'id': userId,
+          'fcm_token': token,
+          'updated_at': DateTime.now().toIso8601String(),
+        });
+        debugPrint('FCM Token guardado en Supabase: $token');
+      }
+
+      // Escuchar cuando el token se actualice
+      FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {
+        await client.from('perfiles').upsert({
+          'id': userId,
+          'fcm_token': newToken,
+          'updated_at': DateTime.now().toIso8601String(),
+        });
+      });
+    } catch (e) {
+      debugPrint('Error registrando token FCM: $e');
+    }
   }
 
   // --- Database ---

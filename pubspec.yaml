@@ -84,6 +84,8 @@ dependencies:
   # Fondo y Widgets
   flutter_background_service: ^5.0.10
   home_widget: ^0.7.0
+  firebase_core: ^4.5.0
+  firebase_messaging: ^16.1.2
 
 dev_dependencies:
   flutter_test:

@@ -5,6 +5,10 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:home_widget/home_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'core/services/notification_service.dart';
 import 'core/providers/auth_provider.dart';
 import 'core/providers/vehicle_provider.dart';
@@ -13,7 +17,22 @@ import 'core/services/background_nav_service.dart';
 import 'core/logic/app_widget_logic.dart';
 import 'features/auth/login_screen.dart';
 
-/// Función principal — punto de entrada de la aplicación.
+/// Detecta si la app fue abierta desde un widget con deep link
+void _checkWidgetLaunch() async {
+  final uri = await HomeWidget.initiallyLaunchedFromHomeWidget();
+  if (uri != null && uri.host == 'start_free_tracking') {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('widget_start_tracking', true);
+  }
+  
+  // También escuchar clicks futuros mientras la app está abierta
+  HomeWidget.widgetClicked.listen((uri) async {
+    if (uri != null && uri.host == 'start_free_tracking') {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('widget_start_tracking', true);
+    }
+  });
+}
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -49,6 +68,14 @@ Future<void> main() async {
           fallback: const String.fromEnvironment('SUPABASE_ANON_KEY')),
     );
 
+    // 2.5 Inicializar Firebase (Push Notifications)
+    try {
+      await Firebase.initializeApp();
+      await FirebaseMessaging.instance.requestPermission();
+    } catch (e) {
+      debugPrint("Advertencia: Firebase no se pudo inicializar (falta google-services.json): $e");
+    }
+
     // 3. Inicializar Sync Service para sincronización offline
     SyncService().initialize();
 
@@ -57,10 +84,12 @@ Future<void> main() async {
       await NotificationService().init();
       await BackgroundNavService.initializeService();
       await AppWidgetLogic.initializeWidgetInteraction();
+      
+      // Detectar si la app se abrió desde un widget
+      _checkWidgetLaunch();
     }
 
-    // 5. ARRANCAR LA APLICACIÓN
-    runApp(const MyApp());
+    // 5. El arranque se realiza dentro de Sentry o directamente arriba
   } catch (e, stackTrace) {
     // En caso de error en inicialización, mostrar pantalla de error
     runApp(MaterialApp(

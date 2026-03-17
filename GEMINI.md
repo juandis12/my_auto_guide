@@ -32,12 +32,14 @@ STACK TECNOLÓGICO ACTUALIZADO
 
 • **Framework**: Flutter (>=3.3.0) - Arquitectura Modular.
 • **Backend**: Supabase (Auth, Realtime DB, Storage).
-• **Estado**: Provider / Riverpod.
+• **Estado**: Provider.
 • **Base de Datos Local**: sqflite (Offline support).
 • **Mapas**: flutter_map, latlong2, geolocator.
+• **Fondo y Widgets**: flutter_background_service, home_widget.
 • **Monitoreo**: Sentry Flutter (Error tracking).
 • **Utilidades**: flutter_dotenv, intl, connectivity_plus, timezone.
 • **Multimedia**: youtube_player_iframe, syncfusion_flutter_pdfviewer.
+• **Internacionalización**: intl, flutter_localizations.
 
 ══════════════════════════════════════════════
 ESTRUCTURA MODULAR DE CARPETAS (Domain-Driven)
@@ -45,17 +47,20 @@ ESTRUCTURA MODULAR DE CARPETAS (Domain-Driven)
 
 **/lib**
   ├── **core/**: Lógica transversal y servicios base.
-  │   ├── logic/: `PerformanceGuard`, `VehicleExpensesLogic`.
-  │   ├── services/: `Database`, `SupabaseService`, `SyncService`, `NotificationService`.
+  │   ├── logic/: `PerformanceGuard`, `VehicleExpensesLogic`, `AppWidgetLogic`, `FuelEfficiencyLogic`, `VehicleAiLogic`, `VehicleHealthLogic`, etc.
+  │   ├── providers/: Proveedores de estado global (`auth_provider`, `vehicle_provider`).
+  │   ├── services/: `Database`, `SupabaseService`, `SyncService`, `NotificationService`, `BackgroundNavService`.
   │   ├── theme/: Sistema de diseño (Tokens, Colors, Typography).
   │   └── utils/: Helpers globales.
-  ├── **features/**: Módulos de funcionalidad independientes.
-  │   ├── auth/: Login, Registro, Recuperación.
-  │   ├── vehicles/: Registro y Visualización de flota.
-  │   ├── expenses/: Control de costos y estadísticas.
-  │   ├── navigation/: GPS, Rutas e Historial.
-  │   └── guides/: Tutoriales interactivos (PDF/Video).
-  └── **shared/**: Widgets, Modelos y Componentes reutilizables.
+  ├── **features/**: Módulos de funcionalidad independientes (dentro contienen carpetas como `presentation/`).
+  │   ├── auth/: Login, Registro.
+  │   ├── vehicles/: Registro y Visualización de flota (`inicio_app.dart`, `Agregar_vehiculo.dart`, `parametrizacion_mantenimientos.dart`).
+  │   ├── expenses/: Control de costos y estadísticas (`gastos_screen.dart`).
+  │   ├── navigation/: GPS, Rutas e Historial (`rutas_screen.dart`).
+  │   └── guides/: Tutoriales interactivos (PDF/Video) (`guia.dart`).
+  ├── **l10n/**: Archivos de internacionalización y traducciones (arb, dart).
+  ├── **shared/**: Widgets, Modelos y Componentes reutilizables.
+  └── **main.dart**: Punto de entrada de la aplicación e inicialización.
 
 ══════════════════════════════════════════════
 REGLAS DE DESARROLLO Y ARQUITECTURA

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "6479414600",
+    "project_id": "my-auto-guide",
+    "storage_bucket": "my-auto-guide.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:6479414600:android:7fe2d8108324b44f71df7d",
+        "android_client_info": {
+          "package_name": "com.example.my_auto_guide"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDgv7datbxu0ViOQ8woQQsOhxMrCMWceRQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

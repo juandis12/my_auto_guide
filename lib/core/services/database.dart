@@ -20,7 +20,7 @@ class AppDatabase {
     final path = join(documentsDirectory.path, 'my_auto_guide.db');
     return await openDatabase(
       path,
-      version: 2, // Incrementado para incluir nuevas tablas
+      version: 3, // Incrementado para incluir tabla pending_expenses
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -88,6 +88,18 @@ class AppDatabase {
         synced INTEGER DEFAULT 0
       )
     ''');
+    await db.execute('''
+      CREATE TABLE pending_expenses (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        userId TEXT,
+        vehicleId TEXT,
+        categoria TEXT,
+        monto REAL,
+        descripcion TEXT,
+        fecha TEXT,
+        synced INTEGER DEFAULT 0
+      )
+    ''');
   }
 
   Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
@@ -113,6 +125,20 @@ class AppDatabase {
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           vehicleId TEXT,
           kmsToAdd INTEGER,
+          fecha TEXT,
+          synced INTEGER DEFAULT 0
+        )
+      ''');
+    }
+    if (oldVersion < 3) {
+      await db.execute('''
+        CREATE TABLE pending_expenses (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          userId TEXT,
+          vehicleId TEXT,
+          categoria TEXT,
+          monto REAL,
+          descripcion TEXT,
           fecha TEXT,
           synced INTEGER DEFAULT 0
         )
@@ -223,5 +249,26 @@ class AppDatabase {
     final db = await database;
     return await db
         .delete('pending_kms_updates', where: 'id = ?', whereArgs: [id]);
+  }
+
+  // Métodos para Pending Expenses
+  Future<int> insertPendingExpense(Map<String, dynamic> expense) async {
+    final db = await database;
+    return await db.insert('pending_expenses', expense);
+  }
+
+  Future<List<Map<String, dynamic>>> getPendingExpenses() async {
+    final db = await database;
+    return await db.query('pending_expenses', where: 'synced = ?', whereArgs: [0]);
+  }
+
+  Future<int> markExpenseAsSynced(int id) async {
+    final db = await database;
+    return await db.update('pending_expenses', {'synced': 1}, where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<int> deletePendingExpense(int id) async {
+    final db = await database;
+    return await db.delete('pending_expenses', where: 'id = ?', whereArgs: [id]);
   }
 }

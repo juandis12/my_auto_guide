@@ -3,6 +3,8 @@ plugins {
     id("kotlin-android")
     // Flutter plugin
     id("dev.flutter.flutter-gradle-plugin")
+    // Google Services Plugin
+    id("com.google.gms.google-services")
 }
 
 android {

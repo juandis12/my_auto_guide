@@ -1,8 +1,7 @@
 import 'dart:async';
 import 'dart:ui';
+import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
-import 'package:flutter_background_service_android/flutter_background_service_android.dart';
-import 'package:flutter_background_service_android/flutter_background_service_android.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:latlong2/latlong.dart';
@@ -14,6 +13,9 @@ class BackgroundNavService {
 
   static Future<void> initializeService() async {
     final service = FlutterBackgroundService();
+
+    // Pequeño delay para asegurar que otros servicios (notificaciones) estén listos
+    await Future.delayed(const Duration(milliseconds: 500));
 
     await service.configure(
       androidConfiguration: AndroidConfiguration(
@@ -40,6 +42,7 @@ class BackgroundNavService {
 
   @pragma('vm:entry-point')
   static void onStart(ServiceInstance service) async {
+    WidgetsFlutterBinding.ensureInitialized();
     DartPluginRegistrant.ensureInitialized();
 
     if (service is AndroidServiceInstance) {
@@ -61,51 +64,56 @@ class BackgroundNavService {
     double totalDistance = 0.0;
     LatLng? lastPos;
 
-    final prefs = await SharedPreferences.getInstance();
-    String? vehiculoId = prefs.getString('active_nav_vehicle_id');
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      
+      Geolocator.getPositionStream(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+          distanceFilter: 2, // Reducido: Más sensible al movimiento para evitar sensación de congelamiento
+        ),
+      ).listen((Position position) async {
+        final currentPos = LatLng(position.latitude, position.longitude);
 
-    Geolocator.getPositionStream(
-      locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.high,
-        distanceFilter: 5,
-      ),
-    ).listen((Position position) async {
-      final currentPos = LatLng(position.latitude, position.longitude);
-
-      if (lastPos != null) {
-        final distance = Geolocator.distanceBetween(lastPos!.latitude,
-            lastPos!.longitude, currentPos.latitude, currentPos.longitude);
-        totalDistance += distance;
-      }
-      lastPos = currentPos;
-
-      if (service is AndroidServiceInstance) {
-        if (await service.isForegroundService()) {
-          service.setForegroundNotificationInfo(
-            title: notificationTitle,
-            content:
-                'Distancia recorrida: ${(totalDistance / 1000).toStringAsFixed(2)} km',
-          );
+        if (lastPos != null) {
+          final distance = Geolocator.distanceBetween(lastPos!.latitude,
+              lastPos!.longitude, currentPos.latitude, currentPos.longitude);
+          totalDistance += distance;
         }
-      }
+        lastPos = currentPos;
 
-      // Enviar datos a la app (si está abierta)
-      service.invoke('update', {
-        "lat": position.latitude,
-        "lng": position.longitude,
-        "distance": totalDistance / 1000,
+        if (service is AndroidServiceInstance) {
+          if (await service.isForegroundService()) {
+            service.setForegroundNotificationInfo(
+              title: notificationTitle,
+              content:
+                  'Recorrido: ${(totalDistance / 1000).toStringAsFixed(2)} km - Seguimiento activo',
+            );
+          }
+        }
+
+        // Actualizar datos en tiempo real
+        service.invoke('update', {
+          "lat": position.latitude,
+          "lng": position.longitude,
+          "distance": totalDistance / 1000,
+        });
+
+        // Actualizar Widget
+        await AppWidgetLogic.updateWidget(
+          distance: totalDistance / 1000,
+          isTracking: true,
+        );
+
+        // Persistencia
+        await prefs.setDouble('nav_total_distance', totalDistance / 1000);
+        await prefs.setDouble('nav_last_lat', position.latitude);
+        await prefs.setDouble('nav_last_lng', position.longitude);
+      }, onError: (e) {
+        debugPrint('Error en stream GPS: $e');
       });
-
-      // Actualizar Widget de Inicio
-      AppWidgetLogic.updateWidget(
-        distance: totalDistance / 1000,
-        isTracking: true,
-      );
-
-      // Guardar localmente para persistencia en caso de cierre total
-      prefs.setDouble('nav_total_distance', totalDistance / 1000);
-      prefs.setDouble('nav_last_lat', position.latitude);
-      prefs.setDouble('nav_last_lng', position.longitude);
-    });
+    } catch (e) {
+      debugPrint('Error fatal en servicio de fondo: $e');
+    }
   }
 }
