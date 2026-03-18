@@ -44,6 +44,7 @@ import 'dart:async';
 
 import '../../../core/services/notification_service.dart';
 import '../../../core/services/supabase_service.dart';
+import '../../../core/services/vehicle_storage_service.dart';
 import '../../../core/logic/app_widget_logic.dart';
 import '../../../core/logic/vehicle_health_logic.dart';
 import '../../../core/logic/vehicle_ai_logic.dart';
@@ -70,8 +71,7 @@ class InicioApp extends StatefulWidget {
 
 class _InicioAppState extends State<InicioApp> {
   final supabase = Supabase.instance.client;
-
-  static const String _docsBucket = 'vehiculos-docs';
+  final _storage = VehicleStorageService();
 
   static const Map<String, String> brandLogos = {
     'YAMAHA': 'assets/logos/yamaha_logo.png',
@@ -106,7 +106,7 @@ class _InicioAppState extends State<InicioApp> {
   double _savingsCOP = 0.0;
 
   Map<String, dynamic>? _cachedVehicleData;
-  final Map<String, (String url, DateTime expires)> _urlCache = {};
+  final Map<String, dynamic> _urlCache = {};
   bool _notificacionesProcesadas = false;
 
   String _docFolder(DocType type) => {
@@ -120,23 +120,8 @@ class _InicioAppState extends State<InicioApp> {
       '${widget.vehiculoId}/${_docFolder(type)}';
 
   Future<String> _signedUrlCachedFor(String path) async {
-    final cached = _urlCache[path];
-    if (cached != null && DateTime.now().isBefore(cached.$2)) {
-      return cached.$1;
-    }
-    final signed = await _signedUrlFor(path);
-    if (!mounted) return '';
-    final expires = DateTime.now().add(const Duration(seconds: 3500));
-    _urlCache[path] = (signed, expires);
-    return signed;
-  }
-
-  Future<String> _signedUrlFor(String path) async {
-    final user = supabase.auth.currentUser;
-    if (user == null) {
-      throw Exception('Usuario no autenticado');
-    }
-    return await supabase.storage.from(_docsBucket).createSignedUrl(path, 3600);
+    final signed = await _storage.getSignedUrl(path, _urlCache);
+    return signed ?? '';
   }
 
   Color _colorFor(double pct) {
@@ -332,13 +317,7 @@ class _InicioAppState extends State<InicioApp> {
   Future<List<(String name, String url)>> _listDocsSigned(DocType type) async {
     try {
       final folder = _folderPath(type);
-      final objs = await supabase.storage.from(_docsBucket).list(
-            path: folder,
-            searchOptions: const SearchOptions(
-              limit: 100,
-              sortBy: SortBy(column: 'name', order: 'asc'),
-            ),
-          );
+      final objs = await _storage.listFolder(folder);
       final futures = objs.map((o) async {
         final path = '$folder/${o.name}';
         final signed = await _signedUrlCachedFor(path);
@@ -366,11 +345,7 @@ class _InicioAppState extends State<InicioApp> {
       final folder = _folderPath(type);
       final path = '$folder/$ts.$ext';
 
-      await supabase.storage.from(_docsBucket).uploadBinary(
-            path,
-            bytes,
-            fileOptions: const FileOptions(upsert: false),
-          );
+      await _storage.uploadBinary(path, bytes);
 
       final col = {
         DocType.soat: 'soat_path',
@@ -395,7 +370,7 @@ class _InicioAppState extends State<InicioApp> {
   }
 
   Future<void> _deleteStorageFile(String path) async {
-    await supabase.storage.from(_docsBucket).remove([path]);
+    await _storage.deleteDocument(path);
   }
 
   Future<void> _openUrl(String url) async {
@@ -580,20 +555,72 @@ class _InicioAppState extends State<InicioApp> {
                                                   ),
                                                 );
                                                 if (ok == true) {
-                                                  final path = '$folder/$name';
-                                                  await _deleteStorageFile(
-                                                      path);
-                                                  setState(() {
-                                                    if (_soatPath == path) {
-                                                      _soatPath = null;
-                                                      _soatSigned = null;
+                                                  try {
+                                                    // 1. Mostrar estado de carga temporal en UI si se desea o solo await
+                                                    final path = '$folder/$name';
+                                                    
+                                                    // 2. Eliminar de Bucket Storage
+                                                    await _deleteStorageFile(path);
+                                                    
+                                                    // 3. Remover del Caché en Memoria
+                                                    _urlCache.remove(path);
+
+                                                    // 4. Limpiar Variables de la UI
+                                                    setState(() {
+                                                      if (_soatPath == path) {
+                                                        _soatPath = null;
+                                                        _soatSigned = null;
+                                                      }
+                                                      if (_tecnoPath == path) {
+                                                        _tecnoPath = null;
+                                                        _tecnoSigned = null;
+                                                      }
+                                                      if (_seguroPath == path) {
+                                                        _seguroPath = null;
+                                                        _seguroSigned = null;
+                                                      }
+                                                      if (_propPath == path) {
+                                                        _propPath = null;
+                                                        _propSigned = null;
+                                                      }
+                                                    });
+
+                                                    // 5. Limpiar en PostgreSQL si la referencia Padre fue borrada
+                                                    final dbCol = {
+                                                      DocType.soat: 'soat_path',
+                                                      DocType.tecno: 'tecno_path',
+                                                      DocType.seguro: 'seguro_path',
+                                                      DocType.propiedad: 'propiedad_path',
+                                                    }[type]!;
+
+                                                    final varCheck = {
+                                                      DocType.soat: _soatPath,
+                                                      DocType.tecno: _tecnoPath,
+                                                      DocType.seguro: _seguroPath,
+                                                      DocType.propiedad: _propPath,
+                                                    }[type];
+
+                                                    if (varCheck == null) {
+                                                       await supabase
+                                                          .from('vehiculos')
+                                                          .update({dbCol: null}).eq('id', widget.vehiculoId);
+                                                       _cachedVehicleData = null; // forzar update dashboard
                                                     }
-                                                    if (_tecnoPath == path) {
-                                                      _tecnoPath = null;
-                                                      _tecnoSigned = null;
+
+                                                    // 6. Refrescar Modal
+                                                    await refresh();
+                                                    
+                                                  } catch (e) {
+                                                    // 7. Notificar visualmente si falla permisos / servidor
+                                                    if (mounted) {
+                                                      ScaffoldMessenger.of(context).showSnackBar(
+                                                        SnackBar(
+                                                          content: Text('Error al eliminar archivo: $e'),
+                                                          backgroundColor: Colors.redAccent,
+                                                        ),
+                                                      );
                                                     }
-                                                  });
-                                                  await refresh();
+                                                  }
                                                 }
                                               },
                                               child: const Padding(

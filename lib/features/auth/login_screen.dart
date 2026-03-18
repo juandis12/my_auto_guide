@@ -21,11 +21,10 @@
 // =============================================================================
 
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'registro_screen.dart';
 import '../vehicles/presentation/Agregar_vehiculo.dart';
 import '../vehicles/presentation/inicio_app.dart';
-import '../../core/services/supabase_service.dart';
+import '../../core/services/auth_service.dart';
 import '../../core/logic/performance_guard.dart';
 
 class CarRentalLoginScreen extends StatefulWidget {
@@ -36,8 +35,7 @@ class CarRentalLoginScreen extends StatefulWidget {
 }
 
 class _CarRentalLoginScreenState extends State<CarRentalLoginScreen> {
-  final SupabaseClient supabase = SupabaseService().client;
-
+  final _auth = AuthService();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
@@ -52,141 +50,89 @@ class _CarRentalLoginScreenState extends State<CarRentalLoginScreen> {
 
   // Si hay sesión vigente, salta el login y navega donde corresponda
   Future<void> _bootstrapSession() async {
-    final session =
-        supabase.auth.currentSession; // sesión persistida si existe [1]
-    if (session == null) return;
+    if (_auth.currentUser == null) return;
     if (!mounted) return;
-    await _goToDestination(); // decide destino por vehículos [2][3]
+    await _goToDestination(); 
   }
 
   // Decide a dónde navegar: InicioApp con id o AgregarVehiculo si no hay registros
   Future<void> _goToDestination() async {
-    final user = supabase.auth.currentUser; // usuario autenticado [1]
-    if (user == null) return;
+    if (_auth.currentUser == null) return;
 
-    try {
-      final List data = await supabase
-          .from('vehiculos')
-          .select('id')
-          .eq('user_id', user.id)
-          .order('created_at', ascending: false)
-          .limit(1);
-
-      if (!mounted) return;
-      if (data.isNotEmpty) {
-        final String vehiculoId = (data.first as Map)['id'] as String;
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => InicioApp(vehiculoId: vehiculoId)),
-        ); // ir a inicio con el id hallado [2]
-      } else {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const AgregarVehiculoScreen()),
-        ); // no hay vehículos, ir a agregar [2]
-      }
-    } on PostgrestException catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('No se pudo verificar vehículos: ${e.message}')),
-      ); // mensaje de respaldo [2]
+    final String? vehiculoId = await _auth.getFirstVehicleId();
+    if (!mounted) return;
+    
+    if (vehiculoId != null) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => InicioApp(vehiculoId: vehiculoId)),
+      );
+    } else {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const AgregarVehiculoScreen()),
-      ); // fallback razonable [2]
+      );
     }
   }
 
   Future<void> signIn() async {
     setState(() => isLoading = true);
     try {
-      final res = await supabase.auth.signInWithPassword(
-        email: emailController.text.trim(),
-        password: passwordController.text.trim(),
-      ); // login con email/contraseña [1]
+      await _auth.signIn(
+         emailController.text, 
+         passwordController.text
+      );
 
-      if (res.session != null && res.user != null) {
-        if (!mounted) return;
-        await _goToDestination();
-      }
-    } on AuthException catch (e) {
-      final msg = (e.message ?? '').toLowerCase();
-
-      // Caso: correo no confirmado
-      if (msg.contains('not confirmed')) {
-        if (!mounted) return;
+      if (!mounted) return;
+      await _goToDestination();
+    } on AuthLogicException catch (e) {
+      if (!mounted) return;
+      if (e.isNotConfirmed) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text(
-              'Tu correo no está confirmado. Revisa tu bandeja o reenvía el correo de verificación.',
-            ),
+            content: Text(e.message),
             action: SnackBarAction(
               label: 'Reenviar',
               onPressed: () async {
                 try {
-                  await supabase.auth.resend(
-                    type: OtpType.signup,
-                    email: emailController.text.trim(),
-                  );
+                  await _auth.resendConfirmationEmail(emailController.text);
                   if (!mounted) return;
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Correo de confirmación reenviado.'),
-                    ),
+                    const SnackBar(content: Text('Correo de confirmación reenviado.')),
                   );
-                } on AuthException catch (e2) {
+                } on AuthLogicException catch (e2) {
                   if (!mounted) return;
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('No se pudo reenviar: ${e2.message}'),
-                    ),
+                    SnackBar(content: Text('No se pudo reenviar: ${e2.message}')),
                   );
                 }
               },
             ),
             duration: const Duration(seconds: 8),
           ),
-        ); // aviso de confirmación [1]
-        return;
+        );
+      } else {
+         ScaffoldMessenger.of(context).showSnackBar(
+           SnackBar(content: Text('Error: ${e.message}')),
+         );
       }
-
-      // Otros errores (incluye "Invalid login credentials")
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: ${e.message}')),
-      ); // feedback [1]
     } finally {
       if (mounted) setState(() => isLoading = false);
     }
   }
 
   Future<void> sendPasswordReset() async {
-    final email = emailController.text.trim();
-    if (email.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Ingresa tu e-mail para recuperar la contraseña.'),
-        ),
-      ); // validación simple [1]
-      return;
-    }
     try {
-      await supabase.auth.resetPasswordForEmail(
-        email,
-      );
+      await _auth.sendPasswordReset(emailController.text);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Te enviamos un enlace para restablecer tu contraseña.',
-          ),
-        ),
-      ); // éxito [1]
-    } on AuthException catch (e) {
+        const SnackBar(content: Text('Te enviamos un enlace para restablecer tu contraseña.')),
+      ); 
+    } on AuthLogicException catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al enviar recuperación: ${e.message}')),
-      ); // error [1]
+        SnackBar(content: Text(e.message)),
+      ); 
     }
   }
 

@@ -139,84 +139,227 @@ class _ParametrizacionMantenimientosScreenState
     }
   }
 
+  Widget _buildMaintenanceCard({
+    required BuildContext context,
+    required String title,
+    required DateTime? date,
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryColor = Theme.of(context).primaryColor;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.white.withOpacity(0.04) : Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+            color: isDark ? Colors.white10 : Colors.black.withOpacity(0.05)),
+        boxShadow: [
+          if (!isDark)
+            BoxShadow(
+              color: Colors.black.withOpacity(0.03),
+              blurRadius: 15,
+              offset: const Offset(0, 8),
+            )
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(24),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(24),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            child: Row(
+              children: [
+                // Icono
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: primaryColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Icon(icon, color: primaryColor, size: 28),
+                ),
+                const SizedBox(width: 16),
+                // Textos
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.calendar_month,
+                            size: 14,
+                            color: date == null ? Colors.redAccent : Colors.grey,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            date == null ? 'Fecha requerida' : _fmt(date),
+                            style: TextStyle(
+                              color: date == null
+                                  ? Colors.redAccent
+                                  : Colors.grey[600],
+                              fontSize: 13,
+                              fontWeight: date == null
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                // Botón Editar
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: isDark
+                        ? Colors.white.withOpacity(0.1)
+                        : Colors.grey.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.edit_calendar,
+                    size: 20,
+                    color: isDark ? Colors.white70 : Colors.black54,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Parametrización de mantenimientos')),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          ListTile(
-            leading: const Icon(Icons.build_circle),
-            title: const Text('Última lubricación de cadena'),
-            subtitle: Text(_cadena == null ? 'Sin seleccionar' : _fmt(_cadena)),
-            trailing: FilledButton(
-              onPressed: () => _pickDate(
-                (d) => setState(() => _cadena = d),
-                initial: _cadena,
+      backgroundColor: isDark ? const Color(0xFF121212) : const Color(0xFFF7F8FA),
+      appBar: AppBar(
+        title: const Text('Mantenimientos', style: TextStyle(fontWeight: FontWeight.bold)),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+      ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                children: [
+                   const Padding(
+                    padding: EdgeInsets.only(bottom: 20),
+                    child: Text(
+                      'Configura la fecha de los últimos mantenimientos que le hiciste a tu vehículo para recibir recordatorios exactos.',
+                      style: TextStyle(color: Colors.grey, fontSize: 14),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  _buildMaintenanceCard(
+                    context: context,
+                    title: 'Lubricación de Cadena',
+                    date: _cadena,
+                    icon: Icons.build_circle_outlined,
+                    onTap: () => _pickDate(
+                      (d) => setState(() => _cadena = d),
+                      initial: _cadena,
+                    ),
+                  ),
+                  _buildMaintenanceCard(
+                    context: context,
+                    title: 'Filtro de Aire',
+                    date: _filtro,
+                    icon: Icons.filter_alt_outlined,
+                    onTap: () => _pickDate(
+                      (d) => setState(() => _filtro = d),
+                      initial: _filtro,
+                    ),
+                  ),
+                  _buildMaintenanceCard(
+                    context: context,
+                    title: 'Cambio de Aceite',
+                    date: _aceite,
+                    icon: Icons.water_drop_outlined,
+                    onTap: () => _pickDate(
+                      (d) => setState(() => _aceite = d),
+                      initial: _aceite,
+                    ),
+                  ),
+                  _buildMaintenanceCard(
+                    context: context,
+                    title: 'Seguro Obligatorio (SOAT)',
+                    date: _soat,
+                    icon: Icons.health_and_safety_outlined,
+                    onTap: () => _pickDate(
+                      (d) => setState(() => _soat = d),
+                      initial: _soat,
+                    ),
+                  ),
+                  _buildMaintenanceCard(
+                    context: context,
+                    title: 'Revisión Técnico-Mecánica',
+                    date: _tecno,
+                    icon: Icons.car_crash_outlined,
+                    onTap: () => _pickDate(
+                      (d) => setState(() => _tecno = d),
+                      initial: _tecno,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                ],
               ),
-              child: const Text('Elegir'),
             ),
-          ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.filter_alt),
-            title: const Text('Último mantenimiento de filtro de aire'),
-            subtitle: Text(_filtro == null ? 'Sin seleccionar' : _fmt(_filtro)),
-            trailing: FilledButton(
-              onPressed: () => _pickDate(
-                (d) => setState(() => _filtro = d),
-                initial: _filtro,
+            // Panel Inferior Flotante
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    offset: const Offset(0, -5),
+                    blurRadius: 20,
+                  )
+                ],
               ),
-              child: const Text('Elegir'),
-            ),
-          ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.oil_barrel),
-            title: const Text('Último cambio de aceite'),
-            subtitle: Text(_aceite == null ? 'Sin seleccionar' : _fmt(_aceite)),
-            trailing: FilledButton(
-              onPressed: () => _pickDate(
-                (d) => setState(() => _aceite = d),
-                initial: _aceite,
+              child: SizedBox(
+                width: double.infinity,
+                height: 55,
+                child: FilledButton.icon(
+                  style: FilledButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                  icon: const Icon(Icons.save_rounded),
+                  label: const Text(
+                    'Guardar y Calcular',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  onPressed: _guardar,
+                ),
               ),
-              child: const Text('Elegir'),
             ),
-          ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.health_and_safety),
-            title: const Text('Último SOAT'),
-            subtitle: Text(_soat == null ? 'Sin seleccionar' : _fmt(_soat)),
-            trailing: FilledButton(
-              onPressed: () => _pickDate(
-                (d) => setState(() => _soat = d),
-                initial: _soat,
-              ),
-              child: const Text('Elegir'),
-            ),
-          ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.car_crash),
-            title: const Text('Última Técnico-Mecánica'),
-            subtitle: Text(_tecno == null ? 'Sin seleccionar' : _fmt(_tecno)),
-            trailing: FilledButton(
-              onPressed: () => _pickDate(
-                (d) => setState(() => _tecno = d),
-                initial: _tecno,
-              ),
-              child: const Text('Elegir'),
-            ),
-          ),
-          const SizedBox(height: 24),
-          FilledButton.icon(
-            icon: const Icon(Icons.save),
-            label: const Text('Guardar y calcular'),
-            onPressed: _guardar,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
