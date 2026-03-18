@@ -43,11 +43,11 @@ import 'dart:io';
 import 'dart:async';
 
 import '../../../core/services/notification_service.dart';
-import '../../../core/services/supabase_service.dart';
 import '../../../core/services/vehicle_storage_service.dart';
 import '../../../core/logic/app_widget_logic.dart';
 import '../../../core/logic/vehicle_health_logic.dart';
 import '../../../core/logic/vehicle_ai_logic.dart';
+import '../../../core/services/sync_service.dart';
 import '../../../core/theme/brand_theme.dart';
 import '../../../shared/widgets/runt_webview.dart';
 import '../../navigation/rutas_screen.dart';
@@ -57,6 +57,8 @@ import 'parametrizacion_mantenimientos.dart';
 import '../../expenses/presentation/gastos_screen.dart';
 import '../../../core/logic/fuel_efficiency_logic.dart';
 import '../../navigation/presentation/historial_rutas_screen.dart';
+import '../../marketplace/presentation/marketplace_talleres_screen.dart';
+import '../../ai_bot/presentation/ai_chat_screen.dart';
 import '../../../core/logic/performance_guard.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -134,11 +136,12 @@ class _InicioAppState extends State<InicioApp> {
     return const Color(0xFF69F0AE).withOpacity(0.8);
   }
 
-  double _pctRestante(DateTime? last, int cicloDias) {
-    if (last == null) return 0.0;
-    final dias = DateTime.now().difference(last).inDays;
-    final restante = 1.0 - (dias / cicloDias);
-    return restante.clamp(0.0, 1.0);
+
+
+  double _asDouble(dynamic value) {
+    if (value == null) return 0.0;
+    if (value is num) return value.toDouble();
+    return double.tryParse(value.toString()) ?? 0.0;
   }
 
   Future<Map<String, dynamic>> _cargar() async {
@@ -150,7 +153,7 @@ class _InicioAppState extends State<InicioApp> {
       final row = await supabase
           .from('vehiculos')
           .select(
-            'marca, modelo, apodo, kms, image_path, last_cadena, last_filtro, last_aceite, last_soat, last_tecno, soat_path, tecno_path, seguro_path, propiedad_path',
+            'marca, modelo, apodo, kms, image_path, last_cadena, last_filtro, last_aceite, last_soat, last_tecno, soat_path, tecno_path, seguro_path, propiedad_path, kms_last_cadena, kms_last_filtro, kms_last_aceite',
           )
           .eq('id', widget.vehiculoId)
           .single();
@@ -252,6 +255,8 @@ class _InicioAppState extends State<InicioApp> {
         setState(() {
           _cachedVehicleData = null;
         });
+        // Refrescar resumen semanal tras volver de navegación (Bug #3)
+        unawaited(_cargarWeeklyStats());
       }
     });
   }
@@ -265,6 +270,70 @@ class _InicioAppState extends State<InicioApp> {
     );
   }
 
+  Widget _buildLegalAlerts() {
+    final alerts = <Widget>[];
+    final now = DateTime.now();
+
+    void checkDoc(String name, DateTime? lastDate) {
+      if (lastDate == null) return;
+      final expiration = lastDate.add(const Duration(days: 365));
+      final daysLeft = expiration.difference(now).inDays;
+
+      if (daysLeft <= 30) {
+        final isCritical = daysLeft <= 7;
+        alerts.add(
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: (isCritical ? Colors.redAccent : Colors.orangeAccent).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: (isCritical ? Colors.redAccent : Colors.orangeAccent).withOpacity(0.3)),
+              ),
+              child: Row(
+                children: [
+                  Icon(isCritical ? Icons.warning_amber_rounded : Icons.info_outline,
+                      color: isCritical ? Colors.redAccent : Colors.orangeAccent),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(daysLeft < 0 ? '¡$name Vencido!' : 'Vencimiento de $name',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: isCritical ? Colors.redAccent : Colors.orangeAccent)),
+                        Text(
+                          daysLeft < 0
+                              ? 'Tu $name venció hace ${daysLeft.abs()} días.'
+                              : 'Te quedan $daysLeft días para renovar tu $name.',
+                          style: const TextStyle(fontSize: 12, color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () => _abrirParametrizacion(),
+                    child: const Text('Arreglar', style: TextStyle(fontWeight: FontWeight.bold)),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      }
+    }
+
+    checkDoc('SOAT', _lastSoat);
+    checkDoc('Tecnomecánica', _lastTecno);
+
+    if (alerts.isEmpty) return const SizedBox.shrink();
+    return Column(children: alerts);
+  }
+
+
+
   Future<void> _abrirParametrizacion() async {
     final res = await Navigator.push(
       context,
@@ -276,6 +345,10 @@ class _InicioAppState extends State<InicioApp> {
           lastAceite: _lastAceite,
           lastSoat: _lastSoat,
           lastTecno: _lastTecno,
+          lastKmCadena: _asDouble(_cachedVehicleData?['kms_last_cadena']),
+          lastKmFiltro: _asDouble(_cachedVehicleData?['kms_last_filtro']),
+          lastKmAceite: _asDouble(_cachedVehicleData?['kms_last_aceite']),
+          currentKms: _asDouble(_cachedVehicleData?['kms']),
         ),
       ),
     );
@@ -291,8 +364,16 @@ class _InicioAppState extends State<InicioApp> {
         _pctAceite = (res['pctAceite'] as double?) ?? 0.0;
         _pctSoat = (res['pctSoat'] as double?) ?? 0.0;
         _pctTecno = (res['pctTecno'] as double?) ?? 0.0;
+        
+        // Actualizar caché para que la próxima apertura tenga los KMs correctos
+        if (_cachedVehicleData != null) {
+          _cachedVehicleData!['kms_last_cadena'] = res['lastKmCadena'];
+          _cachedVehicleData!['kms_last_filtro'] = res['lastKmFiltro'];
+          _cachedVehicleData!['kms_last_aceite'] = res['lastKmAceite'];
+        }
+
         _notificacionesProcesadas = false;
-        _cachedVehicleData = null; // Forzar recarga de ISH y gamificación
+        _cachedVehicleData = null; // Forzar recarga total para asegurar consistencia
       });
       unawaited(_syncHealthWidget());
       final bool vencido = (res['vencCadena'] == true) ||
@@ -393,7 +474,10 @@ class _InicioAppState extends State<InicioApp> {
       builder: (ctx) {
         return StatefulBuilder(
           builder: (ctx, setM) {
-            Future<void> refresh() async => setM(() {});
+            Future<void> refreshModal() async {
+              setM(() {});
+              if (mounted) setState(() {}); // Llama al setState del Dashboard para limpiar variables
+            }
             final folder = _folderPath(type);
             return SafeArea(
               child: Padding(
@@ -437,7 +521,7 @@ class _InicioAppState extends State<InicioApp> {
                                       break;
                                   }
                                 });
-                                await refresh();
+                                await refreshModal();
                               }
                             },
                           ),
@@ -604,11 +688,10 @@ class _InicioAppState extends State<InicioApp> {
                                                        await supabase
                                                           .from('vehiculos')
                                                           .update({dbCol: null}).eq('id', widget.vehiculoId);
-                                                       _cachedVehicleData = null; // forzar update dashboard
                                                     }
 
-                                                    // 6. Refrescar Modal
-                                                    await refresh();
+                                                    // 6. Refrescar Modal y Dashboard
+                                                    await refreshModal();
                                                     
                                                   } catch (e) {
                                                     // 7. Notificar visualmente si falla permisos / servidor
@@ -662,52 +745,69 @@ class _InicioAppState extends State<InicioApp> {
     if (!mounted) return;
     try {
       if (mounted) setState(() => _loadingWeekly = true);
-      final stats = await SupabaseService().getWeeklyStats(widget.vehiculoId);
-      final totalHistory =
-          await SupabaseService().getRouteHistory(widget.vehiculoId);
+      
+      final totalHistory = await SyncService().getCombinedRouteHistory(widget.vehiculoId);
       final totalR = totalHistory.length;
+
+      final weekAgo = DateTime.now().subtract(const Duration(days: 7));
+      final stats = totalHistory.where((s) {
+        final dateStr = s['fecha'] ?? s['created_at'] ?? '';
+        final date = DateTime.tryParse(dateStr);
+        if (date == null) return false;
+        return date.isAfter(weekAgo);
+      }).toList();
 
       double d = 0, f = 0, c = 0;
       for (var s in stats) {
-        // Intentar nuevos nombres, fallback a antiguos
-        d += (s['distancia_km'] ?? s['distancia'] as num?)?.toDouble() ?? 0.0;
-        f += (s['consumo_galones'] ?? s['consumo_estimado'] as num?)?.toDouble() ?? 0.0;
-        c += (s['costo_estimado'] as num?)?.toDouble() ?? 0.0;
+        d += _asDouble(s['distancia_km'] ?? s['distancia']);
+        f += _asDouble(s['consumo_galones'] ?? s['consumo_estimado']);
+        c += _asDouble(s['costo_estimado']);
       }
 
+      // Cargar datos del vehículo PRIMERO para que las fechas estén disponibles
+      // al calcular predicciones (Bug #4: antes dependía de _lastX que se seteaban tarde)
+      final vehicleData = await _cargar();
+      final modelName = vehicleData['modelo'] as String? ?? '';
+      final marca = (vehicleData['marca'] as String? ?? '').toUpperCase();
+      final isCar = marca.contains('CARRO') ||
+          (vehicleData['apodo'] as String? ?? '').toUpperCase().contains('CARRO');
+
+      // Extraer fechas directamente del mapa de datos (no depender de postFrameCallback)
+      final DateTime? lastAceiteFromData = vehicleData['last_aceite'] != null
+          ? DateTime.tryParse(vehicleData['last_aceite'])
+          : null;
+      final DateTime? lastFiltroFromData = vehicleData['last_filtro'] != null
+          ? DateTime.tryParse(vehicleData['last_filtro'])
+          : null;
+      final DateTime? lastCadenaFromData = vehicleData['last_cadena'] != null
+          ? DateTime.tryParse(vehicleData['last_cadena'])
+          : null;
+
+      // Calcular predicciones de mantenimiento con fechas reales disponibles
       List<Map<String, dynamic>> preds = [];
       if (stats.isNotEmpty) {
-        if (_lastAceite != null) {
+        if (lastAceiteFromData != null) {
           preds.add(VehicleHealthLogic.predictMaintenance(
               item: 'Aceite',
-              lastDate: _lastAceite,
+              lastDate: lastAceiteFromData,
               baseDays: 25,
               routeHistory: stats));
         }
-        if (_lastFiltro != null) {
+        if (lastFiltroFromData != null) {
           preds.add(VehicleHealthLogic.predictMaintenance(
               item: 'Filtro',
-              lastDate: _lastFiltro,
+              lastDate: lastFiltroFromData,
               baseDays: 90,
               routeHistory: stats));
         }
-        if (_lastCadena != null) {
+        if (lastCadenaFromData != null) {
           preds.add(VehicleHealthLogic.predictMaintenance(
               item: 'Cadena',
-              lastDate: _lastCadena,
+              lastDate: lastCadenaFromData,
               baseDays: 15,
               routeHistory: stats));
         }
       }
-
-      final vehicleData = await _cargar();
-      final modelName = vehicleData['modelo'] as String? ?? '';
-      final isCar = (vehicleData['marca'] as String? ?? '')
-              .toUpperCase()
-              .contains('CARRO') ||
-          (vehicleData['apodo'] as String? ?? '')
-              .toUpperCase()
-              .contains('CARRO');
 
       final efficiency = FuelEfficiencyLogic.calculateEfficiencyScore(
           actualKm: d,
@@ -733,7 +833,7 @@ class _InicioAppState extends State<InicioApp> {
           _loadingWeekly = false;
         });
 
-        // 🚀 CÁLCULO IA DE MANTENIMIENTO PROFUNDO (Solo 1 vez tras cargar data)
+        // Fallback: si no hay fechas de mantenimiento, usar alertas por KMS
         if (preds.isEmpty && vehicleData['kms'] != null) {
           _recalculateAI(vehicleData);
         }
@@ -856,12 +956,23 @@ class _InicioAppState extends State<InicioApp> {
           final dt =
               v['last_tecno'] != null ? DateTime.parse(v['last_tecno']) : null;
 
+          final currentKms = _asDouble(v['kms']);
+          final kmc = _asDouble(v['kms_last_cadena']);
+          final kmf = _asDouble(v['kms_last_filtro']);
+          final kma = _asDouble(v['kms_last_aceite']);
+
           if (_lastCadena == null && dc != null) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (mounted) {
                 setState(() {
                   _lastCadena = dc;
-                  _pctCadena = _pctRestante(dc, 15);
+                  _pctCadena = VehicleHealthLogic.calculateHybridPercentage(
+                    lastDate: dc,
+                    lastKms: kmc,
+                    cycleDays: 15,
+                    cycleKms: 500,
+                    currentKms: currentKms,
+                  );
                 });
                 unawaited(_syncHealthWidget());
               }
@@ -872,7 +983,13 @@ class _InicioAppState extends State<InicioApp> {
               if (mounted) {
                 setState(() {
                   _lastFiltro = df;
-                  _pctFiltro = _pctRestante(df, 90);
+                  _pctFiltro = VehicleHealthLogic.calculateHybridPercentage(
+                    lastDate: df,
+                    lastKms: kmf,
+                    cycleDays: 90,
+                    cycleKms: 5000,
+                    currentKms: currentKms,
+                  );
                 });
               }
             });
@@ -882,7 +999,13 @@ class _InicioAppState extends State<InicioApp> {
               if (mounted) {
                 setState(() {
                   _lastAceite = da;
-                  _pctAceite = _pctRestante(da, 25);
+                  _pctAceite = VehicleHealthLogic.calculateHybridPercentage(
+                    lastDate: da,
+                    lastKms: kma,
+                    cycleDays: 25,
+                    cycleKms: 3000,
+                    currentKms: currentKms,
+                  );
                 });
               }
             });
@@ -892,7 +1015,13 @@ class _InicioAppState extends State<InicioApp> {
               if (mounted) {
                 setState(() {
                   _lastSoat = ds;
-                  _pctSoat = _pctRestante(ds, 365);
+                  _pctSoat = VehicleHealthLogic.calculateHybridPercentage(
+                    lastDate: ds,
+                    lastKms: 0,
+                    cycleDays: 365,
+                    cycleKms: 1, // Irrelevante ya que kms=0
+                    currentKms: 0,
+                  );
                 });
               }
             });
@@ -902,7 +1031,13 @@ class _InicioAppState extends State<InicioApp> {
               if (mounted) {
                 setState(() {
                   _lastTecno = dt;
-                  _pctTecno = _pctRestante(dt, 365);
+                  _pctTecno = VehicleHealthLogic.calculateHybridPercentage(
+                    lastDate: dt,
+                    lastKms: 0,
+                    cycleDays: 365,
+                    cycleKms: 1,
+                    currentKms: 0,
+                  );
                 });
               }
             });
@@ -966,8 +1101,17 @@ class _InicioAppState extends State<InicioApp> {
                     pctSoat: _pctSoat,
                     pctTecno: _pctTecno,
                     brandTheme: bTheme,
+                    efficiencyScore: _efficiencyScore.toDouble(),
+                    totalSavings: _savingsCOP,
+                    documentsComplete: _soatPath != null && _tecnoPath != null && _seguroPath != null && _propPath != null,
+                    consistency: VehicleAILogic.analyzeJourneyPatterns(
+                        routeHistory: _weeklyStats,
+                        modelName: modelo,
+                        isCar: marca.contains('CARRO'))['consistency'] as String? ?? 'Variable',
+                    hasLongRoute: _weeklyStats.any((route) => _asDouble(route['distancia_km'] ?? route['distancia']) >= 100),
                   ),
                 ),
+                _buildLegalAlerts(),
                 const SizedBox(height: 24),
                 _StaggeredFadeIn(
                   delay: const Duration(milliseconds: 300),
@@ -986,6 +1130,7 @@ class _InicioAppState extends State<InicioApp> {
                             border: Border.all(
                                 color: bTheme.primaryColor.withOpacity(0.1))),
                         child: Column(
+                          mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const _SectionTitle('Documentos Legales'),
@@ -1077,6 +1222,22 @@ class _InicioAppState extends State<InicioApp> {
                                 title: 'Tecno',
                                 value: _pctTecno,
                                 color: _colorFor(_pctTecno)),
+                            const SizedBox(width: 12),
+                            _IndicatorTile(
+                              title: 'SIMIT',
+                              value: 1.0,
+                              color: Colors.blueAccent,
+                              isSimit: true,
+                              onTap: () => unawaited(Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) => RuntWebViewScreen(
+                                            placa: _cachedVehicleData?['placa'] ?? '',
+                                            cedula: '',
+                                            vehiculoId: widget.vehiculoId,
+                                          )))),
+                            ),
+                            const SizedBox(width: 12),
                           ],
                         ),
                       ),
@@ -1156,6 +1317,25 @@ class _InicioAppState extends State<InicioApp> {
                                       cedula: '12345678',
                                       vehiculoId: widget.vehiculoId))),
                           brandTheme: bTheme),
+                      const SizedBox(height: 16),
+                      _GradientButton(
+                          icon: Icons.store_rounded,
+                          text: 'Marketplace de Talleres',
+                          onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => const MarketplaceTalleresScreen())),
+                          brandTheme: bTheme),
+                      const SizedBox(height: 12),
+                      _GradientButton(
+                          icon: Icons.auto_awesome,
+                          text: 'Consultar al Experto IA',
+                          onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => const AIChatScreen())),
+                          brandTheme: bTheme,
+                          isSpecial: true), // Usamos una bandera para resaltar el botón
                     ],
                   ),
                 ),
@@ -1164,6 +1344,15 @@ class _InicioAppState extends State<InicioApp> {
             ),
           );
         },
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const AIChatScreen()),
+        ),
+        backgroundColor: Theme.of(context).primaryColor,
+        icon: const Icon(Icons.auto_awesome, color: Colors.white),
+        label: const Text('IA Experto', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
       ),
     );
   }
@@ -1389,6 +1578,7 @@ class _WeeklyInsightCard extends StatelessWidget {
                   offset: const Offset(0, 8))
           ]),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(children: [
@@ -1575,14 +1765,14 @@ class _AIInsightsPanel extends StatelessWidget {
             runSpacing: 8,
             crossAxisAlignment: WrapCrossAlignment.start,
             children: [
-              _AIBadge(label: 'Uso: ${aiInsights['intensity']}', color: Colors.orange),
-              _AIBadge(label: 'IA Care: ${aiInsights['careScore'].round()}%', color: Colors.blueAccent),
-              _AIBadge(label: 'Consistencia: ${aiInsights['consistency']}', color: Colors.green),
+              _AIBadge(label: 'Uso: ${aiInsights['intensity'] ?? 'N/A'}', color: Colors.orange),
+              _AIBadge(label: 'IA Care: ${(aiInsights['careScore'] as num?)?.round() ?? 100}%', color: Colors.blueAccent),
+              _AIBadge(label: 'Consistencia: ${aiInsights['consistency'] ?? 'N/A'}', color: Colors.green),
             ],
           ),
           const SizedBox(height: 12),
           Text(
-            aiInsights['advice'],
+            aiInsights['advice'] ?? 'Aún no hay suficientes datos para el análisis.',
             style: TextStyle(
               fontSize: 13,
               height: 1.4,
@@ -1777,47 +1967,60 @@ class _IndicatorTile extends StatelessWidget {
   final String title;
   final double value;
   final Color color;
-  const _IndicatorTile(
-      {required this.title, required this.value, required this.color});
+  final bool isSimit;
+  final VoidCallback? onTap;
+
+  const _IndicatorTile({
+    required this.title,
+    required this.value,
+    required this.color,
+    this.isSimit = false,
+    this.onTap,
+  });
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-      width: 100,
-      decoration: BoxDecoration(
-          color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-              color: isDark
-                  ? Colors.white.withOpacity(0.1)
-                  : Colors.white.withOpacity(0.2))),
-      child: Column(children: [
-        Text(title,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: isDark ? Colors.white70 : Colors.black87)),
-        const SizedBox(height: 12),
-        SizedBox(
-            height: 50,
-            width: 50,
-            child: Stack(fit: StackFit.expand, children: [
-              CircularProgressIndicator(
-                  value: value,
-                  strokeWidth: 6,
-                  backgroundColor:
-                      isDark ? Colors.white10 : Colors.black.withOpacity(0.05),
-                  valueColor: AlwaysStoppedAnimation<Color>(color)),
-              Center(
-                  child: Text('${(value * 100).round()}%',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                          color: isDark ? Colors.white : Colors.black)))
-            ]))
-      ]),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+        width: 100,
+        decoration: BoxDecoration(
+            color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+                color: isDark
+                    ? Colors.white.withOpacity(0.1)
+                    : Colors.white.withOpacity(0.2))),
+        child: Column(children: [
+          Text(title,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? Colors.white70 : Colors.black87)),
+          const SizedBox(height: 12),
+          SizedBox(
+              height: 50,
+              width: 50,
+              child: Stack(fit: StackFit.expand, children: [
+                CircularProgressIndicator(
+                    value: value,
+                    strokeWidth: 6,
+                    backgroundColor:
+                        isDark ? Colors.white10 : Colors.black.withOpacity(0.05),
+                    valueColor: AlwaysStoppedAnimation<Color>(color)),
+                Center(
+                    child: isSimit
+                        ? Icon(Icons.gavel_rounded, color: color, size: 20)
+                        : Text('${(value * 100).round()}%',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                                color: isDark ? Colors.white : Colors.black)))
+              ]))
+        ]),
+      ),
     );
   }
 }
@@ -1827,11 +2030,13 @@ class _GradientButton extends StatelessWidget {
   final String text;
   final VoidCallback onTap;
   final BrandTheme? brandTheme;
+  final bool isSpecial;
   const _GradientButton(
       {required this.icon,
       required this.text,
       required this.onTap,
-      this.brandTheme});
+      this.brandTheme,
+      this.isSpecial = false});
   @override
   Widget build(BuildContext context) {
     final theme = brandTheme ?? BrandTheme.defaultTheme;
@@ -1841,7 +2046,21 @@ class _GradientButton extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
-                gradient: theme.gradient),
+                gradient: isSpecial 
+                  ? LinearGradient(
+                      colors: [Colors.blue.shade400, Colors.purple.shade600],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    )
+                  : theme.gradient,
+                boxShadow: [
+                  if (isSpecial)
+                    BoxShadow(
+                      color: Colors.blue.withOpacity(0.3),
+                      blurRadius: 10,
+                      spreadRadius: 1,
+                    )
+                ]),
             child: Row(children: [
               Container(
                   width: 40,
@@ -1989,15 +2208,28 @@ class _AchievementsCard extends StatelessWidget {
   final int routeCount;
   final double pctCadena, pctFiltro, pctAceite, pctSoat, pctTecno;
   final BrandTheme brandTheme;
-  const _AchievementsCard(
-      {required this.healthIndex,
-      required this.routeCount,
-      required this.pctCadena,
-      required this.pctFiltro,
-      required this.pctAceite,
-      required this.pctSoat,
-      required this.pctTecno,
-      required this.brandTheme});
+  // Propiedades Gamificación Avanzada
+  final double efficiencyScore;
+  final double totalSavings;
+  final bool documentsComplete;
+  final String consistency;
+  final bool hasLongRoute;
+
+  const _AchievementsCard({
+    required this.healthIndex,
+    required this.routeCount,
+    required this.pctCadena,
+    required this.pctFiltro,
+    required this.pctAceite,
+    required this.pctSoat,
+    required this.pctTecno,
+    required this.brandTheme,
+    required this.efficiencyScore,
+    required this.totalSavings,
+    required this.documentsComplete,
+    required this.consistency,
+    required this.hasLongRoute,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -2008,7 +2240,12 @@ class _AchievementsCard extends StatelessWidget {
         pctAceite: pctAceite,
         pctSoat: pctSoat,
         pctTecno: pctTecno,
-        routeCount: routeCount);
+        routeCount: routeCount,
+        efficiencyScore: efficiencyScore,
+        totalSavings: totalSavings,
+        documentsComplete: documentsComplete,
+        consistency: consistency,
+        hasLongRoute: hasLongRoute);
     return PerformanceGuard.adaptiveBlur(
       borderRadius: BorderRadius.circular(24),
       fallbackColor: Theme.of(context).brightness == Brightness.dark
@@ -2021,6 +2258,7 @@ class _AchievementsCard extends StatelessWidget {
             border:
                 Border.all(color: brandTheme.primaryColor.withOpacity(0.1))),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
@@ -2082,6 +2320,16 @@ class _AchievementsCard extends StatelessWidget {
         return Icons.settings_applications_rounded;
       case 'map':
         return Icons.map_rounded;
+      case 'eco':
+        return Icons.eco_rounded;
+      case 'savings':
+        return Icons.savings_rounded;
+      case 'cloud_done':
+        return Icons.cloud_done_rounded;
+      case 'shield':
+        return Icons.shield_rounded;
+      case 'terrain':
+        return Icons.terrain_rounded;
       default:
         return Icons.star_rounded;
     }

@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../../core/services/supabase_service.dart';
+import '../../../core/services/sync_service.dart';
 import '../../../core/logic/performance_guard.dart';
+import '../../../core/logic/vehicle_ai_logic.dart';
+import '../../marketplace/presentation/marketplace_talleres_screen.dart';
+import '../../../core/services/report_service.dart';
 
 class HistorialRutasScreen extends StatefulWidget {
   final String vehiculoId;
@@ -19,6 +23,13 @@ class HistorialRutasScreen extends StatefulWidget {
 class _HistorialRutasScreenState extends State<HistorialRutasScreen> {
   bool _isLoading = true;
   List<Map<String, dynamic>> _history = [];
+  Map<String, dynamic> _aiInsights = {};
+  List<Map<String, dynamic>> _upcomingIssues = [];
+  String _vehicleModel = '';
+  String _vehicleBrand = '';
+  String _vehicleImage = '';
+  bool _isCar = false;
+  int _totalKms = 0;
 
   @override
   void initState() {
@@ -29,9 +40,52 @@ class _HistorialRutasScreenState extends State<HistorialRutasScreen> {
   Future<void> _fetchHistory() async {
     setState(() => _isLoading = true);
     try {
-      final data = await SupabaseService().getRouteHistory(widget.vehiculoId);
+      // Usar historial combinado: Supabase remoto + rutas locales pendientes de sync
+      final data = await SyncService().getCombinedRouteHistory(widget.vehiculoId);
+      
+      // Asignar inmediatamente la data offline-first al estado base
       if (mounted) {
-        setState(() => _history = data);
+        setState(() {
+          _history = data;
+        });
+      }
+
+      // Obtener info del vehículo para la IA y Reporte (Resistente a fallos de red)
+      try {
+        final vData = await SupabaseService().client
+            .from('vehiculos')
+            .select('marca, modelo, kms, image_path')
+            .eq('id', widget.vehiculoId)
+            .single();
+        
+        _vehicleBrand = (vData['marca'] as String? ?? '').toUpperCase();
+        _vehicleModel = vData['modelo'] ?? 'Vehículo';
+        _vehicleImage = vData['image_path'] ?? '';
+        _totalKms = (vData['kms'] as num? ?? 0).toInt();
+        _isCar = _vehicleBrand == 'TOYOTA' || _vehicleBrand == 'MAZDA' || _vehicleBrand == 'CHEVROLET';
+      } catch (e) {
+        debugPrint('Historial: Error obteniendo metadata del vehículo (Modo Offline o Timeout): $e');
+        _vehicleBrand = 'Desconocido';
+        _vehicleModel = 'Vehículo';
+        _vehicleImage = '';
+        _totalKms = 0;
+        _isCar = false;
+      }
+
+      if (mounted) {
+        setState(() {
+          // Ya asignamos data antes, aquí calculamos insights con los fallbacks o reales
+
+          _aiInsights = VehicleAILogic.analyzeJourneyPatterns(
+            routeHistory: _history,
+            modelName: _vehicleModel,
+            isCar: _isCar,
+          );
+          _upcomingIssues = VehicleAILogic.predictUpcomingIssues(
+            totalKms: _totalKms,
+            intensity: _aiInsights['intensity'] ?? 'Baja',
+          );
+        });
       }
     } catch (e) {
       debugPrint('Error cargando historial: $e');
@@ -52,6 +106,20 @@ class _HistorialRutasScreenState extends State<HistorialRutasScreen> {
         elevation: 0,
         actions: [
           IconButton(
+            tooltip: 'Exportar Reporte PDF',
+            icon: const Icon(Icons.picture_as_pdf_rounded),
+            onPressed: () {
+              ReportService.generateVehicleReport(
+                brand: _vehicleBrand,
+                model: _vehicleModel,
+                vehicleImage: _vehicleImage,
+                totalKms: _totalKms,
+                routeHistory: _history,
+                upcomingIssues: _upcomingIssues,
+              );
+            },
+          ),
+          IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: _fetchHistory,
           ),
@@ -61,25 +129,35 @@ class _HistorialRutasScreenState extends State<HistorialRutasScreen> {
           ? const Center(child: CircularProgressIndicator())
           : _history.isEmpty
               ? _buildEmptyState()
-              : ListView.builder(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  itemCount: _history.length,
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () {
-                        final selectedRoute = _history[index];
-                        if (widget.onRouteSelected != null) {
-                          widget.onRouteSelected!(selectedRoute);
-                        }
-                        Navigator.of(context).pop(selectedRoute);
-                      },
-                      child: _RouteCard(
-                        route: _history[index],
-                        isDark: isDark,
+              : CustomScrollView(
+                  slivers: [
+                    SliverToBoxAdapter(
+                      child: _buildAIHeader(isDark),
+                    ),
+                    SliverPadding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      sliver: SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                          (context, index) {
+                            return GestureDetector(
+                              onTap: () {
+                                final selectedRoute = _history[index];
+                                if (widget.onRouteSelected != null) {
+                                  widget.onRouteSelected!(selectedRoute);
+                                }
+                                Navigator.of(context).pop(selectedRoute);
+                              },
+                              child: _RouteCard(
+                                route: _history[index],
+                                isDark: isDark,
+                              ),
+                            );
+                          },
+                          childCount: _history.length,
+                        ),
                       ),
-                    );
-                  },
+                    ),
+                  ],
                 ),
     );
   }
@@ -95,6 +173,149 @@ class _HistorialRutasScreenState extends State<HistorialRutasScreen> {
           const Text(
             'Aún no tienes trayectos guardados',
             style: TextStyle(color: Colors.grey, fontSize: 16),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAIHeader(bool isDark) {
+    if (_aiInsights.isEmpty) return const SizedBox.shrink();
+
+    final careScore = (_aiInsights['careScore'] as num?)?.toDouble() ?? 100.0;
+    final advice = _aiInsights['advice'] as String? ?? '';
+    final intensity = _aiInsights['intensity'] as String? ?? 'Baja';
+
+    return Container(
+      margin: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: isDark 
+            ? [const Color(0xFF1E3C72), const Color(0xFF2A5298)]
+            : [Colors.blue[700]!, Colors.blue[500]!],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.blue.withOpacity(0.3),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          )
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'AI Insights • My Auto Guide',
+                style: TextStyle(
+                  color: Colors.white70,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.2,
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  'Uso: $intensity',
+                  style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              // Care Score Gauge
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  SizedBox(
+                    width: 60,
+                    height: 60,
+                    child: CircularProgressIndicator(
+                      value: careScore / 100,
+                      strokeWidth: 6,
+                      backgroundColor: Colors.white.withOpacity(0.1),
+                      valueColor: const AlwaysStoppedAnimation(Colors.white),
+                    ),
+                  ),
+                  Text(
+                    '${careScore.round()}',
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+                  ),
+                ],
+              ),
+              const SizedBox(width: 20),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Salud del Trayecto',
+                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      advice,
+                      style: const TextStyle(color: Colors.white70, fontSize: 13, height: 1.4),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          if (_upcomingIssues.isNotEmpty) ...[
+            const SizedBox(height: 20),
+            const Text(
+              'Alertas Técnicas (IA)',
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+            ),
+            const SizedBox(height: 10),
+            ..._upcomingIssues.take(2).map((issue) => _buildIssueItem(issue)),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildIssueItem(Map<String, dynamic> issue) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.warning_amber_rounded, color: Colors.orange[300], size: 18),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              '${issue['item']}: ${issue['reason']}',
+              style: const TextStyle(color: Colors.white, fontSize: 11),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const MarketplaceTalleresScreen()),
+              );
+            },
+            child: const Text('Ver Taller', style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -122,6 +343,8 @@ class _RouteCard extends StatelessWidget {
     final kms = distRaw?.toDouble() ?? 0.0;
     final galones = fuelRaw?.toDouble() ?? 0.0;
     final costo = costRaw?.toDouble() ?? 0.0;
+    final vMax = (route['velocidad_max'] as num?)?.toDouble() ?? 0.0;
+    final vProm = (route['velocidad_prom'] as num?)?.toDouble() ?? 0.0;
 
     DateTime fecha;
     // Priorizar 'fecha' explícita, luego 'created_at' de Supabase
@@ -202,32 +425,50 @@ class _RouteCard extends StatelessWidget {
                       color: Colors.redAccent),
                   const Divider(height: 24),
                   // Métrica
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      _Stat(
-                        icon: Icons.route_outlined,
-                        value: kms > 0 ? '${kms.toStringAsFixed(1)} km' : '0.0 km',
-                        label: 'Distancia',
-                      ),
-                      _Stat(
-                        icon: Icons.local_gas_station_rounded,
-                        value: galones > 0
-                            ? '${galones.toStringAsFixed(2)} gal'
-                            : '0.00 gal',
-                        label: 'Consumo',
-                        color: Colors.orange,
-                      ),
-                      _Stat(
-                        icon: Icons.payments_rounded,
-                        value: costo > 0
-                            ? '\$${(costo / 1000).toStringAsFixed(1)}k'
-                            : '\$0k',
-                        label: 'Gasto',
-                        color: Colors.green,
-                      ),
-                    ],
-                  ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _Stat(
+                          icon: Icons.route_outlined,
+                          value: kms > 0 ? '${kms.toStringAsFixed(1)} km' : '0.0 km',
+                          label: 'Distancia',
+                        ),
+                        _Stat(
+                          icon: Icons.speed,
+                          value: '${vMax.toStringAsFixed(0)} km/h',
+                          label: 'Vel. Máx',
+                          color: Colors.redAccent,
+                        ),
+                        _Stat(
+                          icon: Icons.av_timer,
+                          value: '${vProm.toStringAsFixed(0)} km/h',
+                          label: 'Vel. Prom',
+                          color: Colors.blue,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        _Stat(
+                          icon: Icons.local_gas_station_rounded,
+                          value: galones > 0
+                              ? '${galones.toStringAsFixed(2)} gal'
+                              : '0.00 gal',
+                          label: 'Consumo',
+                          color: Colors.orange,
+                        ),
+                        _Stat(
+                          icon: Icons.payments_rounded,
+                          value: costo > 0
+                              ? '\$${(costo / 1000).toStringAsFixed(1)}k'
+                              : '\$0k',
+                          label: 'Gasto',
+                          color: Colors.green,
+                        ),
+                      ],
+                    ),
                 ],
               ),
             ),

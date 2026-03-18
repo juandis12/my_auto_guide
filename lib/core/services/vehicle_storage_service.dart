@@ -76,7 +76,12 @@ class VehicleStorageService {
   /// Elimina un archivo del storage
   Future<void> deleteDocument(String path) async {
     try {
-      await _supabase.storage.from(_bucketName).remove([path]);
+      final res = await _supabase.storage.from(_bucketName).remove([path]);
+      if (res.isEmpty) {
+        // En Supabase, si no tienes permisos o si ya no existe, devuelve vacío.
+        // Si la foto/pdf "ya no existe", le permitiremos pasar silenciosamente 
+        // a la UI para que limpie el Caché Inconsistente de PostgreSQL.
+      }
     } catch (e) {
       throw VehicleStorageLogicException('Error al eliminar el documento: $e');
     }

@@ -27,6 +27,9 @@ import '../vehicles/presentation/inicio_app.dart';
 import '../../core/services/auth_service.dart';
 import '../../core/logic/performance_guard.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../core/services/biometric_service.dart';
+
 class CarRentalLoginScreen extends StatefulWidget {
   const CarRentalLoginScreen({super.key});
 
@@ -36,23 +39,52 @@ class CarRentalLoginScreen extends StatefulWidget {
 
 class _CarRentalLoginScreenState extends State<CarRentalLoginScreen> {
   final _auth = AuthService();
+  final _biometric = BiometricService();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
   bool isLoading = false;
-  bool rememberMe = false;
+  bool rememberMe = true; // Por defecto true para mayor comodidad
+  bool canUseBiometrics = false;
 
   @override
   void initState() {
     super.initState();
-    _bootstrapSession(); // intenta usar sesión reciente guardada [1]
+    _checkBiometrics();
+    _bootstrapSession();
+  }
+
+  Future<void> _checkBiometrics() async {
+    final available = await _biometric.isBiometricAvailable();
+    if (mounted) setState(() => canUseBiometrics = available);
   }
 
   // Si hay sesión vigente, salta el login y navega donde corresponda
   Future<void> _bootstrapSession() async {
+    final prefs = await SharedPreferences.getInstance();
+    final shouldRemember = prefs.getBool('remember_me') ?? false;
+    
+    if (mounted) setState(() => rememberMe = shouldRemember);
+
     if (_auth.currentUser == null) return;
+    if (!shouldRemember) return; // Si no marcó recordar, no auto-logueamos al inicio
+
+    // Si hay sesión y se marcó recordar, probamos biometría si está disponible
+    if (canUseBiometrics) {
+      final authenticated = await _biometric.authenticate();
+      if (!authenticated) return; // Se queda en la pantalla de login para meter clave manual
+    }
+
     if (!mounted) return;
     await _goToDestination(); 
+  }
+
+  Future<void> _loginAlternative() async {
+    if (!canUseBiometrics) return;
+    final authenticated = await _biometric.authenticate();
+    if (authenticated && _auth.currentUser != null) {
+      await _goToDestination();
+    }
   }
 
   // Decide a dónde navegar: InicioApp con id o AgregarVehiculo si no hay registros
@@ -82,6 +114,10 @@ class _CarRentalLoginScreenState extends State<CarRentalLoginScreen> {
          emailController.text, 
          passwordController.text
       );
+
+      // Guardar preferencia de recordar
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('remember_me', rememberMe);
 
       if (!mounted) return;
       await _goToDestination();
@@ -135,8 +171,6 @@ class _CarRentalLoginScreenState extends State<CarRentalLoginScreen> {
       ); 
     }
   }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
@@ -314,58 +348,79 @@ class _CarRentalLoginScreenState extends State<CarRentalLoginScreen> {
                   ),
                   const SizedBox(height: 16),
 
-                  // Botón Iniciar Sesión con gradiente armonizado
-                  Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      gradient: PerformanceGuard().isLowEnd
-                          ? null
-                          : const LinearGradient(
-                              colors: [Color(0xFF035880), Color(0xFF023E5A)],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
-                      color: PerformanceGuard().isLowEnd
-                          ? const Color(0xFF035880)
-                          : null,
-                      boxShadow: [
-                        if (!PerformanceGuard().isLowEnd)
-                          BoxShadow(
-                            color: const Color(0xFF035880).withOpacity(0.3),
-                            blurRadius: 20,
-                            offset: const Offset(0, 10),
-                          ),
-                      ],
-                    ),
-                    child: ElevatedButton(
-                      onPressed: isLoading ? null : signIn,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                        shadowColor: Colors.transparent,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 18),
-                        textStyle: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                      ),
-                      child: isLoading
-                          ? const SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 2,
+                      // Botón Iniciar Sesión y Biometría
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(16),
+                                gradient: PerformanceGuard().isLowEnd
+                                    ? null
+                                    : const LinearGradient(
+                                        colors: [Color(0xFF035880), Color(0xFF023E5A)],
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                      ),
+                                color: PerformanceGuard().isLowEnd
+                                    ? const Color(0xFF035880)
+                                    : null,
+                                boxShadow: [
+                                  if (!PerformanceGuard().isLowEnd)
+                                    BoxShadow(
+                                      color: const Color(0xFF035880).withOpacity(0.3),
+                                      blurRadius: 20,
+                                      offset: const Offset(0, 10),
+                                    ),
+                                ],
                               ),
-                            )
-                          : const Text('Iniciar Sesión'),
-                    ),
-                  ),
+                              child: ElevatedButton(
+                                onPressed: isLoading ? null : signIn,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.transparent,
+                                  shadowColor: Colors.transparent,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(vertical: 18),
+                                  textStyle: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 1,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                ),
+                                child: isLoading
+                                    ? const SizedBox(
+                                        width: 24,
+                                        height: 24,
+                                        child: CircularProgressIndicator(
+                                          color: Colors.white,
+                                          strokeWidth: 2,
+                                        ),
+                                      )
+                                    : const Text('Iniciar Sesión'),
+                              ),
+                            ),
+                          ),
+                          if (canUseBiometrics) ...[
+                            const SizedBox(width: 12),
+                            InkWell(
+                              onTap: _loginAlternative,
+                              borderRadius: BorderRadius.circular(16),
+                              child: Container(
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF035880).withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(color: const Color(0xFF035880).withOpacity(0.3)),
+                                ),
+                                child: const Icon(Icons.fingerprint, size: 32, color: Color(0xFF035880)),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
                   const SizedBox(height: 30),
                   Row(
                     children: [

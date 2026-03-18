@@ -13,8 +13,37 @@ class VehicleHealthLogic {
     double mechanicHealth = (pctCadena + pctFiltro + pctAceite) / 3;
     double legalHealth = (pctSoat + pctTecno) / 2;
     
-    // El índice global pondera ambos (60% mecánica, 40% legal por ejemplo)
+     // El índice global pondera ambos (60% mecánica, 40% legal por ejemplo)
     return (mechanicHealth * 0.6 + legalHealth * 0.4) * 100;
+  }
+
+  /// Calcula el porcentaje de vida útil restante comparando Tiempo vs Kilometraje.
+  /// Retorna el factor más crítico (el menor de ambos).
+  static double calculateHybridPercentage({
+    required DateTime? lastDate,
+    required double lastKms,
+    required int cycleDays,
+    required int cycleKms,
+    required double currentKms,
+  }) {
+    if (lastDate == null) return 0.0;
+
+    // 1. Desgaste por Tiempo
+    final elapsedDays = DateTime.now().difference(lastDate).inDays;
+    final timeRemainingPct = 1.0 - (elapsedDays / cycleDays);
+
+    // 2. Desgaste por Kilometraje
+    // Si lastKms es 0 o null (dato no ingresado aún), ignoramos este factor
+    double kmsRemainingPct = 1.0;
+    if (lastKms > 0) {
+      final elapsedKms = (currentKms - lastKms).clamp(0.0, double.infinity);
+      kmsRemainingPct = 1.0 - (elapsedKms / cycleKms);
+    }
+
+    // 3. El factor dominante es el menor (el que más se haya desgastado)
+    return [timeRemainingPct, kmsRemainingPct]
+        .reduce((a, b) => a < b ? a : b)
+        .clamp(0.0, 1.0);
   }
 
   /// Retorna la categoría profesional del estado del vehículo.
@@ -53,6 +82,11 @@ class VehicleHealthLogic {
     required double pctSoat,
     required double pctTecno,
     int routeCount = 0,
+    double efficiencyScore = 0.0,
+    double totalSavings = 0.0,
+    bool documentsComplete = false,
+    String consistency = 'Variable',
+    bool hasLongRoute = false,
   }) {
     List<Map<String, dynamic>> certs = [];
 
@@ -96,6 +130,56 @@ class VehicleHealthLogic {
       });
     }
 
+    if (efficiencyScore >= 90) {
+      certs.add({
+        'id': 'eco_driver',
+        'label': 'Pie de Pluma',
+        'description': 'Eficiencia de combustible > 90%.',
+        'icon': 'eco',
+        'color': '0xFF4CAF50',
+      });
+    }
+
+    if (totalSavings >= 50000) {
+      certs.add({
+        'id': 'smart_saver',
+        'label': 'Lobo de Wall Street',
+        'description': 'Ahorro mayor a \$50K COP.',
+        'icon': 'savings',
+        'color': '0xFFFF4081',
+      });
+    }
+
+    if (documentsComplete) {
+      certs.add({
+        'id': 'paperless',
+        'label': 'Nube Maestra',
+        'description': 'Todos los documentos digitales.',
+        'icon': 'cloud_done',
+        'color': '0xFF03A9F4',
+      });
+    }
+
+    if (consistency == 'Alta') {
+      certs.add({
+        'id': 'visionary_mechanic',
+        'label': 'Mecánico Visionario',
+        'description': 'Manejo constante sin sobresaltos.',
+        'icon': 'shield',
+        'color': '0xFF607D8B',
+      });
+    }
+
+    if (hasLongRoute) {
+      certs.add({
+        'id': 'marathoner',
+        'label': 'Trotamundos',
+        'description': 'Viaje continuo de +100 km.',
+        'icon': 'terrain',
+        'color': '0xFF795548',
+      });
+    }
+
     return certs;
   }
 
@@ -125,8 +209,14 @@ class VehicleHealthLogic {
           
       if (date != null && date.isAfter(sevenDaysAgo)) {
         // Usar distancia_km (nuevo nombre) o distancia (antiguo)
-        final dist = (route['distancia_km'] ?? route['distancia'] ?? 0) as num;
-        totalKmLast7Days += dist.toDouble();
+        final rawDist = route['distancia_km'] ?? route['distancia'] ?? 0;
+        double dist = 0.0;
+        if (rawDist is num) {
+          dist = rawDist.toDouble();
+        } else {
+          dist = double.tryParse(rawDist.toString()) ?? 0.0;
+        }
+        totalKmLast7Days += dist;
       }
     }
 

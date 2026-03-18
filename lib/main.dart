@@ -16,6 +16,7 @@ import 'core/services/sync_service.dart';
 import 'core/services/background_nav_service.dart';
 import 'core/logic/app_widget_logic.dart';
 import 'features/auth/login_screen.dart';
+import 'core/logic/performance_guard.dart';
 
 /// Detecta si la app fue abierta desde un widget con deep link
 void _checkWidgetLaunch() async {
@@ -44,7 +45,12 @@ Future<void> main() async {
       debugPrint("Archivo .env no encontrado. Asegúrate de crearlo.");
     }
 
-    // 2. Inicializar Sentry (solo si hay DSN configurado)
+    // 2. Inicializar Rendimiento (PerformanceGuard)
+    if (!kIsWeb) {
+      await PerformanceGuard().initialize();
+    }
+
+    // 2.1 Inicializar Sentry (solo si hay DSN configurado)
     final sentryDsn = dotenv.get('SENTRY_DSN', fallback: '');
     if (sentryDsn.isNotEmpty) {
       await SentryFlutter.init(

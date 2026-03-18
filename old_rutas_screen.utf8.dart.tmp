@@ -1,61 +1,58 @@
-// =============================================================================
-// rutas_screen.dart — NAVEGACIÓN GPS CON MAPA INTERACTIVO
+﻿// =============================================================================
+// rutas_screen.dart ÔÇö NAVEGACI├ôN GPS CON MAPA INTERACTIVO
 // =============================================================================
 //
-// Pantalla de navegación tipo Waze usando tecnologías 100% gratuitas:
+// Pantalla de navegaci├│n tipo Waze usando tecnolog├¡as 100% gratuitas:
 //   - Mapa: OpenStreetMap con tiles de CartoDB Voyager (alta calidad visual).
-//   - Geocodificación: Nominatim (búsqueda de direcciones y lugares).
-//   - Cálculo de ruta: OSRM (Open Source Routing Machine).
+//   - Geocodificaci├│n: Nominatim (b├║squeda de direcciones y lugares).
+//   - C├ílculo de ruta: OSRM (Open Source Routing Machine).
 //   - GPS: Plugin Geolocator para seguimiento en tiempo real.
 //
 // FLUJO DE USO:
-//   1. IDLE: Se muestra el mapa centrado en la ubicación actual del usuario.
-//      El usuario busca un destino en la barra de búsqueda.
-//   2. ROUTE_READY: Se traza la ruta óptima (línea azul).
+//   1. IDLE: Se muestra el mapa centrado en la ubicaci├│n actual del usuario.
+//      El usuario busca un destino en la barra de b├║squeda.
+//   2. ROUTE_READY: Se traza la ruta ├│ptima (l├¡nea azul).
 //      Se muestra distancia y tiempo estimado en el panel inferior.
 //   3. NAVIGATING: El GPS sigue al usuario en tiempo real.
 //      La ruta recorrida se marca en verde y se acumula distancia.
 //   4. COMPLETED: Al llegar al destino (o finalizar manualmente), se
-//      actualiza el kilometraje del vehículo en Supabase sumando los
+//      actualiza el kilometraje del veh├¡culo en Supabase sumando los
 //      km recorridos.
 //
-// MÉTODOS PRINCIPALES:
-//   - [_obtenerUbicacion]: Solicita permisos GPS y obtiene la posición actual.
+// M├ëTODOS PRINCIPALES:
+//   - [_obtenerUbicacion]: Solicita permisos GPS y obtiene la posici├│n actual.
 //   - [_buscarDestino]: Llama a la API de Nominatim para buscar lugares.
-//   - [_trazarRuta]: Llama a la API de OSRM para calcular la ruta óptima.
+//   - [_trazarRuta]: Llama a la API de OSRM para calcular la ruta ├│ptima.
 //   - [_iniciarNavegacion]: Escucha el stream del GPS y trackea el recorrido.
-//   - [_completarRuta]: Suma km recorridos al vehículo en Supabase.
+//   - [_completarRuta]: Suma km recorridos al veh├¡culo en Supabase.
 //   - [_finalizarManual]: Permite al usuario terminar la ruta manualmente.
-//   - [_cancelarRuta]: Resetea el estado y cancela la navegación.
-//   - [_Iniciarrecodidolibre]: Si lo presionas, la app seguirá tu ubicación y sumará los kilómetros que recorras directamente al kilometraje de tu vehículo en la base de datos, sin necesidad de que pongas un destino específico. .
+//   - [_cancelarRuta]: Resetea el estado y cancela la navegaci├│n.
+//   - [_Iniciarrecodidolibre]: Si lo presionas, la app seguir├í tu ubicaci├│n y sumar├í los kil├│metros que recorras directamente al kilometraje de tu veh├¡culo en la base de datos, sin necesidad de que pongas un destino espec├¡fico. .
 
 //
 // WIDGETS AUXILIARES:
-//   - [_InfoRow]: Fila de información en el diálogo de ruta completada.
-//   - [_InfoChip]: Chip con ícono para distancia, tiempo y km recorridos.
+//   - [_InfoRow]: Fila de informaci├│n en el di├ílogo de ruta completada.
+//   - [_InfoChip]: Chip con ├¡cono para distancia, tiempo y km recorridos.
 //
-// Parámetros requeridos:
-//   - vehiculoId: ID del vehículo en Supabase para actualizar el kilometraje.
-//   - kmsActuales: Kilometraje actual del vehículo antes de iniciar la ruta.
+// Par├ímetros requeridos:
+//   - vehiculoId: ID del veh├¡culo en Supabase para actualizar el kilometraje.
+//   - kmsActuales: Kilometraje actual del veh├¡culo antes de iniciar la ruta.
 //
 // =============================================================================
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/services/supabase_service.dart';
 import '../../../core/logic/vehicle_performance_logic.dart';
 import '../../../core/services/sync_service.dart';
-import '../../../core/services/navigation_service.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'presentation/historial_rutas_screen.dart';
 
 class RutasScreen extends StatefulWidget {
@@ -82,34 +79,27 @@ class _RutasScreenState extends State<RutasScreen>
 
   // Estado
   _RouteState _state = _RouteState.idle;
-  LatLng? _initialPos;
+  LatLng? _currentPos;
   LatLng? _destination;
   String _destinationName = '';
   List<LatLng> _routePoints = [];
+  List<LatLng> _travelledPoints = [];
   double _routeDistanceKm = 0.0;
   double _routeDurationMin = 0.0;
+  double _travelledDistanceKm = 0.0;
   DateTime? _navStartTime;
-  double _maxSpeedKmH = 0.0;
-  double _speedSumKmH = 0.0;
-  int _speedPointsCount = 0;
 
-  // Notifiers Anti-Jank (Evitan setState inyectando 60FPS al backend del UI)
-  final ValueNotifier<LatLng?> _currentPosNotifier = ValueNotifier(null);
-  final ValueNotifier<List<LatLng>> _travelledPointsNotifier = ValueNotifier([]);
-  final ValueNotifier<double> _travelledDistNotifier = ValueNotifier(0.0);
-
-  // Datos Vehículo
+  // Datos Veh├¡culo
   String _vehicleModel = '';
   bool _isCar = false;
-  final String _originName = 'Ubicación Actual';
+  final String _originName = 'Ubicaci├│n Actual';
 
-  // Búsqueda
-  List<NominatimPlace> _searchResults = [];
+  // B├║squeda
+  List<Map<String, dynamic>> _searchResults = [];
   bool _isSearching = false;
 
   // Tracking
-  StreamSubscription<Map<String, dynamic>?>? _serviceSubscription;
-  StreamSubscription<Position>? _idlePositionSubscription; // Stream para modo reposo
+  StreamSubscription<Position>? _posStream;
   bool _isLoadingRoute = false;
   bool _showSuccessOverlay = false;
 
@@ -117,58 +107,7 @@ class _RutasScreenState extends State<RutasScreen>
   void initState() {
     super.initState();
     _obtenerUbicacion();
-    _iniciarSeguimientoIdle(); // Iniciar seguimiento apenas abre la pantalla
-    _checkActiveService();
     _cargarInfoVehiculo();
-  }
-
-  Future<void> _checkActiveService() async {
-    final service = FlutterBackgroundService();
-    if (await service.isRunning()) {
-      // Reconectar al stream de actualizaciones
-      _serviceSubscription?.cancel();
-      // Escuchar errores
-      service.on('error').listen((event) {
-        if (!mounted) return;
-        final String msg = (event?['message'] as String?) ?? 'Error desconocido en GPS';
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(msg),
-            backgroundColor: Colors.redAccent,
-            duration: const Duration(seconds: 5),
-          )
-        );
-      });
-
-      _serviceSubscription = service.on('update').listen((event) {
-        if (!mounted) return;
-        final double lat = (event?['lat'] as num?)?.toDouble() ?? 0.0;
-        final double lng = (event?['lng'] as num?)?.toDouble() ?? 0.0;
-        final double distanceKm = (event?['distance'] as num?)?.toDouble() ?? 0.0;
-        final double speedMs = (event?['speed'] as num?)?.toDouble() ?? 0.0;
-        
-        if (lat == 0.0 && lng == 0.0) return; // Ignorar coordenas nulas del GPS
-
-        final newPos = LatLng(lat, lng);
-        _currentPosNotifier.value = newPos;
-        _travelledDistNotifier.value = distanceKm;
-        
-        _actualizarTelemetriaVelocidad(speedMs);
-        
-        final pts = List<LatLng>.from(_travelledPointsNotifier.value);
-        if (pts.isEmpty || pts.last != newPos) {
-           pts.add(newPos);
-           if (pts.length > 5000) pts.removeAt(0); // Prevención OOM
-           _travelledPointsNotifier.value = pts;
-        }
-
-        if (_state != _RouteState.freeTracking && _state != _RouteState.navigating) {
-          setState(() {
-            _state = _RouteState.freeTracking; // Asumimos modo libre por ahora si reconecta
-          });
-        }
-      });
-    }
   }
 
   Future<void> _cargarInfoVehiculo() async {
@@ -180,8 +119,8 @@ class _RutasScreenState extends State<RutasScreen>
           .single();
       setState(() {
         final marca = (data['marca'] as String? ?? '').toUpperCase();
-        _vehicleModel = data['modelo'] ?? 'Moto Genérica';
-        // Determinar si es carro basado en la marca (Toyota, Mazda, Chevrolet son carros en este catálogo)
+        _vehicleModel = data['modelo'] ?? 'Moto Gen├®rica';
+        // Determinar si es carro basado en la marca (Toyota, Mazda, Chevrolet son carros en este cat├ílogo)
         _isCar = marca == 'TOYOTA' || marca == 'MAZDA' || marca == 'CHEVROLET';
       });
     } catch (_) {}
@@ -189,97 +128,12 @@ class _RutasScreenState extends State<RutasScreen>
 
   @override
   void dispose() {
-    _serviceSubscription?.cancel();
-    _idlePositionSubscription?.cancel();
+    _posStream?.cancel();
     _searchCtrl.dispose();
     super.dispose();
   }
 
-  // ─── SEGUIMIENTO EN REPOSO (IDLE) ──────────────────────
-  void _iniciarSeguimientoIdle() {
-    _idlePositionSubscription?.cancel();
-    
-    // Solo rastreamos si el servicio de fondo NO está corriendo
-    // El stream principal de UI que nunca duerme mientras la pantalla está activa
-    _idlePositionSubscription = Geolocator.getPositionStream(
-      locationSettings: AndroidSettings(
-        accuracy: LocationAccuracy.high,
-        distanceFilter: 3, // Previene jittering cuando está detenido sumando km falsos
-        intervalDuration: const Duration(seconds: 2),
-      ),
-    ).listen((Position position) {
-      final latLng = LatLng(position.latitude, position.longitude);
-      _currentPosNotifier.value = latLng;
-      
-      // ALTA DISPONIBILIDAD (Active UI Ownership):
-      // Gobernar la ruta desde el Frontend si estamos en viaje activo
-      if (_state == _RouteState.navigating || _state == _RouteState.freeTracking) {
-        _actualizarRutaVivo(latLng);
-        _actualizarTelemetriaVelocidad(position.speed);
-      }
-      
-      // Si es el primer fix y no teníamos initialPos, lo seteamos
-      if (_initialPos == null) {
-        setState(() {
-          _initialPos = latLng;
-        });
-        _mapCtrl.move(latLng, 15);
-      }
-    });
-  }
-
-  // ─── ACTIVE UI OWNERSHIP: ACTUALIZAR RUTA EN VIVO ───────
-  void _actualizarRutaVivo(LatLng newPos, {double? backendDistanceKm}) {
-    final pts = List<LatLng>.from(_travelledPointsNotifier.value);
-    
-    // Evitar añadir puntos redundantes que ensucian la memoria y el mapa
-    if (pts.isEmpty || pts.last != newPos) {
-       final oldPos = pts.isEmpty ? newPos : pts.last;
-       pts.add(newPos);
-       if (pts.length > 5000) pts.removeAt(0); // Prevención OOM
-       _travelledPointsNotifier.value = pts;
-       
-       // Si el backend (BackgroundNavService) cuenta con más KMS (porque el usuario 
-       // apagó la pantalla y el frontend se durmió), le creemos al backend. 
-       // Pero si el frontend está despierto, suma sus propios metros fluidamente.
-       if (backendDistanceKm != null && backendDistanceKm > _travelledDistNotifier.value) {
-         _travelledDistNotifier.value = backendDistanceKm;
-       } else {
-         final dist = Geolocator.distanceBetween(
-             oldPos.latitude, oldPos.longitude, newPos.latitude, newPos.longitude);
-         // Ignorar saltos ultrasónicos causados por glitches de red/GPS (ej: >200m en <2seg)
-         if (dist < 300) {
-           _travelledDistNotifier.value += (dist / 1000);
-         }
-       }
-       
-       // Centrar mapa si el mapa está enfocado en tracking
-       try { _mapCtrl.move(newPos, _mapCtrl.camera.zoom); } catch (_) {}
-
-       // Verificar llegada al destino si aplica
-       if (_destination != null && _state == _RouteState.navigating) {
-         const distanceCalc = Distance();
-         final distToEnd = distanceCalc.as(LengthUnit.Meter, newPos, _destination!);
-         if (distToEnd < 50) {
-           _completarRuta();
-         }
-       }
-    }
-  }
-
-  void _actualizarTelemetriaVelocidad(double speedMs) {
-    if (speedMs < 0) return; 
-    final speedKmH = speedMs * 3.6;
-    
-    _speedSumKmH += speedKmH;
-    _speedPointsCount++;
-    
-    if (speedKmH > _maxSpeedKmH) {
-      _maxSpeedKmH = speedKmH;
-    }
-  }
-
-  // ─── UBICACIÓN ──────────────────────────────────────────
+  // ÔöÇÔöÇÔöÇ UBICACI├ôN ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
   Future<void> _obtenerUbicacion() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
@@ -296,7 +150,7 @@ class _RutasScreenState extends State<RutasScreen>
       if (permission == LocationPermission.denied) {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Permiso de ubicación denegado')),
+          const SnackBar(content: Text('Permiso de ubicaci├│n denegado')),
         );
         return;
       }
@@ -305,36 +159,23 @@ class _RutasScreenState extends State<RutasScreen>
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Permiso de ubicación denegado permanentemente'),
+          content: Text('Permiso de ubicaci├│n denegado permanentemente'),
         ),
       );
       return;
-    }
-
-    // Intentar obtener la última ubicación conocida para rapidez
-    final lastPos = await Geolocator.getLastKnownPosition();
-    if (lastPos != null && mounted) {
-      final latLng = LatLng(lastPos.latitude, lastPos.longitude);
-      _currentPosNotifier.value = latLng;
-      setState(() => _initialPos = latLng);
-      _mapCtrl.move(latLng, 15);
     }
 
     final pos = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.high,
     );
     if (!mounted) return;
-    
-    final latLng = LatLng(pos.latitude, pos.longitude);
-    _currentPosNotifier.value = latLng;
-    
     setState(() {
-      _initialPos = latLng;
+      _currentPos = LatLng(pos.latitude, pos.longitude);
     });
-    _mapCtrl.move(latLng, 15);
+    _mapCtrl.move(_currentPos!, 15);
   }
 
-  // ─── BÚSQUEDA DE DESTINO (Nominatim) ───────────────────
+  // ÔöÇÔöÇÔöÇ B├ÜSQUEDA DE DESTINO (Nominatim) ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
   Future<void> _buscarDestino(String query) async {
     if (query.trim().isEmpty) {
       setState(() => _searchResults = []);
@@ -342,29 +183,34 @@ class _RutasScreenState extends State<RutasScreen>
     }
     setState(() => _isSearching = true);
     try {
-      final results = await NavigationService().searchDestination(query);
-      if (!mounted) return;
-      setState(() {
-        _searchResults = results;
+      final url = Uri.parse(
+        'https://nominatim.openstreetmap.org/search'
+        '?q=${Uri.encodeComponent(query)}'
+        '&format=json&limit=5&addressdetails=1',
+      );
+      final res = await http.get(url, headers: {
+        'User-Agent': 'MyAutoGuide/1.0',
       });
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString()),
-            backgroundColor: Colors.redAccent,
-          ),
-        );
+      if (!mounted) return;
+      if (res.statusCode == 200) {
+        final data = json.decode(res.body) as List;
+        setState(() {
+          _searchResults = data.map((e) => e as Map<String, dynamic>).toList();
+        });
       }
+    } catch (_) {
+      // silencioso
     } finally {
       if (mounted) setState(() => _isSearching = false);
     }
   }
 
-  void _seleccionarDestino(NominatimPlace place) {
+  void _seleccionarDestino(Map<String, dynamic> place) {
+    final lat = double.parse(place['lat']);
+    final lon = double.parse(place['lon']);
     setState(() {
-      _destination = LatLng(place.lat, place.lon);
-      _destinationName = place.displayName;
+      _destination = LatLng(lat, lon);
+      _destinationName = place['display_name'] ?? 'Destino';
       _searchResults = [];
       _searchCtrl.text = _destinationName.length > 50
           ? '${_destinationName.substring(0, 50)}...'
@@ -373,42 +219,59 @@ class _RutasScreenState extends State<RutasScreen>
     _trazarRuta();
   }
 
-  // ─── TRAZAR RUTA (OSRM) ────────────────────────────────
+  // ÔöÇÔöÇÔöÇ TRAZAR RUTA (OSRM) ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
   Future<void> _trazarRuta() async {
-    final curPos = _currentPosNotifier.value;
-    if (curPos == null || _destination == null) return;
+    if (_currentPos == null || _destination == null) return;
     setState(() => _isLoadingRoute = true);
     try {
-      final route = await NavigationService().calculateRoute(curPos, _destination!);
-      if (!mounted) return;
-
-      setState(() {
-        _routePoints = route.points;
-        _routeDistanceKm = route.distanceKm;
-        _routeDurationMin = route.durationMin;
-        _state = _RouteState.routeReady;
-        _isLoadingRoute = false;
-      });
-
-      // Ajustar mapa para ver toda la ruta
-      final bounds = LatLngBounds.fromPoints([curPos, _destination!]);
-      _mapCtrl.fitCamera(
-        CameraFit.bounds(
-          bounds: bounds,
-          padding: const EdgeInsets.all(60),
-        ),
+      final url = Uri.parse(
+        'https://router.project-osrm.org/route/v1/driving/'
+        '${_currentPos!.longitude},${_currentPos!.latitude};'
+        '${_destination!.longitude},${_destination!.latitude}'
+        '?overview=full&geometries=geojson&steps=true',
       );
+      final res = await http.get(url);
+      if (!mounted) return;
+      if (res.statusCode == 200) {
+        final data = json.decode(res.body);
+        final route = data['routes'][0];
+        final coords = route['geometry']['coordinates'] as List;
+        final distMeters = (route['distance'] as num).toDouble();
+        final durSeconds = (route['duration'] as num).toDouble();
+
+        final points = coords
+            .map((c) =>
+                LatLng((c[1] as num).toDouble(), (c[0] as num).toDouble()))
+            .toList();
+
+        setState(() {
+          _routePoints = points;
+          _routeDistanceKm = distMeters / 1000;
+          _routeDurationMin = durSeconds / 60;
+          _state = _RouteState.routeReady;
+          _isLoadingRoute = false;
+        });
+
+        // Ajustar mapa para ver toda la ruta
+        final bounds = LatLngBounds.fromPoints([_currentPos!, _destination!]);
+        _mapCtrl.fitCamera(
+          CameraFit.bounds(
+            bounds: bounds,
+            padding: const EdgeInsets.all(60),
+          ),
+        );
+      }
     } catch (e) {
       if (mounted) {
         setState(() => _isLoadingRoute = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString())),
+          SnackBar(content: Text('Error al trazar ruta: $e')),
         );
       }
     }
   }
 
-  // ─── HISTORIAL / RECENT ROUTES (UX Mejorada) ─────────────────────────
+  // ÔöÇÔöÇÔöÇ HISTORIAL / RECENT ROUTES (UX Mejorada) ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
   Future<void> _openRouteHistory() async {
     final selected = await Navigator.of(context).push<Map<String, dynamic>>(
       MaterialPageRoute(
@@ -426,7 +289,7 @@ class _RutasScreenState extends State<RutasScreen>
   Future<void> _goToDestinationName(String name) async {
     if (name.isEmpty) return;
 
-    // Mostrar en la barra de búsqueda y trazar ruta automáticamente
+    // Mostrar en la barra de b├║squeda y trazar ruta autom├íticamente
     _searchCtrl.text = name;
     await _buscarDestino(name);
 
@@ -435,61 +298,18 @@ class _RutasScreenState extends State<RutasScreen>
     } else {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('No se encontró la ubicación para "$name"')),
+          SnackBar(content: Text('No se encontr├│ la ubicaci├│n para "$name"')),
         );
       }
     }
   }
 
-  // ─── INICIAR NAVEGACIÓN ─────────────────────────────────
-  void _iniciarNavegacion({bool isFree = false}) async {
-    // 1. Verificar permisos de notificaciones (Android 13+)
-    if (await Permission.notification.isDenied) {
-      await Permission.notification.request();
-    }
-
-    // 2. Verificar permisos de localización SIEMPRE (Requerido para background en algunos dispositivos)
-    if (await Permission.locationAlways.isDenied) {
-      await Permission.locationAlways.request();
-    }
-
-    final service = FlutterBackgroundService();
-    
-    // Guardar ID del vehículo activo para el servicio
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('active_nav_vehicle_id', widget.vehiculoId);
-    
-    // Pasar credenciales de Supabase al isolate de fondo
-    await prefs.setString('supabase_url', dotenv.get('SUPABASE_URL'));
-    await prefs.setString('supabase_key', dotenv.get('SUPABASE_ANON_KEY'));
-    
-    try {
-      if (!(await service.isRunning())) {
-        await service.startService();
-        // Give service a moment to boot up before subscribing to its streams
-        await Future.delayed(const Duration(milliseconds: 800));
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error al iniciar servicio de fondo: $e')),
-        );
-      }
-      return;
-    }
-
-    if (!mounted) return;
-
-    if (!mounted) return;
-
-    _serviceSubscription?.cancel();
-    _travelledPointsNotifier.value = _currentPosNotifier.value != null 
-        ? [_currentPosNotifier.value!] 
-        : [];
-    _travelledDistNotifier.value = 0.0;
-    
+  // ÔöÇÔöÇÔöÇ INICIAR NAVEGACI├ôN ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+  void _iniciarNavegacion({bool isFree = false}) {
     setState(() {
       _state = isFree ? _RouteState.freeTracking : _RouteState.navigating;
+      _travelledPoints = [_currentPos!];
+      _travelledDistanceKm = 0.0;
       _navStartTime = DateTime.now();
       if (isFree) {
         _destination = null;
@@ -498,76 +318,46 @@ class _RutasScreenState extends State<RutasScreen>
       }
     });
 
-    if (isFree) {
-       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Modo Libre Iniciado: Rastreo GPS activado')),
-        );
-    }
+    const locationSettings = LocationSettings(
+      accuracy: LocationAccuracy.high,
+      distanceFilter: 5, // metros para mayor sensibilidad en modo libre
+    );
 
-    // Escuchar errores del servicio de fondo
-    service.on('error').listen((event) {
-      if (!mounted) return;
-      final String msg = (event?['message'] as String?) ?? 'Error desconocido en GPS';
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(msg),
-          backgroundColor: Colors.redAccent,
-          duration: const Duration(seconds: 5),
-        )
-      );
-    });
+    _posStream = Geolocator.getPositionStream(
+      locationSettings: locationSettings,
+    ).listen((pos) {
+      final newPos = LatLng(pos.latitude, pos.longitude);
+      final lastPos = _travelledPoints.last;
 
-    _serviceSubscription = service.on('update').listen((event) {
-      if (!mounted) return;
-      
-      final double lat = (event?['lat'] as num?)?.toDouble() ?? 0.0;
-      final double lng = (event?['lng'] as num?)?.toDouble() ?? 0.0;
-      final double distanceKm = (event?['distance'] as num?)?.toDouble() ?? 0.0;
-      
-      if (lat == 0.0 && lng == 0.0) return; // Rechazar coordenadas inválidas
-      
-      final newPos = LatLng(lat, lng);
-      _currentPosNotifier.value = newPos;
+      // Calcular distancia recorrida con mayor precisi├│n
+      const distance = Distance();
+      // Usamos metros directamente para evitar redondeos de la librer├¡a a nivel de km
+      final segmentMeters = distance.as(LengthUnit.Meter, lastPos, newPos);
+      final segmentKm = segmentMeters / 1000.0;
 
-      // El stream de background nos sirve como validador o proveedor si el 
-      // stream del UI está sufriendo throttling del SO por pantalla apagada.
-      _actualizarRutaVivo(newPos, backendDistanceKm: distanceKm);
+      setState(() {
+        _currentPos = newPos;
+        _travelledPoints.add(newPos);
+        _travelledDistanceKm += segmentKm;
+      });
 
-      // Log para depuración interna
-      debugPrint('Sync UI: Lat ${newPos.latitude}, Lng ${newPos.longitude}, Dist ${distanceKm.toStringAsFixed(2)}');
+      // Centrar mapa en posici├│n actual
+      _mapCtrl.move(newPos, _mapCtrl.camera.zoom);
+
+      // Verificar si lleg├│ al destino (menos de 50 metros)
+      if (_destination != null) {
+        final distToEnd = distance.as(LengthUnit.Meter, newPos, _destination!);
+        if (distToEnd < 50) {
+          _completarRuta();
+        }
+      }
     });
   }
 
-  // ─── COMPLETAR RUTA ─────────────────────────────────────
+  // ÔöÇÔöÇÔöÇ COMPLETAR RUTA ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
   Future<void> _completarRuta() async {
-    final service = FlutterBackgroundService();
-    service.invoke('stopService');
-    final kmsRecorridos = _travelledDistNotifier.value;
-
-    /* RESTRICCIÓN DESACTIVADA TEMPORALMENTE PARA EL USUARIO EN QA
-    if (kmsRecorridos < 0.05) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('El recorrido es demasiado corto para registrarse (Mínimo: 0.05 km).')),
-        );
-        _cancelarRuta();
-      }
-      return;
-    }
-    */
-
-    // Filtrar telemetría para protección del Payload DB
-    final allPts = _travelledPointsNotifier.value;
-    final List<LatLng> filteredPts = [];
-    if (allPts.isNotEmpty) {
-      int step = allPts.length > 200 ? (allPts.length / 100).ceil() : 1;
-      for (int i = 0; i < allPts.length; i += step) {
-        filteredPts.add(allPts[i]);
-      }
-      if (filteredPts.last != allPts.last) {
-        filteredPts.add(allPts.last);
-      }
-    }
+    _posStream?.cancel();
+    final kmsRecorridos = _travelledDistanceKm;
 
     // Obtener userId
     final userId = supabase.auth.currentUser?.id;
@@ -576,17 +366,15 @@ class _RutasScreenState extends State<RutasScreen>
       return;
     }
 
-    // Calcular duración
+    // Calcular duraci├│n
     final durationSec = _navStartTime != null
         ? DateTime.now().difference(_navStartTime!).inSeconds
         : 0;
 
     // Calcular consumo y costo
-    final avgSpeed = _speedPointsCount > 0 ? _speedSumKmH / _speedPointsCount : 0.0;
     final galones = VehiclePerformanceLogic.estimateFuelConsumption(
         kmsRecorridos, _vehicleModel,
-        isCar: _isCar,
-        avgSpeedKmH: avgSpeed);
+        isCar: _isCar);
     final costo = VehiclePerformanceLogic.estimateFuelCost(galones);
 
     // Usar SyncService para guardar offline-first
@@ -601,21 +389,18 @@ class _RutasScreenState extends State<RutasScreen>
         durationSeconds: durationSec,
         consumoGalones: galones,
         costoEstimado: costo,
-        velocidadMax: _maxSpeedKmH,
-        velocidadProm: _speedPointsCount > 0 ? _speedSumKmH / _speedPointsCount : 0.0,
-        viaPuntos: filteredPts
-            .map((p) => {'lat': p.latitude, 'lng': p.longitude})
-            .toList(),
       );
 
       // Actualizar KMS offline-first
       await SyncService().updateVehicleKmsOfflineFirst(
-          widget.vehiculoId, kmsRecorridos.round());
+        widget.vehiculoId,
+        kmsRecorridos.round()
+      );
 
       debugPrint('Ruta guardada exitosamente (offline-first)');
     } catch (e) {
       debugPrint('Error guardando ruta offline: $e');
-      // Aun si falla, mostrar el diálogo de éxito ya que se guardó localmente
+      // Aun si falla, mostrar el di├ílogo de ├®xito ya que se guard├│ localmente
     }
 
     setState(() {
@@ -623,7 +408,7 @@ class _RutasScreenState extends State<RutasScreen>
       _showSuccessOverlay = true;
     });
 
-    // Pequeño delay para la animación de éxito antes del diálogo
+    // Peque├▒o delay para la animaci├│n de ├®xito antes del di├ílogo
     await Future.delayed(const Duration(milliseconds: 2000));
     if (mounted) setState(() => _showSuccessOverlay = false);
 
@@ -637,7 +422,7 @@ class _RutasScreenState extends State<RutasScreen>
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.green.withValues(alpha: 0.15),
+                color: Colors.green.withOpacity(0.15),
                 shape: BoxShape.circle,
               ),
               child:
@@ -645,7 +430,7 @@ class _RutasScreenState extends State<RutasScreen>
             ),
             const SizedBox(width: 12),
             Text(
-              '¡Ruta completada!',
+              '┬íRuta completada!',
               style: TextStyle(
                 color: Theme.of(context).brightness == Brightness.dark
                     ? Colors.white
@@ -665,19 +450,7 @@ class _RutasScreenState extends State<RutasScreen>
             const SizedBox(height: 8),
             _InfoRow(
               icon: Icons.speed,
-              label: 'Velocidad Máxima',
-              value: '${_maxSpeedKmH.toStringAsFixed(1)} km/h',
-            ),
-            const SizedBox(height: 8),
-            _InfoRow(
-              icon: Icons.av_timer,
-              label: 'Velocidad Promedio',
-              value: '${(_speedPointsCount > 0 ? _speedSumKmH / _speedPointsCount : 0.0).toStringAsFixed(1)} km/h',
-            ),
-            const SizedBox(height: 8),
-            _InfoRow(
-              icon: Icons.speed,
-              label: 'Kilómetros recorridos',
+              label: 'Kil├│metros recorridos',
               value: '${kmsRecorridos.round()} km',
             ),
             const Divider(height: 24),
@@ -707,15 +480,15 @@ class _RutasScreenState extends State<RutasScreen>
     );
   }
 
-  // ─── FINALIZAR MANUALMENTE ──────────────────────────────
+  // ÔöÇÔöÇÔöÇ FINALIZAR MANUALMENTE ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
   Future<void> _finalizarManual() async {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Finalizar ruta'),
         content: Text(
-          '¿Deseas finalizar la ruta?\n'
-          'Has recorrido ${_travelledDistNotifier.value.toStringAsFixed(1)} km.',
+          '┬┐Deseas finalizar la ruta?\n'
+          'Has recorrido ${_travelledDistanceKm.toStringAsFixed(1)} km.',
         ),
         actions: [
           TextButton(
@@ -734,56 +507,50 @@ class _RutasScreenState extends State<RutasScreen>
     }
   }
 
-  // ─── CANCELAR ───────────────────────────────────────────
+  // ÔöÇÔöÇÔöÇ CANCELAR ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
   void _cancelarRuta() {
-    final service = FlutterBackgroundService();
-    service.invoke('stopService');
-    _travelledPointsNotifier.value = [];
-    _travelledDistNotifier.value = 0.0;
-    
+    _posStream?.cancel();
     setState(() {
       _state = _RouteState.idle;
       _destination = null;
       _destinationName = '';
       _routePoints = [];
+      _travelledPoints = [];
       _routeDistanceKm = 0.0;
       _routeDurationMin = 0.0;
+      _travelledDistanceKm = 0.0;
       _searchCtrl.clear();
     });
   }
 
-  // ─── INICIAR RECORRIDO LIBRE ────────────────────────────
+  // ÔöÇÔöÇÔöÇ INICIAR RECORRIDO LIBRE ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
   void _iniciarRecorridoLibre() {
-    if (_currentPosNotifier.value == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Buscando señal GPS. El recorrido iniciará automáticamente...')),
-      );
-    }
+    if (_currentPos == null) return;
     _iniciarNavegacion(isFree: true);
   }
 
-  // ─── BUILD ──────────────────────────────────────────────
+  // ÔöÇÔöÇÔöÇ BUILD ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
           // === MAPA ===
-          _initialPos == null
+          _currentPos == null
               ? const Center(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       CircularProgressIndicator(),
                       SizedBox(height: 16),
-                      Text('Obteniendo ubicación...'),
+                      Text('Obteniendo ubicaci├│n...'),
                     ],
                   ),
                 )
               : FlutterMap(
                   mapController: _mapCtrl,
                   options: MapOptions(
-                    initialCenter: _initialPos!,
+                    initialCenter: _currentPos!,
                     initialZoom: 15,
                   ),
                   children: [
@@ -809,87 +576,78 @@ class _RutasScreenState extends State<RutasScreen>
                           ],
                         ),
                       ),
-                    // Recorrido en navegación
-                    ValueListenableBuilder<List<LatLng>>(
-                      valueListenable: _travelledPointsNotifier,
-                      builder: (ctx, pts, child) {
-                        if (pts.length < 2) return const SizedBox.shrink();
-                        return RepaintBoundary(
-                          child: PolylineLayer(
-                            polylines: [
-                              Polyline(
-                                points: pts,
-                                strokeWidth: 6,
-                                color: Colors.green,
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
+                    // Recorrido en navegaci├│n
+                    if (_travelledPoints.length > 1)
+                      RepaintBoundary(
+                        child: PolylineLayer(
+                          polylines: [
+                            Polyline(
+                              points: _travelledPoints,
+                              strokeWidth: 6,
+                              color: Colors.green,
+                            ),
+                          ],
+                        ),
+                      ),
                     // Marcadores
-                    ValueListenableBuilder<LatLng?>(
-                      valueListenable: _currentPosNotifier,
-                      builder: (ctx, pos, child) {
-                        return RepaintBoundary(
-                          child: MarkerLayer(
-                            markers: [
-                              // Posición actual
-                              if (pos != null)
-                                Marker(
-                                  point: pos,
-                                  width: 50,
-                                  height: 50,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Colors.blue,
-                                      border: Border.all(color: Colors.white, width: 3),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.blue.withOpacity(0.4),
-                                          blurRadius: 10,
-                                          spreadRadius: 3,
-                                        ),
-                                      ],
-                                    ),
-                                    child: const Icon(
-                                      Icons.navigation,
-                                      color: Colors.white,
-                                      size: 22,
-                                    ),
+                    RepaintBoundary(
+                      child: MarkerLayer(
+                        markers: [
+                          // Posici├│n actual
+                          Marker(
+                            point: _currentPos!,
+                            width: 50,
+                            height: 50,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.blue,
+                                border:
+                                    Border.all(color: Colors.white, width: 3),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.blue.withOpacity(0.4),
+                                    blurRadius: 10,
+                                    spreadRadius: 3,
                                   ),
-                                ),
-                              // Destino
-                              if (_destination != null)
-                                Marker(
-                                  point: _destination!,
-                                  width: 50,
-                                  height: 50,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Colors.redAccent,
-                                      border: Border.all(color: Colors.white, width: 3),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.red.withOpacity(0.4),
-                                          blurRadius: 10,
-                                          spreadRadius: 3,
-                                        ),
-                                      ],
-                                    ),
-                                    child: const Icon(
-                                      Icons.flag,
-                                      color: Colors.white,
-                                      size: 22,
-                                    ),
-                                  ),
-                                ),
-                            ],
+                                ],
+                              ),
+                              child: const Icon(
+                                Icons.navigation,
+                                color: Colors.white,
+                                size: 22,
+                              ),
+                            ),
                           ),
-                        );
-                      },
+                          // Destino
+                          if (_destination != null)
+                            Marker(
+                              point: _destination!,
+                              width: 50,
+                              height: 50,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.redAccent,
+                                  border:
+                                      Border.all(color: Colors.white, width: 3),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.red.withOpacity(0.4),
+                                      blurRadius: 10,
+                                      spreadRadius: 3,
+                                    ),
+                                  ],
+                                ),
+                                child: const Icon(
+                                  Icons.flag,
+                                  color: Colors.white,
+                                  size: 22,
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -905,7 +663,7 @@ class _RutasScreenState extends State<RutasScreen>
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 child: Column(
                   children: [
-                    // Botón volver + barra búsqueda
+                    // Bot├│n volver + barra b├║squeda
                     Row(
                       children: [
                         Material(
@@ -929,7 +687,7 @@ class _RutasScreenState extends State<RutasScreen>
                           ),
                         ),
                         const SizedBox(width: 8),
-                        // Botón rápido para ver historial y repetir rutas
+                        // Bot├│n r├ípido para ver historial y repetir rutas
                         Material(
                           elevation: 4,
                           shape: const CircleBorder(),
@@ -937,10 +695,10 @@ class _RutasScreenState extends State<RutasScreen>
                           child: IconButton(
                             icon: const Icon(Icons.history),
                             tooltip: 'Historial de rutas',
-                            color:
-                                Theme.of(context).brightness == Brightness.dark
-                                    ? Colors.white
-                                    : Colors.black87,
+                            color: Theme.of(context).brightness ==
+                                    Brightness.dark
+                                ? Colors.white
+                                : Colors.black87,
                             onPressed: _openRouteHistory,
                           ),
                         ),
@@ -1035,19 +793,14 @@ class _RutasScreenState extends State<RutasScreen>
                                         size: 20),
                                     const SizedBox(width: 8),
                                     Expanded(
-                                      child: ValueListenableBuilder<double>(
-                                        valueListenable: _travelledDistNotifier,
-                                        builder: (ctx, dist, child) {
-                                          return Text(
-                                            _state == _RouteState.freeTracking
-                                                ? 'Modo Libre • ${dist.toStringAsFixed(1)} km'
-                                                : 'Navegando • ${dist.toStringAsFixed(1)} km',
-                                            style: const TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          );
-                                        },
+                                      child: Text(
+                                        _state == _RouteState.freeTracking
+                                            ? 'Modo Libre ÔÇó ${_travelledDistanceKm.toStringAsFixed(1)} km'
+                                            : 'Navegando ÔÇó ${_travelledDistanceKm.toStringAsFixed(1)} km',
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -1057,7 +810,7 @@ class _RutasScreenState extends State<RutasScreen>
                           ),
                       ],
                     ),
-                    // Resultados de búsqueda
+                    // Resultados de b├║squeda
                     if (_searchResults.isNotEmpty)
                       Container(
                         margin: const EdgeInsets.only(top: 4, left: 48),
@@ -1081,7 +834,7 @@ class _RutasScreenState extends State<RutasScreen>
                               const Divider(height: 1, indent: 48),
                           itemBuilder: (ctx, i) {
                             final place = _searchResults[i];
-                            final name = place.displayName;
+                            final name = place['display_name'] ?? '';
                             return ListTile(
                               dense: true,
                               leading: Container(
@@ -1127,7 +880,7 @@ class _RutasScreenState extends State<RutasScreen>
                     children: [
                       CircularProgressIndicator(),
                       SizedBox(height: 12),
-                      Text('Trazando ruta óptima...'),
+                      Text('Trazando ruta ├│ptima...'),
                     ],
                   ),
                 ),
@@ -1174,7 +927,7 @@ class _RutasScreenState extends State<RutasScreen>
                         ),
                       ),
                       const SizedBox(height: 12),
-                      // Estado Idle: Botón Modo Libre
+                      // Estado Idle: Bot├│n Modo Libre
                       if (_state == _RouteState.idle)
                         SizedBox(
                           width: double.infinity,
@@ -1199,7 +952,7 @@ class _RutasScreenState extends State<RutasScreen>
                             Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: Colors.red.withValues(alpha: 0.1),
+                                color: Colors.red.withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: const Icon(Icons.flag,
@@ -1221,15 +974,15 @@ class _RutasScreenState extends State<RutasScreen>
                             ),
                           ],
                         ),
-                      // Título Modo Libre
+                      // T├¡tulo Modo Libre
                       if (_state == _RouteState.freeTracking)
                         Row(
                           children: [
                             Container(
-                              padding: const EdgeInsets.all(12),
+                              padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: Colors.blue.withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(15),
+                                color: Colors.blue.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(10),
                               ),
                               child: const Icon(Icons.sensors,
                                   color: Colors.blue, size: 20),
@@ -1271,18 +1024,14 @@ class _RutasScreenState extends State<RutasScreen>
                                 _state == _RouteState.freeTracking) ...[
                               if (_state != _RouteState.freeTracking)
                                 const SizedBox(width: 12),
-                              ValueListenableBuilder<double>(
-                                        valueListenable: _travelledDistNotifier,
-                                        builder: (ctx, dist, child) {
-                                          return _InfoChip(
-                                            icon: _state == _RouteState.freeTracking
-                                                ? Icons.add_road
-                                                : Icons.directions_bike,
-                                            label: '${dist.toStringAsFixed(1)} km',
-                                            color: Colors.green,
-                                          );
-                                        },
-                                      ),
+                              _InfoChip(
+                                icon: _state == _RouteState.freeTracking
+                                    ? Icons.add_road
+                                    : Icons.directions_bike,
+                                label:
+                                    '${_travelledDistanceKm.toStringAsFixed(1)} km',
+                                color: Colors.green,
+                              ),
                             ],
                           ],
                         ),
@@ -1347,10 +1096,10 @@ class _RutasScreenState extends State<RutasScreen>
               ),
             ),
 
-          // === BOTÓN MI UBICACIÓN ===
+          // === BOT├ôN MI UBICACI├ôN ===
           if ((_state != _RouteState.navigating &&
                   _state != _RouteState.freeTracking) &&
-              _currentPosNotifier.value != null)
+              _currentPos != null)
             Positioned(
               right: 16,
               bottom: _state == _RouteState.routeReady ? 220 : 24,
@@ -1359,9 +1108,8 @@ class _RutasScreenState extends State<RutasScreen>
                 heroTag: 'myLocation',
                 backgroundColor: Theme.of(context).cardColor,
                 onPressed: () {
-                  final cp = _currentPosNotifier.value;
-                  if (cp != null) {
-                    _mapCtrl.move(cp, 16);
+                  if (_currentPos != null) {
+                    _mapCtrl.move(_currentPos!, 16);
                   }
                 },
                 child: Icon(Icons.my_location,
@@ -1371,7 +1119,7 @@ class _RutasScreenState extends State<RutasScreen>
               ),
             ),
 
-          // OVERLAY DE ÉXITO ANIMADO (Micro-animación Premium)
+          // OVERLAY DE ├ëXITO ANIMADO (Micro-animaci├│n Premium)
           if (_showSuccessOverlay)
             Positioned.fill(
               child: Container(
@@ -1385,7 +1133,7 @@ class _RutasScreenState extends State<RutasScreen>
   }
 }
 
-// ─── WIDGETS AUXILIARES ───────────────────────────────────
+// ÔöÇÔöÇÔöÇ WIDGETS AUXILIARES ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
 
 class _InfoChip extends StatelessWidget {
   final IconData icon;
@@ -1467,7 +1215,7 @@ class _InfoRow extends StatelessWidget {
   }
 }
 
-// ─── WIDGET DE ÉXITO ANIMADO ─────────────────────────────
+// ÔöÇÔöÇÔöÇ WIDGET DE ├ëXITO ANIMADO ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
 class _SuccessCheckmark extends StatefulWidget {
   const _SuccessCheckmark();
 

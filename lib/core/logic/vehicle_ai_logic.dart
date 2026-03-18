@@ -15,6 +15,8 @@ class VehicleAILogic {
         'consistency': 'Pendiente',
         'advice': 'Realiza más trayectos para activar el análisis de IA.',
         'healthImpact': 0.0,
+        'careScore': 100.0,
+        'avgDailyKm': 0.0,
       };
     }
 
@@ -22,10 +24,16 @@ class VehicleAILogic {
     List<double> distances = [];
 
     for (var route in routeHistory) {
-      final d = (route['distancia_km'] ?? route['distancia'] ?? 0.0) as num;
+      final rawDist = route['distancia_km'] ?? route['distancia'] ?? 0.0;
+      double d = 0.0;
+      if (rawDist is num) {
+        d = rawDist.toDouble();
+      } else {
+        d = double.tryParse(rawDist.toString()) ?? 0.0;
+      }
       
-      totalKm += d.toDouble();
-      distances.add(d.toDouble());
+      totalKm += d;
+      distances.add(d);
     }
 
     // Análisis de consistencia (Desviación estándar de distancias)

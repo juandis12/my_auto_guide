@@ -46,3 +46,7 @@ app.*.map.json
 
 # Ambient variables
 .env
+
+# Firebase Config (Sensitive)
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist

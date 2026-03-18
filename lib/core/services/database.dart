@@ -20,7 +20,7 @@ class AppDatabase {
     final path = join(documentsDirectory.path, 'my_auto_guide.db');
     return await openDatabase(
       path,
-      version: 3, // Incrementado para incluir tabla pending_expenses
+      version: 6, // v6: Añadidas columnas velocidad_max y velocidad_prom en pending_routes
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -39,7 +39,8 @@ class AppDatabase {
         consumoGalones REAL,
         costoEstimado REAL,
         fecha TEXT,
-        synced INTEGER DEFAULT 0
+        synced INTEGER DEFAULT 0,
+        viaPuntos TEXT
       )
     ''');
     await db.execute('''
@@ -106,6 +107,22 @@ class AppDatabase {
           synced INTEGER DEFAULT 0
         )
       ''');
+    }
+    if (oldVersion < 4) {
+      try {
+        await db.execute('ALTER TABLE pending_routes ADD COLUMN viaPuntos TEXT');
+      } catch (e) {}
+    }
+    if (oldVersion < 5) {
+      try {
+        await db.execute('ALTER TABLE pending_routes ADD COLUMN viaPuntos TEXT');
+      } catch (e) {}
+    }
+    if (oldVersion < 6) {
+      try {
+        await db.execute('ALTER TABLE pending_routes ADD COLUMN velocidad_max REAL');
+        await db.execute('ALTER TABLE pending_routes ADD COLUMN velocidad_prom REAL');
+      } catch (e) {}
     }
   }
 

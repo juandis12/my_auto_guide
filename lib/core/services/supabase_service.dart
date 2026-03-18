@@ -111,13 +111,13 @@ class SupabaseService {
   }
 
   Future<void> updateMaintenanceDates(
-      String vehicleId, Map<String, String?> dates) async {
+      String vehicleId, Map<String, dynamic> data) async {
     final userId = currentUser?.id;
     if (userId == null) return;
 
     await client
         .from('vehiculos')
-        .update(dates)
+        .update(data)
         .eq('id', vehicleId)
         .eq('user_id', userId);
   }
@@ -131,6 +131,9 @@ class SupabaseService {
     required int durationSeconds,
     required double fuelEstimated,
     required double costEstimated,
+    double? velocidadMax,
+    double? velocidadProm,
+    List<dynamic>? points, // Nuevos: Lista de puntos (telemetría)
   }) async {
     final userId = currentUser?.id;
     if (userId == null) {
@@ -138,24 +141,23 @@ class SupabaseService {
       return;
     }
 
-    // Unificar campos con la UI y añadir fecha explícita
+    // Alinear payload exactamente al schema real de tu Supabase
     final data = {
       'user_id': userId,
       'vehiculo_id': vehicleId,
-      'origen_name': origin, // Cambio: origen -> origen_name
-      'destino_name': destination, // Cambio: destino -> destino_name
-      'distancia_km': distance, // Cambio: distancia -> distancia_km
-      'duracion_segundos': durationSeconds, // Cambio: duracion -> duracion_segundos (int)
-      'consumo_galones': fuelEstimated, // Cambio: consumo_estimado -> consumo_galones
+      'origen': origin ?? 'Desconocido',
+      'destino': destination ?? 'Desconocido',
+      'distancia': distance,
+      'duracion': durationSeconds.toString(), // La base de datos lo pide como TEXT
+      'consumo_estimado': fuelEstimated,
       'costo_estimado': costEstimated,
-      'fecha': DateTime.now().toIso8601String(),
+      'velocidad_max': velocidadMax,
+      'velocidad_prom': velocidadProm,
+      // 'created_at' no se envía, Supabase lo asigna por defecto.
+      // 'via_puntos' fue removido de aquí ya que la base de datos no tiene esta columna.
     };
 
-    debugPrint('SupabaseService: Enviando datos a Supabase - Historial de Ruta:');
-    debugPrint(' - Distancia: $distance km');
-    debugPrint(' - Consumo: $fuelEstimated gal');
-    debugPrint(' - Fecha: ${data['fecha']}');
-    debugPrint(' - Payload: $data');
+    debugPrint('SupabaseService: Enviando datos alineados al Schema: $data');
 
     try {
       await client.from('rutas_historial').insert(data);
@@ -184,8 +186,6 @@ class SupabaseService {
         .from('rutas_historial')
         .select()
         .eq('vehiculo_id', vehicleId)
-        // La tabla de historial suele tener un campo creado automáticamente.
-        // Si tu tabla usa otro nombre (p.ej. created_at), ajusta aquí.
         .order('created_at', ascending: false);
   }
 
@@ -200,7 +200,7 @@ class SupabaseService {
         .from('rutas_historial')
         .select()
         .eq('vehiculo_id', vehicleId)
-        .gte('created_at', weekAgo)
+        .gte('created_at', weekAgo) // Alineado con la base real
         .order('created_at', ascending: false);
   }
 

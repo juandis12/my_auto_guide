@@ -24,7 +24,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 import '../../../core/services/supabase_service.dart';
+import '../../../core/logic/vehicle_health_logic.dart';
+import '../../../core/services/ocr_service.dart';
 
 class ParametrizacionMantenimientosScreen extends StatefulWidget {
   final String vehiculoId;
@@ -41,7 +45,16 @@ class ParametrizacionMantenimientosScreen extends StatefulWidget {
     this.lastAceite,
     this.lastSoat,
     this.lastTecno,
+    this.lastKmCadena,
+    this.lastKmFiltro,
+    this.lastKmAceite,
+    required this.currentKms,
   });
+
+  final double currentKms;
+  final double? lastKmCadena;
+  final double? lastKmFiltro;
+  final double? lastKmAceite;
 
   @override
   State<ParametrizacionMantenimientosScreen> createState() =>
@@ -50,6 +63,9 @@ class ParametrizacionMantenimientosScreen extends StatefulWidget {
 
 class _ParametrizacionMantenimientosScreenState
     extends State<ParametrizacionMantenimientosScreen> {
+  final _ocrService = OCRService();
+  final _picker = ImagePicker();
+
 
   DateTime? _cadena;
   DateTime? _filtro;
@@ -65,7 +81,16 @@ class _ParametrizacionMantenimientosScreenState
     _aceite = widget.lastAceite;
     _soat = widget.lastSoat;
     _tecno = widget.lastTecno;
+    _kmCadenaCtrl.text = widget.lastKmCadena?.toStringAsFixed(0) ?? '';
+    _kmFiltroCtrl.text = widget.lastKmFiltro?.toStringAsFixed(0) ?? '';
+    _kmAceiteCtrl.text = widget.lastKmAceite?.toStringAsFixed(0) ?? '';
   }
+
+  final _kmCadenaCtrl = TextEditingController();
+  final _kmFiltroCtrl = TextEditingController();
+  final _kmAceiteCtrl = TextEditingController();
+
+
 
   Future<void> _pickDate(
     ValueChanged<DateTime> onPicked, {
@@ -83,18 +108,80 @@ class _ParametrizacionMantenimientosScreenState
     }
   }
 
-  double _pctRestante(DateTime? last, int cicloDias) {
-    if (last == null) return 0.0;
-    final dias =
-        DateTime.now().difference(last).inDays; // días entre fechas [23]
-    final restante = 1.0 - (dias / cicloDias);
-    return restante.clamp(0.0, 1.0);
+  @override
+  void dispose() {
+    _ocrService.dispose();
+    _kmCadenaCtrl.dispose();
+    _kmFiltroCtrl.dispose();
+    _kmAceiteCtrl.dispose();
+    super.dispose();
   }
 
-  bool _vencido(DateTime? last, int cicloDias) {
-    if (last == null) return false;
-    final dias = DateTime.now().difference(last).inDays;
-    return dias > cicloDias;
+  Future<void> _escanearDocumento(void Function(DateTime) onFound) async {
+    try {
+      final XFile? photo = await _picker.pickImage(
+        source: ImageSource.camera,
+        imageQuality: 80,
+      );
+      if (photo == null) return;
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Row(
+            children: [
+              SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+              ),
+              SizedBox(width: 16),
+              Text('Analizando documento...'),
+            ],
+          ),
+          duration: Duration(seconds: 2),
+        ),
+      );
+
+      final date = await _ocrService.extractExpirationDate(File(photo.path));
+      
+      if (date != null) {
+        onFound(date);
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Fecha detectada: ${_fmt(date)}'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } else {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('No se detectó fecha. Intenta con mejor luz.'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    }
+  }
+
+
+
+  bool _vencidoHybrid(DateTime? last, double lastKm, int cycleDays, int cycleKms) {
+    final pct = VehicleHealthLogic.calculateHybridPercentage(
+      lastDate: last,
+      lastKms: lastKm,
+      cycleDays: cycleDays,
+      cycleKms: cycleKms,
+      currentKms: widget.currentKms,
+    );
+    return pct <= 0.0;
   }
 
   String _fmt(DateTime? d) => d == null
@@ -109,7 +196,14 @@ class _ParametrizacionMantenimientosScreenState
         'last_aceite': _aceite == null ? null : _fmt(_aceite),
         'last_soat': _soat == null ? null : _fmt(_soat),
         'last_tecno': _tecno == null ? null : _fmt(_tecno),
+        'kms_last_cadena': double.tryParse(_kmCadenaCtrl.text),
+        'kms_last_filtro': double.tryParse(_kmFiltroCtrl.text),
+        'kms_last_aceite': double.tryParse(_kmAceiteCtrl.text),
       });
+
+      final kCad = double.tryParse(_kmCadenaCtrl.text) ?? 0.0;
+      final kFil = double.tryParse(_kmFiltroCtrl.text) ?? 0.0;
+      final kAce = double.tryParse(_kmAceiteCtrl.text) ?? 0.0;
 
       final result = {
         'lastCadena': _cadena,
@@ -117,16 +211,49 @@ class _ParametrizacionMantenimientosScreenState
         'lastAceite': _aceite,
         'lastSoat': _soat,
         'lastTecno': _tecno,
-        'pctCadena': _pctRestante(_cadena, 15),
-        'pctFiltro': _pctRestante(_filtro, 90),
-        'pctAceite': _pctRestante(_aceite, 25),
-        'pctSoat': _pctRestante(_soat, 365),
-        'pctTecno': _pctRestante(_tecno, 365),
-        'vencCadena': _vencido(_cadena, 15),
-        'vencFiltro': _vencido(_filtro, 90),
-        'vencAceite': _vencido(_aceite, 25),
-        'vencSoat': _vencido(_soat, 365),
-        'vencTecno': _vencido(_tecno, 365),
+        'lastKmCadena': kCad,
+        'lastKmFiltro': kFil,
+        'lastKmAceite': kAce,
+        'pctCadena': VehicleHealthLogic.calculateHybridPercentage(
+          lastDate: _cadena,
+          lastKms: kCad,
+          cycleDays: 15,
+          cycleKms: 500,
+          currentKms: widget.currentKms,
+        ),
+        'pctFiltro': VehicleHealthLogic.calculateHybridPercentage(
+          lastDate: _filtro,
+          lastKms: kFil,
+          cycleDays: 90,
+          cycleKms: 5000,
+          currentKms: widget.currentKms,
+        ),
+        'pctAceite': VehicleHealthLogic.calculateHybridPercentage(
+          lastDate: _aceite,
+          lastKms: kAce,
+          cycleDays: 25,
+          cycleKms: 3000,
+          currentKms: widget.currentKms,
+        ),
+        'pctSoat': VehicleHealthLogic.calculateHybridPercentage(
+          lastDate: _soat,
+          lastKms: 0,
+          cycleDays: 365,
+          cycleKms: 1,
+          currentKms: 0,
+        ),
+        'pctTecno': VehicleHealthLogic.calculateHybridPercentage(
+          lastDate: _tecno,
+          lastKms: 0,
+          cycleDays: 365,
+          cycleKms: 1,
+          currentKms: 0,
+        ),
+        'vencCadena': _vencidoHybrid(_cadena, kCad, 15, 500),
+        'vencFiltro': _vencidoHybrid(_filtro, kFil, 90, 5000),
+        'vencAceite': _vencidoHybrid(_aceite, kAce, 25, 3000),
+        'vencSoat': _vencidoHybrid(_soat, 0, 365, 1),
+        'vencTecno': _vencidoHybrid(_tecno, 0, 365, 1),
       }; // retorna para actualizar UI [23][24]
 
       if (!mounted) return;
@@ -145,6 +272,8 @@ class _ParametrizacionMantenimientosScreenState
     required DateTime? date,
     required IconData icon,
     required VoidCallback onTap,
+    Widget? trailingInput,
+    VoidCallback? onScan,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryColor = Theme.of(context).primaryColor;
@@ -173,76 +302,134 @@ class _ParametrizacionMantenimientosScreenState
           onTap: onTap,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            child: Row(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                // Icono
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: primaryColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Icon(icon, color: primaryColor, size: 28),
-                ),
-                const SizedBox(width: 16),
-                // Textos
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15,
-                        ),
+                Row(
+                  children: [
+                    // Icono
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: primaryColor.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(16),
                       ),
-                      const SizedBox(height: 4),
-                      Row(
+                      child: Icon(icon, color: primaryColor, size: 28),
+                    ),
+                    const SizedBox(width: 16),
+                    // Textos
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Icon(
-                            Icons.calendar_month,
-                            size: 14,
-                            color: date == null ? Colors.redAccent : Colors.grey,
-                          ),
-                          const SizedBox(width: 4),
                           Text(
-                            date == null ? 'Fecha requerida' : _fmt(date),
-                            style: TextStyle(
-                              color: date == null
-                                  ? Colors.redAccent
-                                  : Colors.grey[600],
-                              fontSize: 13,
-                              fontWeight: date == null
-                                  ? FontWeight.bold
-                                  : FontWeight.normal,
+                            title,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
                             ),
+                          ),
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.calendar_month,
+                                size: 14,
+                                color: date == null ? Colors.redAccent : Colors.grey,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                date == null ? 'Fecha requerida' : _fmt(date),
+                                style: TextStyle(
+                                  color: date == null
+                                      ? Colors.redAccent
+                                      : Colors.grey[600],
+                                  fontSize: 13,
+                                  fontWeight: date == null
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                    ],
-                  ),
+                    ),
+                    if (onScan != null)
+                      IconButton.filledTonal(
+                        onPressed: onScan,
+                        icon: const Icon(Icons.document_scanner_rounded, size: 20),
+                        tooltip: 'Escanear Documento',
+                        style: IconButton.styleFrom(
+                          backgroundColor: primaryColor.withOpacity(0.1),
+                          foregroundColor: primaryColor,
+                        ),
+                      ),
+                    // Botón Editar
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? Colors.white.withOpacity(0.1)
+                            : Colors.grey.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.edit_calendar,
+                        size: 20,
+                        color: isDark ? Colors.white70 : Colors.black54,
+                      ),
+                    ),
+                  ],
                 ),
-                // Botón Editar
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: isDark
-                        ? Colors.white.withOpacity(0.1)
-                        : Colors.grey.withOpacity(0.1),
-                    shape: BoxShape.circle,
+                if (trailingInput != null) ...[
+                  const Divider(height: 24, indent: 70),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 70),
+                    child: trailingInput,
                   ),
-                  child: Icon(
-                    Icons.edit_calendar,
-                    size: 20,
-                    color: isDark ? Colors.white70 : Colors.black54,
-                  ),
-                ),
+                ],
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildKmInput(TextEditingController ctrl, String hint) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Kilometraje en el mantenimiento:',
+          style: TextStyle(
+            fontSize: 11,
+            color: isDark ? Colors.white38 : Colors.black38,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: 8),
+        TextField(
+          controller: ctrl,
+          keyboardType: TextInputType.number,
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          decoration: InputDecoration(
+            hintText: hint,
+            isDense: true,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            filled: true,
+            fillColor: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.03),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+            suffixText: 'km',
+            suffixStyle: const TextStyle(fontSize: 12, color: Colors.grey),
+          ),
+        ),
+      ],
     );
   }
 
@@ -282,6 +469,7 @@ class _ParametrizacionMantenimientosScreenState
                       (d) => setState(() => _cadena = d),
                       initial: _cadena,
                     ),
+                    trailingInput: _buildKmInput(_kmCadenaCtrl, 'Ej: 5000'),
                   ),
                   _buildMaintenanceCard(
                     context: context,
@@ -292,6 +480,7 @@ class _ParametrizacionMantenimientosScreenState
                       (d) => setState(() => _filtro = d),
                       initial: _filtro,
                     ),
+                    trailingInput: _buildKmInput(_kmFiltroCtrl, 'Ej: 15400'),
                   ),
                   _buildMaintenanceCard(
                     context: context,
@@ -302,6 +491,7 @@ class _ParametrizacionMantenimientosScreenState
                       (d) => setState(() => _aceite = d),
                       initial: _aceite,
                     ),
+                    trailingInput: _buildKmInput(_kmAceiteCtrl, 'Ej: 21000'),
                   ),
                   _buildMaintenanceCard(
                     context: context,
@@ -312,6 +502,7 @@ class _ParametrizacionMantenimientosScreenState
                       (d) => setState(() => _soat = d),
                       initial: _soat,
                     ),
+                    onScan: () => _escanearDocumento((d) => setState(() => _soat = d)),
                   ),
                   _buildMaintenanceCard(
                     context: context,
@@ -322,6 +513,7 @@ class _ParametrizacionMantenimientosScreenState
                       (d) => setState(() => _tecno = d),
                       initial: _tecno,
                     ),
+                    onScan: () => _escanearDocumento((d) => setState(() => _tecno = d)),
                   ),
                   const SizedBox(height: 20),
                 ],

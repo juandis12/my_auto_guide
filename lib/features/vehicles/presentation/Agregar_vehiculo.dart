@@ -15,6 +15,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'inicio_app.dart';
 import 'Agregar_carro.dart';
 import '../../../core/services/supabase_service.dart';
+import '../../../core/services/vehicle_catalog_service.dart';
 
 class AgregarVehiculoScreen extends StatefulWidget {
   const AgregarVehiculoScreen({super.key});
@@ -24,102 +25,12 @@ class AgregarVehiculoScreen extends StatefulWidget {
 }
 
 class _AgregarVehiculoScreenState extends State<AgregarVehiculoScreen> {
-  final Map<String, List<Map<String, String>>> catalogo = {
-    'YAMAHA': [
-      {'modelo': 'MT 15', 'img': 'assets/motos/yamaha/mt15.png'},
-      {'modelo': 'R15', 'img': 'assets/motos/yamaha/r15.png'},
-      {'modelo': 'FZ 25', 'img': 'assets/motos/yamaha/fz25.png'},
-      {'modelo': 'CRYPTON FI', 'img': 'assets/motos/yamaha/cripton.png'},
-      {'modelo': 'FZ 2.0', 'img': 'assets/motos/yamaha/fz2.0.png'},
-      {'modelo': 'N-MAX', 'img': 'assets/motos/yamaha/nmax.png'},
-      {'modelo': 'XTZ 150', 'img': 'assets/motos/yamaha/XTZ150.png'},
-    ],
-    'SUZUKI': [
-      {'modelo': 'Gixxer 150 FI', 'img': 'assets/motos/suzuki/gixxer150.png'},
-      {
-        'modelo': 'Gixxer SF 150 FI',
-        'img': 'assets/motos/suzuki/gixxersf150.png'
-      },
-    ],
-    'BMW': [
-      {'modelo': 'G 310 R', 'img': 'assets/motos/bmw/g310r.png'},
-      {'modelo': 'G 310 GS', 'img': 'assets/motos/bmw/g310gs.png'},
-      {'modelo': 'F 900 R', 'img': 'assets/motos/bmw/f900r.png'},
-    ],
-    'KAWASAKI': [
-      {'modelo': 'VERSYS 650', 'img': 'assets/motos/kawasaki/versys650.png'},
-      {'modelo': 'Ninja 650', 'img': 'assets/motos/kawasaki/ninja650.png'},
-      {'modelo': 'Ninja 400', 'img': 'assets/motos/kawasaki/ninja400.png'},
-      {'modelo': 'Z 400', 'img': 'assets/motos/kawasaki/z400.png'},
-    ],
-    'BAJAJ': [
-      {
-        'modelo': 'BOXER CT 100 KS',
-        'img': 'assets/motos/bajaj/boxer-ct100-ks.png'
-      },
-      {
-        'modelo': 'BOXER CT 100 ES',
-        'img': 'assets/motos/bajaj/boxer-ct100.png'
-      },
-      {
-        'modelo': 'BOXER CT 125 SPORT',
-        'img': 'assets/motos/bajaj/boxer-ct-125-sport.png'
-      },
-      {'modelo': 'BOXER 150 X', 'img': 'assets/motos/bajaj/boxer-150x.png'},
-      {
-        'modelo': 'DOMINAR 400',
-        'img': 'assets/motos/bajaj/Dominar-400-touring.png'
-      },
-      {
-        'modelo': 'PULSAR NS 200 FI ABS',
-        'img': 'assets/motos/bajaj/pulsar-ns200-fi-abs.png'
-      },
-    ],
-    'HERO': [
-      {'modelo': 'HUNK 160 R', 'img': 'assets/motos/hero/hunk160r.png'},
-      {'modelo': 'IGNITOR XTECH', 'img': 'assets/motos/hero/IgnitorXtech.png'},
-      {'modelo': 'X PULSE 200 4V', 'img': 'assets/motos/hero/Xpulse2004v.png'},
-    ],
-    'AKT': [
-      {'modelo': 'NKD', 'img': 'assets/motos/akt/NKD.png'},
-      {'modelo': 'CR4 150', 'img': 'assets/motos/akt/CR4_150.png'},
-    ],
-    'KTM': [
-      {'modelo': 'DUKE 200', 'img': 'assets/motos/ktm/DUKE-200.png'},
-      {'modelo': 'DUKE 390', 'img': 'assets/motos/ktm/KTM-390-DUKE.png'},
-      {'modelo': 'ADVENTUR 390', 'img': 'assets/motos/ktm/KTM-390-adv.png'},
-    ],
-    'VICTORI': [
-      {
-        'modelo': 'VENOM 150',
-        'img': 'assets/motos/victori/victori_venom_150.png'
-      },
-    ],
-  };
+  // Servicios
+  final _catalogService = VehicleCatalogService();
 
-  final Map<String, String> logos = const {
-    'YAMAHA': 'assets/logos/yamaha_logo.png',
-    'SUZUKI': 'assets/logos/suzuki_logo.png',
-    'BMW': 'assets/logos/bmw_logo.png',
-    'KAWASAKI': 'assets/logos/kawa_logo.png',
-    'KTM': 'assets/logos/ktm_logo.png',
-    'BAJAJ': 'assets/logos/bajaj_logo.png',
-    'HERO': 'assets/logos/hero_logo.png',
-    'AKT': 'assets/logos/akt_logo.png',
-    'VICTORI': 'assets/logos/victori_logo.png',
-  };
-
-  final Map<String, Color> brandColors = const {
-    'YAMAHA': Color(0xFF0055CC),
-    'SUZUKI': Color(0xFFE30613),
-    'BMW': Color(0xFF2A2A2A),
-    'KAWASAKI': Color(0xFF00A651),
-    'KTM': Color(0xFFFF7B00),
-    'BAJAJ': Color(0xFF006EFF),
-    'HERO': Colors.black,
-    'AKT': Color.fromARGB(255, 21, 54, 172),
-    'VICTORI': Color.fromARGB(255, 203, 167, 61),
-  };
+  late final Map<String, List<Map<String, String>>> catalogo;
+  late final Map<String, String> logos;
+  late final Map<String, Color> brandColors;
 
   String marcaSeleccionada = 'YAMAHA';
   int indexModelo = 0;
@@ -137,6 +48,9 @@ class _AgregarVehiculoScreenState extends State<AgregarVehiculoScreen> {
   @override
   void initState() {
     super.initState();
+    catalogo = _catalogService.getMotoCatalog();
+    logos = _catalogService.getMotoLogos();
+    brandColors = _catalogService.getBrandColors();
     _page = PageController(initialPage: indexModelo);
   }
 

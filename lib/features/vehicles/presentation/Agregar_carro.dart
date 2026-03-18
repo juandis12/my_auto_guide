@@ -24,6 +24,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'inicio_app.dart';
 import 'Agregar_vehiculo.dart';
 import '../../../core/services/supabase_service.dart';
+import '../../../core/services/vehicle_catalog_service.dart';
 
 class AgregarCarroScreen extends StatefulWidget {
   const AgregarCarroScreen({super.key});
@@ -33,74 +34,12 @@ class AgregarCarroScreen extends StatefulWidget {
 }
 
 class _AgregarCarroScreenState extends State<AgregarCarroScreen> {
-  // Catálogo de carros
-  final Map<String, List<Map<String, String>>> catalogo = {
-    'TOYOTA': [
-      {'modelo': 'Corolla', 'img': 'assets/carros/toyota/corolla.png'},
-      {'modelo': 'Hilux', 'img': 'assets/carros/toyota/hilux.png'},
-      {'modelo': 'YARIS', 'img': 'assets/carros/toyota/yaris.png'},
-      {'modelo': 'YARIS CROSS', 'img': 'assets/carros/toyota/yaris_cross.png'},
-      {'modelo': 'TUNDRA', 'img': 'assets/carros/toyota/tundra.png'},
-      {
-        'modelo': 'LAND CRUISER 300',
-        'img': 'assets/carros/toyota/landcruiser300.png',
-      },
-      {'modelo': 'HILUX CARGA', 'img': 'assets/carros/toyota/hiluxcarga.png'},
-      {'modelo': 'FORTUNER', 'img': 'assets/carros/toyota/fortuner.png'},
-      {
-        'modelo': 'COROLLA CROSS',
-        'img': 'assets/carros/toyota/corolla_cross.png',
-      },
-      {
-        'modelo': 'COROLLA CROSS GR-S',
-        'img': 'assets/carros/toyota/corolla_cross_gr-s.png',
-      },
-    ],
-    'MAZDA': [
-      {'modelo': 'MAZDA 2 HATCHBACK', 'img': 'assets/carros/mazda/mazda2.png'},
-      {'modelo': 'MAZDA 2 SEDAN', 'img': 'assets/carros/mazda/mazda2sedan.png'},
-      {'modelo': 'MAZDA 3 SEDAN', 'img': 'assets/carros/mazda/mazda3.png'},
-    ],
-    'CHEVROLET': [
-      {
-        'modelo': 'ONIX TURBO RS',
-        'img': 'assets/carros/chevrolet/jelly-onix-turbo-rs.png',
-      },
-      {
-        'modelo': 'ONIX PRIME HB',
-        'img': 'assets/carros/chevrolet/2022-tambien-onix-turbo-hb.png',
-      },
-      {
-        'modelo': 'ONIX TURBO SEDAN',
-        'img': 'assets/carros/chevrolet/2024-versiones-onix-turbo-ltz-at.png',
-      },
-      {'modelo': 'TRACKER RS', 'img': 'assets/carros/chevrolet/tracker-RS.png'},
-      {'modelo': 'BLAZER EV RS', 'img': 'assets/carros/chevrolet/BLAZEREV.png'},
-      {
-        'modelo': 'EQUINOX RS',
-        'img': 'assets/carros/chevrolet/equinox-rs-blazer-rs.png',
-      },
-      {'modelo': 'TRAVERSE RS', 'img': 'assets/carros/chevrolet/traverse.png'},
-      {'modelo': 'BLAZER RS', 'img': 'assets/carros/chevrolet/blazerrs.png'},
-      {'modelo': 'MONTANA', 'img': 'assets/carros/chevrolet/Montana.png'},
-      {'modelo': 'COLORADO RS', 'img': 'assets/carros/chevrolet/colorado.png'},
-      {'modelo': 'SILVERADO', 'img': 'assets/carros/chevrolet/silverado.png'},
-    ],
-  };
+  // Servicios
+  final _catalogService = VehicleCatalogService();
 
-  // Logos
-  final Map<String, String> logos = const {
-    'TOYOTA': 'assets/logos/toyota_logo.png',
-    'MAZDA': 'assets/logos/mazda_logo.png',
-    'CHEVROLET': 'assets/logos/chevrolet_logo.png',
-  };
-
-  // Colores
-  final Map<String, Color> brandColors = const {
-    'TOYOTA': Color(0xFFEB0A1E),
-    'MAZDA': Color(0xFF1B1B1B),
-    'CHEVROLET': Color(0xFFFFC107),
-  };
+  late final Map<String, List<Map<String, String>>> catalogo;
+  late final Map<String, String> logos;
+  late final Map<String, Color> brandColors;
 
   String marcaSeleccionada = 'TOYOTA';
   int indexModelo = 0;
@@ -119,6 +58,9 @@ class _AgregarCarroScreenState extends State<AgregarCarroScreen> {
   @override
   void initState() {
     super.initState();
+    catalogo = _catalogService.getCarCatalog();
+    logos = _catalogService.getCarLogos();
+    brandColors = _catalogService.getBrandColors();
     _page = PageController(initialPage: indexModelo);
   }
 

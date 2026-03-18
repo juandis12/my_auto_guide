@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
@@ -15,7 +16,6 @@ class SyncService {
   final Connectivity _connectivity = Connectivity();
 
   StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
-  Timer? _syncTimer;
   bool _isSyncing = false;
 
   void initialize() {
@@ -32,21 +32,11 @@ class SyncService {
       }
     });
 
-    // También verificar periódicamente (cada 30 segundos)
-    _syncTimer = Timer.periodic(const Duration(seconds: 30), (timer) async {
-      final List<ConnectivityResult> results =
-          await _connectivity.checkConnectivity();
-      final ConnectivityResult result =
-          results.isNotEmpty ? results.first : ConnectivityResult.none;
-      if (result != ConnectivityResult.none) {
-        await syncPendingData();
-      }
-    });
+
   }
 
   void dispose() {
     _connectivitySubscription?.cancel();
-    _syncTimer?.cancel();
   }
 
   Future<bool> hasInternetConnection() async {
@@ -122,10 +112,13 @@ class SyncService {
           vehicleId: route['vehicleId'],
           origin: route['originName'],
           destination: route['destinationName'],
-          distance: route['distanceKm'],
-          durationSeconds: route['durationSeconds'],
-          fuelEstimated: route['consumoGalones'],
-          costEstimated: route['costoEstimado'],
+          distance: (route['distanceKm'] as num?)?.toDouble() ?? 0.0,
+          durationSeconds: route['durationSeconds'] ?? 0,
+          fuelEstimated: (route['consumoGalones'] as num?)?.toDouble() ?? 0.0,
+          costEstimated: (route['costoEstimado'] as num?)?.toDouble() ?? 0.0,
+          velocidadMax: (route['velocidad_max'] as num?)?.toDouble(),
+          velocidadProm: (route['velocidad_prom'] as num?)?.toDouble(),
+          points: route['viaPuntos'] != null ? jsonDecode(route['viaPuntos']) : null,
         );
       },
       markAsSynced: (route) => _db.markRouteAsSynced(route['id']),
@@ -177,6 +170,9 @@ class SyncService {
     required int durationSeconds,
     required double consumoGalones,
     required double costoEstimado,
+    double? velocidadMax,
+    double? velocidadProm,
+    List<dynamic>? viaPuntos,
   }) async {
     final routeData = {
       'userId': userId,
@@ -187,6 +183,9 @@ class SyncService {
       'durationSeconds': durationSeconds,
       'consumoGalones': consumoGalones,
       'costoEstimado': costoEstimado,
+      'velocidad_max': velocidadMax,
+      'velocidad_prom': velocidadProm,
+      'viaPuntos': viaPuntos != null ? jsonEncode(viaPuntos) : null,
       'fecha': DateTime.now().toIso8601String(),
       'synced': 0
     };
@@ -209,13 +208,15 @@ class SyncService {
           durationSeconds: durationSeconds,
           fuelEstimated: consumoGalones,
           costEstimated: costoEstimado,
+          velocidadMax: velocidadMax,
+          velocidadProm: velocidadProm,
+          points: viaPuntos,
         );
 
         // Marcar como sincronizada
         final routes = await _db.getPendingRoutes();
         for (final route in routes) {
           if (route['vehicleId'] == vehicleId &&
-              route['distanceKm'] == distanceKm &&
               route['fecha'] == routeData['fecha']) {
             await _db.markRouteAsSynced(route['id']);
             break;
@@ -290,5 +291,56 @@ class SyncService {
         debugPrint('Error sincronizando gasto inmediatamente: $e');
       }
     }
+  } // FIN saveExpenseOfflineFirst
+
+  // Método para obtener historial combinado (Supabase + Local Pendiente)
+  Future<List<Map<String, dynamic>>> getCombinedRouteHistory(String vehicleId) async {
+    List<Map<String, dynamic>> combined = [];
+
+    // 1. Obtener de Supabase (si hay internet)
+    try {
+      if (await hasInternetConnection()) {
+        final remote = await _supabase.getRouteHistory(vehicleId);
+        combined.addAll(remote);
+      }
+    } catch (e) {
+      debugPrint('SyncService: Error cargando historial remoto: $e');
+    }
+
+    // 2. Obtener locales pendientes
+    try {
+      final pending = await _db.getPendingRoutes();
+      final filtered = pending.where((r) => r['vehicleId'] == vehicleId).map((r) {
+        // Mapear al formato de Supabase (snake_case) para compatibilidad con la UI
+        return {
+          'id': 'pending_${r['id']}',
+          'user_id': r['userId'],
+          'vehiculo_id': r['vehicleId'],
+          'origen': r['originName'],
+          'destino': r['destinationName'],
+          'distancia': r['distanceKm'],
+          'duracion': r['durationSeconds']?.toString() ?? '0',
+          'consumo_estimado': r['consumoGalones'],
+          'costo_estimado': r['costoEstimado'],
+          'velocidad_max': r['velocidad_max'],
+          'velocidad_prom': r['velocidad_prom'],
+          'created_at': r['fecha'],
+          'via_puntos': r['viaPuntos'] != null ? jsonDecode(r['viaPuntos']) : null,
+          'is_pending': true, // Flag para la UI
+        };
+      });
+      combined.addAll(filtered);
+    } catch (e) {
+      debugPrint('SyncService: Error cargando rutas locales: $e');
+    }
+
+    // 3. Ordenar por fecha (descendente)
+    combined.sort((a, b) {
+      final dateA = DateTime.tryParse(a['fecha'] ?? a['created_at'] ?? '') ?? DateTime(2000);
+      final dateB = DateTime.tryParse(b['fecha'] ?? b['created_at'] ?? '') ?? DateTime(2000);
+      return dateB.compareTo(dateA);
+    });
+
+    return combined;
   }
 }
