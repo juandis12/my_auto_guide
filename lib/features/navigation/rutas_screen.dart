@@ -102,7 +102,7 @@ class _RutasScreenState extends State<RutasScreen>
   bool _isSearching = false;
 
   // Tracking
-  StreamSubscription<Position>? _posStream;
+  StreamSubscription<Map<String, dynamic>?>? _serviceSubscription;
   bool _isLoadingRoute = false;
   bool _showSuccessOverlay = false;
 
@@ -118,11 +118,12 @@ class _RutasScreenState extends State<RutasScreen>
     final service = FlutterBackgroundService();
     if (await service.isRunning()) {
       // Reconectar al stream de actualizaciones
-      service.on('update').listen((event) {
+      _serviceSubscription?.cancel();
+      _serviceSubscription = service.on('update').listen((event) {
         if (!mounted) return;
-        final double lat = event?['lat'] ?? 0.0;
-        final double lng = event?['lng'] ?? 0.0;
-        final double distanceKm = event?['distance'] ?? 0.0;
+        final double lat = (event?['lat'] as num?)?.toDouble() ?? 0.0;
+        final double lng = (event?['lng'] as num?)?.toDouble() ?? 0.0;
+        final double distanceKm = (event?['distance'] as num?)?.toDouble() ?? 0.0;
         
         if (lat == 0.0 && lng == 0.0) return; // Ignorar coordenas nulas del GPS
 
@@ -162,7 +163,7 @@ class _RutasScreenState extends State<RutasScreen>
 
   @override
   void dispose() {
-    _posStream?.cancel();
+    _serviceSubscription?.cancel();
     _searchCtrl.dispose();
     super.dispose();
   }
@@ -231,9 +232,18 @@ class _RutasScreenState extends State<RutasScreen>
         setState(() {
           _searchResults = data.map((e) => e as Map<String, dynamic>).toList();
         });
+      } else {
+        throw Exception('El servidor de mapas no respondió (Code: ${res.statusCode})');
       }
-    } catch (_) {
-      // silencioso
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error al buscar dirección: Valida tu conexión a Internet o intenta nuevamente.'),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+      }
     } finally {
       if (mounted) setState(() => _isSearching = false);
     }
@@ -397,12 +407,13 @@ class _RutasScreenState extends State<RutasScreen>
     }
 
     // Escuchar actualizaciones del servicio de fondo
-    service.on('update').listen((event) {
+    _serviceSubscription?.cancel();
+    _serviceSubscription = service.on('update').listen((event) {
       if (!mounted) return;
       
-      final double lat = event?['lat'] ?? 0.0;
-      final double lng = event?['lng'] ?? 0.0;
-      final double distanceKm = event?['distance'] ?? 0.0;
+      final double lat = (event?['lat'] as num?)?.toDouble() ?? 0.0;
+      final double lng = (event?['lng'] as num?)?.toDouble() ?? 0.0;
+      final double distanceKm = (event?['distance'] as num?)?.toDouble() ?? 0.0;
       
       if (lat == 0.0 && lng == 0.0) return; // Rechazar coordenadas inválidas
       

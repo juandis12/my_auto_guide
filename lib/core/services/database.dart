@@ -28,43 +28,6 @@ class AppDatabase {
 
   Future _onCreate(Database db, int version) async {
     await db.execute('''
-      CREATE TABLE vehicles (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        userId TEXT,
-        marca TEXT,
-        modelo TEXT,
-        apodo TEXT,
-        kms INTEGER,
-        imagePath TEXT,
-        createdAt TEXT
-      )
-    ''');
-    await db.execute('''
-      CREATE TABLE routes (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        userId TEXT,
-        vehicleId TEXT,
-        originName TEXT,
-        destinationName TEXT,
-        distanceKm REAL,
-        durationSeconds INTEGER,
-        consumoGalones REAL,
-        costoEstimado REAL,
-        fecha TEXT
-      )
-    ''');
-    await db.execute('''
-      CREATE TABLE expenses (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        userId TEXT,
-        vehicleId TEXT,
-        categoria TEXT,
-        monto REAL,
-        descripcion TEXT,
-        fecha TEXT
-      )
-    ''');
-    await db.execute('''
       CREATE TABLE pending_routes (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         userId TEXT,
@@ -144,59 +107,6 @@ class AppDatabase {
         )
       ''');
     }
-  }
-
-  // Métodos para Vehicles
-  Future<List<Map<String, dynamic>>> getAllVehicles(String userId) async {
-    final db = await database;
-    return await db.query('vehicles', where: 'userId = ?', whereArgs: [userId]);
-  }
-
-  Future<int> insertVehicle(Map<String, dynamic> vehicle) async {
-    final db = await database;
-    return await db.insert('vehicles', vehicle);
-  }
-
-  Future<int> updateVehicle(int id, Map<String, dynamic> vehicle) async {
-    final db = await database;
-    return await db
-        .update('vehicles', vehicle, where: 'id = ?', whereArgs: [id]);
-  }
-
-  Future<int> deleteVehicle(int id) async {
-    final db = await database;
-    return await db.delete('vehicles', where: 'id = ?', whereArgs: [id]);
-  }
-
-  // Métodos para Routes
-  Future<List<Map<String, dynamic>>> getRoutesForVehicle(
-      String vehicleId) async {
-    final db = await database;
-    return await db
-        .query('routes', where: 'vehicleId = ?', whereArgs: [vehicleId]);
-  }
-
-  Future<int> insertRoute(Map<String, dynamic> route) async {
-    final db = await database;
-    return await db.insert('routes', route);
-  }
-
-  // Métodos para Expenses
-  Future<List<Map<String, dynamic>>> getExpensesForVehicle(
-      String vehicleId) async {
-    final db = await database;
-    return await db
-        .query('expenses', where: 'vehicleId = ?', whereArgs: [vehicleId]);
-  }
-
-  Future<int> insertExpense(Map<String, dynamic> expense) async {
-    final db = await database;
-    return await db.insert('expenses', expense);
-  }
-
-  Future<int> deleteExpense(int id) async {
-    final db = await database;
-    return await db.delete('expenses', where: 'id = ?', whereArgs: [id]);
   }
 
   // Métodos para Pending Routes (sincronización offline)

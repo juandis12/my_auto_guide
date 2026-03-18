@@ -39,12 +39,21 @@ class _GastosScreenState extends State<GastosScreen> {
   }
 
   Future<void> _fetchExpenses() async {
+    if (!mounted) return;
     setState(() => _isLoading = true);
+    
     try {
       final data = await SupabaseService().getExpenses(widget.vehiculoId);
-      setState(() => _expenses = data);
-    } catch (_) {}
-    setState(() => _isLoading = false);
+      if (!mounted) return;
+      
+      setState(() {
+        _expenses = data;
+        _isLoading = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+    }
   }
 
   void _showAddExpenseDialog() {

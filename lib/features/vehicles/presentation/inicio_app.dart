@@ -705,6 +705,11 @@ class _InicioAppState extends State<InicioApp> {
           _savingsCOP = aiStats['amount'];
           _loadingWeekly = false;
         });
+
+        // 🚀 CÁLCULO IA DE MANTENIMIENTO PROFUNDO (Solo 1 vez tras cargar data)
+        if (preds.isEmpty && vehicleData['kms'] != null) {
+          _recalculateAI(vehicleData);
+        }
       }
     } catch (_) {
       if (mounted) setState(() => _loadingWeekly = false);
@@ -777,9 +782,8 @@ class _InicioAppState extends State<InicioApp> {
           final kms = v['kms']?.toString() ?? '0';
           final imagePath = v['image_path'] as String? ?? '';
 
-          if (_predictions.isEmpty && v['kms'] != null) {
-            WidgetsBinding.instance.addPostFrameCallback((_) => _recalculateAI(v));
-          }
+          // La llamada a IA ya no se hará aquí en build(). Fue transportada
+          // a `_cargarWeeklyStats()` para integrarse limpiamente con la data local.
 
           _soatPath ??= v['soat_path'] as String?;
           _tecnoPath ??= v['tecno_path'] as String?;

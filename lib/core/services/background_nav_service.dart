@@ -1,8 +1,11 @@
 import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:geolocator_android/geolocator_android.dart';
+import 'package:geolocator_apple/geolocator_apple.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:latlong2/latlong.dart';
 import '../logic/app_widget_logic.dart';
@@ -67,11 +70,31 @@ class BackgroundNavService {
     try {
       final prefs = await SharedPreferences.getInstance();
       
-      Geolocator.getPositionStream(
-        locationSettings: const LocationSettings(
+      late LocationSettings locationSettings;
+      
+      if (defaultTargetPlatform == TargetPlatform.android) {
+        locationSettings = AndroidSettings(
           accuracy: LocationAccuracy.high,
-          distanceFilter: 2, // Reducido: Más sensible al movimiento para evitar sensación de congelamiento
-        ),
+          distanceFilter: 0, // Ignora el filtro para que no se congele a bajas velocidades
+          forceLocationManager: true, // Fuerza hardware GPS nativo, esquivando el FusedProvider throttling
+          intervalDuration: const Duration(seconds: 2),
+        );
+      } else if (defaultTargetPlatform == TargetPlatform.iOS || defaultTargetPlatform == TargetPlatform.macOS) {
+        locationSettings = AppleSettings(
+          accuracy: LocationAccuracy.high,
+          activityType: ActivityType.automotiveNavigation,
+          distanceFilter: 0,
+          pauseLocationUpdatesAutomatically: false,
+        );
+      } else {
+        locationSettings = const LocationSettings(
+          accuracy: LocationAccuracy.high,
+          distanceFilter: 0,
+        );
+      }
+
+      Geolocator.getPositionStream(
+        locationSettings: locationSettings,
       ).listen((Position position) async {
         final currentPos = LatLng(position.latitude, position.longitude);
 
@@ -92,23 +115,27 @@ class BackgroundNavService {
           }
         }
 
-        // Actualizar datos en tiempo real
-        service.invoke('update', {
-          "lat": position.latitude,
-          "lng": position.longitude,
-          "distance": totalDistance / 1000,
-        });
+        try {
+          // Actualizar datos en tiempo real
+          service.invoke('update', {
+            "lat": position.latitude,
+            "lng": position.longitude,
+            "distance": totalDistance / 1000,
+          });
 
-        // Actualizar Widget
-        await AppWidgetLogic.updateWidget(
-          distance: totalDistance / 1000,
-          isTracking: true,
-        );
+          // Actualizar Widget
+          await AppWidgetLogic.updateWidget(
+            distance: totalDistance / 1000,
+            isTracking: true,
+          );
 
-        // Persistencia
-        await prefs.setDouble('nav_total_distance', totalDistance / 1000);
-        await prefs.setDouble('nav_last_lat', position.latitude);
-        await prefs.setDouble('nav_last_lng', position.longitude);
+          // Persistencia
+          await prefs.setDouble('nav_total_distance', totalDistance / 1000);
+          await prefs.setDouble('nav_last_lat', position.latitude);
+          await prefs.setDouble('nav_last_lng', position.longitude);
+        } catch (e) {
+          debugPrint('Error en el update de geolocalización o widgets: $e');
+        }
       }, onError: (e) {
         debugPrint('Error en stream GPS: $e');
       });

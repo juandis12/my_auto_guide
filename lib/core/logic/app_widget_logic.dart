@@ -11,12 +11,16 @@ class AppWidgetLogic {
     required double distance,
     required bool isTracking,
   }) async {
-    await HomeWidget.saveWidgetData<double>('current_distance', distance);
-    await HomeWidget.saveWidgetData<bool>('is_tracking', isTracking);
-    
-    await HomeWidget.updateWidget(
-      androidName: androidWidgetName,
-    );
+    try {
+      await HomeWidget.saveWidgetData<double>('current_distance', distance);
+      await HomeWidget.saveWidgetData<bool>('is_tracking', isTracking);
+      
+      await HomeWidget.updateWidget(
+        androidName: androidWidgetName,
+      );
+    } catch (e) {
+      debugPrint('Error en updateWidget: $e');
+    }
   }
 
   /// Actualiza los datos del widget de salud con indicadores circulares.

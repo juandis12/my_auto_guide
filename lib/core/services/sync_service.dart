@@ -16,6 +16,7 @@ class SyncService {
 
   StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
   Timer? _syncTimer;
+  bool _isSyncing = false;
 
   void initialize() {
     // Escuchar cambios en conectividad
@@ -67,31 +68,56 @@ class SyncService {
   }
 
   Future<void> syncPendingData() async {
+    if (_isSyncing) {
+      debugPrint('SyncService: Ya hay una sincronización en curso. Ignorando...');
+      return;
+    }
+
     final results = await _connectivity.checkConnectivity();
     final result = results.isNotEmpty ? results.first : ConnectivityResult.none;
     if (result == ConnectivityResult.none) return;
 
+    _isSyncing = true;
     try {
-      // Sincronizar rutas pendientes
+      debugPrint('SyncService: Iniciando sincronización de datos pendientes...');
       await _syncPendingRoutes();
-
-      // Sincronizar actualizaciones de kms pendientes
       await _syncPendingKmsUpdates();
-
-      // Sincronizar gastos pendientes
       await _syncPendingExpenses();
-
-      debugPrint('Sincronización completada exitosamente');
+      debugPrint('SyncService: Sincronización completada exitosamente.');
     } catch (e) {
-      debugPrint('Error en sincronización: $e');
+      debugPrint('SyncService: Error global en sincronización: $e');
+    } finally {
+      _isSyncing = false;
+    }
+  }
+
+  /// Método genérico para procesar cualquier cola de base de datos local
+  Future<void> _processQueue<T>({
+    required String logName,
+    required Future<List<T>> Function() fetchItems,
+    required Future<void> Function(T item) syncItem,
+    required Future<void> Function(T item) markAsSynced,
+  }) async {
+    final items = await fetchItems();
+    if (items.isEmpty) return;
+
+    debugPrint('Pendientes $logName: ${items.length}');
+    for (final item in items) {
+      try {
+        await syncItem(item);
+        await markAsSynced(item);
+        debugPrint('$logName sincronizado (ID: ${(item as Map)['id']})');
+      } catch (e) {
+        debugPrint('Error sincronizando $logName (ID: ${(item as Map)['id']}): $e');
+      }
     }
   }
 
   Future<void> _syncPendingRoutes() async {
-    final pendingRoutes = await _db.getPendingRoutes();
-
-    for (final route in pendingRoutes) {
-      try {
+    await _processQueue<Map<String, dynamic>>(
+      logName: 'Rutas',
+      fetchItems: _db.getPendingRoutes,
+      syncItem: (route) async {
         await _supabase.saveRoute(
           vehicleId: route['vehicleId'],
           origin: route['originName'],
@@ -101,67 +127,44 @@ class SyncService {
           fuelEstimated: route['consumoGalones'],
           costEstimated: route['costoEstimado'],
         );
-
-        // Marcar como sincronizada
-        await _db.markRouteAsSynced(route['id']);
-        debugPrint('Ruta sincronizada: ${route['id']}');
-      } catch (e) {
-        debugPrint('Error sincronizando ruta ${route['id']}: $e');
-        // Si falla, dejar para el próximo intento
-      }
-    }
+      },
+      markAsSynced: (route) => _db.markRouteAsSynced(route['id']),
+    );
   }
 
   Future<void> _syncPendingKmsUpdates() async {
-    final pendingUpdates = await _db.getPendingKmsUpdates();
-    debugPrint('Pendientes KMS updates: ${pendingUpdates.length}');
-
-    for (final update in pendingUpdates) {
-      try {
-        // Asegurar que kmsToAdd sea un número
+    await _processQueue<Map<String, dynamic>>(
+      logName: 'KMS Updates',
+      fetchItems: _db.getPendingKmsUpdates,
+      syncItem: (update) async {
         final kmsToAddRaw = update['kmsToAdd'];
         final kmsToAdd = kmsToAddRaw is int
             ? kmsToAddRaw
             : int.tryParse(kmsToAddRaw?.toString() ?? '') ?? 0;
 
-        // Obtener kms actuales del vehículo
-        final currentKms =
-            await _supabase.getVehicleMileage(update['vehicleId']);
+        final currentKms = await _supabase.getVehicleMileage(update['vehicleId']);
         final newKms = currentKms + kmsToAdd;
 
-        // Actualizar en Supabase
         await _supabase.updateVehicleKms(update['vehicleId'], newKms);
-
-        // Marcar como sincronizada
-        await _db.markKmsUpdateAsSynced(update['id']);
-        debugPrint('KMS update sincronizado: ${update['id']}');
-      } catch (e) {
-        debugPrint('Error sincronizando KMS update ${update['id']}: $e');
-        // Si falla, dejar para el próximo intento
-      }
-    }
+      },
+      markAsSynced: (update) => _db.markKmsUpdateAsSynced(update['id']),
+    );
   }
 
   Future<void> _syncPendingExpenses() async {
-    final pendingExpenses = await _db.getPendingExpenses();
-    debugPrint('Pendientes Expenses updates: ${pendingExpenses.length}');
-
-    for (final expense in pendingExpenses) {
-      try {
+    await _processQueue<Map<String, dynamic>>(
+      logName: 'Gastos',
+      fetchItems: _db.getPendingExpenses,
+      syncItem: (expense) async {
         await _supabase.addExpense(
           vehicleId: expense['vehicleId'],
           categoria: expense['categoria'],
           monto: expense['monto'],
           descripcion: expense['descripcion'],
         );
-
-        // Marcar como sincronizada
-        await _db.markExpenseAsSynced(expense['id']);
-        debugPrint('Gasto sincronizado: ${expense['id']}');
-      } catch (e) {
-        debugPrint('Error sincronizando gasto ${expense['id']}: $e');
-      }
-    }
+      },
+      markAsSynced: (expense) => _db.markExpenseAsSynced(expense['id']),
+    );
   }
 
   // Método para guardar ruta de forma offline-first
