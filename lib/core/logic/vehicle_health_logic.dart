@@ -188,60 +188,64 @@ class VehicleHealthLogic {
   static Map<String, dynamic> predictMaintenance({
     required String item,
     required DateTime? lastDate,
-    required int baseDays,
-    required List<Map<String, dynamic>> routeHistory,
+    int? baseDays, // Antiguo parámetro
+    List<Map<String, dynamic>>? routeHistory, // Antiguo parámetro
+    double? avgKmPerDay, // Nuevo: Promedio pre-calculado
+    int? cycleDays, // Nuevo: Días de ciclo alternativo
   }) {
-    if (lastDate == null || routeHistory.isEmpty) {
+    if (lastDate == null) {
       return {'status': 'Sin datos suficientes'};
     }
 
-    // 1. Calcular km recorridos en los últimos 7 días
-    final now = DateTime.now();
-    final sevenDaysAgo = now.subtract(const Duration(days: 7));
-    double totalKmLast7Days = 0;
-    for (var route in routeHistory) {
-      final fechaRaw = route['fecha'] ?? route['created_at'];
-      if (fechaRaw == null) continue;
-      
-      final date = fechaRaw is DateTime 
-          ? fechaRaw 
-          : DateTime.tryParse(fechaRaw.toString());
-          
-      if (date != null && date.isAfter(sevenDaysAgo)) {
-        // Usar distancia_km (nuevo nombre) o distancia (antiguo)
-        final rawDist = route['distancia_km'] ?? route['distancia'] ?? 0;
-        double dist = 0.0;
-        if (rawDist is num) {
-          dist = rawDist.toDouble();
-        } else {
-          dist = double.tryParse(rawDist.toString()) ?? 0.0;
+    double finalAvgKmPerDay = 0;
+    
+    if (avgKmPerDay != null) {
+      finalAvgKmPerDay = avgKmPerDay;
+    } else if (routeHistory != null && routeHistory.isNotEmpty) {
+      final now = DateTime.now();
+      final sevenDaysAgo = now.subtract(const Duration(days: 7));
+      double totalKmLast7Days = 0;
+      for (var route in routeHistory) {
+        final fechaRaw = route['fecha'] ?? route['created_at'];
+        if (fechaRaw == null) continue;
+        final date = fechaRaw is DateTime ? fechaRaw : DateTime.tryParse(fechaRaw.toString());
+        if (date != null && date.isAfter(sevenDaysAgo)) {
+          final rawDist = route['distancia_km'] ?? route['distancia'] ?? 0;
+          final dist = rawDist is num ? rawDist.toDouble() : (double.tryParse(rawDist.toString()) ?? 0.0);
+          totalKmLast7Days += dist;
         }
-        totalKmLast7Days += dist;
       }
+      finalAvgKmPerDay = totalKmLast7Days / 7;
     }
 
-    double kmPerDay = totalKmLast7Days / 7;
-    
+    if (finalAvgKmPerDay == 0 && (routeHistory == null || routeHistory.isEmpty)) {
+      return {'status': 'Sin uso reciente', 'item': item};
+    }
+
     // 2. Definir Uso Base Standard (ej. 25km/día es un uso normal)
     const double standardDailyUsage = 25.0;
     
     // 3. Calcular Factor de Desgaste (Mínimo 0.5x, máximo 4x)
-    double wearFactor = (kmPerDay / standardDailyUsage).clamp(0.5, 4.0);
+    double wearFactor = (finalAvgKmPerDay / standardDailyUsage).clamp(0.5, 4.0);
     
     // 4. Calcular días restantes teóricos vs reales
-    int elapsedDays = now.difference(lastDate).inDays;
-    double adjustedTotalDays = baseDays / wearFactor;
+    int elapsedDays = DateTime.now().difference(lastDate).inDays;
+    int effectiveBaseDays = cycleDays ?? baseDays ?? 30; // Fallback a 30 días si no hay nada
+    double adjustedTotalDays = effectiveBaseDays / wearFactor;
     int remainingDays = (adjustedTotalDays - elapsedDays).round();
 
-    final estimatedDate = now.add(Duration(days: remainingDays > 0 ? remainingDays : 0));
+    final estimatedDate = DateTime.now().add(Duration(days: remainingDays > 0 ? remainingDays : 0));
 
     return {
       'status': remainingDays <= 0 ? 'Vencido' : 'Proyectado',
       'days': remainingDays,
       'date': estimatedDate,
       'wearFactor': wearFactor,
-      'kmPerDay': kmPerDay,
+      'kmPerDay': finalAvgKmPerDay,
       'item': item,
+      'reason': remainingDays <= 7 ? 'Uso intensivo detectado' : 'Mantenimiento preventivo',
+      'risk': remainingDays <= 0 ? 'Alto' : (remainingDays <= 14 ? 'Medio' : 'Bajo'),
+      'isCritical': remainingDays <= 3,
     };
   }
 
