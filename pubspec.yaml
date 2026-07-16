@@ -106,6 +106,9 @@ flutter:
 
   generate: true
 
+  config:
+    enable-swift-package-manager: false
+
   assets:
     - .env
     - assets/car.png
