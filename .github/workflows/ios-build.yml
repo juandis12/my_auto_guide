@@ -158,6 +158,16 @@ jobs:
         run: |
           set -e
 
+          # Create dummy .env if it does not exist (since it is gitignored but declared in pubspec)
+          if [ ! -f "${GITHUB_WORKSPACE}/.env" ]; then
+            echo "Creating dummy .env from .env.example..."
+            if [ -f "${GITHUB_WORKSPACE}/.env.example" ]; then
+              cp "${GITHUB_WORKSPACE}/.env.example" "${GITHUB_WORKSPACE}/.env"
+            else
+              touch "${GITHUB_WORKSPACE}/.env"
+            fi
+          fi
+
           # Navigate to iOS project
           cd "$IOS_PATH"
 
