@@ -50,3 +50,6 @@ app.*.map.json
 # Firebase Config (Sensitive)
 android/app/google-services.json
 ios/Runner/GoogleService-Info.plist
+
+# ios-builder output
+/dist/

@@ -1,0 +1,29 @@
+{
+  "project": "my_auto_guide",
+  "platform": "ios",
+  "github": {
+    "owner": "juandis12",
+    "repo": "my_auto_guide"
+  },
+  "ios": {
+    "path": "ios",
+    "scheme": "",
+    "signing": false
+  },
+  "flutter": {
+    "version": "3.44.0",
+    "watch": {
+      "dirs": [
+        "lib"
+      ],
+      "patterns": [
+        ".dart"
+      ],
+      "ignore": [
+        ".g.dart",
+        ".freezed.dart"
+      ],
+      "debounce": 100
+    }
+  }
+}
