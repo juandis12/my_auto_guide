@@ -11,7 +11,7 @@ on:
         description: 'Path to iOS project (e.g., "ios" for React Native)'
         required: false
         type: string
-        default: '.'
+        default: 'ios'
       scheme:
         description: 'Xcode scheme to build (auto-detected if empty)'
         required: false
@@ -199,7 +199,7 @@ jobs:
           DERIVED_DATA_PATH="${GITHUB_WORKSPACE}/DerivedData"
 
           if [ "$PROJECT_TYPE" = "flutter" ]; then
-            cd ..
+            cd "${GITHUB_WORKSPACE}"
             if [ "$CONFIGURATION" = "Debug" ]; then
               echo "Building Flutter iOS Debug..."
               flutter build ios --debug --no-codesign
@@ -207,7 +207,7 @@ jobs:
               echo "Building Flutter iOS Release..."
               flutter build ios --release --no-codesign
             fi
-            cd "$IOS_PATH"
+            cd "${GITHUB_WORKSPACE}/${IOS_PATH}"
           elif [ "$PROJECT_TYPE" = "reactnative" ] || [ "$PROJECT_TYPE" = "expo" ]; then
             # Use xcodebuild directly for React Native/Expo
             echo "Building React Native iOS ($CONFIGURATION)..."
@@ -273,7 +273,7 @@ jobs:
           # Create IPA
           if [ "$USE_SIGNING" = "true" ]; then
             # For signed builds, use xcodebuild -exportArchive
-            cd ..
+            cd "${GITHUB_WORKSPACE}"
             printf '%s\n' \
               '<?xml version="1.0" encoding="UTF-8"?>' \
               '<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">' \
@@ -308,7 +308,7 @@ jobs:
               exit 1
             fi
             echo "Found app at: $APP_PATH"
-            cd ..
+            cd "${GITHUB_WORKSPACE}"
             mkdir -p build/Payload
             cp -R "$APP_PATH" build/Payload/
             cd build
