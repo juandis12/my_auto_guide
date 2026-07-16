@@ -158,9 +158,14 @@ jobs:
         run: |
           set -e
 
-          # Create dummy .env if it does not exist (since it is gitignored but declared in pubspec)
-          if [ ! -f "${GITHUB_WORKSPACE}/.env" ]; then
-            echo "Creating dummy .env from .env.example..."
+          # Create .env file from secrets or fallback to .env.example
+          echo "Creando archivo .env..."
+          if [ -n "${{ secrets.SUPABASE_URL }}" ]; then
+            echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" > "${GITHUB_WORKSPACE}/.env"
+            echo "SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}" >> "${GITHUB_WORKSPACE}/.env"
+            echo "Secretos de Supabase inyectados correctamente."
+          else
+            echo "Secrets no configurados, usando .env.example como fallback..."
             if [ -f "${GITHUB_WORKSPACE}/.env.example" ]; then
               cp "${GITHUB_WORKSPACE}/.env.example" "${GITHUB_WORKSPACE}/.env"
             else
