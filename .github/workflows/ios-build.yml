@@ -81,6 +81,12 @@ jobs:
         if: steps.detect.outputs.type == 'flutter'
         run: flutter pub get
 
+      - name: Configure iOS Widget Target
+        if: steps.detect.outputs.type == 'flutter'
+        run: |
+          gem install xcodeproj --no-document
+          ruby ios/add_widget_extension.rb
+
       - name: Setup Node.js
         if: steps.detect.outputs.type == 'reactnative' || steps.detect.outputs.type == 'expo'
         uses: actions/setup-node@v4
