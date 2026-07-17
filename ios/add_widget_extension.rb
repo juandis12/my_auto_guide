@@ -33,6 +33,7 @@ widget_target.source_build_phase.add_file_reference(swift_ref)
 
 # 4. Configure build settings for Debug and Release configurations
 widget_target.build_configurations.each do |config|
+  config.build_settings['PRODUCT_NAME'] = 'RunnerWidget'
   config.build_settings['PRODUCT_BUNDLE_IDENTIFIER'] = "com.example.myAutoGuide.RunnerWidget"
   config.build_settings['CODE_SIGN_ENTITLEMENTS'] = "RunnerWidget/RunnerWidget.entitlements"
   config.build_settings['INFOPLIST_FILE'] = "RunnerWidget/Info.plist"
@@ -40,6 +41,8 @@ widget_target.build_configurations.each do |config|
   config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '14.0'
   config.build_settings['TARGETED_DEVICE_FAMILY'] = '1,2'
   config.build_settings['LD_RUNPATH_SEARCH_PATHS'] = '$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks'
+  config.build_settings['SKIP_INSTALL'] = 'YES'
+  config.build_settings['WRAPPER_EXTENSION'] = 'appex'
 end
 
 # 5. Link Widget Target as dependency in the main 'Runner' target
