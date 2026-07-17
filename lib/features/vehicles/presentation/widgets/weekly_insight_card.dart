@@ -55,18 +55,25 @@ class WeeklyInsightCard extends StatelessWidget {
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [
-                  Colors.white.withOpacity(0.08),
-                  Colors.white.withOpacity(0.02),
-                ],
+                colors: isDark
+                    ? [
+                        Colors.white.withOpacity(0.08),
+                        Colors.white.withOpacity(0.02),
+                      ]
+                    : [
+                        Colors.black.withOpacity(0.03),
+                        Colors.black.withOpacity(0.01),
+                      ],
               ),
               border: Border.all(
-                color: Colors.white.withOpacity(0.15),
+                color: isDark
+                    ? Colors.white.withOpacity(0.15)
+                    : Colors.black.withOpacity(0.08),
                 width: 1.0,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.15),
+                  color: Colors.black.withOpacity(isDark ? 0.15 : 0.05),
                   blurRadius: 16,
                   offset: const Offset(0, 8),
                 ),

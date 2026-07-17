@@ -49,10 +49,11 @@ class AchievementsCard extends StatelessWidget {
         hasLongRoute: stats.aiAnalytics.intensity == 'Alta');
 
     final isIOS = Theme.of(context).platform == TargetPlatform.iOS;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return PerformanceGuard.adaptiveBlur(
       borderRadius: BorderRadius.circular(24),
       sigma: isIOS ? 15.0 : 5.0,
-      fallbackColor: Theme.of(context).brightness == Brightness.dark
+      fallbackColor: isDark
           ? Colors.white.withOpacity(0.05)
           : Colors.black.withOpacity(0.02),
       child: Container(
@@ -63,18 +64,25 @@ class AchievementsCard extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [
-                    Colors.white.withOpacity(0.08),
-                    Colors.white.withOpacity(0.02),
-                  ],
+                  colors: isDark
+                      ? [
+                          Colors.white.withOpacity(0.08),
+                          Colors.white.withOpacity(0.02),
+                        ]
+                      : [
+                          Colors.black.withOpacity(0.03),
+                          Colors.black.withOpacity(0.01),
+                        ],
                 ),
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.15),
+                  color: isDark
+                      ? Colors.white.withOpacity(0.15)
+                      : Colors.black.withOpacity(0.08),
                   width: 1.0,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.15),
+                    color: Colors.black.withOpacity(isDark ? 0.15 : 0.05),
                     blurRadius: 16,
                     offset: const Offset(0, 8),
                   ),

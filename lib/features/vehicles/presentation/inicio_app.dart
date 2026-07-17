@@ -1056,7 +1056,10 @@ class _InicioAppState extends State<InicioApp> {
             pctTecno: _pctTecno,
           );
 
-          return SingleChildScrollView(
+          final isIOS = Theme.of(context).platform == TargetPlatform.iOS;
+          final isDark = Theme.of(context).brightness == Brightness.dark;
+
+          final mainContent = SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1107,18 +1110,25 @@ class _InicioAppState extends State<InicioApp> {
                                 gradient: LinearGradient(
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
-                                  colors: [
-                                    Colors.white.withOpacity(0.08),
-                                    Colors.white.withOpacity(0.02),
-                                  ],
+                                  colors: isDark
+                                      ? [
+                                          Colors.white.withOpacity(0.08),
+                                          Colors.white.withOpacity(0.02),
+                                        ]
+                                      : [
+                                          Colors.black.withOpacity(0.03),
+                                          Colors.black.withOpacity(0.01),
+                                        ],
                                 ),
                                 border: Border.all(
-                                  color: Colors.white.withOpacity(0.15),
+                                  color: isDark
+                                      ? Colors.white.withOpacity(0.15)
+                                      : Colors.black.withOpacity(0.08),
                                   width: 1.0,
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.15),
+                                    color: Colors.black.withOpacity(isDark ? 0.15 : 0.05),
                                     blurRadius: 16,
                                     offset: const Offset(0, 8),
                                   ),
@@ -1350,6 +1360,52 @@ class _InicioAppState extends State<InicioApp> {
               ],
             ),
           );
+
+          if (isIOS) {
+            return Stack(
+              children: [
+                Positioned(
+                  top: -80,
+                  left: -80,
+                  child: Container(
+                    width: 280,
+                    height: 280,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: bTheme.primaryColor.withOpacity(isDark ? 0.15 : 0.1),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 350,
+                  right: -100,
+                  child: Container(
+                    width: 320,
+                    height: 320,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.blueAccent.withOpacity(isDark ? 0.12 : 0.08),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  bottom: 100,
+                  left: -120,
+                  child: Container(
+                    width: 380,
+                    height: 380,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.purpleAccent.withOpacity(isDark ? 0.1 : 0.06),
+                    ),
+                  ),
+                ),
+                mainContent,
+              ],
+            );
+          }
+
+          return mainContent;
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
