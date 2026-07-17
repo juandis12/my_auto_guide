@@ -45,5 +45,17 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Necesitamos acceso a tu ubicación para calcular las rutas y el consumo en tiempo real.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Necesitamos acceso a tu ubicación siempre para registrar tus trayectos y consumos en segundo plano incluso con la pantalla apagada.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Necesitamos acceso a tu ubicación siempre para registrar tus trayectos y consumos en segundo plano incluso con la pantalla apagada.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>location</string>
+		<string>fetch</string>
+		<string>processing</string>
+	</array>
 </dict>
 </plist>

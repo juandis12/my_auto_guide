@@ -59,6 +59,9 @@ import '../../marketplace/presentation/marketplace_talleres_screen.dart';
 import '../../ai_bot/presentation/ai_chat_screen.dart';
 import '../../../core/logic/performance_guard.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:share_plus/share_plus.dart';
+import 'Agregar_vehiculo.dart';
+import 'Agregar_carro.dart';
 
 // Modelos Refactorizados
 import '../domain/models/vehicle_analytics.dart';
@@ -234,6 +237,190 @@ class _InicioAppState extends State<InicioApp> {
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => const CarRentalLoginScreen()),
       (route) => false,
+    );
+  }
+
+  Future<void> _compartirVehiculo(Map<String, dynamic> v, double healthIndex) async {
+    final String brand = (v['marca'] as String? ?? '').toUpperCase();
+    final String model = v['modelo'] as String? ?? '';
+    final String nickname = v['apodo'] as String? ?? '';
+    final dynamic kms = v['kms'] ?? 0;
+    
+    final text = '🚗 ¡Te comparto el estado de mi vehículo en My Auto Guide! 🏍️\n\n'
+        '• Apodo: $nickname\n'
+        '• Marca y Modelo: $brand $model\n'
+        '• Kilometraje: $kms KM\n'
+        '• Índice de Salud (ISH): ${healthIndex.toStringAsFixed(0)}%\n\n'
+        '¡Mantén tu vehículo al día y seguro con My Auto Guide!';
+        
+    await Share.share(text);
+  }
+
+  Future<void> _abrirGarajeSelector() async {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      builder: (ctx) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return Container(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Mi Garaje',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Outfit',
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.pop(ctx),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              FutureBuilder<List<Map<String, dynamic>>>(
+                future: SupabaseService().getVehicles(),
+                builder: (ctx, snap) {
+                  if (snap.connectionState != ConnectionState.done) {
+                    return const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  }
+                  if (snap.hasError) {
+                    return Center(child: Text('Error: ${snap.error}'));
+                  }
+                  final list = snap.data ?? [];
+                  if (list.isEmpty) {
+                    return const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Text('No tienes vehículos registrados.'),
+                      ),
+                    );
+                  }
+                  return ConstrainedBox(
+                    constraints: const BoxConstraints(maxHeight: 250),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: list.length,
+                      itemBuilder: (ctx, index) {
+                        final item = list[index];
+                        final id = item['id'] as String;
+                        final String brand = (item['marca'] as String? ?? '').toUpperCase();
+                        final String model = item['modelo'] as String? ?? '';
+                        final String nickname = item['apodo'] as String? ?? '';
+                        final isCurrent = id == widget.vehiculoId;
+
+                        return Card(
+                          elevation: 0,
+                          color: isCurrent
+                              ? Theme.of(context).primaryColor.withOpacity(0.1)
+                              : (isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.03)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            side: BorderSide(
+                              color: isCurrent
+                                  ? Theme.of(context).primaryColor
+                                  : Colors.transparent,
+                              width: 1.5,
+                            ),
+                          ),
+                          margin: const EdgeInsets.only(bottom: 8),
+                          child: ListTile(
+                            leading: const Icon(Icons.directions_car_filled_outlined),
+                            title: Text(
+                              nickname.isNotEmpty ? nickname : '$brand $model',
+                              style: const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            subtitle: Text('$brand $model • ${item['kms'] ?? 0} KM'),
+                            trailing: isCurrent
+                                ? const Icon(Icons.check_circle_rounded, color: Colors.green)
+                                : IconButton(
+                                    icon: const Icon(Icons.swap_horiz_rounded),
+                                    onPressed: () {
+                                      Navigator.pop(ctx); // Close sheet
+                                      // Switch vehicle!
+                                      Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => InicioApp(vehiculoId: id),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () {
+                        Navigator.pop(ctx);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const AgregarVehiculoScreen(),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.motorcycle_rounded),
+                      label: const Text('Agregar Moto'),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () {
+                        Navigator.pop(ctx);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const AgregarCarroScreen(),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.directions_car_rounded),
+                      label: const Text('Agregar Carro'),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -865,6 +1052,28 @@ class _InicioAppState extends State<InicioApp> {
         title: const Text('Inicio'),
         actions: [
           IconButton(
+            tooltip: 'Compartir vehículo',
+            icon: const Icon(Icons.share_rounded),
+            onPressed: () {
+              if (_cachedVehicleData != null) {
+                final double currentHealthIndex =
+                    VehicleHealthLogic.calculateHealthIndex(
+                  pctCadena: _pctCadena,
+                  pctFiltro: _pctFiltro,
+                  pctAceite: _pctAceite,
+                  pctSoat: _pctSoat,
+                  pctTecno: _pctTecno,
+                );
+                _compartirVehiculo(_cachedVehicleData!, currentHealthIndex);
+              }
+            },
+          ),
+          IconButton(
+            tooltip: 'Mi Garaje',
+            icon: const Icon(Icons.directions_car_rounded),
+            onPressed: _abrirGarajeSelector,
+          ),
+          IconButton(
               tooltip: 'Eliminar vehículo',
               icon: const Icon(Icons.delete),
               onPressed: () => _confirmarYEliminar(widget.vehiculoId)),
@@ -1145,8 +1354,13 @@ class _InicioAppState extends State<InicioApp> {
                           children: [
                             const SectionTitle(text: 'Documentos Legales'),
                             const SizedBox(height: 16),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            GridView.count(
+                              crossAxisCount: 2,
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              crossAxisSpacing: 12,
+                              mainAxisSpacing: 12,
+                              childAspectRatio: 1.35,
                               children: [
                                 DocTileInteractive(
                                     title: 'SOAT',
@@ -1159,7 +1373,7 @@ class _InicioAppState extends State<InicioApp> {
                                         : () =>
                                             unawaited(_openUrl(_soatSigned!))),
                                 DocTileInteractive(
-                                    title: 'Tecno',
+                                    title: 'Tecno mechanical',
                                     path: _tecnoSigned,
                                     icon: Icons.precision_manufacturing_rounded,
                                     onUpload: () => unawaited(
@@ -1170,7 +1384,7 @@ class _InicioAppState extends State<InicioApp> {
                                         : () =>
                                             unawaited(_openUrl(_tecnoSigned!))),
                                 DocTileInteractive(
-                                    title: 'Seguro',
+                                    title: 'Seguro Todo Riesgo',
                                     path: _seguroSigned,
                                     icon: Icons.verified_user_rounded,
                                     onUpload: () => unawaited(
@@ -1181,7 +1395,7 @@ class _InicioAppState extends State<InicioApp> {
                                         : () => unawaited(
                                             _openUrl(_seguroSigned!))),
                                 DocTileInteractive(
-                                    title: 'T. Propied',
+                                    title: 'T. de Propiedad',
                                     path: _propSigned,
                                     icon: Icons.article_rounded,
                                     onUpload: () => unawaited(

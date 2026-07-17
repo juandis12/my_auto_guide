@@ -89,6 +89,7 @@ class BackgroundNavService {
           activityType: ActivityType.automotiveNavigation,
           distanceFilter: 5,
           pauseLocationUpdatesAutomatically: false,
+          showBackgroundLocationIndicator: true,
         );
       } else {
         locationSettings = const LocationSettings(

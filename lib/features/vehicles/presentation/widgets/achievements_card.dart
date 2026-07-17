@@ -135,14 +135,53 @@ class AchievementsCard extends StatelessWidget {
                     final desc = m['description'] as String? ?? m['desc'] as String? ?? '';
                     return Tooltip(
                       message: desc,
-                      child: Container(
-                        margin: const EdgeInsets.only(right: 12),
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                            color: Colors.amber.withOpacity(0.15),
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.amber, width: 2)),
-                        child: Icon(_getIconData(iconName), color: Colors.amber, size: 24),
+                      child: GestureDetector(
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                              title: Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: Colors.amber.withOpacity(0.15),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(_getIconData(iconName), color: Colors.amber, size: 28),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Text(
+                                      m['label'] as String? ?? 'Logro de Conducción',
+                                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              content: Text(
+                                desc,
+                                style: const TextStyle(fontSize: 14, height: 1.5),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: const Text('¡Excelente!', style: TextStyle(fontWeight: FontWeight.bold)),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.only(right: 12),
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                              color: Colors.amber.withOpacity(0.15),
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.amber, width: 2)),
+                          child: Icon(_getIconData(iconName), color: Colors.amber, size: 24),
+                        ),
                       ),
                     );
                   }).toList())),
