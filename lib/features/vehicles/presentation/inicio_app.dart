@@ -62,6 +62,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:share_plus/share_plus.dart';
 import 'Agregar_vehiculo.dart';
 import 'Agregar_carro.dart';
+import '../../../core/services/supabase_service.dart';
 
 // Modelos Refactorizados
 import '../domain/models/vehicle_analytics.dart';
