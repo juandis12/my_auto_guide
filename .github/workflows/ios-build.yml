@@ -81,11 +81,15 @@ jobs:
         if: steps.detect.outputs.type == 'flutter'
         run: flutter pub get
 
-      - name: Configure iOS Widget Target
-        if: steps.detect.outputs.type == 'flutter'
-        run: |
-          gem install xcodeproj --no-document
-          ruby ios/add_widget_extension.rb
+      # NOTE: iOS Widget Extension is disabled in CI for now.
+      # flutter build ios manages the Xcode project internally and adding
+      # extra native targets via script causes "Multiple commands produce .appex"
+      # conflicts. The widget will be configured when building from Xcode on a Mac.
+      # - name: Configure iOS Widget Target
+      #   if: steps.detect.outputs.type == 'flutter'
+      #   run: |
+      #     gem install xcodeproj --no-document
+      #     ruby ios/add_widget_extension.rb
 
       - name: Setup Node.js
         if: steps.detect.outputs.type == 'reactnative' || steps.detect.outputs.type == 'expo'
