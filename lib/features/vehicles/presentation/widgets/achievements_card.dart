@@ -123,8 +123,10 @@ class AchievementsCard extends StatelessWidget {
                   physics: const BouncingScrollPhysics(),
                   child: Row(
                       children: medallas.map((m) {
+                    final iconName = m['icon'] as String? ?? '';
+                    final desc = m['description'] as String? ?? m['desc'] as String? ?? '';
                     return Tooltip(
-                      message: m['desc'],
+                      message: desc,
                       child: Container(
                         margin: const EdgeInsets.only(right: 12),
                         padding: const EdgeInsets.all(10),
@@ -132,7 +134,7 @@ class AchievementsCard extends StatelessWidget {
                             color: Colors.amber.withOpacity(0.15),
                             shape: BoxShape.circle,
                             border: Border.all(color: Colors.amber, width: 2)),
-                        child: Icon(m['icon'], color: Colors.amber, size: 24),
+                        child: Icon(_getIconData(iconName), color: Colors.amber, size: 24),
                       ),
                     );
                   }).toList())),
@@ -140,6 +142,31 @@ class AchievementsCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  IconData _getIconData(String name) {
+    switch (name) {
+      case 'verified':
+        return Icons.verified_rounded;
+      case 'gavel':
+        return Icons.gavel_rounded;
+      case 'settings_input_component':
+        return Icons.settings_input_component_rounded;
+      case 'map':
+        return Icons.map_rounded;
+      case 'eco':
+        return Icons.eco_rounded;
+      case 'savings':
+        return Icons.savings_rounded;
+      case 'cloud_done':
+        return Icons.cloud_done_rounded;
+      case 'shield':
+        return Icons.shield_rounded;
+      case 'terrain':
+        return Icons.terrain_rounded;
+      default:
+        return Icons.stars_rounded;
+    }
   }
 }
 

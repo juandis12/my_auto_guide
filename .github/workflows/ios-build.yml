@@ -163,7 +163,10 @@ jobs:
           if [ -n "${{ secrets.SUPABASE_URL }}" ]; then
             echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" > "${GITHUB_WORKSPACE}/.env"
             echo "SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}" >> "${GITHUB_WORKSPACE}/.env"
-            echo "Secretos de Supabase inyectados correctamente."
+            if [ -n "${{ secrets.GEMINI_API_KEY }}" ]; then
+              echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" >> "${GITHUB_WORKSPACE}/.env"
+            fi
+            echo "Secretos inyectados correctamente."
           else
             echo "Secrets no configurados, usando .env.example como fallback..."
             if [ -f "${GITHUB_WORKSPACE}/.env.example" ]; then

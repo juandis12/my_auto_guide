@@ -178,7 +178,7 @@ class _InicioAppState extends State<InicioApp> {
   }
 
   Future<void> _recalculateAI(Map<String, dynamic> v) async {
-    final int kms = v['kms'] ?? 0;
+    final int kms = _asDouble(v['kms']).toInt();
     final marca = (v['marca'] as String? ?? '').toUpperCase();
     final bool isCarLocal = marca.contains('CARRO') || (v['apodo'] as String? ?? '').toUpperCase().contains('CARRO');
 
