@@ -48,17 +48,41 @@ class AchievementsCard extends StatelessWidget {
         consistency: stats.aiAnalytics.consistency,
         hasLongRoute: stats.aiAnalytics.intensity == 'Alta');
 
+    final isIOS = Theme.of(context).platform == TargetPlatform.iOS;
     return PerformanceGuard.adaptiveBlur(
       borderRadius: BorderRadius.circular(24),
+      sigma: isIOS ? 15.0 : 5.0,
       fallbackColor: Theme.of(context).brightness == Brightness.dark
           ? Colors.white.withOpacity(0.05)
           : Colors.black.withOpacity(0.02),
       child: Container(
         padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(24),
-            border:
-                Border.all(color: brandTheme.primaryColor.withOpacity(0.1))),
+        decoration: isIOS
+            ? BoxDecoration(
+                borderRadius: BorderRadius.circular(24),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Colors.white.withOpacity(0.08),
+                    Colors.white.withOpacity(0.02),
+                  ],
+                ),
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.15),
+                  width: 1.0,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.15),
+                    blurRadius: 16,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              )
+            : BoxDecoration(
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: brandTheme.primaryColor.withOpacity(0.1))),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -71,18 +95,18 @@ class AchievementsCard extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                      color: Color(int.parse(level['color'])).withOpacity(0.2),
+                      color: Color(level['color']).withOpacity(0.2),
                       borderRadius: BorderRadius.circular(12),
                       border:
-                          Border.all(color: Color(int.parse(level['color'])))),
+                          Border.all(color: Color(level['color']))),
                   child: Row(children: [
                     Icon(Icons.workspace_premium,
-                        size: 16, color: Color(int.parse(level['color']))),
+                        size: 16, color: Color(level['color'])),
                     const SizedBox(width: 6),
                     Text('Nivel ${level['name']}',
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: Color(int.parse(level['color'])),
+                            color: Color(level['color']),
                             fontSize: 12))
                   ]),
                 ),

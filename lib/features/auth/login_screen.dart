@@ -50,8 +50,12 @@ class _CarRentalLoginScreenState extends State<CarRentalLoginScreen> {
   @override
   void initState() {
     super.initState();
-    _checkBiometrics();
-    _bootstrapSession();
+    _initSession();
+  }
+
+  Future<void> _initSession() async {
+    await _checkBiometrics();
+    await _bootstrapSession();
   }
 
   Future<void> _checkBiometrics() async {

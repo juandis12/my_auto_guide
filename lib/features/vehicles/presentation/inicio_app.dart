@@ -1094,17 +1094,41 @@ class _InicioAppState extends State<InicioApp> {
                   child: RepaintBoundary(
                     child: PerformanceGuard.adaptiveBlur(
                       borderRadius: BorderRadius.circular(24),
+                      sigma: Theme.of(context).platform == TargetPlatform.iOS ? 15.0 : 5.0,
                       fallbackColor:
                           Theme.of(context).brightness == Brightness.dark
                               ? Colors.white.withOpacity(0.08)
                               : Colors.black.withOpacity(0.03),
                       child: Container(
                         padding: const EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                            color: Colors.transparent,
-                            borderRadius: BorderRadius.circular(24),
-                            border: Border.all(
-                                color: bTheme.primaryColor.withOpacity(0.1))),
+                        decoration: Theme.of(context).platform == TargetPlatform.iOS
+                            ? BoxDecoration(
+                                borderRadius: BorderRadius.circular(24),
+                                gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    Colors.white.withOpacity(0.08),
+                                    Colors.white.withOpacity(0.02),
+                                  ],
+                                ),
+                                border: Border.all(
+                                  color: Colors.white.withOpacity(0.15),
+                                  width: 1.0,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.15),
+                                    blurRadius: 16,
+                                    offset: const Offset(0, 8),
+                                  ),
+                                ],
+                              )
+                            : BoxDecoration(
+                                color: Colors.transparent,
+                                borderRadius: BorderRadius.circular(24),
+                                border: Border.all(
+                                    color: bTheme.primaryColor.withOpacity(0.1))),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1227,18 +1251,26 @@ class _InicioAppState extends State<InicioApp> {
                 const SizedBox(height: 24),
                 _StaggeredFadeIn(
                   delay: const Duration(milliseconds: 500),
-                  child: WeeklyInsightCard(
-                    pctCadena: _pctCadena,
-                    pctFiltro: _pctFiltro,
-                    pctAceite: _pctAceite,
-                    pctSoat: _pctSoat,
-                    pctTecno: _pctTecno,
-                    brandTheme: bTheme,
-                    stats: _weeklyStatsModel,
-                    predictions: _predictionsList,
-                    modelName: modelo,
-                    onHistoryTap: _abrirHistorialRutas,
-                    isLoading: _loadingWeekly,
+                  child: PerformanceGuard.adaptiveBlur(
+                    borderRadius: BorderRadius.circular(24),
+                    sigma: Theme.of(context).platform == TargetPlatform.iOS ? 15.0 : 5.0,
+                    fallbackColor:
+                        Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white.withOpacity(0.08)
+                            : Colors.white,
+                    child: WeeklyInsightCard(
+                      pctCadena: _pctCadena,
+                      pctFiltro: _pctFiltro,
+                      pctAceite: _pctAceite,
+                      pctSoat: _pctSoat,
+                      pctTecno: _pctTecno,
+                      brandTheme: bTheme,
+                      stats: _weeklyStatsModel,
+                      predictions: _predictionsList,
+                      modelName: modelo,
+                      onHistoryTap: _abrirHistorialRutas,
+                      isLoading: _loadingWeekly,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 24),

@@ -45,19 +45,44 @@ class WeeklyInsightCard extends StatelessWidget {
     final efficiencyScore = stats.aiAnalytics.careScore; // Simplified for now
     final savingsCOP = stats.aiAnalytics.avgDailyKm * 0.1; // Ejemplo
 
+    final isIOS = Theme.of(context).platform == TargetPlatform.iOS;
+
     return Container(
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-          color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: brandTheme.primaryColor.withOpacity(0.1)),
-          boxShadow: [
-            if (!PerformanceGuard().isLowEnd)
-              BoxShadow(
-                  color: Colors.black.withOpacity(isDark ? 0.3 : 0.08),
-                  blurRadius: 24,
-                  offset: const Offset(0, 8))
-          ]),
+      decoration: isIOS
+          ? BoxDecoration(
+              borderRadius: BorderRadius.circular(24),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Colors.white.withOpacity(0.08),
+                  Colors.white.withOpacity(0.02),
+                ],
+              ),
+              border: Border.all(
+                color: Colors.white.withOpacity(0.15),
+                width: 1.0,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.15),
+                  blurRadius: 16,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            )
+          : BoxDecoration(
+              color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: brandTheme.primaryColor.withOpacity(0.1)),
+              boxShadow: [
+                if (!PerformanceGuard().isLowEnd)
+                  BoxShadow(
+                      color: Colors.black.withOpacity(isDark ? 0.3 : 0.08),
+                      blurRadius: 24,
+                      offset: const Offset(0, 8))
+              ]),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,

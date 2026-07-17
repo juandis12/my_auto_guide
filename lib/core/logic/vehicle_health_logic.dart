@@ -57,10 +57,10 @@ class VehicleHealthLogic {
 
   /// Retorna el Nivel de Usuario basado en el Score.
   static Map<String, dynamic> getUserLevel(double healthIndex) {
-    if (healthIndex >= 90) return {'name': 'Diamante', 'color': '0xFF00E5FF'};
-    if (healthIndex >= 75) return {'name': 'Oro', 'color': '0xFFFFD700'};
-    if (healthIndex >= 50) return {'name': 'Plata', 'color': '0xFFC0C0C0'};
-    return {'name': 'Bronce', 'color': '0xFFCD7F32'};
+    if (healthIndex >= 90) return {'name': 'Diamante', 'color': 0xFF00E5FF};
+    if (healthIndex >= 75) return {'name': 'Oro', 'color': 0xFFFFD700};
+    if (healthIndex >= 50) return {'name': 'Plata', 'color': 0xFFC0C0C0};
+    return {'name': 'Bronce', 'color': 0xFFCD7F32};
   }
 
   /// Retorna una descripción técnica del estado enfocada en el reporte semanal.

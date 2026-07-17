@@ -151,11 +151,14 @@ class _AgregarCarroScreenState extends State<AgregarCarroScreen> {
             right: 0,
             child: Container(
               height: headerHeight,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/lineasfondo.png'),
+                  image: const AssetImage('assets/lineasfondo.png'),
                   fit: BoxFit.cover,
-                  alignment: Alignment(-0.20, -0.05),
+                  alignment: const Alignment(-0.20, -0.05),
+                  colorFilter: Theme.of(context).brightness == Brightness.dark
+                      ? ColorFilter.mode(Colors.black.withOpacity(0.85), BlendMode.darken)
+                      : null,
                 ),
               ),
             ),
