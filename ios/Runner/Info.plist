@@ -59,5 +59,9 @@
 	</array>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Necesitamos acceso a Face ID para autenticarte de forma rápida y segura en la aplicación.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Necesitamos acceso a la cámara para tomar las fotos en 360 grados de tu motocicleta.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Necesitamos acceso al micrófono para el correcto funcionamiento de la cámara.</string>
 </dict>
 </plist>

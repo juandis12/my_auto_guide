@@ -63,31 +63,32 @@ class _CarRentalLoginScreenState extends State<CarRentalLoginScreen> {
     if (mounted) setState(() => canUseBiometrics = available);
   }
 
-  // Si hay sesión vigente, salta el login y navega donde corresponda
+  // Carga preferencias pero no autologuea de forma automática en el arranque
   Future<void> _bootstrapSession() async {
     final prefs = await SharedPreferences.getInstance();
     final shouldRemember = prefs.getBool('remember_me') ?? false;
     
     if (mounted) setState(() => rememberMe = shouldRemember);
 
-    if (_auth.currentUser == null) return;
-    if (!shouldRemember) return; // Si no marcó recordar, no auto-logueamos al inicio
-
-    // Si hay sesión y se marcó recordar, probamos biometría si está disponible
-    if (canUseBiometrics) {
-      final authenticated = await _biometric.authenticate();
-      if (!authenticated) return; // Se queda en la pantalla de login para meter clave manual
+    // Rellenar email del usuario actual si existe sesión previa
+    if (_auth.currentUser != null && _auth.currentUser!.email != null) {
+      emailController.text = _auth.currentUser!.email!;
     }
-
-    if (!mounted) return;
-    await _goToDestination(); 
   }
 
   Future<void> _loginAlternative() async {
     if (!canUseBiometrics) return;
     final authenticated = await _biometric.authenticate();
-    if (authenticated && _auth.currentUser != null) {
-      await _goToDestination();
+    if (authenticated) {
+      if (_auth.currentUser != null) {
+        await _goToDestination();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Por favor, inicia sesión con correo y contraseña primero para habilitar el acceso biométrico.'),
+          ),
+        );
+      }
     }
   }
 

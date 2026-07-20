@@ -95,6 +95,8 @@ class SupabaseService {
     required String apodo,
     required int kms,
     required String imagePath,
+    String placa = '',
+    String cedula = '',
   }) async {
     return await client
         .from('vehiculos')
@@ -105,6 +107,8 @@ class SupabaseService {
           'apodo': apodo,
           'kms': kms,
           'image_path': imagePath,
+          'placa': placa,
+          'cedula': cedula,
         })
         .select()
         .single();

@@ -49,6 +49,8 @@ class _AgregarCarroScreenState extends State<AgregarCarroScreen> {
   final TextEditingController _kmsController = TextEditingController();
   final TextEditingController _modeloController = TextEditingController();
   final TextEditingController _apodoController = TextEditingController();
+  final TextEditingController _placaController = TextEditingController();
+  final TextEditingController _cedulaController = TextEditingController();
 
   final supabase = Supabase.instance.client;
 
@@ -70,6 +72,8 @@ class _AgregarCarroScreenState extends State<AgregarCarroScreen> {
     _kmsController.dispose();
     _modeloController.dispose();
     _apodoController.dispose();
+    _placaController.dispose();
+    _cedulaController.dispose();
     super.dispose();
   }
 
@@ -95,12 +99,27 @@ class _AgregarCarroScreenState extends State<AgregarCarroScreen> {
 
     final kms = int.tryParse(_kmsController.text.trim()) ?? 0;
     final apodo = _apodoController.text.trim();
+    final placa = _placaController.text.trim().toUpperCase();
+    final cedula = _cedulaController.text.trim();
     final modelo = modelosDeMarca.isEmpty
         ? ''
         : modelosDeMarca[indexModelo]['modelo']!;
     final imagePath = modelosDeMarca.isEmpty
         ? ''
         : modelosDeMarca[indexModelo]['img']!;
+
+    if (placa.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Por favor ingresa la placa del carro')),
+      );
+      return;
+    }
+    if (cedula.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Por favor ingresa la cédula del propietario')),
+      );
+      return;
+    }
 
     if (modelo.isEmpty || imagePath.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -117,6 +136,8 @@ class _AgregarCarroScreenState extends State<AgregarCarroScreen> {
         apodo: apodo,
         kms: kms,
         imagePath: imagePath,
+        placa: placa,
+        cedula: cedula,
       );
 
       if (!mounted) return;
@@ -275,6 +296,8 @@ class _AgregarCarroScreenState extends State<AgregarCarroScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
+                _buildField(_placaController, 'Placa del carro', Icons.tag),
+                _buildField(_cedulaController, 'Cédula del propietario', Icons.badge),
                 _buildField(_kmsController, 'Kilometraje', Icons.speed),
                 _buildField(
                     _modeloController, 'Modelo (Año)', Icons.calendar_today),

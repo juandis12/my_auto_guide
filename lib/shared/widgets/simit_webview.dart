@@ -221,6 +221,142 @@ class _SimitWebViewScreenState extends State<SimitWebViewScreen> {
     );
   }
 
+  Future<void> _escanearPagina() async {
+    setState(() => _isLoading = true);
+    try {
+      final Object resultObj = await _controller.runJavaScriptReturningResult(r'''
+        (function() {
+          var totalAmount = 0.0;
+          var finesCount = 0;
+          var category = 'Tránsito';
+          
+          var bodyText = document.body.innerText || '';
+          
+          // Expresión regular para pesos colombianos (ej. $1.500.000 o $ 1200000)
+          var currencyRegex = /\$\s*([0-9]{1,3}(\.[0-9]{3})+|[0-9]{4,10})/g;
+          var match;
+          var foundAmounts = [];
+          while ((match = currencyRegex.exec(bodyText)) !== null) {
+            var numStr = match[1].replace(/\./g, '').trim();
+            var val = parseFloat(numStr);
+            if (!isNaN(val) && val > 10000) { // Ignorar cobros menores a 10 mil pesos
+              foundAmounts.push(val);
+            }
+          }
+          
+          if (foundAmounts.length > 0) {
+            totalAmount = Math.max.apply(null, foundAmounts);
+          }
+          
+          var tables = document.querySelectorAll('table');
+          var rowCount = 0;
+          tables.forEach(function(table) {
+            var rows = table.querySelectorAll('tbody tr');
+            if (rows.length > 0) {
+              rowCount += rows.length;
+            }
+          });
+          
+          var countRegex = /(total\s+)?comparendos?\s*:\s*(\d+)/i;
+          var countMatch = bodyText.match(countRegex);
+          if (countMatch && countMatch[2]) {
+            finesCount = parseInt(countMatch[2]);
+          } else if (rowCount > 0) {
+            finesCount = rowCount;
+          } else if (totalAmount > 0) {
+            finesCount = 1;
+          }
+          
+          if (bodyText.toLowerCase().indexOf('fotomulta') !== -1 || 
+              bodyText.toLowerCase().indexOf('foto dete') !== -1 || 
+              bodyText.toLowerCase().indexOf('electrónica') !== -1) {
+            category = 'Foto-Multa';
+          }
+          
+          return JSON.stringify({
+            "finesCount": finesCount,
+            "totalAmount": totalAmount,
+            "category": category
+          });
+        })()
+      ''');
+
+      // Algunos motores de WebView devuelven el resultado formateado como un string con comillas dobles escapadas
+      String resultStr = resultObj.toString();
+      if (resultStr.startsWith('"') && resultStr.endsWith('"')) {
+        resultStr = resultStr.substring(1, resultStr.length - 1)
+            .replaceAll('\\"', '"')
+            .replaceAll('\\\\', '\\');
+      }
+
+      final Map<String, dynamic> data = jsonDecode(resultStr);
+      final int count = data['finesCount'] as int? ?? 0;
+      final double amount = (data['totalAmount'] as num? ?? 0.0).toDouble();
+      final String category = data['category'] as String? ?? 'Tránsito';
+
+      setState(() {
+        _isLoading = false;
+        _finesCount = count;
+        _totalAmount = amount;
+        _simitStatus = count > 0 ? 'has_fines' : 'clean';
+        _finesDetails = [
+          {
+            'cantidad': count,
+            'valor_total': amount,
+            'categoria': category,
+            'fecha_verificacion': DateTime.now().toIso8601String(),
+          }
+        ];
+      });
+
+      if (count > 0 || amount > 0) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('🔍 Escaneo completado: Se encontraron $count comparendos por \$${amount.round()} COP.'),
+            backgroundColor: Colors.orangeAccent,
+          ),
+        );
+        await _guardarResultados();
+      } else {
+        // No se encontraron comparendos evidentes en pantalla
+        final bool? clean = await showDialog<bool>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: const Text('Resultado del Escaneo'),
+            content: const Text('No se encontraron comparendos ni montos pendientes de pago visibles en la página.\\n\\n¿Quieres marcar tu estado SIMIT como "Libre de multas"?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, false),
+                child: const Text('Cancelar'),
+              ),
+              FilledButton(
+                onPressed: () => Navigator.pop(ctx, true),
+                child: const Text('Sí, libre de multas'),
+              ),
+            ],
+          ),
+        );
+        if (clean == true) {
+          setState(() {
+            _simitStatus = 'clean';
+            _finesCount = 0;
+            _totalAmount = 0.0;
+            _finesDetails = [];
+          });
+          await _guardarResultados();
+        }
+      }
+    } catch (e) {
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('❌ No se pudo auto-escanear la página: $e. Inténtalo manualmente.'),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -326,6 +462,18 @@ class _SimitWebViewScreenState extends State<SimitWebViewScreen> {
                         ],
                       ),
                       const Divider(height: 16),
+                      LiquidGlassButton(
+                        icon: Icons.qr_code_scanner_rounded,
+                        label: 'Escanear Página (Auto)',
+                        width: double.infinity,
+                        height: 44,
+                        customColors: [
+                          Colors.blue.shade900.withOpacity(0.6),
+                          Colors.purple.shade900.withOpacity(0.4),
+                        ],
+                        onTap: _escanearPagina,
+                      ),
+                      const SizedBox(height: 12),
                       Row(
                         children: [
                           Expanded(
