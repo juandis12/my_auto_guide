@@ -376,7 +376,7 @@ class _Captura360ScreenState extends State<Captura360Screen> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   decoration: BoxDecoration(
-                    color: Colors.black80,
+                    color: Colors.black.withOpacity(0.8),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(color: isAligned ? Colors.green : Colors.white24, width: 1.5),
                   ),

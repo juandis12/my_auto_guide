@@ -335,7 +335,7 @@ class _SimitWebViewScreenState extends State<SimitWebViewScreen> {
                               height: 42,
                               customColors: [
                                 Colors.green.shade800.withOpacity(0.5),
-                                Colors.emerald.shade900.withOpacity(0.3),
+                                const Color(0xFF064E3B).withOpacity(0.3),
                               ],
                               onTap: _isSaving
                                   ? () {}
