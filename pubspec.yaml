@@ -50,6 +50,8 @@ dependencies:
   # Imágenes
   image_picker: ^1.1.0
   vision_gallery_saver: ^3.0.0
+  camera: ^0.11.0
+  sensors_plus: ^6.1.1
 
   # Almacenamiento local
   shared_preferences: ^2.3.2

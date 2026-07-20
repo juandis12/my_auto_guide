@@ -58,6 +58,7 @@ import '../../navigation/presentation/historial_rutas_screen.dart';
 import '../../marketplace/presentation/marketplace_talleres_screen.dart';
 import '../../../shared/widgets/simit_webview.dart';
 import '../../../shared/widgets/liquid_glass_fab.dart';
+import 'captura_360_screen.dart';
 import '../../ai_bot/presentation/ai_chat_screen.dart';
 import '../../../core/logic/performance_guard.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -1460,12 +1461,28 @@ class _InicioAppState extends State<InicioApp> {
                 StaggeredFadeIn(
                   delay: const Duration(milliseconds: 100),
                   child: _MainHero(
+                    vehicleId: widget.vehiculoId,
                     imagePath: imagePath,
                     logoPath: logoPath,
                     modelo: modelo,
                     kms: kms,
                     brandTheme: bTheme,
                     healthIndex: currentHealthIndex,
+                    has360: v['has_360_view'] as bool? ?? false,
+                    images360: List<String>.from(v['images_360_urls'] ?? []),
+                    onCapture360: () async {
+                      final res = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => Captura360Screen(vehiculoId: widget.vehiculoId),
+                        ),
+                      );
+                      if (res == true) {
+                        setState(() {
+                          _cachedVehicleData = null; // forzar recarga
+                        });
+                      }
+                    },
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -1829,20 +1846,29 @@ class _InicioAppState extends State<InicioApp> {
 }
 
 class _MainHero extends StatelessWidget {
+  final String vehicleId;
   final String imagePath;
   final String? logoPath;
   final String modelo;
   final String kms;
   final BrandTheme brandTheme;
   final double healthIndex;
+  final bool has360;
+  final List<String> images360;
+  final VoidCallback onCapture360;
 
-  const _MainHero(
-      {required this.imagePath,
-      required this.logoPath,
-      required this.modelo,
-      required this.kms,
-      required this.brandTheme,
-      required this.healthIndex});
+  const _MainHero({
+    required this.vehicleId,
+    required this.imagePath,
+    required this.logoPath,
+    required this.modelo,
+    required this.kms,
+    required this.brandTheme,
+    required this.healthIndex,
+    required this.onCapture360,
+    this.has360 = false,
+    this.images360 = const [],
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -1922,16 +1948,34 @@ class _MainHero extends StatelessWidget {
                   ),
                 ),
                 Expanded(
-                    flex: 4,
-                    child: Hero(
+                  flex: 4,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Hero(
                         tag: 'vehicle_main_image',
-                        child: imagePath.isNotEmpty
-                            ? Image.asset(imagePath,
-                                fit: BoxFit.contain, cacheWidth: 800)
-                            : Icon(Icons.motorcycle,
-                                size: 100,
-                                color:
-                                    brandTheme.primaryColor.withOpacity(0.2)))),
+                        child: has360 && images360.isNotEmpty
+                            ? Interactive360Spinner(imageUrls: images360)
+                            : (imagePath.isNotEmpty
+                                ? Image.asset(imagePath,
+                                    fit: BoxFit.contain, cacheWidth: 800)
+                                : Icon(Icons.motorcycle,
+                                    size: 100,
+                                    color: brandTheme.primaryColor.withOpacity(0.2))),
+                      ),
+                      Positioned(
+                        top: 0,
+                        right: 0,
+                        child: LiquidGlassIconButton(
+                          icon: Icons.camera_alt,
+                          onTap: onCapture360,
+                          size: 32,
+                          iconSize: 15,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
@@ -2105,6 +2149,75 @@ class _ScaleButtonState extends State<_ScaleButton> {
             scale: _isPressed ? 0.96 : 1.0,
             duration: const Duration(milliseconds: 100),
             child: widget.child));
+  }
+}
+
+class Interactive360Spinner extends StatefulWidget {
+  final List<String> imageUrls;
+  const Interactive360Spinner({super.key, required this.imageUrls});
+
+  @override
+  State<Interactive360Spinner> createState() => _Interactive360SpinnerState();
+}
+
+class _Interactive360SpinnerState extends State<Interactive360Spinner> {
+  int _currentIndex = 0;
+  double _dragStart = 0.0;
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.imageUrls.isEmpty) return const SizedBox.shrink();
+
+    return GestureDetector(
+      onHorizontalDragStart: (details) {
+        _dragStart = details.localPosition.dx;
+      },
+      onHorizontalDragUpdate: (details) {
+        double offset = details.localPosition.dx - _dragStart;
+        // Sensibilidad de la rotación
+        int change = (offset / 12).round();
+        if (change != 0) {
+          setState(() {
+            _currentIndex = (_currentIndex - change) % widget.imageUrls.length;
+            if (_currentIndex < 0) _currentIndex += widget.imageUrls.length;
+          });
+          _dragStart = details.localPosition.dx;
+        }
+      },
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Image.network(
+            widget.imageUrls[_currentIndex],
+            fit: BoxFit.contain,
+            loadingBuilder: (context, child, loadingProgress) {
+              if (loadingProgress == null) return child;
+              return const Center(child: CircularProgressIndicator());
+            },
+            errorBuilder: (context, error, stackTrace) => const Icon(Icons.broken_image, size: 60),
+          ),
+          Positioned(
+            bottom: 4,
+            right: 4,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.black54,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.threed_rotation, color: Colors.white, size: 12),
+                  SizedBox(width: 4),
+                  Text('360°', style: TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold)),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 

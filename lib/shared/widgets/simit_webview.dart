@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'liquid_glass_fab.dart';
 
 class SimitWebViewScreen extends StatefulWidget {
   final String placa;
@@ -182,12 +183,15 @@ class _SimitWebViewScreenState extends State<SimitWebViewScreen> {
             ),
           ),
           actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: const Text('Cancelar'),
+            LiquidGlassButton(
+              label: 'Cancelar',
+              onTap: () => Navigator.pop(ctx),
+              width: 100,
+              height: 38,
             ),
-            FilledButton(
-              onPressed: () {
+            LiquidGlassButton(
+              label: 'Guardar',
+              onTap: () {
                 final count = int.tryParse(countCtrl.text) ?? 0;
                 final amount = double.tryParse(amountCtrl.text) ?? 0.0;
 
@@ -208,7 +212,8 @@ class _SimitWebViewScreenState extends State<SimitWebViewScreen> {
                 Navigator.pop(ctx);
                 _guardarResultados();
               },
-              child: const Text('Guardar'),
+              width: 100,
+              height: 38,
             ),
           ],
         );
@@ -286,10 +291,11 @@ class _SimitWebViewScreenState extends State<SimitWebViewScreen> {
                           ),
                           Row(
                             children: [
-                              TextButton.icon(
-                                icon: const Icon(Icons.copy_rounded, size: 16),
-                                label: const Text('Placa'),
-                                onPressed: () {
+                              LiquidGlassButton(
+                                icon: Icons.copy_rounded,
+                                label: 'Placa',
+                                height: 32,
+                                onTap: () {
                                   Clipboard.setData(ClipboardData(text: widget.placa));
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
@@ -299,11 +305,13 @@ class _SimitWebViewScreenState extends State<SimitWebViewScreen> {
                                   );
                                 },
                               ),
+                              const SizedBox(width: 8),
                               if (widget.cedula.isNotEmpty)
-                                TextButton.icon(
-                                  icon: const Icon(Icons.copy_rounded, size: 16),
-                                  label: const Text('Cédula'),
-                                  onPressed: () {
+                                LiquidGlassButton(
+                                  icon: Icons.copy_rounded,
+                                  label: 'Cédula',
+                                  height: 32,
+                                  onTap: () {
                                     Clipboard.setData(ClipboardData(text: widget.cedula));
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
@@ -321,16 +329,16 @@ class _SimitWebViewScreenState extends State<SimitWebViewScreen> {
                       Row(
                         children: [
                           Expanded(
-                            child: OutlinedButton.icon(
-                              icon: const Icon(Icons.check_circle_outline_rounded),
-                              label: const Text('Sin Multas'),
-                              style: OutlinedButton.styleFrom(
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                side: const BorderSide(color: Colors.green),
-                                foregroundColor: Colors.green,
-                              ),
-                              onPressed: _isSaving
-                                  ? null
+                            child: LiquidGlassButton(
+                              icon: Icons.check_circle_outline_rounded,
+                              label: 'Sin Multas',
+                              height: 42,
+                              customColors: [
+                                Colors.green.shade800.withOpacity(0.5),
+                                Colors.emerald.shade900.withOpacity(0.3),
+                              ],
+                              onTap: _isSaving
+                                  ? () {}
                                   : () {
                                       setState(() {
                                         _simitStatus = 'clean';
@@ -344,14 +352,15 @@ class _SimitWebViewScreenState extends State<SimitWebViewScreen> {
                           ),
                           const SizedBox(width: 12),
                           Expanded(
-                            child: FilledButton.icon(
-                              icon: const Icon(Icons.warning_amber_rounded),
-                              label: const Text('Con Multas'),
-                              style: FilledButton.styleFrom(
-                                backgroundColor: Colors.redAccent,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                              ),
-                              onPressed: _isSaving ? null : _mostrarDialogoCaptura,
+                            child: LiquidGlassButton(
+                              icon: Icons.warning_amber_rounded,
+                              label: 'Con Multas',
+                              height: 42,
+                              customColors: [
+                                Colors.red.shade900.withOpacity(0.6),
+                                Colors.deepOrange.shade900.withOpacity(0.4),
+                              ],
+                              onTap: _isSaving ? () {} : _mostrarDialogoCaptura,
                             ),
                           ),
                         ],
