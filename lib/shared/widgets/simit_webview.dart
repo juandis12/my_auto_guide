@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'liquid_glass_fab.dart';
+import '../../core/services/ai_bot_service.dart';
 
 class SimitWebViewScreen extends StatefulWidget {
   final String placa;
@@ -221,6 +222,50 @@ class _SimitWebViewScreenState extends State<SimitWebViewScreen> {
     );
   }
 
+  Future<String> _obtenerExplicacionInfraccion(String code) async {
+    const Map<String, String> localDescriptions = {
+      'A01': 'No adquirir el SOAT obligatorio.',
+      'A02': 'Conducir sobre aceras, plazas, bermas o separadores.',
+      'B01': 'Conducir sin llevar la licencia de conducción.',
+      'B02': 'Conducir con la licencia vencida.',
+      'C02': 'Estacionar en sitios prohibidos (parquear mal).',
+      'C03': 'Bloquear una calzada o intersección.',
+      'C14': 'Transitar en sitios o de horas prohibidas (Pico y Placa).',
+      'C24': 'Conducir moto sin casco o chaleco reflectivo reglamentario.',
+      'C29': 'Conducir a velocidad superior a la permitida.',
+      'C35': 'No tener la revisión Técnico-Mecánica al día.',
+      'D02': 'Conducir sin portar el SOAT vigente.',
+      'D04': 'Pasarse un semáforo en rojo o señal de PARE.',
+      'D08': 'Conducir sin luces encendidas en horas de la noche.',
+      'D12': 'Conducir en contravía (sentido contrario).',
+      'E04': 'Conducir bajo el influjo del alcohol o sustancias psicoactivas.',
+      'F': 'Conducir invadiendo el carril exclusivo de Transmilenio/MIO/Metroplús.',
+    };
+
+    final String upCode = code.toUpperCase();
+    String localDesc = localDescriptions[upCode] ?? '';
+    
+    // Intentar consultar con la IA Experto
+    try {
+      final aiBot = AIBotService();
+      aiBot.initialize();
+      final prompt = 'Explica brevemente en una sola frase qué significa el código de infracción de tránsito "$upCode" en Colombia y cuál es su causa común.';
+      final aiResult = await aiBot.sendMessage(prompt);
+      
+      if (aiResult.isNotEmpty && !aiResult.contains('Error') && !aiResult.contains('problema')) {
+        return '$upCode: ${aiResult.trim()}';
+      }
+    } catch (_) {
+      // Ignorar fallas y usar local
+    }
+
+    if (localDesc.isNotEmpty) {
+      return '$upCode: $localDesc';
+    }
+    
+    return '$upCode: Infracción de tránsito colombiana.';
+  }
+
   Future<void> _escanearPagina() async {
     setState(() => _isLoading = true);
     try {
@@ -229,10 +274,11 @@ class _SimitWebViewScreenState extends State<SimitWebViewScreen> {
           var totalAmount = 0.0;
           var finesCount = 0;
           var category = 'Tránsito';
+          var codesFound = [];
           
           var bodyText = document.body.innerText || '';
           
-          // Expresión regular para pesos colombianos (ej. $1.500.000 o $ 1200000)
+          // 1. Extraer montos de dinero
           var currencyRegex = /\$\s*([0-9]{1,3}(\.[0-9]{3})+|[0-9]{4,10})/g;
           var match;
           var foundAmounts = [];
@@ -248,25 +294,54 @@ class _SimitWebViewScreenState extends State<SimitWebViewScreen> {
             totalAmount = Math.max.apply(null, foundAmounts);
           }
           
-          var tables = document.querySelectorAll('table');
-          var rowCount = 0;
-          tables.forEach(function(table) {
-            var rows = table.querySelectorAll('tbody tr');
-            if (rows.length > 0) {
-              rowCount += rows.length;
-            }
-          });
+          // 2. Extraer cantidad de comparendos / multas
+          // A. Buscar en el texto de resumen del SIMIT: "Comparendos: X", "Multas: Y", "Acuerdos de pago: Z"
+          var compMatch = bodyText.match(/comparendos?\s*:\s*(\d+)/i);
+          var multMatch = bodyText.match(/multas?\s*:\s*(\d+)/i);
+          var acueMatch = bodyText.match(/acuerdos?\s*(de\s+pago)?\s*:\s*(\d+)/i);
           
-          var countRegex = /(total\s+)?comparendos?\s*:\s*(\d+)/i;
-          var countMatch = bodyText.match(countRegex);
-          if (countMatch && countMatch[2]) {
-            finesCount = parseInt(countMatch[2]);
-          } else if (rowCount > 0) {
-            finesCount = rowCount;
-          } else if (totalAmount > 0) {
+          var compVal = compMatch ? parseInt(compMatch[1]) : 0;
+          var multVal = multMatch ? parseInt(multMatch[1]) : 0;
+          var acueVal = acueMatch ? parseInt(acueMatch[2]) : 0;
+          
+          finesCount = compVal + multVal + acueVal;
+          
+          // B. Si da 0, buscar el indicador "Total (X):" o "Total (X)" que suele salir al pie de la tabla
+          if (finesCount === 0) {
+            var totalCountMatch = bodyText.match(/Total\s*\((\d+)\)/i);
+            if (totalCountMatch && totalCountMatch[1]) {
+              finesCount = parseInt(totalCountMatch[1]);
+            }
+          }
+          
+          // C. Si sigue dando 0, buscar números largos de comparendos/resoluciones (de 8 a 20 dígitos)
+          if (finesCount === 0) {
+            var comparendoNumbers = bodyText.match(/\b\d{8,20}\b/g) || [];
+            var distinctComparendos = [];
+            comparendoNumbers.forEach(function(num) {
+              if (distinctComparendos.indexOf(num) === -1) {
+                distinctComparendos.push(num);
+              }
+            });
+            finesCount = distinctComparendos.length;
+          }
+          
+          // D. Fallback si hay valor total pero contador es 0
+          if (totalAmount > 0 && finesCount === 0) {
             finesCount = 1;
           }
           
+          // E. Extraer códigos de infracción (ej: C02, C14, D02)
+          var codeRegex = /\b([A-F]\d{1,2})(?=\.\.\.|\b|\s|$)/gi;
+          var codeMatch;
+          while ((codeMatch = codeRegex.exec(bodyText)) !== null) {
+            var code = codeMatch[1].toUpperCase();
+            if (codesFound.indexOf(code) === -1) {
+              codesFound.push(code);
+            }
+          }
+          
+          // 3. Determinar categoría predominante
           if (bodyText.toLowerCase().indexOf('fotomulta') !== -1 || 
               bodyText.toLowerCase().indexOf('foto dete') !== -1 || 
               bodyText.toLowerCase().indexOf('electrónica') !== -1) {
@@ -276,7 +351,8 @@ class _SimitWebViewScreenState extends State<SimitWebViewScreen> {
           return JSON.stringify({
             "finesCount": finesCount,
             "totalAmount": totalAmount,
-            "category": category
+            "category": category,
+            "codes": codesFound
           });
         })()
       ''');
@@ -293,6 +369,15 @@ class _SimitWebViewScreenState extends State<SimitWebViewScreen> {
       final int count = data['finesCount'] as int? ?? 0;
       final double amount = (data['totalAmount'] as num? ?? 0.0).toDouble();
       final String category = data['category'] as String? ?? 'Tránsito';
+      final List<dynamic> codesRaw = data['codes'] as List<dynamic>? ?? [];
+      final List<String> codes = codesRaw.map((e) => e.toString()).toList();
+
+      // Buscar explicaciones de las infracciones encontradas
+      List<String> explanations = [];
+      for (String code in codes) {
+        final String exp = await _obtenerExplicacionInfraccion(code);
+        explanations.add(exp);
+      }
 
       setState(() {
         _isLoading = false;
@@ -304,18 +389,62 @@ class _SimitWebViewScreenState extends State<SimitWebViewScreen> {
             'cantidad': count,
             'valor_total': amount,
             'categoria': category,
+            'codigos': codes,
+            'explicaciones': explanations,
             'fecha_verificacion': DateTime.now().toIso8601String(),
           }
         ];
       });
 
       if (count > 0 || amount > 0) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('🔍 Escaneo completado: Se encontraron $count comparendos por \$${amount.round()} COP.'),
-            backgroundColor: Colors.orangeAccent,
+        showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Row(
+              children: const [
+                Icon(Icons.warning_amber_rounded, color: Colors.orangeAccent),
+                SizedBox(width: 10),
+                Text('Multas Encontradas'),
+              ],
+            ),
+            content: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text('Se encontraron $count multas/comparendos en el portal SIMIT.'),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Valor Total: \$${amount.round()} COP',
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                  if (explanations.isNotEmpty) ...[
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Motivo de las Infracciones:',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 6),
+                    ...explanations.map((exp) => Padding(
+                          padding: const EdgeInsets.only(bottom: 6),
+                          child: Text(
+                            '• $exp',
+                            style: const TextStyle(fontSize: 13, color: Colors.black87),
+                          ),
+                        )),
+                  ],
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('Entendido'),
+              ),
+            ],
           ),
         );
+
         await _guardarResultados();
       } else {
         // No se encontraron comparendos evidentes en pantalla
@@ -323,7 +452,7 @@ class _SimitWebViewScreenState extends State<SimitWebViewScreen> {
           context: context,
           builder: (ctx) => AlertDialog(
             title: const Text('Resultado del Escaneo'),
-            content: const Text('No se encontraron comparendos ni montos pendientes de pago visibles en la página.\\n\\n¿Quieres marcar tu estado SIMIT como "Libre de multas"?'),
+            content: const Text('No se encontraron comparendos ni montos pendientes de pago visibles en la página.\n\n¿Quieres marcar tu estado SIMIT como "Libre de multas"?'),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(ctx, false),
