@@ -122,108 +122,68 @@ class BackgroundNavService {
       });
 
       // =========================================================
-      // 3. GESTIÓN DEL STREAM GPS (ADAPTATIVO - MODO BATERÍA)
+      // 3. GESTIÓN DEL STREAM GPS CONTINUO (SIN INTERRUPCIONES)
       // =========================================================
       StreamSubscription<Position>? gpsSubscription;
-      int currentInterval = 5; // Default 5s
-      DateTime lastConfigChange = DateTime.now();
 
-      void startGpsStream(int interval) {
-        gpsSubscription?.cancel();
-        currentInterval = interval;
-        lastConfigChange = DateTime.now();
+      gpsSubscription = Geolocator.getPositionStream(
+        locationSettings: locationSettings,
+      ).listen((Position position) async {
+        final currentPos = LatLng(position.latitude, position.longitude);
 
-        final newSettings = defaultTargetPlatform == TargetPlatform.android
-            ? AndroidSettings(
-                accuracy: LocationAccuracy.high,
-                distanceFilter: 5,
-                intervalDuration: Duration(seconds: interval),
-              )
-            : locationSettings; // iOS/Other settings are more static or managed by OS
+        if (lastPos != null) {
+          final distance = Geolocator.distanceBetween(lastPos!.latitude,
+              lastPos!.longitude, currentPos.latitude, currentPos.longitude);
+          totalDistance += distance;
+        }
+        lastPos = currentPos;
 
-        gpsSubscription = Geolocator.getPositionStream(
-          locationSettings: newSettings,
-        ).listen((Position position) async {
-          final currentPos = LatLng(position.latitude, position.longitude);
-
-          if (lastPos != null) {
-            final distance = Geolocator.distanceBetween(lastPos!.latitude,
-                lastPos!.longitude, currentPos.latitude, currentPos.longitude);
-            totalDistance += distance;
-          }
-          lastPos = currentPos;
-
-          // PRIORIDAD 1: Actualizar la UI inmediatamente
-          service.invoke('update', {
-            "lat": position.latitude,
-            "lng": position.longitude,
-            "distance": totalDistance / 1000,
-            "speed": position.speed, // En m/s
-          });
-
-          // PRIORIDAD 2: Actualizar Notificación de Android
-          if (service is AndroidServiceInstance) {
-            if (await service.isForegroundService()) {
-              service.setForegroundNotificationInfo(
-                title: notificationTitle,
-                content: 'Recorrido: ${(totalDistance / 1000).toStringAsFixed(2)} km - ${interval}s scan',
-              );
-            }
-          }
-
-          // PRIORIDAD 3: Persistencia y Red
-          try {
-            AppWidgetLogic.updateWidget(
-              distance: totalDistance / 1000,
-              isTracking: true,
-            );
-
-            prefs.setDouble('nav_total_distance', totalDistance / 1000);
-            prefs.setDouble('nav_last_lat', position.latitude);
-            prefs.setDouble('nav_last_lng', position.longitude);
-
-            // Transmisión asíncrona segura
-            supabaseChannel?.track({
-              'lat': position.latitude,
-              'lng': position.longitude,
-              'dist': totalDistance / 1000,
-              'ts': DateTime.now().millisecondsSinceEpoch,
-              'speed': position.speed,
-              'interval': interval,
-            });
-          } catch (e) {
-            debugPrint('Fallo secundario en background: $e');
-          }
-
-          // =========================================================
-          // 4. LÓGICA DE ADAPTACIÓN (EXTREMA BATERÍA)
-          // =========================================================
-          final speedKmH = position.speed * 3.6;
-          final timeSinceChange = DateTime.now().difference(lastConfigChange).inSeconds;
-
-          if (timeSinceChange > 20) { // Histéresis de 20 segundos
-            int nextInterval = 5;
-            if (speedKmH < 5) {
-              nextInterval = 10; // Trancón / Detenerse
-            } else if (speedKmH > 60) {
-              nextInterval = 2; // Alta velocidad, curvas cerradas
-            }
-
-            if (nextInterval != currentInterval) {
-              debugPrint('Adaptive GPS: Changing interval from $currentInterval to $nextInterval (Speed: ${speedKmH.toStringAsFixed(1)} km/h)');
-              startGpsStream(nextInterval);
-            }
-          }
-        }, onError: (e) {
-          debugPrint('Error en stream GPS: $e');
-          service.invoke('error', {
-            "message": "Error GPS: $e. Verifica permisos y señal."
-          });
+        // PRIORIDAD 1: Actualizar la UI inmediatamente
+        service.invoke('update', {
+          "lat": position.latitude,
+          "lng": position.longitude,
+          "distance": totalDistance / 1000,
+          "speed": position.speed, // En m/s
         });
-      }
 
-      // Iniciar con el intervalo inicial
-      startGpsStream(5);
+        // PRIORIDAD 2: Actualizar Notificación de Android
+        if (service is AndroidServiceInstance) {
+          if (await service.isForegroundService()) {
+            service.setForegroundNotificationInfo(
+              title: notificationTitle,
+              content: 'Recorrido: ${(totalDistance / 1000).toStringAsFixed(2)} km',
+            );
+          }
+        }
+
+        // PRIORIDAD 3: Persistencia y Red
+        try {
+          AppWidgetLogic.updateWidget(
+            distance: totalDistance / 1000,
+            isTracking: true,
+          );
+
+          prefs.setDouble('nav_total_distance', totalDistance / 1000);
+          prefs.setDouble('nav_last_lat', position.latitude);
+          prefs.setDouble('nav_last_lng', position.longitude);
+
+          // Transmisión asíncrona segura
+          supabaseChannel?.track({
+            'lat': position.latitude,
+            'lng': position.longitude,
+            'dist': totalDistance / 1000,
+            'ts': DateTime.now().millisecondsSinceEpoch,
+            'speed': position.speed,
+          });
+        } catch (e) {
+          debugPrint('Fallo secundario en background: $e');
+        }
+      }, onError: (e) {
+        debugPrint('Error en stream GPS: $e');
+        service.invoke('error', {
+          "message": "Error GPS: $e. Verifica permisos y señal."
+        });
+      });
     } catch (e) {
       debugPrint('Error fatal iniciando background GPS: $e');
       service.invoke('error', {"message": "Crash total en background: $e"});

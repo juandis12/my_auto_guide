@@ -56,6 +56,8 @@ import 'parametrizacion_mantenimientos.dart';
 import '../../expenses/presentation/gastos_screen.dart';
 import '../../navigation/presentation/historial_rutas_screen.dart';
 import '../../marketplace/presentation/marketplace_talleres_screen.dart';
+import '../../../shared/widgets/simit_webview.dart';
+import '../../../shared/widgets/liquid_glass_fab.dart';
 import '../../ai_bot/presentation/ai_chat_screen.dart';
 import '../../../core/logic/performance_guard.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -116,6 +118,181 @@ class _InicioAppState extends State<InicioApp> {
   Map<String, dynamic>? _cachedVehicleData;
   final Map<String, dynamic> _urlCache = {};
   bool _notificacionesProcesadas = false;
+  bool _checkedKm24h = false;
+
+  Color _getSimitColor() {
+    final status = _cachedVehicleData?['simit_status'] ?? 'unchecked';
+    if (status == 'clean') {
+      return Colors.green;
+    } else if (status == 'has_fines') {
+      return Colors.redAccent;
+    }
+    return Colors.blueAccent;
+  }
+
+  Future<void> _abrirSimit() async {
+    final placa = _cachedVehicleData?['placa'] ?? '';
+    final cedula = _cachedVehicleData?['cedula'] ?? '';
+    final res = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => SimitWebViewScreen(
+          placa: placa.isNotEmpty ? placa : 'ABC123',
+          cedula: cedula.isNotEmpty ? cedula : '12345678',
+          vehiculoId: widget.vehiculoId,
+        ),
+      ),
+    );
+    if (res == true) {
+      setState(() {
+        _cachedVehicleData = null; // forzar recarga
+      });
+    }
+  }
+
+  Future<void> _verificarKilometraje24h(Map<String, dynamic> vehicleData) async {
+    final vehicleId = widget.vehiculoId;
+    final prefs = await SharedPreferences.getInstance();
+    final lastCheckStr = prefs.getString('last_km_check_$vehicleId');
+    final now = DateTime.now();
+
+    bool shouldShowDialog = false;
+    if (lastCheckStr == null) {
+      await prefs.setString('last_km_check_$vehicleId', now.toIso8601String());
+    } else {
+      final lastCheck = DateTime.parse(lastCheckStr);
+      final difference = now.difference(lastCheck).inHours;
+      if (difference >= 24) {
+        shouldShowDialog = true;
+      }
+    }
+
+    if (shouldShowDialog && mounted) {
+      await Future.delayed(const Duration(seconds: 1));
+      if (!mounted) return;
+
+      final currentKms = _asDouble(vehicleData['kms']).toInt();
+      final TextEditingController kmController = TextEditingController(text: currentKms.toString());
+
+      await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            title: const Row(
+              children: [
+                Icon(Icons.speed, color: Colors.blueAccent),
+                SizedBox(width: 10),
+                Text('Actualizar Kilometraje'),
+              ],
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Por favor, ingresa el kilometraje actual de tu vehículo para mantener los mantenimientos al día:',
+                  style: TextStyle(fontSize: 13, color: Colors.grey),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: kmController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'Kilómetros actuales',
+                    suffixText: 'KM',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () async {
+                  final nextAsk = DateTime.now().subtract(const Duration(hours: 20));
+                  await prefs.setString('last_km_check_$vehicleId', nextAsk.toIso8601String());
+                  if (ctx.mounted) Navigator.pop(ctx);
+                },
+                child: const Text('Más tarde'),
+              ),
+              FilledButton(
+                onPressed: () async {
+                  final newKms = int.tryParse(kmController.text) ?? currentKms;
+                  if (newKms >= currentKms) {
+                    await SupabaseService().updateVehicleKms(vehicleId, newKms);
+                    await prefs.setString('last_km_check_$vehicleId', DateTime.now().toIso8601String());
+                    setState(() {
+                      _cachedVehicleData = null;
+                    });
+                    if (ctx.mounted) Navigator.pop(ctx);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('El kilometraje no puede ser menor al actual.'),
+                        backgroundColor: Colors.orange,
+                      ),
+                    );
+                  }
+                },
+                child: const Text('Actualizar'),
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
+
+  Widget _buildSimitAlertCard() {
+    final status = _cachedVehicleData?['simit_status'] ?? 'unchecked';
+    if (status != 'has_fines') return const SizedBox.shrink();
+
+    final List<dynamic> fines = _cachedVehicleData?['simit_fines_data'] ?? [];
+    if (fines.isEmpty) return const SizedBox.shrink();
+
+    final fine = fines.first;
+    final double amount = _asDouble(fine['valor_total']);
+    final int count = fine['cantidad'] ?? 1;
+    final String category = fine['categoria'] ?? 'Tránsito';
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.redAccent.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Colors.redAccent.withOpacity(0.3)),
+        ),
+        child: Row(
+          children: [
+            const Icon(Icons.warning_amber_rounded, color: Colors.redAccent, size: 28),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Comparendos Pendientes ($count)',
+                    style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.redAccent),
+                  ),
+                  Text(
+                    'Valor Total: \$${amount.toStringAsFixed(0)} COP • Categoría: $category',
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
+                ],
+              ),
+            ),
+            TextButton(
+              onPressed: () => _abrirSimit(),
+              child: const Text('Ver SIMIT', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.redAccent)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   String _docFolder(DocType type) => {
         DocType.soat: 'soat',
@@ -159,7 +336,7 @@ class _InicioAppState extends State<InicioApp> {
       final row = await supabase
           .from('vehiculos')
           .select(
-            'marca, modelo, apodo, kms, image_path, last_cadena, last_filtro, last_aceite, last_soat, last_tecno, soat_path, tecno_path, seguro_path, propiedad_path, kms_last_cadena, kms_last_filtro, kms_last_aceite',
+            'marca, modelo, apodo, kms, image_path, last_cadena, last_filtro, last_aceite, last_soat, last_tecno, soat_path, tecno_path, seguro_path, propiedad_path, kms_last_cadena, kms_last_filtro, kms_last_aceite, placa, cedula, simit_status, simit_fines_data, simit_last_check',
           )
           .eq('id', widget.vehiculoId)
           .single();
@@ -1096,6 +1273,12 @@ class _InicioAppState extends State<InicioApp> {
           }
 
           final v = s.data!;
+          if (!_checkedKm24h) {
+            _checkedKm24h = true;
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _verificarKilometraje24h(v);
+            });
+          }
           final marca = (v['marca'] as String? ?? '').toUpperCase();
           final modelo = v['modelo'] as String? ?? '';
           final apodo = v['apodo'] as String? ?? 'Mi Vehículo';
@@ -1301,6 +1484,7 @@ class _InicioAppState extends State<InicioApp> {
                   ),
                 ),
                 _buildLegalAlerts(),
+                _buildSimitAlertCard(),
                 const SizedBox(height: 24),
                 _StaggeredFadeIn(
                   delay: const Duration(milliseconds: 300),
@@ -1371,8 +1555,12 @@ class _InicioAppState extends State<InicioApp> {
                                         _openDocManager(DocType.soat, 'SOAT')),
                                     onView: _soatSigned == null
                                         ? null
-                                        : () =>
-                                            unawaited(_openUrl(_soatSigned!))),
+                                        : () => Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (_) => DocumentViewerScreen(
+                                                    url: _soatSigned!,
+                                                    fileName: 'SOAT')))),
                                 DocTileInteractive(
                                     title: 'Tecno mechanical',
                                     path: _tecnoSigned,
@@ -1382,8 +1570,12 @@ class _InicioAppState extends State<InicioApp> {
                                             DocType.tecno, 'Tecno')),
                                     onView: _tecnoSigned == null
                                         ? null
-                                        : () =>
-                                            unawaited(_openUrl(_tecnoSigned!))),
+                                        : () => Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (_) => DocumentViewerScreen(
+                                                    url: _tecnoSigned!,
+                                                    fileName: 'Tecno')))),
                                 DocTileInteractive(
                                     title: 'Seguro Todo Riesgo',
                                     path: _seguroSigned,
@@ -1393,8 +1585,12 @@ class _InicioAppState extends State<InicioApp> {
                                             DocType.seguro, 'Seguro')),
                                     onView: _seguroSigned == null
                                         ? null
-                                        : () => unawaited(
-                                            _openUrl(_seguroSigned!))),
+                                        : () => Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (_) => DocumentViewerScreen(
+                                                    url: _seguroSigned!,
+                                                    fileName: 'Seguro')))),
                                 DocTileInteractive(
                                     title: 'T. de Propiedad',
                                     path: _propSigned,
@@ -1404,8 +1600,12 @@ class _InicioAppState extends State<InicioApp> {
                                             'Tarjeta de Propiedad')),
                                     onView: _propSigned == null
                                         ? null
-                                        : () =>
-                                            unawaited(_openUrl(_propSigned!))),
+                                        : () => Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (_) => DocumentViewerScreen(
+                                                    url: _propSigned!,
+                                                    fileName: 'Tarjeta de Propiedad')))),
                               ],
                             ),
                           ],
@@ -1455,16 +1655,9 @@ class _InicioAppState extends State<InicioApp> {
                             IndicatorTile(
                               title: 'SIMIT',
                               value: 1.0,
-                              color: Colors.blueAccent,
+                              color: _getSimitColor(),
                               isSimit: true,
-                              onTap: () => unawaited(Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (_) => RuntWebViewScreen(
-                                            placa: _cachedVehicleData?['placa'] ?? '',
-                                            cedula: '',
-                                            vehiculoId: widget.vehiculoId,
-                                          )))),
+                              onTap: _abrirSimit,
                             ),
                             const SizedBox(width: 12),
                           ],
@@ -1623,14 +1816,13 @@ class _InicioAppState extends State<InicioApp> {
           return mainContent;
         },
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => Navigator.push(
+      floatingActionButton: LiquidGlassFAB(
+        onTap: () => Navigator.push(
           context,
           MaterialPageRoute(builder: (_) => const AIChatScreen()),
         ),
-        backgroundColor: Theme.of(context).primaryColor,
-        icon: const Icon(Icons.auto_awesome, color: Colors.white),
-        label: const Text('IA Experto', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        icon: Icons.auto_awesome,
+        label: 'IA Experto',
       ),
     );
   }

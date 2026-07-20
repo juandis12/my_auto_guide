@@ -57,5 +57,7 @@
 		<string>fetch</string>
 		<string>processing</string>
 	</array>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Necesitamos acceso a Face ID para autenticarte de forma rápida y segura en la aplicación.</string>
 </dict>
 </plist>

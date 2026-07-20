@@ -2,6 +2,7 @@
 // rutas_screen.dart — NAVEGACIÓN GPS REFACTORIZADA (MODULAR)
 // =============================================================================
 import 'dart:async';
+import 'dart:ui' show ImageFilter;
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -170,6 +171,11 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
   void _iniciarNav({bool isFree = false}) async {
     if (await Permission.locationAlways.isDenied) await Permission.locationAlways.request();
 
+    // Solicitar exención de ahorro de batería para evitar que Android suspenda el tracking
+    if (await Permission.ignoreBatteryOptimizations.isDenied) {
+      await Permission.ignoreBatteryOptimizations.request();
+    }
+
     final service = FlutterBackgroundService();
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('active_nav_vehicle_id', widget.vehiculoId);
@@ -190,7 +196,20 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
     
     final t = _controller.telemetry;
     final userId = supabase.auth.currentUser?.id;
-    if (userId == null) return;
+    
+    if (userId == null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Error: No se encontró sesión de usuario activa para guardar el trayecto.')),
+        );
+      }
+      _controller.stopNavigation();
+      return;
+    }
+
+    final durationSec = t.startTime != null ? DateTime.now().difference(t.startTime!).inSeconds : 0;
+    
+    debugPrint('Guardando trayecto: Distancia: ${t.distanceKm} km, Duración: $durationSec s');
 
     final impact = TelemetryCalculator.estimateImpact(
       distanceKm: t.distanceKm, 
@@ -199,54 +218,46 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
       isCar: _controller.isCar
     );
 
-    try {
-      await SyncService().saveRouteOfflineFirst(
-        userId: userId,
-        vehicleId: widget.vehiculoId,
-        originName: 'Ubicación Actual',
-        destinationName: _controller.destinationName,
-        distanceKm: t.distanceKm,
-        durationSeconds: t.startTime != null ? DateTime.now().difference(t.startTime!).inSeconds : 0,
-        consumoGalones: impact['gallons']!,
-        costoEstimado: impact['cost']!,
-        velocidadMax: t.maxSpeedKmH,
-        velocidadProm: t.averageSpeedKmH,
-        viaPuntos: t.travelledPoints.map((p) => {'lat': p.latitude, 'lng': p.longitude}).toList(),
-      );
-      await SyncService().updateVehicleKmsOfflineFirst(widget.vehiculoId, t.distanceKm.round());
-    } catch (_) {}
+    if (t.distanceKm > 0.05) {
+      try {
+        await SyncService().saveRouteOfflineFirst(
+          userId: userId,
+          vehicleId: widget.vehiculoId,
+          originName: 'Ubicación Actual',
+          destinationName: _controller.destinationName,
+          distanceKm: t.distanceKm,
+          durationSeconds: durationSec,
+          consumoGalones: impact['gallons']!,
+          costoEstimado: impact['cost']!,
+          velocidadMax: t.maxSpeedKmH,
+          velocidadProm: t.averageSpeedKmH,
+          viaPuntos: t.travelledPoints.map((p) => {'lat': p.latitude, 'lng': p.longitude}).toList(),
+        );
+        
+        await SyncService().updateVehicleKmsOfflineFirst(widget.vehiculoId, t.distanceKm.round());
+      } catch (e) {
+        debugPrint('Error al guardar trayecto localmente: $e');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error al guardar el trayecto localmente: $e')),
+          );
+        }
+      }
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Recorrido demasiado corto o sin cambios de ubicación. No se guardó.'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      }
+    }
 
     _controller.stopNavigation();
     setState(() => _showSuccessOverlay = true);
     await Future.delayed(const Duration(milliseconds: 2000));
     if (mounted) setState(() => _showSuccessOverlay = false);
-
-    _mostrarResumen(t.distanceKm, t.maxSpeedKmH, t.averageSpeedKmH, impact['gallons']!, impact['cost']!);
-  }
-
-  void _mostrarResumen(double kms, double maxV, double avgV, double gals, double cost) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text('¡Ruta completada!'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            InfoRow(icon: Icons.straighten, label: 'Distancia', value: '${kms.toStringAsFixed(1)} km'),
-            InfoRow(icon: Icons.speed, label: 'V. Máxima', value: '${maxV.toStringAsFixed(1)} km/h'),
-            InfoRow(icon: Icons.av_timer, label: 'V. Promedio', value: '${avgV.toStringAsFixed(1)} km/h'),
-            const Divider(),
-            InfoRow(icon: Icons.local_gas_station, label: 'Consumo', value: '${gals.toStringAsFixed(2)} gal'),
-            InfoRow(icon: Icons.payments, label: 'Costo', value: '\$${cost.toStringAsFixed(0)} COP'),
-          ],
-        ),
-        actions: [
-          FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text('Aceptar')),
-        ],
-      ),
-    );
   }
 
   // ─── BUILD UI ───────────────────────────────────────────
@@ -256,15 +267,53 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
     final t = _controller.telemetry;
     final state = _controller.state;
 
-    return Scaffold(
-      body: Stack(
-        children: [
-          _buildMap(t),
-          if (_showSuccessOverlay) const SuccessCheckmark(),
-          _buildTopSearch(),
-          _buildBottomPanel(t, state),
-          if (_isLoadingRoute) const Center(child: CircularProgressIndicator()),
-        ],
+    return PopScope(
+      canPop: state != NavigationState.navigating && state != NavigationState.freeTracking,
+      onPopInvoked: (didPop) async {
+        if (didPop) return;
+        // Mostrar diálogo de confirmación para salir y finalizar la ruta
+        final ok = await showDialog<bool>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: const Text('Ruta en curso'),
+            content: const Text('¿Deseas finalizar y guardar el recorrido actual antes de salir?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, false),
+                child: const Text('Cancelar'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, true),
+                child: const Text('Salir sin guardar'),
+              ),
+              FilledButton(
+                onPressed: () async {
+                  Navigator.pop(ctx, false); // Cierra diálogo
+                  await _finalizarRuta();    // Finaliza y guarda
+                  if (mounted) Navigator.pop(context); // Sale de la pantalla
+                },
+                child: const Text('Guardar y Salir'),
+              ),
+            ],
+          ),
+        );
+        if (ok == true && mounted) {
+          _controller.stopNavigation();
+          final service = FlutterBackgroundService();
+          service.invoke('stopService');
+          Navigator.pop(context);
+        }
+      },
+      child: Scaffold(
+        body: Stack(
+          children: [
+            _buildMap(t),
+            if (_showSuccessOverlay) const SuccessCheckmark(),
+            _buildTopSearch(),
+            _buildBottomPanel(t, state),
+            if (_isLoadingRoute) const Center(child: CircularProgressIndicator()),
+          ],
+        ),
       ),
     );
   }
@@ -279,58 +328,139 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
         TileLayer(
           urlTemplate: Theme.of(context).brightness == Brightness.dark
               ? 'https://basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}@2x.png'
-              : 'https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png',
+              : 'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', // Google Maps standard tiles
+          userAgentPackageName: 'com.example.my_auto_guide',
         ),
         if (_controller.routePoints.isNotEmpty)
           PolylineLayer(polylines: [
-            Polyline(points: _controller.routePoints, strokeWidth: 5, color: Colors.blue.withOpacity(0.6)),
+            // Línea externa de neón (sombra de ruta)
+            Polyline(
+              points: _controller.routePoints,
+              strokeWidth: 8,
+              color: Colors.blue.withOpacity(0.3),
+            ),
+            // Línea interna de ruta (núcleo brillante)
+            Polyline(
+              points: _controller.routePoints,
+              strokeWidth: 4,
+              color: const Color(0xFF00C6FF),
+            ),
           ]),
         if (t.travelledPoints.isNotEmpty)
           PolylineLayer(polylines: [
-            Polyline(points: t.travelledPoints, strokeWidth: 7, color: Colors.green.withOpacity(0.8)),
+            // Línea externa de neón para puntos recorridos
+            Polyline(
+              points: t.travelledPoints,
+              strokeWidth: 9,
+              color: Colors.green.withOpacity(0.3),
+            ),
+            // Línea interna brillante para puntos recorridos
+            Polyline(
+              points: t.travelledPoints,
+              strokeWidth: 5,
+              color: const Color(0xFF00FF87),
+            ),
           ]),
         MarkerLayer(markers: [
           if (_controller.destination != null)
-            Marker(point: _controller.destination!, child: const Icon(Icons.location_on, color: Colors.red, size: 40)),
-          Marker(point: t.currentPos!, child: const Icon(Icons.navigation, color: Colors.blue, size: 30)),
+            Marker(
+              point: _controller.destination!,
+              width: 45,
+              height: 45,
+              child: const Icon(
+                Icons.location_on,
+                color: Colors.redAccent,
+                size: 40,
+                shadows: [
+                  Shadow(
+                    color: Colors.black38,
+                    blurRadius: 6,
+                    offset: Offset(0, 3),
+                  ),
+                ],
+              ),
+            ),
+          Marker(
+            point: t.currentPos!,
+            width: 45,
+            height: 45,
+            child: const PulsingLocationMarker(),
+          ),
         ]),
       ],
     );
   }
 
   Widget _buildTopSearch() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Positioned(
       top: 50, left: 16, right: 16,
       child: Column(
         children: [
-          Card(
-            elevation: 4,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-            child: TextField(
-              controller: _searchCtrl,
-              decoration: InputDecoration(
-                hintText: '¿A dónde vas?',
-                prefixIcon: const Icon(Icons.search),
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.history), 
-                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => HistorialRutasScreen(vehiculoId: widget.vehiculoId))),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: isDark ? Colors.black.withOpacity(0.4) : Colors.white.withOpacity(0.65),
+                   borderRadius: BorderRadius.circular(20),
+                   border: Border.all(
+                     color: isDark ? Colors.white10 : Colors.white.withOpacity(0.3),
+                     width: 1.5,
+                   ),
+                   boxShadow: [
+                     BoxShadow(
+                       color: Colors.black.withOpacity(0.05),
+                       blurRadius: 10,
+                       offset: const Offset(0, 4),
+                     )
+                   ],
                 ),
-                border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(vertical: 15),
+                child: TextField(
+                  controller: _searchCtrl,
+                  style: TextStyle(color: isDark ? Colors.white : Colors.black87),
+                  decoration: InputDecoration(
+                    hintText: '¿A dónde vas?',
+                    hintStyle: TextStyle(color: isDark ? Colors.white60 : Colors.black54),
+                    prefixIcon: Icon(Icons.search, color: isDark ? Colors.white70 : Colors.black54),
+                    suffixIcon: IconButton(
+                      icon: Icon(Icons.history, color: isDark ? Colors.white70 : Colors.black54), 
+                      onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => HistorialRutasScreen(vehiculoId: widget.vehiculoId))),
+                    ),
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 15),
+                  ),
+                  onChanged: _buscarDestino,
+                ),
               ),
-              onChanged: _buscarDestino,
             ),
           ),
           if (_searchResults.isNotEmpty)
-            Container(
-              height: 250,
-              margin: const EdgeInsets.only(top: 8),
-              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(15)),
-              child: ListView.builder(
-                itemCount: _searchResults.length,
-                itemBuilder: (ctx, i) => ListTile(
-                  title: Text(_searchResults[i].displayName),
-                  onTap: () => _seleccionarDestino(_searchResults[i]),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: Container(
+                  height: 250,
+                  margin: const EdgeInsets.only(top: 8),
+                  decoration: BoxDecoration(
+                    color: isDark ? Colors.black.withOpacity(0.6) : Colors.white.withOpacity(0.8),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: isDark ? Colors.white10 : Colors.white.withOpacity(0.3),
+                    ),
+                  ),
+                  child: ListView.builder(
+                    itemCount: _searchResults.length,
+                    itemBuilder: (ctx, i) => ListTile(
+                      title: Text(
+                        _searchResults[i].displayName,
+                        style: TextStyle(color: isDark ? Colors.white : Colors.black87),
+                      ),
+                      onTap: () => _seleccionarDestino(_searchResults[i]),
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -340,60 +470,185 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
   }
 
   Widget _buildBottomPanel(NavigationTelemetry t, NavigationState state) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Positioned(
       bottom: 0, left: 0, right: 0,
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
-          boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 20)],
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (state == NavigationState.navigating || state == NavigationState.freeTracking) ...[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  InfoChip(icon: Icons.speed, label: '${t.maxSpeedKmH.toStringAsFixed(0)} km/h', color: Colors.blue),
-                  InfoChip(icon: Icons.straighten, label: '${t.distanceKm.toStringAsFixed(1)} km', color: Colors.green),
+      child: ClipRRect(
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: isDark ? Colors.black.withOpacity(0.55) : Colors.white.withOpacity(0.7),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+              border: Border.all(
+                color: isDark ? Colors.white10 : Colors.white.withOpacity(0.3),
+                width: 1.5,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 20,
+                )
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (state == NavigationState.navigating || state == NavigationState.freeTracking) ...[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      InfoChip(
+                        icon: Icons.speed,
+                        label: '${t.maxSpeedKmH.toStringAsFixed(0)} km/h',
+                        color: Colors.blueAccent,
+                      ),
+                      InfoChip(
+                        icon: Icons.straighten,
+                        label: '${t.distanceKm.toStringAsFixed(1)} km',
+                        color: Colors.greenAccent,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  FilledButton.icon(
+                    onPressed: _finalizarRuta,
+                    icon: const Icon(Icons.stop),
+                    label: const Text('FINALIZAR VIAJE'),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: Colors.redAccent.withOpacity(0.85),
+                      minimumSize: const Size(double.infinity, 54),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    ),
+                  ),
+                ] else if (state == NavigationState.routeReady) ...[
+                  Text(
+                    _controller.destinationName,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : Colors.black87,
+                      fontSize: 16,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      InfoChip(
+                        icon: Icons.straighten,
+                        label: '${_controller.routeDistanceKm.toStringAsFixed(1)} km',
+                        color: Colors.blueAccent,
+                      ),
+                      InfoChip(
+                        icon: Icons.timer,
+                        label: '${_controller.routeDurationMin.round()} min',
+                        color: Colors.orangeAccent,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  FilledButton(
+                    onPressed: () => _iniciarNav(),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: const Color(0xFF035880),
+                      minimumSize: const Size(double.infinity, 54),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    ),
+                    child: const Text('INICIAR NAVEGACIÓN', style: TextStyle(fontWeight: FontWeight.bold)),
+                  ),
+                ] else ...[
+                  FilledButton.icon(
+                    onPressed: () => _iniciarNav(isFree: true),
+                    icon: const Icon(Icons.navigation_rounded),
+                    label: const Text('RECORRIDO LIBRE', style: TextStyle(fontWeight: FontWeight.bold)),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: const Color(0xFF035880),
+                      minimumSize: const Size(double.infinity, 54),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    ),
+                  ),
                 ],
-              ),
-              const SizedBox(height: 20),
-              FilledButton.icon(
-                onPressed: _finalizarRuta,
-                icon: const Icon(Icons.stop),
-                label: const Text('FINALIZAR'),
-                style: FilledButton.styleFrom(backgroundColor: Colors.red, minimumSize: const Size(double.infinity, 50)),
-              ),
-            ] else if (state == NavigationState.routeReady) ...[
-              Text(_controller.destinationName, maxLines: 1, style: const TextStyle(fontWeight: FontWeight.bold)),
-              const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  InfoChip(icon: Icons.straighten, label: '${_controller.routeDistanceKm.toStringAsFixed(1)} km', color: Colors.blue),
-                  InfoChip(icon: Icons.timer, label: '${_controller.routeDurationMin.round()} min', color: Colors.orange),
-                ],
-              ),
-              const SizedBox(height: 20),
-              FilledButton(
-                onPressed: () => _iniciarNav(),
-                style: FilledButton.styleFrom(minimumSize: const Size(double.infinity, 50)),
-                child: const Text('INICIAR NAVEGACIÓN'),
-              ),
-            ] else ...[
-              FilledButton.icon(
-                onPressed: () => _iniciarNav(isFree: true),
-                icon: const Icon(Icons.play_arrow),
-                label: const Text('MODO LIBRE'),
-                style: FilledButton.styleFrom(minimumSize: const Size(double.infinity, 50)),
-              ),
-            ],
-          ],
+              ],
+            ),
+          ),
         ),
       ),
+    );
+  }
+}
+
+class PulsingLocationMarker extends StatefulWidget {
+  const PulsingLocationMarker({super.key});
+  @override
+  State<PulsingLocationMarker> createState() => _PulsingLocationMarkerState();
+}
+
+class _PulsingLocationMarkerState extends State<PulsingLocationMarker> with SingleTickerProviderStateMixin {
+  late AnimationController _animCtrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _animCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _animCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _animCtrl,
+      builder: (context, child) {
+        return Stack(
+          alignment: Alignment.center,
+          children: [
+            Container(
+              width: 36 * _animCtrl.value,
+              height: 36 * _animCtrl.value,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: const Color(0xFF00C6FF).withOpacity(1.0 - _animCtrl.value),
+              ),
+            ),
+            Container(
+              width: 14,
+              height: 14,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 4,
+                    offset: Offset(0, 2),
+                  )
+                ],
+              ),
+              child: Center(
+                child: Container(
+                  width: 10,
+                  height: 10,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Color(0xFF00C6FF),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
