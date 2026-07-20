@@ -10,6 +10,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'liquid_glass_fab.dart';
 import '../../core/services/ai_bot_service.dart';
+import '../../core/services/email_service.dart';
 
 class SimitWebViewScreen extends StatefulWidget {
   final String placa;
@@ -30,10 +31,9 @@ class SimitWebViewScreen extends StatefulWidget {
 class _SimitWebViewScreenState extends State<SimitWebViewScreen> {
   late final WebViewController _controller;
   bool _isLoading = true;
-  bool _isSaving = false;
 
   // Estado local para multas
-  String _simitStatus = 'unchecked'; // unchecked, clean, has_fines
+  String _simitStatus = 'unchecked';
   double _totalAmount = 0.0;
   int _finesCount = 0;
   List<Map<String, dynamic>> _finesDetails = [];
@@ -82,9 +82,8 @@ class _SimitWebViewScreenState extends State<SimitWebViewScreen> {
       );
   }
 
-  // Guardar resultados en Supabase
+  // Guardar resultados en Supabase y enviar correo al usuario
   Future<void> _guardarResultados() async {
-    setState(() => _isSaving = true);
     final supabase = Supabase.instance.client;
 
     try {
@@ -99,14 +98,71 @@ class _SimitWebViewScreenState extends State<SimitWebViewScreen> {
           .update(dataToUpdate)
           .eq('id', widget.vehiculoId);
 
+      // Obtener el email del usuario autenticado para enviarle el reporte
+      final userEmail = supabase.auth.currentUser?.email ?? '';
+      if (userEmail.isNotEmpty) {
+        // Extraer las explicaciones guardadas del primer detalle
+        final List<String> explanations = _finesDetails.isNotEmpty
+            ? List<String>.from(_finesDetails.first['explicaciones'] ?? [])
+            : [];
+
+        // Enviar correo de reporte de forma silenciosa (sin bloquear la UI)
+        EmailService.sendSimitReport(
+          toEmail: userEmail,
+          placa: widget.placa,
+          finesCount: _finesCount,
+          totalAmount: _totalAmount,
+          explanations: explanations,
+        ).then((sent) {
+          if (sent) {
+            debugPrint('EmailService: Reporte SIMIT enviado a $userEmail');
+          }
+        });
+      }
+
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('✅ Resultados de SIMIT guardados correctamente.'),
-            backgroundColor: Colors.green,
+        // Mostrar diálogo informativo completo que no desaparece solo
+        showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            title: Row(
+              children: const [
+                Icon(Icons.check_circle_rounded, color: Colors.green),
+                SizedBox(width: 10),
+                Text('Resultados Guardados'),
+              ],
+            ),
+            content: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  _simitStatus == 'has_fines'
+                      ? '⚠️ Se registraron $_finesCount comparendo(s) por \$${_totalAmount.round()} COP.'
+                      : '✅ Tu vehículo está libre de multas en el SIMIT.',
+                  style: const TextStyle(fontSize: 15),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  userEmail.isNotEmpty
+                      ? '📧 Se ha enviado un reporte a tu correo:\n$userEmail'
+                      : '📧 Inicia sesión para recibir el reporte por correo.',
+                  style: const TextStyle(fontSize: 13, color: Colors.grey),
+                ),
+              ],
+            ),
+            actions: [
+              FilledButton(
+                onPressed: () {
+                  Navigator.pop(ctx);
+                  Navigator.pop(context, true); // Volver al dashboard y actualizarlo
+                },
+                child: const Text('Aceptar'),
+              ),
+            ],
           ),
         );
-        Navigator.pop(context, true); // Devolver true para actualizar dashboard
       }
     } catch (e) {
       debugPrint('Error al guardar en Supabase: $e');
@@ -115,111 +171,12 @@ class _SimitWebViewScreenState extends State<SimitWebViewScreen> {
           SnackBar(
             content: Text('❌ Error al guardar datos: $e'),
             backgroundColor: Colors.redAccent,
+            duration: const Duration(seconds: 5),
           ),
         );
       }
     } finally {
-      if (mounted) setState(() => _isSaving = false);
     }
-  }
-
-  // Cuadro de diálogo interactivo para ingresar las multas encontradas manualmente
-  // Esto es necesario por las restricciones de CORS, captchas y cambios dinámicos del DOM en la web del SIMIT.
-  void _mostrarDialogoCaptura() {
-    final TextEditingController countCtrl = TextEditingController(text: _finesCount.toString());
-    final TextEditingController amountCtrl = TextEditingController(text: _totalAmount.round().toString());
-    String categoria = 'Tránsito';
-
-    showDialog(
-      context: context,
-      builder: (ctx) {
-        return AlertDialog(
-          title: const Text('Registrar Resultado de Multas'),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text(
-                  'Ingresa el número de multas y el valor total que observas en la pantalla del SIMIT:',
-                  style: TextStyle(fontSize: 13, color: Colors.grey),
-                ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: countCtrl,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: 'Cantidad de multas',
-                    prefixIcon: Icon(Icons.gavel_rounded),
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: amountCtrl,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: 'Valor total (COP)',
-                    prefixIcon: Icon(Icons.attach_money_rounded),
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                DropdownButtonFormField<String>(
-                  value: categoria,
-                  decoration: const InputDecoration(
-                    labelText: 'Categoría predominante',
-                    border: OutlineInputBorder(),
-                  ),
-                  items: ['Tránsito', 'Foto-Multa', 'Pico y Placa', 'Mal parqueado', 'SOAT/Tecno vencido']
-                      .map((String val) => DropdownMenuItem<String>(
-                            value: val,
-                            child: Text(val),
-                          ))
-                      .toList(),
-                  onChanged: (val) {
-                    if (val != null) categoria = val;
-                  },
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            LiquidGlassButton(
-              label: 'Cancelar',
-              onTap: () => Navigator.pop(ctx),
-              width: 100,
-              height: 38,
-            ),
-            LiquidGlassButton(
-              label: 'Guardar',
-              onTap: () {
-                final count = int.tryParse(countCtrl.text) ?? 0;
-                final amount = double.tryParse(amountCtrl.text) ?? 0.0;
-
-                setState(() {
-                  _finesCount = count;
-                  _totalAmount = amount;
-                  _simitStatus = count > 0 ? 'has_fines' : 'clean';
-                  _finesDetails = [
-                    {
-                      'cantidad': count,
-                      'valor_total': amount,
-                      'categoria': categoria,
-                      'fecha_verificacion': DateTime.now().toIso8601String(),
-                    }
-                  ];
-                });
-
-                Navigator.pop(ctx);
-                _guardarResultados();
-              },
-              width: 100,
-              height: 38,
-            ),
-          ],
-        );
-      },
-    );
   }
 
   Future<String> _obtenerExplicacionInfraccion(String code) async {
@@ -601,55 +558,16 @@ class _SimitWebViewScreenState extends State<SimitWebViewScreen> {
                           Colors.purple.shade900.withOpacity(0.4),
                         ],
                         onTap: _escanearPagina,
-                      ),
-                      const SizedBox(height: 12),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: LiquidGlassButton(
-                              icon: Icons.check_circle_outline_rounded,
-                              label: 'Sin Multas',
-                              height: 42,
-                              customColors: [
-                                Colors.green.shade800.withOpacity(0.5),
-                                const Color(0xFF064E3B).withOpacity(0.3),
-                              ],
-                              onTap: _isSaving
-                                  ? () {}
-                                  : () {
-                                      setState(() {
-                                        _simitStatus = 'clean';
-                                        _finesCount = 0;
-                                        _totalAmount = 0.0;
-                                        _finesDetails = [];
-                                      });
-                                      _guardarResultados();
-                                    },
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: LiquidGlassButton(
-                              icon: Icons.warning_amber_rounded,
-                              label: 'Con Multas',
-                              height: 42,
-                              customColors: [
-                                Colors.red.shade900.withOpacity(0.6),
-                                Colors.deepOrange.shade900.withOpacity(0.4),
-                              ],
-                              onTap: _isSaving ? () {} : _mostrarDialogoCaptura,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+                      ),         // LiquidGlassButton
+                    ],           // Column children
+                  ),             // Column
+                ),               // Container
+              ),                 // BackdropFilter
+            ),                   // ClipRRect
+          ),                     // Positioned
+        ],                       // Stack children
+      ),                         // Stack (body)
+    );                           // Scaffold
   }
 }
+

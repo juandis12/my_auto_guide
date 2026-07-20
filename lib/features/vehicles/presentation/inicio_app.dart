@@ -252,46 +252,97 @@ class _InicioAppState extends State<InicioApp> {
     final List<dynamic> fines = _cachedVehicleData?['simit_fines_data'] ?? [];
     if (fines.isEmpty) return const SizedBox.shrink();
 
-    final fine = fines.first;
-    final double amount = _asDouble(fine['valor_total']);
-    final int count = fine['cantidad'] ?? 1;
-    final String category = fine['categoria'] ?? 'Tránsito';
+    final String dismissKey = 'simit_dismissed_${widget.vehiculoId}';
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 20),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.redAccent.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Colors.redAccent.withOpacity(0.3)),
-        ),
-        child: Row(
-          children: [
-            const Icon(Icons.warning_amber_rounded, color: Colors.redAccent, size: 28),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Comparendos Pendientes ($count)',
-                    style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.redAccent),
-                  ),
-                  Text(
-                    'Valor Total: \$${amount.toStringAsFixed(0)} COP • Categoría: $category',
-                    style: const TextStyle(fontSize: 12, color: Colors.grey),
-                  ),
-                ],
-              ),
+    return FutureBuilder<bool>(
+      future: SharedPreferences.getInstance().then((prefs) {
+        final int? dismissedUntil = prefs.getInt(dismissKey);
+        if (dismissedUntil == null) return false;
+        return DateTime.now().millisecondsSinceEpoch < dismissedUntil;
+      }),
+      builder: (context, snapshot) {
+        if (snapshot.data == true) return const SizedBox.shrink();
+
+        final fine = fines.first;
+        final double amount = _asDouble(fine['valor_total']);
+        final int count = fine['cantidad'] ?? 1;
+        final String category = fine['categoria'] ?? 'Tránsito';
+        final List<dynamic> codes = fine['codigos'] ?? [];
+
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 20),
+          child: Container(
+            padding: const EdgeInsets.fromLTRB(16, 12, 8, 12),
+            decoration: BoxDecoration(
+              color: Colors.redAccent.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: Colors.redAccent.withOpacity(0.3)),
             ),
-            TextButton(
-              onPressed: () => _abrirSimit(),
-              child: const Text('Ver SIMIT', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.redAccent)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(top: 2),
+                      child: Icon(Icons.warning_amber_rounded, color: Colors.redAccent, size: 26),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Comparendos Pendientes ($count)',
+                            style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.redAccent, fontSize: 14),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'Valor Total: \$${amount.toStringAsFixed(0)} COP  •  $category',
+                            style: const TextStyle(fontSize: 12, color: Colors.grey),
+                          ),
+                          if (codes.isNotEmpty) ...[
+                            const SizedBox(height: 2),
+                            Text(
+                              'Infracciones: ${codes.join(', ')}',
+                              style: const TextStyle(fontSize: 11, color: Colors.redAccent, fontWeight: FontWeight.w500),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                    // Botón X: descarta la alerta por 24 horas
+                    IconButton(
+                      icon: const Icon(Icons.close_rounded, color: Colors.grey, size: 20),
+                      tooltip: 'Ocultar durante 24 horas',
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                      onPressed: () async {
+                        final prefs = await SharedPreferences.getInstance();
+                        final dismissUntil = DateTime.now()
+                            .add(const Duration(hours: 24))
+                            .millisecondsSinceEpoch;
+                        await prefs.setInt(dismissKey, dismissUntil);
+                        if (mounted) setState(() {});
+                      },
+                    ),
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 36),
+                  child: TextButton.icon(
+                    onPressed: () => _abrirSimit(),
+                    style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: const Size(0, 30)),
+                    icon: const Icon(Icons.open_in_new, size: 13, color: Colors.redAccent),
+                    label: const Text('Consultar en SIMIT', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.redAccent)),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -337,7 +388,7 @@ class _InicioAppState extends State<InicioApp> {
       final row = await supabase
           .from('vehiculos')
           .select(
-            'marca, modelo, apodo, kms, image_path, last_cadena, last_filtro, last_aceite, last_soat, last_tecno, soat_path, tecno_path, seguro_path, propiedad_path, kms_last_cadena, kms_last_filtro, kms_last_aceite, placa, cedula, simit_status, simit_fines_data, simit_last_check',
+            'marca, modelo, apodo, kms, image_path, last_cadena, last_filtro, last_aceite, last_soat, last_tecno, soat_path, tecno_path, seguro_path, propiedad_path, kms_last_cadena, kms_last_filtro, kms_last_aceite, placa, cedula, simit_status, simit_fines_data, simit_last_check, has_360_view, images_360_urls',
           )
           .eq('id', widget.vehiculoId)
           .single();
