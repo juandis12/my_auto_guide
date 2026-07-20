@@ -90,6 +90,7 @@ class BackgroundNavService {
           distanceFilter: 5,
           pauseLocationUpdatesAutomatically: false,
           showBackgroundLocationIndicator: true,
+          allowBackgroundLocationUpdates: true,
         );
       } else {
         locationSettings = const LocationSettings(

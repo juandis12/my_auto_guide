@@ -11,6 +11,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'liquid_glass_fab.dart';
 import '../../core/services/ai_bot_service.dart';
 import '../../core/services/email_service.dart';
+import '../../core/services/notification_service.dart';
 
 class SimitWebViewScreen extends StatefulWidget {
   final String placa;
@@ -98,24 +99,43 @@ class _SimitWebViewScreenState extends State<SimitWebViewScreen> {
           .update(dataToUpdate)
           .eq('id', widget.vehiculoId);
 
-      // Obtener el email del usuario autenticado para enviarle el reporte
+      // Obtener los datos completos del vehículo (para incluir SOAT, Tecno y Mantenimientos en el reporte)
+      Map<String, dynamic>? vehicleData;
+      try {
+        vehicleData = await supabase
+            .from('vehiculos')
+            .select('last_soat, last_tecno, last_aceite, kms, kms_last_aceite, kms_last_filtro, kms_last_cadena, marca, modelo, apodo')
+            .eq('id', widget.vehiculoId)
+            .single();
+      } catch (_) {}
+
+      // Disparar notificaciones locales (compatibles con iOS y Android en segundo plano)
+      if (_finesCount > 0) {
+        NotificationService().showMaintenanceNotification(
+          id: 9901,
+          title: '⚠️ ALERTA SIMIT: Comparendos Registrados',
+          body: 'Se detectaron $_finesCount multas (\$${_totalAmount.round()} COP) para el vehículo ${widget.placa}.',
+        );
+      }
+
+      // Obtener el email del usuario autenticado para enviarle el reporte completo
       final userEmail = supabase.auth.currentUser?.email ?? '';
       if (userEmail.isNotEmpty) {
-        // Extraer las explicaciones guardadas del primer detalle
         final List<String> explanations = _finesDetails.isNotEmpty
             ? List<String>.from(_finesDetails.first['explicaciones'] ?? [])
             : [];
 
-        // Enviar correo de reporte de forma silenciosa (sin bloquear la UI)
+        // Enviar correo de reporte completo con SIMIT + Vencimientos
         EmailService.sendSimitReport(
           toEmail: userEmail,
           placa: widget.placa,
           finesCount: _finesCount,
           totalAmount: _totalAmount,
           explanations: explanations,
+          vehicleData: vehicleData,
         ).then((sent) {
           if (sent) {
-            debugPrint('EmailService: Reporte SIMIT enviado a $userEmail');
+            debugPrint('EmailService: Reporte completo enviado a $userEmail');
           }
         });
       }

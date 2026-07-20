@@ -4,9 +4,12 @@
 import 'dart:async';
 import 'dart:ui' show ImageFilter;
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:geolocator_android/geolocator_android.dart';
+import 'package:geolocator_apple/geolocator_apple.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -110,8 +113,27 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
 
   void _iniciarSeguimientoIdle() {
     _idlePositionSubscription?.cancel();
+    late LocationSettings settings;
+    if (defaultTargetPlatform == TargetPlatform.iOS || defaultTargetPlatform == TargetPlatform.macOS) {
+      settings = AppleSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 3,
+        pauseLocationUpdatesAutomatically: false,
+        allowBackgroundLocationUpdates: true,
+        showBackgroundLocationIndicator: true,
+      );
+    } else if (defaultTargetPlatform == TargetPlatform.android) {
+      settings = AndroidSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 3,
+        intervalDuration: const Duration(seconds: 2),
+      );
+    } else {
+      settings = const LocationSettings(accuracy: LocationAccuracy.high, distanceFilter: 3);
+    }
+
     _idlePositionSubscription = Geolocator.getPositionStream(
-      locationSettings: LocationSettings(accuracy: LocationAccuracy.high, distanceFilter: 3),
+      locationSettings: settings,
     ).listen((Position position) {
       final latLng = LatLng(position.latitude, position.longitude);
       _controller.updateCurrentPosition(latLng, speedMs: position.speed);

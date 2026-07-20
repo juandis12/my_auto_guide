@@ -16,9 +16,9 @@ class TelemetryCalculator {
       newPos.longitude
     );
 
-    // Filtro de ruido (jitter): Ignorar saltos menores a 3m o mayores a 400m en un intervalo corto.
-    // Esto previene que el GPS sume km mientras el vehículo está detenido o por glitches de red.
-    if (distMeters < 3 || distMeters > 400) return 0.0;
+    // Filtro de ruido (jitter): Ignorar saltos menores a 3m (vehículo detenido)
+    // o saltos mayores a 5000m en un solo tick (glitch extremo de GPS/red).
+    if (distMeters < 3 || distMeters > 5000) return 0.0;
     
     return distMeters / 1000.0;
   }

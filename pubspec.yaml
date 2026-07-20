@@ -35,8 +35,9 @@ dependencies:
   open_filex: ^4.0.0
   path_provider: ^2.1.5
 
-  # Red
+  # Red y Correos
   http: ^1.5.0
+  mailer: ^6.1.0
 
   # Permisos
   permission_handler: ^12.0.1
