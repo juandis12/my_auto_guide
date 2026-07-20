@@ -44,6 +44,7 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
   late NavigationController _controller;
   bool _isLoadingRoute = false;
   bool _showSuccessOverlay = false;
+  String? _vehicleImagePath;
   
   List<NominatimPlace> _searchResults = [];
   bool _isSearching = false;
@@ -79,10 +80,14 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
   
   Future<void> _cargarInfoVehiculo() async {
     try {
-      final data = await supabase.from('vehiculos').select('modelo, marca').eq('id', widget.vehiculoId).single();
+      final data = await supabase.from('vehiculos').select('modelo, marca, image_path').eq('id', widget.vehiculoId).single();
       final marca = (data['marca'] as String? ?? '').toUpperCase();
       final modelo = data['modelo'] ?? 'Vehículo';
       final isCar = marca == 'TOYOTA' || marca == 'MAZDA' || marca == 'CHEVROLET';
+      
+      setState(() {
+        _vehicleImagePath = data['image_path'] as String?;
+      });
       
       _controller = NavigationController(
         vehicleId: widget.vehiculoId,
@@ -384,7 +389,7 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
             point: t.currentPos!,
             width: 45,
             height: 45,
-            child: const PulsingLocationMarker(),
+            child: PulsingLocationMarker(imagePath: _vehicleImagePath),
           ),
         ]),
       ],
@@ -582,7 +587,8 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
 }
 
 class PulsingLocationMarker extends StatefulWidget {
-  const PulsingLocationMarker({super.key});
+  final String? imagePath;
+  const PulsingLocationMarker({super.key, this.imagePath});
   @override
   State<PulsingLocationMarker> createState() => _PulsingLocationMarkerState();
 }
@@ -614,20 +620,21 @@ class _PulsingLocationMarkerState extends State<PulsingLocationMarker> with Sing
           alignment: Alignment.center,
           children: [
             Container(
-              width: 36 * _animCtrl.value,
-              height: 36 * _animCtrl.value,
+              width: 44 * _animCtrl.value,
+              height: 44 * _animCtrl.value,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: const Color(0xFF00C6FF).withOpacity(1.0 - _animCtrl.value),
               ),
             ),
             Container(
-              width: 14,
-              height: 14,
-              decoration: const BoxDecoration(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.white,
-                boxShadow: [
+                border: Border.all(color: const Color(0xFF00C6FF), width: 1.5),
+                boxShadow: const [
                   BoxShadow(
                     color: Colors.black26,
                     blurRadius: 4,
@@ -635,15 +642,22 @@ class _PulsingLocationMarkerState extends State<PulsingLocationMarker> with Sing
                   )
                 ],
               ),
-              child: Center(
-                child: Container(
-                  width: 10,
-                  height: 10,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Color(0xFF00C6FF),
-                  ),
-                ),
+              child: ClipOval(
+                child: widget.imagePath != null && widget.imagePath!.isNotEmpty
+                    ? Image.asset(
+                        widget.imagePath!,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) => const Icon(
+                          Icons.motorcycle,
+                          size: 18,
+                          color: Color(0xFF00C6FF),
+                        ),
+                      )
+                    : const Icon(
+                        Icons.motorcycle,
+                        size: 18,
+                        color: Color(0xFF00C6FF),
+                      ),
               ),
             ),
           ],
