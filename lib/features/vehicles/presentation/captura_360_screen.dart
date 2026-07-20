@@ -230,46 +230,102 @@ class _Captura360ScreenState extends State<Captura360Screen> {
     }
   }
 
-  // LLamada a API Gratuita de BRIA AI en Hugging Face
+  // LLamada a API Gratuita de BRIA AI (RMBG) en Hugging Face para remover fondo
   Future<Uint8List?> _removerFondoGratis(Uint8List imageBytes) async {
     final String base64Image = base64Encode(imageBytes);
     final String dataUri = 'data:image/jpeg;base64,$base64Image';
 
-    final response = await http.post(
-      Uri.parse('https://briaai-bria-rmbg-1-4.hf.space/api/predict'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'data': [
-          {'data': dataUri, 'name': 'moto_captura.jpg'}
-        ]
-      }),
-    ).timeout(const Duration(seconds: 15));
+    final List<String> endpoints = [
+      'https://briaai-bria-rmbg-1-4.hf.space/api/predict',
+      'https://briaai-bria-rmbg-2-0.hf.space/api/predict',
+      'https://mvgorich-bria-rmbg-1-4.hf.space/api/predict',
+    ];
 
-    if (response.statusCode == 200) {
-      final jsonResponse = jsonDecode(response.body);
-      final listData = jsonResponse['data'] as List;
-      
-      if (listData.isNotEmpty) {
-        final result = listData[0];
-        
-        // Caso A: Imagen en Base64 directo
-        if (result is String) {
-          final String base64Str = result.split(',').last;
-          return base64Decode(base64Str);
-        }
-        
-        // Caso B: URL temporal provista por Gradio
-        if (result is Map) {
-          final String? urlStr = result['url'] ?? result['path'];
-          if (urlStr != null) {
-            final downloadRes = await http.get(Uri.parse(urlStr));
-            if (downloadRes.statusCode == 200) {
-              return downloadRes.bodyBytes;
+    // Intento 1: Formato estándar de Gradio payload (string base64 directo)
+    for (final endpoint in endpoints) {
+      try {
+        final response = await http.post(
+          Uri.parse(endpoint),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            'data': [dataUri]
+          }),
+        ).timeout(const Duration(seconds: 12));
+
+        if (response.statusCode == 200) {
+          final jsonResponse = jsonDecode(response.body);
+          final listData = jsonResponse['data'] as List?;
+          
+          if (listData != null && listData.isNotEmpty) {
+            final result = listData[0];
+            
+            // Caso A: Imagen en Base64 directo
+            if (result is String) {
+              final String base64Str = result.contains(',') ? result.split(',').last : result;
+              return base64Decode(base64Str);
+            }
+            
+            // Caso B: Objeto con URL o path provisto por Gradio
+            if (result is Map) {
+              String? urlStr = result['url'] ?? result['path'];
+              if (urlStr != null) {
+                if (!urlStr.startsWith('http')) {
+                  final baseUri = Uri.parse(endpoint);
+                  urlStr = '${baseUri.scheme}://${baseUri.host}$urlStr';
+                }
+                final downloadRes = await http.get(Uri.parse(urlStr));
+                if (downloadRes.statusCode == 200) {
+                  return downloadRes.bodyBytes;
+                }
+              }
             }
           }
         }
+      } catch (e) {
+        debugPrint('Error en endpoint $endpoint (intento 1): $e');
       }
     }
+
+    // Intento 2: Formato de objeto file si la API requiere path o url
+    for (final endpoint in endpoints) {
+      try {
+        final response = await http.post(
+          Uri.parse(endpoint),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            'data': [
+              {'path': dataUri, 'url': dataUri}
+            ]
+          }),
+        ).timeout(const Duration(seconds: 10));
+
+        if (response.statusCode == 200) {
+          final jsonResponse = jsonDecode(response.body);
+          final listData = jsonResponse['data'] as List?;
+          if (listData != null && listData.isNotEmpty) {
+            final result = listData[0];
+            if (result is String) {
+              final String base64Str = result.contains(',') ? result.split(',').last : result;
+              return base64Decode(base64Str);
+            }
+            if (result is Map) {
+              String? urlStr = result['url'] ?? result['path'];
+              if (urlStr != null) {
+                if (!urlStr.startsWith('http')) {
+                  final baseUri = Uri.parse(endpoint);
+                  urlStr = '${baseUri.scheme}://${baseUri.host}$urlStr';
+                }
+                final downloadRes = await http.get(Uri.parse(urlStr));
+                if (downloadRes.statusCode == 200) {
+                  return downloadRes.bodyBytes;
+                }
+              }
+            }
+          }
+        }
+      } catch (_) {}
+    }
+
     return null;
   }
 
