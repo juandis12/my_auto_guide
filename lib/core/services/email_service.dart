@@ -35,10 +35,12 @@ class EmailService {
     // 1. PRIMERA OPCIÓN: Enviar usando directamente tu cuenta de Gmail (SMTP)
     if (gmailUser.isNotEmpty && gmailPass.isNotEmpty) {
       try {
-        final smtpServer = gmail(gmailUser, gmailPass);
+        final cleanUser = gmailUser.trim();
+        final cleanPass = gmailPass.replaceAll(' ', '').trim();
+        final smtpServer = gmail(cleanUser, cleanPass);
         final message = Message()
-          ..from = Address(gmailUser, 'My Auto Guide')
-          ..recipients.add(toEmail)
+          ..from = Address(cleanUser, 'My Auto Guide')
+          ..recipients.add(toEmail.trim())
           ..subject = '$subject ($placa)'
           ..html = htmlContent;
 

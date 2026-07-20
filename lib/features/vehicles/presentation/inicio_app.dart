@@ -245,6 +245,15 @@ class _InicioAppState extends State<InicioApp> {
     }
   }
 
+  int get _simitFinesCount {
+    final status = _cachedVehicleData?['simit_status'] ?? 'unchecked';
+    if (status != 'has_fines') return 0;
+    final fines = _cachedVehicleData?['simit_fines_data'] as List<dynamic>?;
+    if (fines == null || fines.isEmpty) return 0;
+    final fine = fines.first;
+    return (fine['cantidad'] as num?)?.toInt() ?? 1;
+  }
+
   Widget _buildSimitAlertCard() {
     final status = _cachedVehicleData?['simit_status'] ?? 'unchecked';
     if (status != 'has_fines') return const SizedBox.shrink();
@@ -1725,6 +1734,7 @@ class _InicioAppState extends State<InicioApp> {
                               value: 1.0,
                               color: _getSimitColor(),
                               isSimit: true,
+                              finesCount: _simitFinesCount,
                               onTap: _abrirSimit,
                             ),
                             const SizedBox(width: 12),

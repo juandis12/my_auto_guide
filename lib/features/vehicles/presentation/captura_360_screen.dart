@@ -4,7 +4,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:sensors_plus/sensors_plus.dart';
@@ -57,7 +56,7 @@ class _Captura360ScreenState extends State<Captura360Screen> {
 
         _cameraCtrl = CameraController(
           backCamera,
-          ResolutionPreset.medium,
+          ResolutionPreset.high,
           enableAudio: false,
         );
 
@@ -73,13 +72,9 @@ class _Captura360ScreenState extends State<Captura360Screen> {
 
   void _initSensors() {
     _targetAngle = 0.0;
-    // Escuchar giroscopio para estimar el giro horizontal del usuario
     _gyroSubscription = gyroscopeEvents.listen((GyroscopeEvent event) {
       if (!mounted) return;
-      // Rotación en el eje vertical (Y en modo retrato vertical estándar)
-      // Multiplicamos por la fracción de tiempo aproximada (60Hz -> 0.016s) y convertimos a grados (1 rad = 57.2958 deg)
       double deltaDegrees = event.y * 0.016 * 57.2958;
-      
       setState(() {
         _currentAngle = (_currentAngle + deltaDegrees) % 360.0;
         if (_currentAngle < 0) _currentAngle += 360.0;
@@ -103,11 +98,10 @@ class _Captura360ScreenState extends State<Captura360Screen> {
       setState(() {
         _capturedPhotos.add(photo);
         _currentStep++;
-        // Avanzar el objetivo 20 grados para el siguiente paso
         _targetAngle = (_targetAngle + 20.0) % 360.0;
       });
 
-      // Si completamos todas las fotos, iniciar procesamiento
+      // Si completamos todas las fotos esperadas, iniciar procesamiento automáticamente
       if (_capturedPhotos.length >= _totalPhotos) {
         _procesarImagenes();
       }
@@ -118,51 +112,74 @@ class _Captura360ScreenState extends State<Captura360Screen> {
     }
   }
 
+  // Finalizar temprano con las fotos que se hayan capturado hasta el momento
+  void _finalizarConFotosActuales() {
+    if (_capturedPhotos.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('📷 Toma al menos 1 foto antes de procesar tu vista 360°'),
+          backgroundColor: Colors.orangeAccent,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+    _procesarImagenes();
+  }
+
   // Enviar a API pública de Hugging Face y subir a Supabase
   Future<void> _procesarImagenes() async {
     setState(() {
       _isProcessing = true;
-      _processingMessage = 'Iniciando optimización de imágenes...';
+      _processingMessage = 'Eliminando fotos anteriores...';
     });
 
     final storage = VehicleStorageService();
     final List<String> uploadedSignedUrls = [];
 
     try {
+      // 0. ELIMINAR FOTOS 360 ANTERIORES EN SUPABASE STORAGE
+      try {
+        final supabase = Supabase.instance.client;
+        final List<FileObject> oldFiles = await supabase.storage
+            .from('documents')
+            .list(path: 'processed_360/${widget.vehiculoId}');
+        if (oldFiles.isNotEmpty) {
+          final pathsToDelete = oldFiles.map((f) => 'processed_360/${widget.vehiculoId}/${f.name}').toList();
+          await supabase.storage.from('documents').remove(pathsToDelete);
+        }
+      } catch (e) {
+        debugPrint('Aviso al purgar archivos 360 anteriores: $e');
+      }
+
       for (int i = 0; i < _capturedPhotos.length; i++) {
         setState(() {
-          _processingMessage = 'Eliminando fondo con IA: Imagen ${i + 1} de $_totalPhotos...';
+          _processingMessage = 'Eliminando fondo con IA: Imagen ${i + 1} de ${_capturedPhotos.length}...';
         });
 
-        // 1. Cargar bytes de la foto local
         final bytes = await _capturedPhotos[i].readAsBytes();
 
-        // 2. Enviar a API gratuita BRIA RMBG 1.4 en la nube
         Uint8List? transparentBytes;
         try {
           transparentBytes = await _removerFondoGratis(bytes);
         } catch (e) {
-          debugPrint('Error en API para foto $i: $e (se usará original con fondo como respaldo)');
+          debugPrint('Error en API para foto $i: $e (usando foto original)');
         }
 
-        // Si la IA falla, usamos los bytes originales para no romper el flujo
         final finalBytes = transparentBytes ?? bytes;
 
         setState(() {
-          _processingMessage = 'Subiendo a la nube: Imagen ${i + 1} de $_totalPhotos...';
+          _processingMessage = 'Subiendo a la nube: Imagen ${i + 1} de ${_capturedPhotos.length}...';
         });
 
-        // 3. Subir a Supabase Storage
         final remotePath = 'processed_360/${widget.vehiculoId}/img_$i.png';
         
-        // Eliminar existente si hay (para sobrescribir)
         try {
           await storage.deleteDocument(remotePath);
         } catch (_) {}
 
         await storage.uploadBinary(remotePath, finalBytes);
 
-        // 4. Obtener URL firmada de largo vencimiento (1 año)
         final signedUrl = await storage.getSignedUrl(remotePath, {});
         if (signedUrl != null) {
           uploadedSignedUrls.add(signedUrl);
@@ -173,7 +190,6 @@ class _Captura360ScreenState extends State<Captura360Screen> {
         _processingMessage = 'Guardando vista 360° en tu garaje...';
       });
 
-      // 5. Actualizar registro en base de datos de Supabase
       final supabase = Supabase.instance.client;
       await supabase.from('vehiculos').update({
         'has_360_view': true,
@@ -194,16 +210,16 @@ class _Captura360ScreenState extends State<Captura360Screen> {
                 Text('¡Vista 360° Creada!'),
               ],
             ),
-            content: const Text(
-              'Las fotos de tu motocicleta han sido procesadas, el fondo fue removido y ahora puedes verla rotar interactivamente en tu pantalla principal.',
-              style: TextStyle(fontSize: 14),
+            content: Text(
+              'Se procesaron ${_capturedPhotos.length} fotos de tu vehículo. El fondo fue recortado con Inteligencia Artificial y la nueva vista 360° ya está disponible.',
+              style: const TextStyle(fontSize: 14),
             ),
             actions: [
               LiquidGlassButton(
                 label: 'Entendido',
                 onTap: () {
-                  Navigator.pop(ctx); // Cierra diálogo
-                  Navigator.pop(context, true); // Vuelve a Dashboard con indicador de actualización
+                  Navigator.pop(ctx);
+                  Navigator.pop(context, true);
                 },
                 width: 130,
                 height: 42,
@@ -241,7 +257,6 @@ class _Captura360ScreenState extends State<Captura360Screen> {
       'https://mvgorich-bria-rmbg-1-4.hf.space/api/predict',
     ];
 
-    // Intento 1: Formato estándar de Gradio payload (string base64 directo)
     for (final endpoint in endpoints) {
       try {
         final response = await http.post(
@@ -259,13 +274,11 @@ class _Captura360ScreenState extends State<Captura360Screen> {
           if (listData != null && listData.isNotEmpty) {
             final result = listData[0];
             
-            // Caso A: Imagen en Base64 directo
             if (result is String) {
               final String base64Str = result.contains(',') ? result.split(',').last : result;
               return base64Decode(base64Str);
             }
             
-            // Caso B: Objeto con URL o path provisto por Gradio
             if (result is Map) {
               String? urlStr = result['url'] ?? result['path'];
               if (urlStr != null) {
@@ -282,48 +295,8 @@ class _Captura360ScreenState extends State<Captura360Screen> {
           }
         }
       } catch (e) {
-        debugPrint('Error en endpoint $endpoint (intento 1): $e');
+        debugPrint('Error en endpoint $endpoint: $e');
       }
-    }
-
-    // Intento 2: Formato de objeto file si la API requiere path o url
-    for (final endpoint in endpoints) {
-      try {
-        final response = await http.post(
-          Uri.parse(endpoint),
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({
-            'data': [
-              {'path': dataUri, 'url': dataUri}
-            ]
-          }),
-        ).timeout(const Duration(seconds: 10));
-
-        if (response.statusCode == 200) {
-          final jsonResponse = jsonDecode(response.body);
-          final listData = jsonResponse['data'] as List?;
-          if (listData != null && listData.isNotEmpty) {
-            final result = listData[0];
-            if (result is String) {
-              final String base64Str = result.contains(',') ? result.split(',').last : result;
-              return base64Decode(base64Str);
-            }
-            if (result is Map) {
-              String? urlStr = result['url'] ?? result['path'];
-              if (urlStr != null) {
-                if (!urlStr.startsWith('http')) {
-                  final baseUri = Uri.parse(endpoint);
-                  urlStr = '${baseUri.scheme}://${baseUri.host}$urlStr';
-                }
-                final downloadRes = await http.get(Uri.parse(urlStr));
-                if (downloadRes.statusCode == 200) {
-                  return downloadRes.bodyBytes;
-                }
-              }
-            }
-          }
-        }
-      } catch (_) {}
     }
 
     return null;
@@ -349,7 +322,7 @@ class _Captura360ScreenState extends State<Captura360Screen> {
                 ),
                 const SizedBox(height: 12),
                 const Text(
-                  'Este proceso utiliza Inteligencia Artificial gratuita en la nube. Por favor, no cierres la aplicación.',
+                  'Este proceso remueve el fondo con IA y sube la nueva animación 360° a la nube. Por favor espera unos momentos.',
                   textAlign: TextAlign.center,
                   style: TextStyle(color: Colors.grey, fontSize: 11),
                 ),
@@ -369,37 +342,42 @@ class _Captura360ScreenState extends State<Captura360Screen> {
       );
     }
 
-    // Calcular desviación del ángulo del giroscopio
     double angleDiff = (_currentAngle - _targetAngle).abs();
     if (angleDiff > 180) angleDiff = 360 - angleDiff;
-    bool isAligned = angleDiff < 8.0; // Margen de alineación de 8 grados
+    bool isAligned = angleDiff < 8.0;
 
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // Vista previa de la cámara
-          CameraPreview(_cameraCtrl!),
-
-          // Máscara / Silueta guía de moto en el centro
-          Center(
-            child: CustomPaint(
-              size: const Size(280, 200),
-              painter: MotorcycleSilhouettePainter(color: isAligned ? Colors.green.withOpacity(0.5) : Colors.white30),
+          // Vista previa de la cámara a pantalla completa limpia sin distorsión
+          ClipRect(
+            child: SizedOverflowBox(
+              size: MediaQuery.of(context).size,
+              child: CameraPreview(_cameraCtrl!),
             ),
           ),
 
-          // Interfaz superior: Título e indicador de progreso
+          // Enmarcado del encuadre limpio en el centro (sin líneas ni círculos feos sobre la moto)
+          Center(
+            child: CustomPaint(
+              size: Size(MediaQuery.of(context).size.width * 0.85, MediaQuery.of(context).size.height * 0.45),
+              painter: ViewfinderReticlePainter(color: isAligned ? Colors.greenAccent : Colors.white38),
+            ),
+          ),
+
+          // Header Superior estilo Glassmorphism
           Positioned(
             top: 50,
             left: 20,
             right: 20,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               decoration: BoxDecoration(
-                color: Colors.black54,
-                borderRadius: BorderRadius.circular(16),
+                color: Colors.black45,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: Colors.white12),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -411,46 +389,57 @@ class _Captura360ScreenState extends State<Captura360Screen> {
                     iconSize: 18,
                   ),
                   Text(
-                    'Captura 360°: Foto ${_currentStep + 1}/$_totalPhotos',
+                    'Captura 360° (${_capturedPhotos.length}/$_totalPhotos)',
                     style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15),
                   ),
-                  const SizedBox(width: 40),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.blueAccent.withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.blueAccent.withOpacity(0.5)),
+                    ),
+                    child: Text(
+                      '${_capturedPhotos.length} fotos',
+                      style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+                    ),
+                  ),
                 ],
               ),
             ),
           ),
 
-          // Interfaz inferior: Controles, Giros y Botón
+          // Interfaz inferior: Controles, Giros y Botones
           Positioned(
-            bottom: 40,
+            bottom: 35,
             left: 20,
             right: 20,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Indicador de ángulo giroscópico (Dial de nivelación)
+                // Indicador de giroscopio limpio
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.8),
+                    color: Colors.black.withOpacity(0.75),
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: isAligned ? Colors.green : Colors.white24, width: 1.5),
+                    border: Border.all(color: isAligned ? Colors.greenAccent : Colors.white24, width: 1.5),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
-                        isAligned ? Icons.check_circle : Icons.navigation_rounded,
-                        color: isAligned ? Colors.green : Colors.orangeAccent,
+                        isAligned ? Icons.check_circle_rounded : Icons.navigation_rounded,
+                        color: isAligned ? Colors.greenAccent : Colors.orangeAccent,
                         size: 20,
                       ),
                       const SizedBox(width: 10),
                       Text(
                         isAligned 
-                          ? '¡Posición Perfecta! Toma la foto' 
-                          : 'Gira el celular unos ${(angleDiff).round()}° hacia la marca',
+                          ? '¡Posición Perfecta! Captura la foto' 
+                          : 'Gira la moto o el celular ~${(angleDiff).round()}° hacia la marca',
                         style: TextStyle(
-                          color: isAligned ? Colors.green : Colors.white,
+                          color: isAligned ? Colors.greenAccent : Colors.white,
                           fontSize: 12,
                           fontWeight: FontWeight.bold
                         ),
@@ -458,15 +447,15 @@ class _Captura360ScreenState extends State<Captura360Screen> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 20),
-                // Botón disparador de fotos
+                const SizedBox(height: 18),
+                // Botones de acción inferiores
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    // Círculos de progreso
+                    // Porcentaje de avance
                     SizedBox(
-                      width: 50,
-                      height: 50,
+                      width: 52,
+                      height: 52,
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
@@ -478,24 +467,51 @@ class _Captura360ScreenState extends State<Captura360Screen> {
                           ),
                           Text(
                             '${((_capturedPhotos.length / _totalPhotos) * 100).round()}%',
-                            style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                            style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
                     ),
+
                     // Botón de obturador principal estilo Liquid Glass
                     LiquidGlassIconButton(
-                      icon: Icons.camera_alt,
+                      icon: Icons.camera_alt_rounded,
                       onTap: _capturarFoto,
-                      size: 76,
+                      size: 74,
                       iconSize: 32,
                     ),
-                    // Botón para saltarse alineación estilo Liquid Glass
-                    LiquidGlassIconButton(
-                      icon: Icons.skip_next,
-                      onTap: _capturarFoto,
-                      size: 44,
-                      iconSize: 20,
+
+                    // Botón de finalizar/procesar con las fotos actuales
+                    GestureDetector(
+                      onTap: _finalizarConFotosActuales,
+                      child: Container(
+                        height: 52,
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        decoration: BoxDecoration(
+                          color: _capturedPhotos.isNotEmpty ? Colors.green.withOpacity(0.8) : Colors.white10,
+                          borderRadius: BorderRadius.circular(26),
+                          border: Border.all(color: _capturedPhotos.isNotEmpty ? Colors.greenAccent : Colors.white24),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.done_all_rounded,
+                              color: _capturedPhotos.isNotEmpty ? Colors.white : Colors.white38,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              'Listo',
+                              style: TextStyle(
+                                color: _capturedPhotos.isNotEmpty ? Colors.white : Colors.white38,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -508,42 +524,57 @@ class _Captura360ScreenState extends State<Captura360Screen> {
   }
 }
 
-// Pintor personalizado para dibujar la silueta esquemática de la moto en el visor de cámara
-class MotorcycleSilhouettePainter extends CustomPainter {
+// Retícula de encuadre profesional (Corner Reticle) para el visor de la cámara
+class ViewfinderReticlePainter extends CustomPainter {
   final Color color;
-  const MotorcycleSilhouettePainter({required this.color});
+  const ViewfinderReticlePainter({required this.color});
 
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
       ..color = color
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.0;
+      ..strokeWidth = 3.0
+      ..strokeCap = StrokeCap.round;
+
+    final cornerLength = 28.0;
+    final r = 16.0;
+
+    // Guía suave central
+    final guidePaint = Paint()
+      ..color = color.withOpacity(0.15)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.0;
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(Rect.fromLTWH(0, 0, size.width, size.height), Radius.circular(r)),
+      guidePaint,
+    );
 
     final path = Path();
-    
-    // Esquema de ruedas
-    path.addOval(Rect.fromCircle(center: Offset(size.width * 0.25, size.height * 0.75), radius: 30));
-    path.addOval(Rect.fromCircle(center: Offset(size.width * 0.75, size.height * 0.75), radius: 30));
 
-    // Manubrio y horquilla delantera
-    path.moveTo(size.width * 0.75, size.height * 0.75); // Eje rueda delantera
-    path.lineTo(size.width * 0.68, size.height * 0.35); // Horquilla
-    path.lineTo(size.width * 0.60, size.height * 0.32); // Manubrio
+    // Superior Izquierda
+    path.moveTo(0, cornerLength);
+    path.lineTo(0, r);
+    path.quadraticBezierTo(0, 0, r, 0);
+    path.lineTo(cornerLength, 0);
 
-    // Chasis y Tanque
-    path.moveTo(size.width * 0.25, size.height * 0.75); // Eje rueda trasera
-    path.lineTo(size.width * 0.35, size.height * 0.50); // Horquilla trasera
-    path.lineTo(size.width * 0.50, size.height * 0.45); // Motor
-    path.lineTo(size.width * 0.65, size.height * 0.48); // Conexión delantera
-    
-    // Tanque de combustible
-    path.moveTo(size.width * 0.50, size.height * 0.45);
-    path.quadraticBezierTo(size.width * 0.58, size.height * 0.35, size.width * 0.68, size.height * 0.42);
-    
-    // Asiento
-    path.moveTo(size.width * 0.32, size.height * 0.52);
-    path.lineTo(size.width * 0.48, size.height * 0.48);
+    // Superior Derecha
+    path.moveTo(size.width - cornerLength, 0);
+    path.lineTo(size.width - r, 0);
+    path.quadraticBezierTo(size.width, 0, size.width, r);
+    path.lineTo(size.width, cornerLength);
+
+    // Inferior Izquierda
+    path.moveTo(0, size.height - cornerLength);
+    path.lineTo(0, size.height - r);
+    path.quadraticBezierTo(0, size.height, r, size.height);
+    path.lineTo(r + cornerLength, size.height);
+
+    // Inferior Derecha
+    path.moveTo(size.width - cornerLength, size.height);
+    path.lineTo(size.width - r, size.height);
+    path.quadraticBezierTo(size.width, size.height, size.width, size.height - r);
+    path.lineTo(size.width, size.height - cornerLength);
 
     canvas.drawPath(path, paint);
   }

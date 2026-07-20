@@ -6,6 +6,7 @@ class IndicatorTile extends StatelessWidget {
   final double value;
   final Color color;
   final bool isSimit;
+  final int finesCount;
   final VoidCallback? onTap;
 
   const IndicatorTile({
@@ -14,6 +15,7 @@ class IndicatorTile extends StatelessWidget {
     required this.value,
     required this.color,
     this.isSimit = false,
+    this.finesCount = 0,
     this.onTap,
   });
 
@@ -43,22 +45,59 @@ class IndicatorTile extends StatelessWidget {
           SizedBox(
               height: 50,
               width: 50,
-              child: Stack(fit: StackFit.expand, children: [
-                CircularProgressIndicator(
-                    value: value,
-                    strokeWidth: 6,
-                    backgroundColor:
-                        isDark ? Colors.white10 : Colors.black.withOpacity(0.05),
-                    valueColor: AlwaysStoppedAnimation<Color>(color)),
-                Center(
-                    child: isSimit
-                        ? Icon(Icons.gavel_rounded, color: color, size: 20)
-                        : Text('${(value * 100).round()}%',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12,
-                                color: isDark ? Colors.white : Colors.black)))
-              ]))
+              child: Stack(
+                clipBehavior: Clip.none,
+                fit: StackFit.expand,
+                children: [
+                  CircularProgressIndicator(
+                      value: value,
+                      strokeWidth: 6,
+                      backgroundColor:
+                          isDark ? Colors.white10 : Colors.black.withOpacity(0.05),
+                      valueColor: AlwaysStoppedAnimation<Color>(color)),
+                  Center(
+                      child: isSimit
+                          ? Icon(Icons.gavel_rounded, color: color, size: 20)
+                          : Text('${(value * 100).round()}%',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                  color: isDark ? Colors.white : Colors.black))),
+                  if (isSimit && finesCount > 0)
+                    Positioned(
+                      top: -4,
+                      right: -4,
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: const BoxDecoration(
+                          color: Colors.orange,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black26,
+                              blurRadius: 4,
+                              offset: Offset(0, 2),
+                            )
+                          ],
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 20,
+                          minHeight: 20,
+                        ),
+                        child: Center(
+                          child: Text(
+                            '$finesCount',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ))
         ]),
       ),
     );
