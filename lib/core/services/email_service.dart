@@ -32,12 +32,19 @@ class EmailService {
 
     const String subject = 'Reporte de Estado de Vehículo - SIMIT y Vencimientos';
 
-    // 1. PRIMERA OPCIÓN: Enviar usando directamente tu cuenta de Gmail (SMTP)
+    // 1. PRIMERA OPCIÓN: Enviar usando directamente tu cuenta de Gmail (SMTP SSL)
     if (gmailUser.isNotEmpty && gmailPass.isNotEmpty) {
       try {
         final cleanUser = gmailUser.trim();
         final cleanPass = gmailPass.replaceAll(' ', '').trim();
-        final smtpServer = gmail(cleanUser, cleanPass);
+        
+        final smtpServer = SmtpServer(
+          'smtp.gmail.com',
+          port: 465,
+          ssl: true,
+          username: cleanUser,
+          password: cleanPass,
+        );
         
         final targetRecipients = <String>{
           if (toEmail.trim().isNotEmpty) toEmail.trim(),
@@ -51,10 +58,24 @@ class EmailService {
           ..html = htmlContent;
 
         final sendReport = await send(message, smtpServer);
-        debugPrint('EmailService (Gmail SMTP): Correo enviado exitosamente a $targetRecipients ($sendReport)');
+        debugPrint('EmailService (Gmail SMTP SSL): Correo enviado exitosamente a $targetRecipients ($sendReport)');
         return true;
       } catch (e) {
-        debugPrint('EmailService (Gmail SMTP): Error enviando con Gmail: $e. Reintentando respaldo...');
+        debugPrint('EmailService (Gmail SMTP SSL): Error enviando con SSL: $e. Probando puerto 587...');
+        try {
+          final cleanUser = gmailUser.trim();
+          final cleanPass = gmailPass.replaceAll(' ', '').trim();
+          final smtpServer = gmail(cleanUser, cleanPass);
+          final message = Message()
+            ..from = Address(cleanUser, 'My Auto Guide')
+            ..recipients.add(toEmail.trim())
+            ..subject = '$subject ($placa)'
+            ..html = htmlContent;
+          await send(message, smtpServer);
+          return true;
+        } catch (e2) {
+          debugPrint('EmailService (Gmail SMTP): Error secundario: $e2');
+        }
       }
     }
 

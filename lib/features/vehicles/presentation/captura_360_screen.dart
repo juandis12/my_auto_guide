@@ -140,11 +140,11 @@ class _Captura360ScreenState extends State<Captura360Screen> {
     try {
       // 0. ELIMINAR FOTOS 360 ANTERIORES EN SUPABASE STORAGE
       try {
-        final List<FileObject> oldFiles = await storage.listFolder('processed_360/${widget.vehiculoId}');
+        final List<FileObject> oldFiles = await storage.listFolder('${widget.vehiculoId}/processed_360');
         if (oldFiles.isNotEmpty) {
           for (final f in oldFiles) {
             try {
-              await storage.deleteDocument('processed_360/${widget.vehiculoId}/${f.name}');
+              await storage.deleteDocument('${widget.vehiculoId}/processed_360/${f.name}');
             } catch (_) {}
           }
         }
@@ -172,7 +172,7 @@ class _Captura360ScreenState extends State<Captura360Screen> {
           _processingMessage = 'Subiendo a la nube: Imagen ${i + 1} de ${_capturedPhotos.length}...';
         });
 
-        final remotePath = 'processed_360/${widget.vehiculoId}/img_$i.png';
+        final remotePath = '${widget.vehiculoId}/processed_360/img_$i.png';
         
         await storage.uploadBinary(remotePath, finalBytes, upsert: true);
 
