@@ -140,13 +140,13 @@ class _Captura360ScreenState extends State<Captura360Screen> {
     try {
       // 0. ELIMINAR FOTOS 360 ANTERIORES EN SUPABASE STORAGE
       try {
-        final supabase = Supabase.instance.client;
-        final List<FileObject> oldFiles = await supabase.storage
-            .from('documents')
-            .list(path: 'processed_360/${widget.vehiculoId}');
+        final List<FileObject> oldFiles = await storage.listFolder('processed_360/${widget.vehiculoId}');
         if (oldFiles.isNotEmpty) {
-          final pathsToDelete = oldFiles.map((f) => 'processed_360/${widget.vehiculoId}/${f.name}').toList();
-          await supabase.storage.from('documents').remove(pathsToDelete);
+          for (final f in oldFiles) {
+            try {
+              await storage.deleteDocument('processed_360/${widget.vehiculoId}/${f.name}');
+            } catch (_) {}
+          }
         }
       } catch (e) {
         debugPrint('Aviso al purgar archivos 360 anteriores: $e');
@@ -174,11 +174,7 @@ class _Captura360ScreenState extends State<Captura360Screen> {
 
         final remotePath = 'processed_360/${widget.vehiculoId}/img_$i.png';
         
-        try {
-          await storage.deleteDocument(remotePath);
-        } catch (_) {}
-
-        await storage.uploadBinary(remotePath, finalBytes);
+        await storage.uploadBinary(remotePath, finalBytes, upsert: true);
 
         final signedUrl = await storage.getSignedUrl(remotePath, {});
         if (signedUrl != null) {

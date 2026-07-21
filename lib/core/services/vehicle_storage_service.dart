@@ -59,13 +59,13 @@ class VehicleStorageService {
     }
   }
 
-  /// Sube un documento en binario
-  Future<String> uploadBinary(String path, dynamic bytes) async {
+  /// Sube un documento en binario (con sobrescritura/upsert automática)
+  Future<String> uploadBinary(String path, dynamic bytes, {bool upsert = true}) async {
     try {
       await _supabase.storage.from(_bucketName).uploadBinary(
         path,
         bytes,
-        fileOptions: const FileOptions(upsert: false),
+        fileOptions: FileOptions(upsert: upsert),
       );
       return path;
     } catch (e) {
