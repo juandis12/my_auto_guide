@@ -110,6 +110,8 @@ class _CarRentalLoginScreenState extends State<CarRentalLoginScreen> {
         MaterialPageRoute(builder: (_) => const AgregarVehiculoScreen()),
       );
     }
+  }
+
   Future<void> _loginGoogle() async {
     setState(() => isLoading = true);
     try {
@@ -206,6 +208,8 @@ class _CarRentalLoginScreenState extends State<CarRentalLoginScreen> {
       ); 
     }
   }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
@@ -547,7 +551,6 @@ class _CarRentalLoginScreenState extends State<CarRentalLoginScreen> {
       ),
     );
   }
-}
 }
 
 class _SocialButton extends StatelessWidget {
