@@ -89,6 +89,34 @@ class AuthService {
     }
   }
 
+  /// Iniciar sesión con Google via OAuth (Soporte Android & iOS)
+  Future<bool> signInWithGoogle() async {
+    try {
+      final res = await _supabase.auth.signInWithOAuth(
+        OAuthProvider.google,
+      );
+      return res;
+    } on AuthException catch (e) {
+      throw AuthLogicException('Error en autenticación con Google: ${e.message}');
+    } catch (e) {
+      throw AuthLogicException('No se pudo iniciar sesión con Google: $e');
+    }
+  }
+
+  /// Iniciar sesión con Facebook via OAuth (Soporte Android & iOS)
+  Future<bool> signInWithFacebook() async {
+    try {
+      final res = await _supabase.auth.signInWithOAuth(
+        OAuthProvider.facebook,
+      );
+      return res;
+    } on AuthException catch (e) {
+      throw AuthLogicException('Error en autenticación con Facebook: ${e.message}');
+    } catch (e) {
+      throw AuthLogicException('No se pudo iniciar sesión con Facebook: $e');
+    }
+  }
+
   /// Cerrar Sesión
   Future<void> signOut() async {
     await _supabase.auth.signOut();

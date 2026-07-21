@@ -56,6 +56,9 @@ import 'parametrizacion_mantenimientos.dart';
 import '../../expenses/presentation/gastos_screen.dart';
 import '../../navigation/presentation/historial_rutas_screen.dart';
 import '../../marketplace/presentation/marketplace_talleres_screen.dart';
+import '../../../core/services/vehicle_pdf_report_service.dart';
+import '../../../core/services/calendar_sync_service.dart';
+import '../../expenses/presentation/bitacora_tanqueo_screen.dart';
 import '../../../shared/widgets/simit_webview.dart';
 import '../../../shared/widgets/liquid_glass_fab.dart';
 import 'captura_360_screen.dart';
@@ -491,8 +494,113 @@ class _InicioAppState extends State<InicioApp> {
         '• Kilometraje: $kms KM\n'
         '• Índice de Salud (ISH): ${healthIndex.toStringAsFixed(0)}%\n\n'
         '¡Mantén tu vehículo al día y seguro con My Auto Guide!';
-        
+         
     await Share.share(text);
+  }
+        
+  Future<void> _exportarPdfHojaVida() async {
+    final vData = _cachedVehicleData;
+    final String placa = vData?['placa'] ?? 'MOTO-360';
+    final String marca = vData?['marca'] ?? 'Moto';
+    final String modelo = vData?['modelo'] ?? '2024';
+    final String apodo = vData?['apodo'] ?? '';
+    final double kms = ((vData?['kms'] ?? 0) as num).toDouble();
+    final String? lastSoat = vData?['last_soat'];
+    final String? lastTecno = vData?['last_tecno'];
+    final String? lastAceite = vData?['last_aceite'];
+    final double kmsLastAceite = ((vData?['kms_last_aceite'] ?? 0) as num).toDouble();
+    final String? imagePath = vData?['image_path'];
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('📄 Generando Hoja de Vida PDF...'),
+        duration: Duration(seconds: 2),
+      ),
+    );
+
+    final String simitStatus = vData?['simit_status'] ?? 'unchecked';
+    final List finesData = vData?['simit_fines_data'] ?? [];
+    double simitTotalAmount = 0.0;
+    for (final f in finesData) {
+      if (f is Map && f['total'] != null) {
+        simitTotalAmount += ((f['total'] ?? 0) as num).toDouble();
+      }
+    }
+
+    try {
+      final pdfBytes = await VehiclePdfReportService.generatePdfReport(
+        placa: placa,
+        marca: marca,
+        modelo: modelo,
+        apodo: apodo,
+        kms: kms,
+        healthIndex: 95.0,
+        simitStatus: simitStatus,
+        simitFinesCount: _simitFinesCount,
+        simitTotalAmount: simitTotalAmount,
+        lastSoat: lastSoat,
+        lastTecno: lastTecno,
+        lastAceite: lastAceite,
+        kmsLastAceite: kmsLastAceite,
+        vehicleImageUrl: imagePath,
+      );
+
+      await VehiclePdfReportService.sharePdfReport(
+        filename: 'Hoja_de_Vida_$placa.pdf',
+        pdfBytes: pdfBytes,
+      );
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error al generar PDF: $e')),
+        );
+      }
+    }
+  }
+
+  void _abrirBitacoraTanqueo() {
+    final vData = _cachedVehicleData;
+    final String marca = vData?['marca'] ?? 'Vehículo';
+    final String modelo = vData?['modelo'] ?? '';
+    final double kms = ((vData?['kms'] ?? 0) as num).toDouble();
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => BitacoraTanqueoScreen(
+          vehiculoId: widget.vehiculoId,
+          marcaModelo: '$marca $modelo',
+          currentKms: kms,
+        ),
+      ),
+    );
+  }
+
+  void _agendarCalendarioDoc(DocType type, String? dateStr) {
+    if (dateStr == null || dateStr.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Registra primero la fecha de vencimiento de este documento.')),
+      );
+      return;
+    }
+
+    final date = DateTime.tryParse(dateStr);
+    if (date == null) return;
+
+    final String placaStr = _cachedVehicleData?['placa'] ?? '';
+    final name = {
+      DocType.soat: 'SOAT',
+      DocType.tecno: 'Tecnomecánica',
+      DocType.seguro: 'Seguro Todo Riesgo',
+      DocType.propiedad: 'Tarjeta de Propiedad',
+    }[type]!;
+
+    CalendarSyncService.addEventToCalendar(
+      title: '⚠️ Vencimiento de $name ($placaStr)',
+      description: 'Recordatorio automático de My Auto Guide para renovar tu $name.',
+      eventDate: date,
+      context: context,
+    );
   }
 
   Future<void> _abrirGarajeSelector() async {
@@ -1807,6 +1915,18 @@ class _InicioAppState extends State<InicioApp> {
                                       marcaModelo: '$marca $modelo',
                                       brandLogoPath: brandLogos[marca],
                                       vehicleImagePath: imagePath))),
+                          brandTheme: bTheme),
+                      const SizedBox(height: 12),
+                      GradientButton(
+                          icon: Icons.picture_as_pdf_rounded,
+                          text: 'Hoja de Vida PDF',
+                          onTap: _exportarPdfHojaVida,
+                          brandTheme: bTheme),
+                      const SizedBox(height: 12),
+                      GradientButton(
+                          icon: Icons.local_gas_station_rounded,
+                          text: 'Bitácora de Tanqueo',
+                          onTap: _abrirBitacoraTanqueo,
                           brandTheme: bTheme),
                       const SizedBox(height: 12),
                       GradientButton(

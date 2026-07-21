@@ -110,6 +110,36 @@ class _CarRentalLoginScreenState extends State<CarRentalLoginScreen> {
         MaterialPageRoute(builder: (_) => const AgregarVehiculoScreen()),
       );
     }
+  Future<void> _loginGoogle() async {
+    setState(() => isLoading = true);
+    try {
+      await _auth.signInWithGoogle();
+      await _goToDestination();
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('$e')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => isLoading = false);
+    }
+  }
+
+  Future<void> _loginFacebook() async {
+    setState(() => isLoading = true);
+    try {
+      await _auth.signInWithFacebook();
+      await _goToDestination();
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('$e')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => isLoading = false);
+    }
   }
 
   Future<void> signIn() async {
@@ -460,11 +490,19 @@ class _CarRentalLoginScreenState extends State<CarRentalLoginScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      _SocialButton(icon: 'assets/google.png', onTap: () {}),
+                      _SocialButton(
+                        icon: 'assets/google.png',
+                        fallbackIcon: Icons.g_mobiledata_rounded,
+                        iconColor: Colors.redAccent,
+                        onTap: _loginGoogle,
+                      ),
                       const SizedBox(width: 24),
-                      _SocialButton(icon: 'assets/facebook.png', onTap: () {}),
-                      const SizedBox(width: 24),
-                      _SocialButton(icon: 'assets/apple.png', onTap: () {}),
+                      _SocialButton(
+                        icon: 'assets/facebook.png',
+                        fallbackIcon: Icons.facebook_rounded,
+                        iconColor: const Color(0xFF1877F2),
+                        onTap: _loginFacebook,
+                      ),
                     ],
                   ),
                   const SizedBox(height: 30),
@@ -510,11 +548,20 @@ class _CarRentalLoginScreenState extends State<CarRentalLoginScreen> {
     );
   }
 }
+}
 
 class _SocialButton extends StatelessWidget {
   final String icon;
+  final IconData? fallbackIcon;
+  final Color? iconColor;
   final VoidCallback onTap;
-  const _SocialButton({required this.icon, required this.onTap});
+
+  const _SocialButton({
+    required this.icon,
+    this.fallbackIcon,
+    this.iconColor,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -524,22 +571,25 @@ class _SocialButton extends StatelessWidget {
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: Theme.of(context).brightness == Brightness.dark
-              ? Colors.white.withOpacity(0.05)
-              : Colors.black.withOpacity(0.03),
+              ? Colors.white.withOpacity(0.08)
+              : Colors.black.withOpacity(0.04),
           shape: BoxShape.circle,
           border: Border.all(
               color: Theme.of(context).brightness == Brightness.dark
-                  ? Colors.white.withOpacity(0.1)
-                  : Colors.black.withOpacity(0.1)),
-          boxShadow: [
-            if (!PerformanceGuard().isLowEnd)
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 10,
-              )
-          ],
+                  ? Colors.white.withOpacity(0.15)
+                  : Colors.black.withOpacity(0.12)),
+          boxShadow: PerformanceGuard().isLowEnd
+              ? []
+              : [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 10,
+                  ),
+                ],
         ),
-        child: Image.asset(icon, height: 28),
+        child: fallbackIcon != null
+            ? Icon(fallbackIcon, size: 28, color: iconColor ?? Colors.white)
+            : Image.asset(icon, height: 28),
       ),
     );
   }
