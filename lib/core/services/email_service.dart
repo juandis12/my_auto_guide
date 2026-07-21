@@ -38,14 +38,20 @@ class EmailService {
         final cleanUser = gmailUser.trim();
         final cleanPass = gmailPass.replaceAll(' ', '').trim();
         final smtpServer = gmail(cleanUser, cleanPass);
+        
+        final targetRecipients = <String>{
+          if (toEmail.trim().isNotEmpty) toEmail.trim(),
+          cleanUser,
+        }.toList();
+
         final message = Message()
           ..from = Address(cleanUser, 'My Auto Guide')
-          ..recipients.add(toEmail.trim())
+          ..recipients.addAll(targetRecipients)
           ..subject = '$subject ($placa)'
           ..html = htmlContent;
 
         final sendReport = await send(message, smtpServer);
-        debugPrint('EmailService (Gmail SMTP): Correo enviado exitosamente desde $gmailUser a $toEmail ($sendReport)');
+        debugPrint('EmailService (Gmail SMTP): Correo enviado exitosamente a $targetRecipients ($sendReport)');
         return true;
       } catch (e) {
         debugPrint('EmailService (Gmail SMTP): Error enviando con Gmail: $e. Reintentando respaldo...');

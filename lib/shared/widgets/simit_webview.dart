@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'liquid_glass_fab.dart';
 import '../../core/services/ai_bot_service.dart';
 import '../../core/services/email_service.dart';
@@ -118,26 +120,33 @@ class _SimitWebViewScreenState extends State<SimitWebViewScreen> {
         );
       }
 
-      // Obtener el email del usuario autenticado para enviarle el reporte completo
-      final userEmail = supabase.auth.currentUser?.email ?? '';
-      if (userEmail.isNotEmpty) {
-        final List<String> explanations = _finesDetails.isNotEmpty
-            ? List<String>.from(_finesDetails.first['explicaciones'] ?? [])
-            : [];
+      // Obtener el email del usuario autenticado (con fallback al email configurado o SharedPreferences)
+      String userEmail = supabase.auth.currentUser?.email ?? '';
+      if (userEmail.isEmpty) {
+        final prefs = await SharedPreferences.getInstance();
+        userEmail = prefs.getString('user_email') ?? '';
+      }
+      if (userEmail.isEmpty) {
+        userEmail = dotenv.get('GMAIL_EMAIL', fallback: 'my.auto.guide.app@gmail.com');
+      }
 
-        // Enviar correo de reporte completo con SIMIT + Vencimientos
-        EmailService.sendSimitReport(
+      final List<String> explanations = _finesDetails.isNotEmpty
+          ? List<String>.from(_finesDetails.first['explicaciones'] ?? [])
+          : [];
+
+      // Enviar correo de reporte completo con SIMIT + Vencimientos
+      bool emailSent = false;
+      try {
+        emailSent = await EmailService.sendSimitReport(
           toEmail: userEmail,
           placa: widget.placa,
           finesCount: _finesCount,
           totalAmount: _totalAmount,
           explanations: explanations,
           vehicleData: vehicleData,
-        ).then((sent) {
-          if (sent) {
-            debugPrint('EmailService: Reporte completo enviado a $userEmail');
-          }
-        });
+        );
+      } catch (e) {
+        debugPrint('Error enviando email en simit_webview: $e');
       }
 
       if (mounted) {
@@ -165,9 +174,9 @@ class _SimitWebViewScreenState extends State<SimitWebViewScreen> {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  userEmail.isNotEmpty
-                      ? '📧 Se ha enviado un reporte a tu correo:\n$userEmail'
-                      : '📧 Inicia sesión para recibir el reporte por correo.',
+                  emailSent
+                      ? '📧 Se ha enviado el reporte completo a tu correo:\n$userEmail'
+                      : '📧 Se guardó el resultado (destinatario: $userEmail).',
                   style: const TextStyle(fontSize: 13, color: Colors.grey),
                 ),
               ],
