@@ -50,7 +50,7 @@ class VehiclePdfReportService {
         margin: const pw.EdgeInsets.all(32),
         build: (pw.Context context) {
           return pw.Column(
-            cross: pw.CrossAxisAlignment.start,
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
               // ENCABEZADO
               pw.Container(
@@ -63,7 +63,7 @@ class VehiclePdfReportService {
                   mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                   children: [
                     pw.Column(
-                      cross: pw.CrossAxisAlignment.start,
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
                       children: [
                         pw.Text(
                           'MY AUTO GUIDE',
@@ -83,7 +83,7 @@ class VehiclePdfReportService {
                       ],
                     ),
                     pw.Column(
-                      cross: pw.CrossAxisAlignment.end,
+                      crossAxisAlignment: pw.CrossAxisAlignment.end,
                       children: [
                         pw.Text(
                           'PLACA: $placa',
@@ -110,7 +110,7 @@ class VehiclePdfReportService {
 
               // INFORMACIÓN DEL VEHÍCULO E IMAGEN
               pw.Row(
-                cross: pw.CrossAxisAlignment.start,
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
                   pw.Expanded(
                     flex: 3,
@@ -121,7 +121,7 @@ class VehiclePdfReportService {
                         borderRadius: pw.BorderRadius.circular(8),
                       ),
                       child: pw.Column(
-                        cross: pw.CrossAxisAlignment.start,
+                        crossAxisAlignment: pw.CrossAxisAlignment.start,
                         children: [
                           pw.Text(
                             'INFORMACIÓN GENERAL',
@@ -269,7 +269,7 @@ class VehiclePdfReportService {
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
                   pw.Column(
-                    cross: pw.CrossAxisAlignment.start,
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
                     children: [
                       pw.Text(
                         'Documento generado automáticamente por la plataforma My Auto Guide.',
