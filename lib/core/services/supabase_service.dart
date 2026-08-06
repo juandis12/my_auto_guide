@@ -186,10 +186,14 @@ class SupabaseService {
   }
 
   Future<List<Map<String, dynamic>>> getRouteHistory(String vehicleId) async {
+    final userId = currentUser?.id;
+    if (userId == null) return [];
+
     return await client
         .from('rutas_historial')
         .select()
         .eq('vehiculo_id', vehicleId)
+        .eq('user_id', userId)
         .order('created_at', ascending: false);
   }
 
@@ -204,16 +208,21 @@ class SupabaseService {
         .from('rutas_historial')
         .select()
         .eq('vehiculo_id', vehicleId)
+        .eq('user_id', userId)
         .gte('created_at', weekAgo) // Alineado con la base real
         .order('created_at', ascending: false);
   }
 
   // --- Gastos ---
   Future<List<Map<String, dynamic>>> getExpenses(String vehicleId) async {
+    final userId = currentUser?.id;
+    if (userId == null) return [];
+
     return await client
         .from('gastos')
         .select()
         .eq('vehiculo_id', vehicleId)
+        .eq('user_id', userId)
         .order('fecha', ascending: false);
   }
 

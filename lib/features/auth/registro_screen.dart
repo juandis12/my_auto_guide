@@ -68,9 +68,15 @@ class _RegistroScreenState extends State<RegistroScreen> {
       return;
     }
 
-    if (password.length < 6) {
+    if (password.length < 8 ||
+        !RegExp(r'[A-Za-z]').hasMatch(password) ||
+        !RegExp(r'\d').hasMatch(password)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('La contraseña debe tener al menos 6 caracteres.')),
+        const SnackBar(
+          content: Text(
+            'La contraseña debe tener al menos 8 caracteres e incluir letras y números.',
+          ),
+        ),
       );
       return;
     }

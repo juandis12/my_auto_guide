@@ -15,6 +15,21 @@ import '../../core/services/ai_bot_service.dart';
 import '../../core/services/email_service.dart';
 import '../../core/services/notification_service.dart';
 
+/// Dominios en los que se permite navegar e inyectar los datos del vehículo.
+const Set<String> _allowedSimitHosts = {
+  'fcm.org.co',
+  'www.fcm.org.co',
+  'simit.org.co',
+  'www.simit.org.co',
+};
+
+bool _isAllowedSimitUrl(String url) {
+  final uri = Uri.tryParse(url);
+  return uri != null &&
+      uri.scheme == 'https' &&
+      _allowedSimitHosts.contains(uri.host);
+}
+
 class SimitWebViewScreen extends StatefulWidget {
   final String placa;
   final String cedula;
@@ -49,10 +64,17 @@ class _SimitWebViewScreenState extends State<SimitWebViewScreen> {
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
         NavigationDelegate(
+          onNavigationRequest: (request) => _isAllowedSimitUrl(request.url)
+              ? NavigationDecision.navigate
+              : NavigationDecision.prevent,
           onPageFinished: (url) async {
             setState(() => _isLoading = false);
 
-            // Intentar inyectar la placa y cédula en los inputs comunes de FCM SIMIT
+            // Solo inyectar datos personales en el portal oficial del SIMIT
+            if (!_isAllowedSimitUrl(url)) return;
+
+            final placa = jsonEncode(widget.placa);
+            final cedula = jsonEncode(widget.cedula);
             await _controller.runJavaScript('''
               function fillSimit() {
                 // SIMIT FCM usa selectores dinámicos. Buscamos inputs comunes.
@@ -63,12 +85,12 @@ class _SimitWebViewScreenState extends State<SimitWebViewScreen> {
                   const id = (input.id || '').toLowerCase();
                   
                   if (placeholder.includes('placa') || name.includes('placa') || id.includes('placa')) {
-                    input.value = '${widget.placa}';
+                    input.value = $placa;
                     input.dispatchEvent(new Event('input', { bubbles: true }));
                   }
                   if (placeholder.includes('documento') || placeholder.includes('cédula') || placeholder.includes('cedula') || name.includes('documento') || id.includes('documento')) {
-                    if ('${widget.cedula}'.length > 0) {
-                      input.value = '${widget.cedula}';
+                    if ($cedula.length > 0) {
+                      input.value = $cedula;
                       input.dispatchEvent(new Event('input', { bubbles: true }));
                     }
                   }
@@ -88,6 +110,8 @@ class _SimitWebViewScreenState extends State<SimitWebViewScreen> {
   // Guardar resultados en Supabase y enviar correo al usuario
   Future<void> _guardarResultados() async {
     final supabase = Supabase.instance.client;
+    final userId = supabase.auth.currentUser?.id;
+    if (userId == null) return;
 
     try {
       final dataToUpdate = {
@@ -99,7 +123,8 @@ class _SimitWebViewScreenState extends State<SimitWebViewScreen> {
       await supabase
           .from('vehiculos')
           .update(dataToUpdate)
-          .eq('id', widget.vehiculoId);
+          .eq('id', widget.vehiculoId)
+          .eq('user_id', userId);
 
       // Obtener los datos completos del vehículo (para incluir SOAT, Tecno y Mantenimientos en el reporte)
       Map<String, dynamic>? vehicleData;
@@ -108,6 +133,7 @@ class _SimitWebViewScreenState extends State<SimitWebViewScreen> {
             .from('vehiculos')
             .select('last_soat, last_tecno, last_aceite, kms, kms_last_aceite, kms_last_filtro, kms_last_cadena, marca, modelo, apodo')
             .eq('id', widget.vehiculoId)
+            .eq('user_id', userId)
             .single();
       } catch (_) {}
 

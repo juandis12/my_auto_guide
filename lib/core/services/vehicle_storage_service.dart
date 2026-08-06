@@ -16,15 +16,25 @@ class VehicleStorageService {
   final SupabaseClient _supabase = SupabaseService().client;
   final String _bucketName = 'vehiculos-docs';
 
+  /// Vigencia de las URLs firmadas de documentos privados.
+  static const Duration _signedUrlTtl = Duration(hours: 12);
+
+  /// Margen antes del vencimiento a partir del cual se renueva la URL cacheada.
+  static const Duration _signedUrlRenewMargin = Duration(hours: 1);
+
   /// Obtiene o genera una URL firmada cacheada para un archivo
-  Future<String?> getSignedUrl(String? path, Map<String, dynamic> cacheMap) async {
+  Future<String?> getSignedUrl(
+    String? path,
+    Map<String, dynamic> cacheMap, {
+    Duration ttl = _signedUrlTtl,
+  }) async {
     if (path == null || path.isEmpty) return null;
 
     final cached = cacheMap[path];
     if (cached != null) {
       final expireDate = DateTime.parse(cached['expires_at']);
-      // Retorna el cache si es válido por al menos 5 días más
-      if (expireDate.isAfter(DateTime.now().add(const Duration(days: 5)))) {
+      // Retorna el cache solo si aún queda margen de vigencia
+      if (expireDate.isAfter(DateTime.now().add(_signedUrlRenewMargin))) {
         return cached['signed_url'];
       }
     }
@@ -32,11 +42,11 @@ class VehicleStorageService {
     try {
       final signedUrl = await _supabase.storage
           .from(_bucketName)
-          .createSignedUrl(path, 31536000); // 1 año (365 días en segundos)
-      
+          .createSignedUrl(path, ttl.inSeconds);
+
       cacheMap[path] = {
         'signed_url': signedUrl,
-        'expires_at': DateTime.now().add(const Duration(days: 365)).toIso8601String(),
+        'expires_at': DateTime.now().add(ttl).toIso8601String(),
       };
       return signedUrl;
     } catch (e) {

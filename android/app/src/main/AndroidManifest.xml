@@ -49,7 +49,11 @@
     <application
         android:name="${applicationName}"
         android:label="my_auto_guide"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:allowBackup="false"
+        android:fullBackupContent="false"
+        android:usesCleartextTraffic="false"
+        tools:replace="android:allowBackup">
 
         <activity
             android:name=".MainActivity"

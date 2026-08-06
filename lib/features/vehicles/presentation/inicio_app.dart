@@ -396,6 +396,8 @@ class _InicioAppState extends State<InicioApp> {
     if (_cachedVehicleData != null) {
       return _cachedVehicleData!;
     }
+    final userId = supabase.auth.currentUser?.id;
+    if (userId == null) return {};
     try {
       final row = await supabase
           .from('vehiculos')
@@ -403,6 +405,7 @@ class _InicioAppState extends State<InicioApp> {
             'marca, modelo, apodo, kms, image_path, last_cadena, last_filtro, last_aceite, last_soat, last_tecno, soat_path, tecno_path, seguro_path, propiedad_path, kms_last_cadena, kms_last_filtro, kms_last_aceite, placa, cedula, simit_status, simit_fines_data, simit_last_check, has_360_view, images_360_urls',
           )
           .eq('id', widget.vehiculoId)
+          .eq('user_id', userId)
           .single();
       _cachedVehicleData = row;
       return row;
@@ -474,7 +477,13 @@ class _InicioAppState extends State<InicioApp> {
       ),
     );
     if (ok != true) return;
-    await supabase.from('vehiculos').delete().eq('id', id);
+    final userId = supabase.auth.currentUser?.id;
+    if (userId == null) return;
+    await supabase
+        .from('vehiculos')
+        .delete()
+        .eq('id', id)
+        .eq('user_id', userId);
     if (!mounted) return;
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => const CarRentalLoginScreen()),
@@ -949,6 +958,8 @@ class _InicioAppState extends State<InicioApp> {
 
   Future<String?> _uploadDoc(DocType type) async {
     try {
+      final userId = supabase.auth.currentUser?.id;
+      if (userId == null) return null;
       final result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png', 'webp', 'heic', 'gif'],
@@ -973,7 +984,9 @@ class _InicioAppState extends State<InicioApp> {
       }[type]!;
       await supabase
           .from('vehiculos')
-          .update({col: path}).eq('id', widget.vehiculoId);
+          .update({col: path})
+          .eq('id', widget.vehiculoId)
+          .eq('user_id', userId);
 
       _cachedVehicleData = null;
       return path;
@@ -1221,10 +1234,15 @@ class _InicioAppState extends State<InicioApp> {
                                                       DocType.propiedad: _propPath,
                                                     }[type];
 
-                                                    if (varCheck == null) {
+                                                    final userId = supabase
+                                                        .auth.currentUser?.id;
+                                                    if (varCheck == null &&
+                                                        userId != null) {
                                                        await supabase
                                                           .from('vehiculos')
-                                                          .update({dbCol: null}).eq('id', widget.vehiculoId);
+                                                          .update({dbCol: null})
+                                                          .eq('id', widget.vehiculoId)
+                                                          .eq('user_id', userId);
                                                     }
 
                                                     // 6. Refrescar Modal y Dashboard
