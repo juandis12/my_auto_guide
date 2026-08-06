@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -17,56 +19,65 @@ import 'core/services/background_nav_service.dart';
 import 'core/logic/app_widget_logic.dart';
 import 'features/auth/login_screen.dart';
 import 'core/logic/performance_guard.dart';
+import 'core/utils/app_logger.dart';
 
 /// Detecta si la app fue abierta desde un widget con deep link
-void _checkWidgetLaunch() async {
-  final uri = await HomeWidget.initiallyLaunchedFromHomeWidget();
-  if (uri != null && uri.host == 'start_free_tracking') {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('widget_start_tracking', true);
-  }
-  
-  // También escuchar clicks futuros mientras la app está abierta
-  HomeWidget.widgetClicked.listen((uri) async {
+Future<void> _checkWidgetLaunch() async {
+  try {
+    final uri = await HomeWidget.initiallyLaunchedFromHomeWidget();
     if (uri != null && uri.host == 'start_free_tracking') {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('widget_start_tracking', true);
     }
+  } catch (e, stackTrace) {
+    AppLogger.error('main._checkWidgetLaunch', e, stackTrace);
+  }
+
+  // También escuchar clicks futuros mientras la app está abierta
+  HomeWidget.widgetClicked.listen((uri) async {
+    try {
+      if (uri != null && uri.host == 'start_free_tracking') {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('widget_start_tracking', true);
+      }
+    } catch (e, stackTrace) {
+      AppLogger.error('main.widgetClicked', e, stackTrace);
+    }
+  }, onError: (Object e, StackTrace stackTrace) {
+    AppLogger.error('main.widgetClicked', e, stackTrace);
   });
 }
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // 1. Cargar variables de entorno (dotenv). Es opcional: los valores pueden
+  // venir de --dart-define, así que sólo se advierte si el archivo no existe.
   try {
-// 1. Cargar variables de entorno (dotenv)
-    try {
-      await dotenv.load(fileName: ".env");
-    } catch (e) {
-      debugPrint("Archivo .env no encontrado. Asegúrate de crearlo.");
-    }
+    await dotenv.load(fileName: ".env");
+  } catch (e, stackTrace) {
+    AppLogger.warning(
+        'main.dotenv (archivo .env no encontrado)', e, stackTrace);
+  }
 
-    // 2. Inicializar Rendimiento (PerformanceGuard)
+  // 2. Inicializar Sentry antes del resto para poder reportar fallas de arranque
+  final sentryDsn = dotenv.get('SENTRY_DSN', fallback: '');
+  if (sentryDsn.isNotEmpty) {
+    await SentryFlutter.init((options) {
+      options.dsn = sentryDsn;
+      options.tracesSampleRate = 1.0;
+    });
+  } else {
+    debugPrint('Sentry DSN no configurado. Saltando inicialización de Sentry.');
+  }
+
+  try {
+    // 3. Inicializar Rendimiento (PerformanceGuard)
     if (!kIsWeb) {
       await PerformanceGuard().initialize();
     }
 
-    // 2.1 Inicializar Sentry (solo si hay DSN configurado)
-    final sentryDsn = dotenv.get('SENTRY_DSN', fallback: '');
-    if (sentryDsn.isNotEmpty) {
-      await SentryFlutter.init(
-        (options) {
-          options.dsn = sentryDsn;
-          options.tracesSampleRate = 1.0;
-        },
-        appRunner: () => runApp(const MyApp()),
-      );
-    } else {
-      debugPrint(
-          'Sentry DSN no configurado. Saltando inicialización de Sentry.');
-      runApp(const MyApp());
-    }
-
-    // 2. Inicializar Supabase
+    // 4. Inicializar Supabase
     await Supabase.initialize(
       url: dotenv.get('SUPABASE_URL',
           fallback: const String.fromEnvironment('SUPABASE_URL')),
@@ -74,39 +85,69 @@ Future<void> main() async {
           fallback: const String.fromEnvironment('SUPABASE_ANON_KEY')),
     );
 
-    // 2.5 Inicializar Firebase (Push Notifications)
+    // 5. Inicializar Firebase (Push Notifications). La app funciona sin push,
+    // por lo que la falla se reporta pero no impide el arranque.
     try {
       await Firebase.initializeApp();
       await FirebaseMessaging.instance.requestPermission();
-    } catch (e) {
-      debugPrint("Advertencia: Firebase no se pudo inicializar (falta google-services.json): $e");
+    } catch (e, stackTrace) {
+      AppLogger.error('main.firebase', e, stackTrace);
     }
 
-    // 3. Inicializar Sync Service para sincronización offline
+    // 6. Inicializar Sync Service para sincronización offline
     SyncService().initialize();
 
-    // 4. Inicializar Notificaciones y Zonas Horarias
+    // 7. Inicializar Notificaciones y Zonas Horarias
     if (!kIsWeb) {
       await NotificationService().init();
       await BackgroundNavService.initializeService();
       await AppWidgetLogic.initializeWidgetInteraction();
-      
+
       // Detectar si la app se abrió desde un widget
-      _checkWidgetLaunch();
+      unawaited(_checkWidgetLaunch());
     }
 
-    // 5. El arranque se realiza dentro de Sentry o directamente arriba
+    // 8. Arrancar la app sólo cuando la inicialización terminó correctamente
+    runApp(const MyApp());
   } catch (e, stackTrace) {
-    // En caso de error en inicialización, mostrar pantalla de error
-    runApp(MaterialApp(
+    AppLogger.error('main.initialize', e, stackTrace);
+    runApp(_InitializationErrorApp(message: e.toString()));
+  }
+}
+
+class _InitializationErrorApp extends StatelessWidget {
+  const _InitializationErrorApp({required this.message});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
-        body: Center(
-          child: Text('Error al inicializar la app: $e'),
+        body: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.error_outline, color: Colors.redAccent, size: 48),
+              const SizedBox(height: 16),
+              const Text(
+                'No pudimos iniciar My Auto Guide',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                message,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 13, color: Colors.grey),
+              ),
+            ],
+          ),
         ),
       ),
-    ));
-    // Reportar a Sentry si está disponible
-    Sentry.captureException(e, stackTrace: stackTrace);
+    );
   }
 }
 

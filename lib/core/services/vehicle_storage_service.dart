@@ -1,9 +1,14 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../utils/app_logger.dart';
 import 'supabase_service.dart';
 
 class VehicleStorageLogicException implements Exception {
   final String message;
-  VehicleStorageLogicException(this.message);
+
+  /// Error original que provocó la falla, para no perder el diagnóstico.
+  final Object? cause;
+
+  VehicleStorageLogicException(this.message, {this.cause});
   @override
   String toString() => message;
 }
@@ -39,7 +44,8 @@ class VehicleStorageService {
         'expires_at': DateTime.now().add(const Duration(days: 365)).toIso8601String(),
       };
       return signedUrl;
-    } catch (e) {
+    } catch (e, stackTrace) {
+      AppLogger.error('VehicleStorageService.getSignedUrl($path)', e, stackTrace);
       return null;
     }
   }
@@ -54,7 +60,8 @@ class VehicleStorageService {
               sortBy: SortBy(column: 'name', order: 'asc'),
             ),
           );
-    } catch (e) {
+    } catch (e, stackTrace) {
+      AppLogger.error('VehicleStorageService.listFolder($folder)', e, stackTrace);
       return [];
     }
   }
@@ -68,8 +75,12 @@ class VehicleStorageService {
         fileOptions: FileOptions(upsert: upsert),
       );
       return path;
-    } catch (e) {
-      throw VehicleStorageLogicException('Error al subir el documento: $e');
+    } catch (e, stackTrace) {
+      Error.throwWithStackTrace(
+        VehicleStorageLogicException('Error al subir el documento: $e',
+            cause: e),
+        stackTrace,
+      );
     }
   }
 
@@ -79,11 +90,17 @@ class VehicleStorageService {
       final res = await _supabase.storage.from(_bucketName).remove([path]);
       if (res.isEmpty) {
         // En Supabase, si no tienes permisos o si ya no existe, devuelve vacío.
-        // Si la foto/pdf "ya no existe", le permitiremos pasar silenciosamente 
-        // a la UI para que limpie el Caché Inconsistente de PostgreSQL.
+        // Se deja pasar para que la UI limpie el caché inconsistente, pero se
+        // registra porque también puede indicar un problema de permisos (RLS).
+        AppLogger.warning('VehicleStorageService.deleteDocument($path)',
+            'Supabase no eliminó ningún archivo (¿no existe o falta permiso?)');
       }
-    } catch (e) {
-      throw VehicleStorageLogicException('Error al eliminar el documento: $e');
+    } catch (e, stackTrace) {
+      Error.throwWithStackTrace(
+        VehicleStorageLogicException('Error al eliminar el documento: $e',
+            cause: e),
+        stackTrace,
+      );
     }
   }
 }

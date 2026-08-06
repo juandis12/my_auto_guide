@@ -14,37 +14,26 @@ class VehicleProvider with ChangeNotifier {
     notifyListeners();
     try {
       _vehicles = await _supabaseService.getVehicles();
-    } catch (e) {
+    } finally {
       _isLoading = false;
       notifyListeners();
-      rethrow;
     }
-    _isLoading = false;
-    notifyListeners();
   }
 
   Future<void> addVehicle(Map<String, dynamic> vehicleData) async {
-    try {
-      await _supabaseService.createVehicle(
-        userId: vehicleData['user_id'],
-        marca: vehicleData['marca'],
-        modelo: vehicleData['modelo'],
-        apodo: vehicleData['apodo'],
-        kms: vehicleData['kms'],
-        imagePath: vehicleData['image_path'],
-      );
-      await loadVehicles(); // Recargar lista
-    } catch (e) {
-      rethrow;
-    }
+    await _supabaseService.createVehicle(
+      userId: vehicleData['user_id'],
+      marca: vehicleData['marca'],
+      modelo: vehicleData['modelo'],
+      apodo: vehicleData['apodo'],
+      kms: vehicleData['kms'],
+      imagePath: vehicleData['image_path'],
+    );
+    await loadVehicles(); // Recargar lista
   }
 
   Future<void> updateVehicleKms(String vehicleId, int kms) async {
-    try {
-      await _supabaseService.updateVehicleKms(vehicleId, kms);
-      await loadVehicles();
-    } catch (e) {
-      rethrow;
-    }
+    await _supabaseService.updateVehicleKms(vehicleId, kms);
+    await loadVehicles();
   }
 }

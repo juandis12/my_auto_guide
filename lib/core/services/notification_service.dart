@@ -6,6 +6,8 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz_data;
 
+import '../utils/app_logger.dart';
+
 class NotificationService {
   static const _platformChannel = MethodChannel('my_auto_guide/exact_alarms');
 
@@ -99,7 +101,11 @@ class NotificationService {
       }
 
       return false;
-    } catch (_) {
+    } catch (e, stackTrace) {
+      // Sin el canal nativo se asume que no hay permiso: las notificaciones se
+      // agendan igual, pero de forma inexacta.
+      AppLogger.error(
+          'NotificationService.ensureExactAlarmsEnabled', e, stackTrace);
       return false;
     }
   }

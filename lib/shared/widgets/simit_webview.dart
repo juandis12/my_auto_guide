@@ -14,6 +14,7 @@ import 'liquid_glass_fab.dart';
 import '../../core/services/ai_bot_service.dart';
 import '../../core/services/email_service.dart';
 import '../../core/services/notification_service.dart';
+import '../../core/utils/app_logger.dart';
 
 class SimitWebViewScreen extends StatefulWidget {
   final String placa;
@@ -109,7 +110,11 @@ class _SimitWebViewScreenState extends State<SimitWebViewScreen> {
             .select('last_soat, last_tecno, last_aceite, kms, kms_last_aceite, kms_last_filtro, kms_last_cadena, marca, modelo, apodo')
             .eq('id', widget.vehiculoId)
             .single();
-      } catch (_) {}
+      } catch (e, stackTrace) {
+        // El reporte se envía sin los datos de vencimientos del vehículo.
+        AppLogger.error(
+            'SimitWebView._guardarResultados (datos vehículo)', e, stackTrace);
+      }
 
       // Disparar notificaciones locales (compatibles con iOS y Android en segundo plano)
       if (_finesCount > 0) {
@@ -145,8 +150,10 @@ class _SimitWebViewScreenState extends State<SimitWebViewScreen> {
           explanations: explanations,
           vehicleData: vehicleData,
         );
-      } catch (e) {
-        debugPrint('Error enviando email en simit_webview: $e');
+      } catch (e, stackTrace) {
+        // El diálogo posterior informa que el correo no se envió.
+        AppLogger.error(
+            'SimitWebView._guardarResultados (email)', e, stackTrace);
       }
 
       if (mounted) {
@@ -193,8 +200,8 @@ class _SimitWebViewScreenState extends State<SimitWebViewScreen> {
           ),
         );
       }
-    } catch (e) {
-      debugPrint('Error al guardar en Supabase: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('SimitWebView._guardarResultados', e, stackTrace);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -204,7 +211,6 @@ class _SimitWebViewScreenState extends State<SimitWebViewScreen> {
           ),
         );
       }
-    } finally {
     }
   }
 
@@ -241,8 +247,10 @@ class _SimitWebViewScreenState extends State<SimitWebViewScreen> {
       if (aiResult.isNotEmpty && !aiResult.contains('Error') && !aiResult.contains('problema')) {
         return '$upCode: ${aiResult.trim()}';
       }
-    } catch (_) {
-      // Ignorar fallas y usar local
+    } catch (e, stackTrace) {
+      // Se cae a la descripción local de la infracción.
+      AppLogger.warning(
+          'SimitWebView._obtenerExplicacionInfraccion', e, stackTrace);
     }
 
     if (localDesc.isNotEmpty) {

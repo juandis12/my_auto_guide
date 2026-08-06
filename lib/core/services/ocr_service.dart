@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
+import '../utils/app_logger.dart';
 
 class OCRService {
   final TextRecognizer _textRecognizer = TextRecognizer(script: TextRecognitionScript.latin);
@@ -49,8 +50,8 @@ class OCRService {
       foundDates.sort((a, b) => b.compareTo(a));
       return foundDates.first;
 
-    } catch (e) {
-      print('Error en OCRService: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('OCRService.extractExpirationDate', e, stackTrace);
       return null;
     }
   }
@@ -70,7 +71,11 @@ class OCRService {
           return DateTime(int.parse(parts[2]), int.parse(parts[1]), int.parse(parts[0]));
         }
       }
-    } catch (_) {}
+    } catch (e, stackTrace) {
+      // Fechas mal reconocidas por el OCR son esperables: se descartan.
+      AppLogger.warning(
+          'OCRService._parseFlexibleDate($dateStr)', e, stackTrace);
+    }
     return null;
   }
 

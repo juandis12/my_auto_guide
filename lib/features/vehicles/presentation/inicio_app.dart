@@ -57,6 +57,7 @@ import '../../expenses/presentation/gastos_screen.dart';
 import '../../navigation/presentation/historial_rutas_screen.dart';
 import '../../marketplace/presentation/marketplace_talleres_screen.dart';
 import '../../../core/services/vehicle_pdf_report_service.dart';
+import '../../../core/utils/app_logger.dart';
 import '../../../core/services/calendar_sync_service.dart';
 import '../../expenses/presentation/bitacora_tanqueo_screen.dart';
 import '../../../shared/widgets/simit_webview.dart';
@@ -406,8 +407,8 @@ class _InicioAppState extends State<InicioApp> {
           .single();
       _cachedVehicleData = row;
       return row;
-    } catch (e) {
-      debugPrint('Error cargando datos del vehículo: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('InicioApp._cargar', e, stackTrace);
       return {};
     }
   }
@@ -942,7 +943,8 @@ class _InicioAppState extends State<InicioApp> {
         return (o.name, signed);
       });
       return await Future.wait(futures);
-    } catch (e) {
+    } catch (e, stackTrace) {
+      AppLogger.error('InicioApp._listDocsSigned($type)', e, stackTrace);
       return [];
     }
   }
@@ -977,7 +979,8 @@ class _InicioAppState extends State<InicioApp> {
 
       _cachedVehicleData = null;
       return path;
-    } catch (e) {
+    } catch (e, stackTrace) {
+      AppLogger.error('InicioApp._uploadDoc($type)', e, stackTrace);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('No se pudo subir: $e')),
@@ -1354,8 +1357,8 @@ class _InicioAppState extends State<InicioApp> {
           _recalculateAI(vehicleData);
         }
       }
-    } catch (e) {
-      debugPrint('Error en _cargarWeeklyStats: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('InicioApp._cargarWeeklyStats', e, stackTrace);
       if (mounted) setState(() => _loadingWeekly = false);
     }
   }

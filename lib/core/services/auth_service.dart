@@ -1,11 +1,16 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../utils/app_logger.dart';
 import 'supabase_service.dart';
 
 /// Excepción personalizada para mapear errores conocidos de Supabase a mensajes UI amigables
 class AuthLogicException implements Exception {
   final String message;
   final bool isNotConfirmed;
-  AuthLogicException(this.message, {this.isNotConfirmed = false});
+
+  /// Error original que provocó la falla, para no perder el diagnóstico.
+  final Object? cause;
+
+  AuthLogicException(this.message, {this.isNotConfirmed = false, this.cause});
   @override
   String toString() => message;
 }
@@ -37,8 +42,10 @@ class AuthService {
         return (data.first as Map)['id'] as String;
       }
       return null;
-    } catch (e) {
-      // Retorna null silenciosamente porque el objetivo de bootstrap es enrutar limpiamente.
+    } catch (e, stackTrace) {
+      // Retorna null para que el bootstrap enrute limpiamente, pero el error se
+      // reporta: si falla, el usuario verá la pantalla de "sin vehículos".
+      AppLogger.error('AuthService.getFirstVehicleId', e, stackTrace);
       return null;
     }
   }
@@ -53,11 +60,12 @@ class AuthService {
     } on AuthException catch (e) {
       final msg = e.message.toLowerCase();
       if (msg.contains('not confirmed')) {
-         throw AuthLogicException('Tu correo no está confirmado. Revisa tu bandeja o reenvía el correo de verificación.', isNotConfirmed: true);
+         throw AuthLogicException('Tu correo no está confirmado. Revisa tu bandeja o reenvía el correo de verificación.', isNotConfirmed: true, cause: e);
       }
-      throw AuthLogicException(e.message);
-    } catch (e) {
-      throw AuthLogicException('Error inesperado: $e');
+      throw AuthLogicException(e.message, cause: e);
+    } catch (e, stackTrace) {
+      Error.throwWithStackTrace(
+          AuthLogicException('Error inesperado: $e', cause: e), stackTrace);
     }
   }
 
@@ -69,9 +77,10 @@ class AuthService {
         email: email.trim(),
       );
     } on AuthException catch (e) {
-      throw AuthLogicException(e.message);
-    } catch (e) {
-      throw AuthLogicException('Error inesperado: $e');
+      throw AuthLogicException(e.message, cause: e);
+    } catch (e, stackTrace) {
+      Error.throwWithStackTrace(
+          AuthLogicException('Error inesperado: $e', cause: e), stackTrace);
     }
   }
 
@@ -83,9 +92,10 @@ class AuthService {
     try {
       await _supabase.auth.resetPasswordForEmail(email.trim());
     } on AuthException catch (e) {
-      throw AuthLogicException(e.message);
-    } catch (e) {
-      throw AuthLogicException('Error inesperado: $e');
+      throw AuthLogicException(e.message, cause: e);
+    } catch (e, stackTrace) {
+      Error.throwWithStackTrace(
+          AuthLogicException('Error inesperado: $e', cause: e), stackTrace);
     }
   }
 
@@ -97,9 +107,13 @@ class AuthService {
       );
       return res;
     } on AuthException catch (e) {
-      throw AuthLogicException('Error en autenticación con Google: ${e.message}');
-    } catch (e) {
-      throw AuthLogicException('No se pudo iniciar sesión con Google: $e');
+      throw AuthLogicException('Error en autenticación con Google: ${e.message}',
+          cause: e);
+    } catch (e, stackTrace) {
+      Error.throwWithStackTrace(
+          AuthLogicException('No se pudo iniciar sesión con Google: $e',
+              cause: e),
+          stackTrace);
     }
   }
 
@@ -111,9 +125,14 @@ class AuthService {
       );
       return res;
     } on AuthException catch (e) {
-      throw AuthLogicException('Error en autenticación con Facebook: ${e.message}');
-    } catch (e) {
-      throw AuthLogicException('No se pudo iniciar sesión con Facebook: $e');
+      throw AuthLogicException(
+          'Error en autenticación con Facebook: ${e.message}',
+          cause: e);
+    } catch (e, stackTrace) {
+      Error.throwWithStackTrace(
+          AuthLogicException('No se pudo iniciar sesión con Facebook: $e',
+              cause: e),
+          stackTrace);
     }
   }
 
