@@ -108,22 +108,24 @@ class AppDatabase {
         )
       ''');
     }
-    if (oldVersion < 4) {
-      try {
-        await db.execute('ALTER TABLE pending_routes ADD COLUMN viaPuntos TEXT');
-      } catch (e) {}
-    }
     if (oldVersion < 5) {
-      try {
-        await db.execute('ALTER TABLE pending_routes ADD COLUMN viaPuntos TEXT');
-      } catch (e) {}
+      await _addColumnIfMissing(db, 'pending_routes', 'viaPuntos', 'TEXT');
     }
     if (oldVersion < 6) {
-      try {
-        await db.execute('ALTER TABLE pending_routes ADD COLUMN velocidad_max REAL');
-        await db.execute('ALTER TABLE pending_routes ADD COLUMN velocidad_prom REAL');
-      } catch (e) {}
+      await _addColumnIfMissing(db, 'pending_routes', 'velocidad_max', 'REAL');
+      await _addColumnIfMissing(db, 'pending_routes', 'velocidad_prom', 'REAL');
     }
+  }
+
+  /// Agrega una columna sólo si no existe, en lugar de intentar el ALTER TABLE
+  /// y descartar la excepción: así una migración que falla de verdad propaga el
+  /// error en vez de dejar la base de datos con un esquema incompleto.
+  Future<void> _addColumnIfMissing(
+      Database db, String table, String column, String type) async {
+    final columns = await db.rawQuery('PRAGMA table_info($table)');
+    final exists = columns.any((c) => c['name'] == column);
+    if (exists) return;
+    await db.execute('ALTER TABLE $table ADD COLUMN $column $type');
   }
 
   // Métodos para Pending Routes (sincronización offline)

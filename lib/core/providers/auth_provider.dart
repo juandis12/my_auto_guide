@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/supabase_service.dart';
+import '../utils/app_logger.dart';
 
 class AuthProvider with ChangeNotifier {
   final SupabaseService _supabaseService = SupabaseService();
@@ -24,6 +25,8 @@ class AuthProvider with ChangeNotifier {
       if (event.event == AuthChangeEvent.signedIn || event.event == AuthChangeEvent.tokenRefreshed) {
         await _supabaseService.registerFcmToken();
       }
+    }, onError: (Object e, StackTrace stackTrace) {
+      AppLogger.error('AuthProvider.authStateChanges', e, stackTrace);
     });
   }
 
@@ -36,13 +39,10 @@ class AuthProvider with ChangeNotifier {
         password: password,
       );
       await _supabaseService.registerFcmToken();
-    } catch (e) {
+    } finally {
       _isLoading = false;
       notifyListeners();
-      rethrow;
     }
-    _isLoading = false;
-    notifyListeners();
   }
 
   Future<void> signUp(String email, String password) async {
@@ -54,13 +54,10 @@ class AuthProvider with ChangeNotifier {
         password: password,
       );
       await _supabaseService.registerFcmToken();
-    } catch (e) {
+    } finally {
       _isLoading = false;
       notifyListeners();
-      rethrow;
     }
-    _isLoading = false;
-    notifyListeners();
   }
 
   Future<void> signOut() async {

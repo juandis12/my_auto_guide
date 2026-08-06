@@ -10,6 +10,7 @@ import 'package:sensors_plus/sensors_plus.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:http/http.dart' as http;
 import '../../../core/services/vehicle_storage_service.dart';
+import '../../../core/utils/app_logger.dart';
 import '../../../shared/widgets/liquid_glass_fab.dart';
 
 class Captura360Screen extends StatefulWidget {
@@ -65,8 +66,16 @@ class _Captura360ScreenState extends State<Captura360Screen> {
           setState(() => _isCameraReady = true);
         }
       }
-    } catch (e) {
-      debugPrint('Error inicializando cámara: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error('Captura360Screen._initCamera', e, stackTrace);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('No se pudo iniciar la cámara: $e'),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+      }
     }
   }
 
@@ -105,7 +114,9 @@ class _Captura360ScreenState extends State<Captura360Screen> {
       if (_capturedPhotos.length >= _totalPhotos) {
         _procesarImagenes();
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      AppLogger.error('Captura360Screen._capturarFoto', e, stackTrace);
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error al capturar foto: $e')),
       );
@@ -145,11 +156,15 @@ class _Captura360ScreenState extends State<Captura360Screen> {
           for (final f in oldFiles) {
             try {
               await storage.deleteDocument('${widget.vehiculoId}/processed_360/${f.name}');
-            } catch (_) {}
+            } catch (e, stackTrace) {
+              // Se continúa con el resto de los archivos.
+              AppLogger.error(
+                  'Captura360Screen (purga ${f.name})', e, stackTrace);
+            }
           }
         }
-      } catch (e) {
-        debugPrint('Aviso al purgar archivos 360 anteriores: $e');
+      } catch (e, stackTrace) {
+        AppLogger.error('Captura360Screen (purga 360)', e, stackTrace);
       }
 
       for (int i = 0; i < _capturedPhotos.length; i++) {
@@ -162,8 +177,10 @@ class _Captura360ScreenState extends State<Captura360Screen> {
         Uint8List? transparentBytes;
         try {
           transparentBytes = await _removerFondoGratis(bytes);
-        } catch (e) {
-          debugPrint('Error en API para foto $i: $e (usando foto original)');
+        } catch (e, stackTrace) {
+          // Se usa la foto original, sin recorte de fondo.
+          AppLogger.warning(
+              'Captura360Screen._removerFondoGratis(foto $i)', e, stackTrace);
         }
 
         final finalBytes = transparentBytes ?? bytes;
@@ -224,7 +241,9 @@ class _Captura360ScreenState extends State<Captura360Screen> {
           ),
         );
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      AppLogger.error('Captura360Screen._procesarImagenes', e, stackTrace);
+      if (!mounted) return;
       setState(() => _isProcessing = false);
       showDialog(
         context: context,
@@ -290,8 +309,10 @@ class _Captura360ScreenState extends State<Captura360Screen> {
             }
           }
         }
-      } catch (e) {
-        debugPrint('Error en endpoint $endpoint: $e');
+      } catch (e, stackTrace) {
+        // Se intenta con el siguiente endpoint de la lista.
+        AppLogger.warning(
+            'Captura360Screen._removerFondoGratis($endpoint)', e, stackTrace);
       }
     }
 

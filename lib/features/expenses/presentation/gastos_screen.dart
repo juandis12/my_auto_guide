@@ -8,6 +8,7 @@ import '../../../core/logic/vehicle_expenses_logic.dart';
 import '../../../core/services/supabase_service.dart';
 import '../../../core/logic/pdf_report_logic.dart';
 import '../../../core/logic/performance_guard.dart';
+import '../../../core/utils/app_logger.dart';
 
 class GastosScreen extends StatefulWidget {
   final String vehiculoId;
@@ -50,9 +51,16 @@ class _GastosScreenState extends State<GastosScreen> {
         _expenses = data;
         _isLoading = false;
       });
-    } catch (_) {
+    } catch (e, stackTrace) {
+      AppLogger.error('GastosScreen._fetchExpenses', e, stackTrace);
       if (!mounted) return;
       setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('No se pudieron cargar los gastos: $e'),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
     }
   }
 

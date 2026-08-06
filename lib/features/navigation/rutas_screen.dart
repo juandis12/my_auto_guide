@@ -19,6 +19,7 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../../core/services/supabase_service.dart';
 import '../../../core/services/sync_service.dart';
 import '../../../core/services/navigation_service.dart';
+import '../../../core/utils/app_logger.dart';
 import 'domain/models/navigation_telemetry.dart';
 import 'logic/telemetry_calculator.dart';
 import 'presentation/controllers/navigation_controller.dart';
@@ -98,17 +99,39 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
         isCar: isCar,
       );
       _controller.addListener(_onControllerStateUpdate);
-    } catch (_) {}
+    } catch (e, stackTrace) {
+      AppLogger.error('RutasScreen._cargarInfoVehiculo', e, stackTrace);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('No se pudo cargar la información del vehículo: $e'),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+      }
+    }
   }
 
   Future<void> _obtenerUbicacionInicial() async {
-    final permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) await Geolocator.requestPermission();
-    
-    final pos = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    final latLng = LatLng(pos.latitude, pos.longitude);
-    _controller.updateCurrentPosition(latLng);
-    _mapCtrl.move(latLng, 15);
+    try {
+      final permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) await Geolocator.requestPermission();
+
+      final pos = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      final latLng = LatLng(pos.latitude, pos.longitude);
+      _controller.updateCurrentPosition(latLng);
+      _mapCtrl.move(latLng, 15);
+    } catch (e, stackTrace) {
+      AppLogger.error('RutasScreen._obtenerUbicacionInicial', e, stackTrace);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('No se pudo obtener tu ubicación: $e'),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+      }
+    }
   }
 
   void _iniciarSeguimientoIdle() {
@@ -137,6 +160,8 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
     ).listen((Position position) {
       final latLng = LatLng(position.latitude, position.longitude);
       _controller.updateCurrentPosition(latLng, speedMs: position.speed);
+    }, onError: (Object e, StackTrace stackTrace) {
+      AppLogger.error('RutasScreen (stream GPS)', e, stackTrace);
     });
   }
 
@@ -150,7 +175,8 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
     setState(() => _isSearching = true);
     try {
       _searchResults = await NavigationService().searchDestination(query);
-    } catch (e) {
+    } catch (e, stackTrace) {
+      AppLogger.error('RutasScreen._buscarDestino', e, stackTrace);
       if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
     } finally {
       if (mounted) setState(() => _isSearching = false);
@@ -186,7 +212,8 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
         durationMin: route.durationMin,
       );
       _mapCtrl.fitCamera(CameraFit.bounds(bounds: LatLngBounds.fromPoints([curPos, dest]), padding: const EdgeInsets.all(60)));
-    } catch (e) {
+    } catch (e, stackTrace) {
+      AppLogger.error('RutasScreen._trazarRuta', e, stackTrace);
       if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
     } finally {
       if (mounted) setState(() => _isLoadingRoute = false);
@@ -262,8 +289,8 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
         );
         
         await SyncService().updateVehicleKmsOfflineFirst(widget.vehiculoId, t.distanceKm.round());
-      } catch (e) {
-        debugPrint('Error al guardar trayecto localmente: $e');
+      } catch (e, stackTrace) {
+        AppLogger.error('RutasScreen (guardar trayecto)', e, stackTrace);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Error al guardar el trayecto localmente: $e')),

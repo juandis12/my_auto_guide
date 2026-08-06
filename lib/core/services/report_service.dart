@@ -6,6 +6,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import '../logic/vehicle_ai_logic.dart';
+import '../utils/app_logger.dart';
 
 class ReportService {
   static Future<void> generateVehicleReport({
@@ -252,11 +253,15 @@ class ReportService {
         if (response.statusCode == 200) {
           return response.bodyBytes;
         }
+        AppLogger.warning('ReportService._loadAssetSafe($path)',
+            'HTTP ${response.statusCode}');
         return null;
       }
       final data = await rootBundle.load(path);
       return data.buffer.asUint8List();
-    } catch (e) {
+    } catch (e, stackTrace) {
+      // El reporte se genera sin la imagen, pero la falla queda registrada.
+      AppLogger.warning('ReportService._loadAssetSafe($path)', e, stackTrace);
       return null;
     }
   }

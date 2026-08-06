@@ -5,6 +5,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import '../services/database.dart';
 import '../services/supabase_service.dart';
+import '../utils/app_logger.dart';
 
 class SyncService {
   static final SyncService _instance = SyncService._internal();
@@ -28,8 +29,10 @@ class SyncService {
           : ConnectivityResult.none;
       if (result != ConnectivityResult.none) {
         // Hay conexión, intentar sincronizar
-        syncPendingData();
+        unawaited(syncPendingData());
       }
+    }, onError: (Object e, StackTrace stackTrace) {
+      AppLogger.error('SyncService.onConnectivityChanged', e, stackTrace);
     });
 
 
@@ -51,8 +54,9 @@ class SyncService {
       final lookup = await InternetAddress.lookup('google.com')
           .timeout(const Duration(seconds: 3));
       return lookup.isNotEmpty && lookup[0].rawAddress.isNotEmpty;
-    } catch (e) {
-      debugPrint('Error checking internet: $e');
+    } catch (e, stackTrace) {
+      // Sin conexión es un estado normal de la app offline-first.
+      AppLogger.warning('SyncService.hasInternetConnection', e, stackTrace);
       return false;
     }
   }
@@ -74,8 +78,10 @@ class SyncService {
       await _syncPendingKmsUpdates();
       await _syncPendingExpenses();
       debugPrint('SyncService: Sincronización completada exitosamente.');
-    } catch (e) {
-      debugPrint('SyncService: Error global en sincronización: $e');
+    } catch (e, stackTrace) {
+      // No se propaga porque la sincronización corre en segundo plano; los datos
+      // quedan pendientes y se reintentan en el próximo cambio de conectividad.
+      AppLogger.error('SyncService.syncPendingData', e, stackTrace);
     } finally {
       _isSyncing = false;
     }
@@ -97,8 +103,12 @@ class SyncService {
         await syncItem(item);
         await markAsSynced(item);
         debugPrint('$logName sincronizado (ID: ${(item as Map)['id']})');
-      } catch (e) {
-        debugPrint('Error sincronizando $logName (ID: ${(item as Map)['id']}): $e');
+      } catch (e, stackTrace) {
+        // El item queda pendiente para el próximo intento.
+        AppLogger.error(
+            'SyncService._processQueue($logName, ID: ${(item as Map)['id']})',
+            e,
+            stackTrace);
       }
     }
   }
@@ -222,9 +232,9 @@ class SyncService {
             break;
           }
         }
-      } catch (e) {
-        debugPrint('Error sincronizando ruta inmediatamente: $e');
+      } catch (e, stackTrace) {
         // Queda pendiente para sincronización posterior
+        AppLogger.error('SyncService.saveRouteOfflineFirst', e, stackTrace);
       }
     }
   }
@@ -253,9 +263,10 @@ class SyncService {
             break;
           }
         }
-      } catch (e) {
-        debugPrint('Error sincronizando KMS update inmediatamente: $e');
+      } catch (e, stackTrace) {
         // Queda pendiente para sincronización posterior
+        AppLogger.error(
+            'SyncService.updateVehicleKmsOfflineFirst', e, stackTrace);
       }
     }
   }
@@ -287,8 +298,9 @@ class SyncService {
     if (await hasInternetConnection()) {
       try {
         await _syncPendingExpenses();
-      } catch (e) {
-        debugPrint('Error sincronizando gasto inmediatamente: $e');
+      } catch (e, stackTrace) {
+        // Queda pendiente para sincronización posterior
+        AppLogger.error('SyncService.saveExpenseOfflineFirst', e, stackTrace);
       }
     }
   } // FIN saveExpenseOfflineFirst
@@ -303,8 +315,10 @@ class SyncService {
         final remote = await _supabase.getRouteHistory(vehicleId);
         combined.addAll(remote);
       }
-    } catch (e) {
-      debugPrint('SyncService: Error cargando historial remoto: $e');
+    } catch (e, stackTrace) {
+      // Se sigue con las rutas locales, pero el historial mostrado es parcial.
+      AppLogger.error(
+          'SyncService.getCombinedRouteHistory (remoto)', e, stackTrace);
     }
 
     // 2. Obtener locales pendientes
@@ -330,8 +344,9 @@ class SyncService {
         };
       });
       combined.addAll(filtered);
-    } catch (e) {
-      debugPrint('SyncService: Error cargando rutas locales: $e');
+    } catch (e, stackTrace) {
+      AppLogger.error(
+          'SyncService.getCombinedRouteHistory (local)', e, stackTrace);
     }
 
     // 3. Ordenar por fecha (descendente)

@@ -23,6 +23,7 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../core/utils/app_logger.dart';
 
 class RuntWebViewScreen extends StatefulWidget {
   final String placa;
@@ -95,8 +96,9 @@ class _RuntWebViewScreenState extends State<RuntWebViewScreen> {
         final result = await _controller.runJavaScriptReturningResult(js);
         final text = parseJsResult(result);
         if (text.isNotEmpty) return text;
-      } catch (e) {
-        debugPrint("Error ejecutando JS: $e");
+      } catch (e, stackTrace) {
+        // Reintento: la página del RUNT todavía puede no estar cargada.
+        AppLogger.warning('RuntWebView.getTextFromJs', e, stackTrace);
       }
       await Future.delayed(const Duration(seconds: 2));
     }
@@ -231,8 +233,16 @@ class _RuntWebViewScreenState extends State<RuntWebViewScreen> {
           .single();
 
       debugPrint("✅ Datos guardados en Supabase: $response");
-    } catch (e) {
-      debugPrint("❌ Error guardando en Supabase: $e");
+    } catch (e, stackTrace) {
+      AppLogger.error('RuntWebView.guardarFechas', e, stackTrace);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('No se pudieron guardar las fechas del RUNT: $e'),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+      }
     }
   }
 
