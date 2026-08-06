@@ -61,6 +61,8 @@ import '../../../core/services/calendar_sync_service.dart';
 import '../../expenses/presentation/bitacora_tanqueo_screen.dart';
 import '../../../shared/widgets/simit_webview.dart';
 import '../../../shared/widgets/liquid_glass_fab.dart';
+import '../../../shared/widgets/app_snack_bar.dart';
+import '../../../core/utils/formatters.dart';
 import 'captura_360_screen.dart';
 import '../../ai_bot/presentation/ai_chat_screen.dart';
 import '../../../core/logic/performance_guard.dart';
@@ -231,11 +233,10 @@ class _InicioAppState extends State<InicioApp> {
                     });
                     if (ctx.mounted) Navigator.pop(ctx);
                   } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('El kilometraje no puede ser menor al actual.'),
-                        backgroundColor: Colors.orange,
-                      ),
+                    AppSnackBar.show(
+                      context,
+                      'El kilometraje no puede ser menor al actual.',
+                      backgroundColor: Colors.orange,
                     );
                   }
                 },
@@ -511,11 +512,10 @@ class _InicioAppState extends State<InicioApp> {
     final double kmsLastAceite = ((vData?['kms_last_aceite'] ?? 0) as num).toDouble();
     final String? imagePath = vData?['image_path'];
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('📄 Generando Hoja de Vida PDF...'),
-        duration: Duration(seconds: 2),
-      ),
+    AppSnackBar.show(
+      context,
+      '📄 Generando Hoja de Vida PDF...',
+      duration: const Duration(seconds: 2),
     );
 
     final String simitStatus = vData?['simit_status'] ?? 'unchecked';
@@ -551,9 +551,7 @@ class _InicioAppState extends State<InicioApp> {
       );
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error al generar PDF: $e')),
-        );
+        AppSnackBar.show(context, 'Error al generar PDF: $e');
       }
     }
   }
@@ -578,9 +576,8 @@ class _InicioAppState extends State<InicioApp> {
 
   void _agendarCalendarioDoc(DocType type, String? dateStr) {
     if (dateStr == null || dateStr.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Registra primero la fecha de vencimiento de este documento.')),
-      );
+      AppSnackBar.show(context,
+          'Registra primero la fecha de vencimiento de este documento.');
       return;
     }
 
@@ -920,13 +917,11 @@ class _InicioAppState extends State<InicioApp> {
           (res['vencTecno'] == true);
       if (vencido) {
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content:
-                Text('Hay mantenimientos vencidos, realizar cuanto antes.'),
-            backgroundColor: Colors.redAccent,
-            duration: Duration(seconds: 4),
-          ),
+        AppSnackBar.show(
+          context,
+          'Hay mantenimientos vencidos, realizar cuanto antes.',
+          backgroundColor: Colors.redAccent,
+          duration: const Duration(seconds: 4),
         );
       }
     }
@@ -979,9 +974,7 @@ class _InicioAppState extends State<InicioApp> {
       return path;
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('No se pudo subir: $e')),
-        );
+        AppSnackBar.show(context, 'No se pudo subir: $e');
       }
       return null;
     }
@@ -995,9 +988,7 @@ class _InicioAppState extends State<InicioApp> {
     final ok =
         await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
     if (!ok && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No se pudo abrir el archivo')),
-      );
+      AppSnackBar.show(context, 'No se pudo abrir el archivo');
     }
   }
 
@@ -1233,11 +1224,11 @@ class _InicioAppState extends State<InicioApp> {
                                                   } catch (e) {
                                                     // 7. Notificar visualmente si falla permisos / servidor
                                                     if (mounted) {
-                                                      ScaffoldMessenger.of(context).showSnackBar(
-                                                        SnackBar(
-                                                          content: Text('Error al eliminar archivo: $e'),
-                                                          backgroundColor: Colors.redAccent,
-                                                        ),
+                                                      AppSnackBar.show(
+                                                        context,
+                                                        'Error al eliminar archivo: $e',
+                                                        backgroundColor:
+                                                            Colors.redAccent,
                                                       );
                                                     }
                                                   }
@@ -2110,7 +2101,7 @@ class _MainHero extends StatelessWidget {
                               letterSpacing: -0.5)),
                       const SizedBox(height: 4),
                       Text(
-                          '${int.tryParse(kms)?.toString().replaceAllMapped(RegExp(r"(\d{1,3})(?=(\d{3})+(?!\d))"), (Match m) => "${m[1]}.") ?? kms} KM',
+                          '${AppFormat.thousandsOrRaw(kms)} KM',
                           style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,

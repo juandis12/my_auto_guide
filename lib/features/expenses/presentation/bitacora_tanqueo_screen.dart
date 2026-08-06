@@ -2,10 +2,11 @@
 // bitacora_tanqueo_screen.dart — PANTALLA BITÁCORA DE TANQUEO Y RENDIMIENTO
 // =============================================================================
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import '../../../core/services/fuel_tracker_service.dart';
 import '../domain/models/fuel_log_model.dart';
 import '../../../shared/widgets/liquid_glass_fab.dart';
+import '../../../shared/widgets/app_snack_bar.dart';
+import '../../../core/utils/formatters.dart';
 
 class BitacoraTanqueoScreen extends StatefulWidget {
   final String vehiculoId;
@@ -110,9 +111,8 @@ class _BitacoraTanqueoScreenState extends State<BitacoraTanqueoScreen> {
                     final precio = double.tryParse(precioCtrl.text) ?? 15500.0;
 
                     if (kms <= 0 || monto <= 0 || galones <= 0) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Ingresa valores válidos de kilometraje, monto y galones.')),
-                      );
+                      AppSnackBar.show(context,
+                          'Ingresa valores válidos de kilometraje, monto y galones.');
                       return;
                     }
 
@@ -159,8 +159,6 @@ class _BitacoraTanqueoScreenState extends State<BitacoraTanqueoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final currencyFmt = NumberFormat.currency(locale: 'es_CO', symbol: '\$', decimalDigits: 0);
-
     return Scaffold(
       backgroundColor: const Color(0xFF0F172A),
       appBar: AppBar(
@@ -197,7 +195,7 @@ class _BitacoraTanqueoScreenState extends State<BitacoraTanqueoScreen> {
                       Expanded(
                         child: _buildMetricCard(
                           title: 'Costo por Km',
-                          value: currencyFmt.format(_metrics['costPerKm']),
+                          value: AppFormat.currency(_metrics['costPerKm']!),
                           subtitle: 'COP por cada Km',
                           icon: Icons.monetization_on_rounded,
                           color: Colors.orangeAccent,
@@ -208,7 +206,7 @@ class _BitacoraTanqueoScreenState extends State<BitacoraTanqueoScreen> {
                   const SizedBox(height: 12),
                   _buildMetricCard(
                     title: 'Gasto Total en Gasolina',
-                    value: currencyFmt.format(_metrics['totalSpent']),
+                    value: AppFormat.currency(_metrics['totalSpent']!),
                     subtitle: 'Acumulado registrado',
                     icon: Icons.local_gas_station_rounded,
                     color: Colors.blueAccent,
@@ -245,7 +243,7 @@ class _BitacoraTanqueoScreenState extends State<BitacoraTanqueoScreen> {
                       itemCount: _logs.length,
                       itemBuilder: (ctx, idx) {
                         final item = _logs[idx];
-                        final fechaStr = DateFormat('dd/MM/yyyy').format(item.fecha);
+                        final fechaStr = AppFormat.date(item.fecha);
                         return Container(
                           margin: const EdgeInsets.only(bottom: 10),
                           padding: const EdgeInsets.all(14),
@@ -284,7 +282,7 @@ class _BitacoraTanqueoScreenState extends State<BitacoraTanqueoScreen> {
                                 ],
                               ),
                               Text(
-                                currencyFmt.format(item.montoCop),
+                                AppFormat.currency(item.montoCop),
                                 style: const TextStyle(color: Colors.greenAccent, fontWeight: FontWeight.bold, fontSize: 14),
                               ),
                             ],

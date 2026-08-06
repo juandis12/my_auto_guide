@@ -29,6 +29,7 @@ import 'dart:io';
 import '../../../core/services/supabase_service.dart';
 import '../../../core/logic/vehicle_health_logic.dart';
 import '../../../core/services/ocr_service.dart';
+import '../../../shared/widgets/app_snack_bar.dart';
 
 class ParametrizacionMantenimientosScreen extends StatefulWidget {
   final String vehiculoId;
@@ -148,26 +149,22 @@ class _ParametrizacionMantenimientosScreenState
       if (date != null) {
         onFound(date);
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Fecha detectada: ${_fmt(date)}'),
-            backgroundColor: Colors.green,
-          ),
+        AppSnackBar.show(
+          context,
+          'Fecha detectada: ${_fmt(date)}',
+          backgroundColor: Colors.green,
         );
       } else {
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('No se detectó fecha. Intenta con mejor luz.'),
-            backgroundColor: Colors.orange,
-          ),
+        AppSnackBar.show(
+          context,
+          'No se detectó fecha. Intenta con mejor luz.',
+          backgroundColor: Colors.orange,
         );
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
+      AppSnackBar.show(context, 'Error: $e');
     }
   }
 
@@ -260,9 +257,7 @@ class _ParametrizacionMantenimientosScreenState
       Navigator.pop(context, result);
     } on PostgrestException catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('No se pudo guardar: ${e.message}')),
-      );
+      AppSnackBar.show(context, 'No se pudo guardar: ${e.message}');
     }
   }
 

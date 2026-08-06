@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
-import 'package:intl/intl.dart';
+import '../utils/formatters.dart';
 
 class VehiclePdfReportService {
   static Future<Uint8List> generatePdfReport({
@@ -32,7 +32,7 @@ class VehiclePdfReportService {
     final dangerColor = PdfColor.fromHex('#D9534F');
     final successColor = PdfColor.fromHex('#5CB85C');
 
-    final String fechaReporte = DateFormat('dd/MM/yyyy HH:mm').format(DateTime.now());
+    final String fechaReporte = AppFormat.dateTime(DateTime.now());
 
     // Cargar imagen de vehículo si existe (opcional)
     pw.ImageProvider? vehicleImage;

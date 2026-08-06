@@ -26,6 +26,8 @@ import '../vehicles/presentation/Agregar_vehiculo.dart';
 import '../vehicles/presentation/inicio_app.dart';
 import '../../core/services/auth_service.dart';
 import '../../core/logic/performance_guard.dart';
+import '../../shared/widgets/app_snack_bar.dart';
+import '../../shared/widgets/glass_text_field.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/services/biometric_service.dart';
@@ -83,10 +85,9 @@ class _CarRentalLoginScreenState extends State<CarRentalLoginScreen> {
       if (_auth.currentUser != null) {
         await _goToDestination();
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Por favor, inicia sesión con correo y contraseña primero para habilitar el acceso biométrico.'),
-          ),
+        AppSnackBar.show(
+          context,
+          'Por favor, inicia sesión con correo y contraseña primero para habilitar el acceso biométrico.',
         );
       }
     }
@@ -119,9 +120,7 @@ class _CarRentalLoginScreenState extends State<CarRentalLoginScreen> {
       await _goToDestination();
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('$e')),
-        );
+        AppSnackBar.show(context, '$e');
       }
     } finally {
       if (mounted) setState(() => isLoading = false);
@@ -135,9 +134,7 @@ class _CarRentalLoginScreenState extends State<CarRentalLoginScreen> {
       await _goToDestination();
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('$e')),
-        );
+        AppSnackBar.show(context, '$e');
       }
     } finally {
       if (mounted) setState(() => isLoading = false);
@@ -161,33 +158,27 @@ class _CarRentalLoginScreenState extends State<CarRentalLoginScreen> {
     } on AuthLogicException catch (e) {
       if (!mounted) return;
       if (e.isNotConfirmed) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.message),
-            action: SnackBarAction(
-              label: 'Reenviar',
-              onPressed: () async {
-                try {
-                  await _auth.resendConfirmationEmail(emailController.text);
-                  if (!mounted) return;
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Correo de confirmación reenviado.')),
-                  );
-                } on AuthLogicException catch (e2) {
-                  if (!mounted) return;
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('No se pudo reenviar: ${e2.message}')),
-                  );
-                }
-              },
-            ),
-            duration: const Duration(seconds: 8),
+        AppSnackBar.show(
+          context,
+          e.message,
+          duration: const Duration(seconds: 8),
+          action: SnackBarAction(
+            label: 'Reenviar',
+            onPressed: () async {
+              try {
+                await _auth.resendConfirmationEmail(emailController.text);
+                if (!mounted) return;
+                AppSnackBar.show(context, 'Correo de confirmación reenviado.');
+              } on AuthLogicException catch (e2) {
+                if (!mounted) return;
+                AppSnackBar.show(
+                    context, 'No se pudo reenviar: ${e2.message}');
+              }
+            },
           ),
         );
       } else {
-         ScaffoldMessenger.of(context).showSnackBar(
-           SnackBar(content: Text('Error: ${e.message}')),
-         );
+        AppSnackBar.show(context, 'Error: ${e.message}');
       }
     } finally {
       if (mounted) setState(() => isLoading = false);
@@ -198,14 +189,11 @@ class _CarRentalLoginScreenState extends State<CarRentalLoginScreen> {
     try {
       await _auth.sendPasswordReset(emailController.text);
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Te enviamos un enlace para restablecer tu contraseña.')),
-      ); 
+      AppSnackBar.show(
+          context, 'Te enviamos un enlace para restablecer tu contraseña.');
     } on AuthLogicException catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message)),
-      ); 
+      AppSnackBar.show(context, e.message);
     }
   }
 
@@ -257,92 +245,18 @@ class _CarRentalLoginScreenState extends State<CarRentalLoginScreen> {
                   const SizedBox(height: 40),
 
                   // Campos de entrada con Glassmorphism suave
-                  PerformanceGuard.adaptiveBlur(
-                    borderRadius: BorderRadius.circular(16),
-                    fallbackColor:
-                        Theme.of(context).brightness == Brightness.dark
-                            ? Colors.white.withOpacity(0.08)
-                            : Colors.black.withOpacity(0.05),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.transparent,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                            color:
-                                Theme.of(context).brightness == Brightness.dark
-                                    ? Colors.white.withOpacity(0.1)
-                                    : Colors.black.withOpacity(0.1)),
-                      ),
-                      child: TextField(
-                        controller: emailController,
-                        style: TextStyle(
-                            color:
-                                Theme.of(context).brightness == Brightness.dark
-                                    ? Colors.white
-                                    : Colors.black87),
-                        decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 18),
-                          labelText: 'E-mail',
-                          labelStyle: TextStyle(
-                              color: Theme.of(context).brightness ==
-                                      Brightness.dark
-                                  ? Colors.white.withOpacity(0.6)
-                                  : Colors.black.withOpacity(0.6)),
-                          border: InputBorder.none,
-                          prefixIcon: Icon(Icons.email_outlined,
-                              color: Theme.of(context).brightness ==
-                                      Brightness.dark
-                                  ? Colors.white.withOpacity(0.6)
-                                  : Colors.black.withOpacity(0.6)),
-                        ),
-                        keyboardType: TextInputType.emailAddress,
-                      ),
-                    ),
+                  GlassTextField(
+                    controller: emailController,
+                    label: 'E-mail',
+                    icon: Icons.email_outlined,
+                    keyboardType: TextInputType.emailAddress,
                   ),
                   const SizedBox(height: 16),
-                  PerformanceGuard.adaptiveBlur(
-                    borderRadius: BorderRadius.circular(16),
-                    fallbackColor:
-                        Theme.of(context).brightness == Brightness.dark
-                            ? Colors.white.withOpacity(0.08)
-                            : Colors.black.withOpacity(0.05),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.transparent,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                            color:
-                                Theme.of(context).brightness == Brightness.dark
-                                    ? Colors.white.withOpacity(0.1)
-                                    : Colors.black.withOpacity(0.1)),
-                      ),
-                      child: TextField(
-                        controller: passwordController,
-                        style: TextStyle(
-                            color:
-                                Theme.of(context).brightness == Brightness.dark
-                                    ? Colors.white
-                                    : Colors.black87),
-                        decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 18),
-                          labelText: 'Contraseña',
-                          labelStyle: TextStyle(
-                              color: Theme.of(context).brightness ==
-                                      Brightness.dark
-                                  ? Colors.white.withOpacity(0.6)
-                                  : Colors.black.withOpacity(0.6)),
-                          border: InputBorder.none,
-                          prefixIcon: Icon(Icons.lock_outline,
-                              color: Theme.of(context).brightness ==
-                                      Brightness.dark
-                                  ? Colors.white.withOpacity(0.6)
-                                  : Colors.black.withOpacity(0.6)),
-                        ),
-                        obscureText: true,
-                      ),
-                    ),
+                  GlassTextField(
+                    controller: passwordController,
+                    label: 'Contraseña',
+                    icon: Icons.lock_outline,
+                    obscureText: true,
                   ),
                   const SizedBox(height: 12),
                   Row(
