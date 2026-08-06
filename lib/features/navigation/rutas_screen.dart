@@ -83,7 +83,14 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
   
   Future<void> _cargarInfoVehiculo() async {
     try {
-      final data = await supabase.from('vehiculos').select('modelo, marca, image_path').eq('id', widget.vehiculoId).single();
+      final userId = supabase.auth.currentUser?.id;
+      if (userId == null) return;
+      final data = await supabase
+          .from('vehiculos')
+          .select('modelo, marca, image_path')
+          .eq('id', widget.vehiculoId)
+          .eq('user_id', userId)
+          .single();
       final marca = (data['marca'] as String? ?? '').toUpperCase();
       final modelo = data['modelo'] ?? 'Vehículo';
       final isCar = marca == 'TOYOTA' || marca == 'MAZDA' || marca == 'CHEVROLET';

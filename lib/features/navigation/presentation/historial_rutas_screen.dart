@@ -52,10 +52,14 @@ class _HistorialRutasScreenState extends State<HistorialRutasScreen> {
 
       // Obtener info del vehículo para la IA y Reporte (Resistente a fallos de red)
       try {
-        final vData = await SupabaseService().client
+        final client = SupabaseService().client;
+        final userId = client.auth.currentUser?.id;
+        if (userId == null) throw Exception('Usuario no autenticado');
+        final vData = await client
             .from('vehiculos')
             .select('marca, modelo, kms, image_path')
             .eq('id', widget.vehiculoId)
+            .eq('user_id', userId)
             .single();
         
         _vehicleBrand = (vData['marca'] as String? ?? '').toUpperCase();

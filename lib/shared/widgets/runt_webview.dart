@@ -20,9 +20,26 @@
 //
 // =============================================================================
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
+/// Dominios en los que se permite navegar e inyectar los datos del vehículo.
+const Set<String> _allowedRuntHosts = {
+  'runt.com.co',
+  'www.runt.com.co',
+  'runt.gov.co',
+  'www.runt.gov.co',
+};
+
+bool _isAllowedRuntUrl(String url) {
+  final uri = Uri.tryParse(url);
+  return uri != null &&
+      uri.scheme == 'https' &&
+      _allowedRuntHosts.contains(uri.host);
+}
 
 class RuntWebViewScreen extends StatefulWidget {
   final String placa;
@@ -57,17 +74,24 @@ class _RuntWebViewScreenState extends State<RuntWebViewScreen> {
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
         NavigationDelegate(
+          onNavigationRequest: (request) => _isAllowedRuntUrl(request.url)
+              ? NavigationDecision.navigate
+              : NavigationDecision.prevent,
           onPageFinished: (url) async {
             setState(() => _loading = false);
 
-            // Autocompletar los campos de placa y cédula automáticamente
+            // Solo autocompletar los datos personales en el portal oficial
+            if (!_isAllowedRuntUrl(url)) return;
+
+            final placa = jsonEncode(widget.placa);
+            final cedula = jsonEncode(widget.cedula);
             await _controller.runJavaScript('''
               function fillInputs() {
                 const placa = document.getElementById('txtPlaca');
                 const cedula = document.getElementById('txtNumDoc');
                 if (placa && cedula) {
-                  placa.value = '${widget.placa}';
-                  cedula.value = '${widget.cedula}';
+                  placa.value = $placa;
+                  cedula.value = $cedula;
                 } else {
                   setTimeout(fillInputs, 500);
                 }

@@ -176,7 +176,10 @@ class _Captura360ScreenState extends State<Captura360Screen> {
         
         await storage.uploadBinary(remotePath, finalBytes, upsert: true);
 
-        final signedUrl = await storage.getSignedUrl(remotePath, {});
+        // Estas URLs se persisten en la fila del vehículo, por eso su vigencia
+        // es mayor que la de los documentos que se firman bajo demanda.
+        final signedUrl = await storage
+            .getSignedUrl(remotePath, {}, ttl: const Duration(days: 30));
         if (signedUrl != null) {
           uploadedSignedUrls.add(signedUrl);
         }
@@ -187,10 +190,16 @@ class _Captura360ScreenState extends State<Captura360Screen> {
       });
 
       final supabase = Supabase.instance.client;
-      await supabase.from('vehiculos').update({
-        'has_360_view': true,
-        'images_360_urls': uploadedSignedUrls,
-      }).eq('id', widget.vehiculoId);
+      final userId = supabase.auth.currentUser?.id;
+      if (userId == null) throw Exception('Usuario no autenticado');
+      await supabase
+          .from('vehiculos')
+          .update({
+            'has_360_view': true,
+            'images_360_urls': uploadedSignedUrls,
+          })
+          .eq('id', widget.vehiculoId)
+          .eq('user_id', userId);
 
       if (mounted) {
         setState(() => _isProcessing = false);
