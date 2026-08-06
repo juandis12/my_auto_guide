@@ -11,6 +11,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:http/http.dart' as http;
 import '../../../core/services/vehicle_storage_service.dart';
 import '../../../shared/widgets/liquid_glass_fab.dart';
+import '../../../shared/widgets/app_snack_bar.dart';
 
 class Captura360Screen extends StatefulWidget {
   final String vehiculoId;
@@ -106,21 +107,18 @@ class _Captura360ScreenState extends State<Captura360Screen> {
         _procesarImagenes();
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al capturar foto: $e')),
-      );
+      AppSnackBar.show(context, 'Error al capturar foto: $e');
     }
   }
 
   // Finalizar temprano con las fotos que se hayan capturado hasta el momento
   void _finalizarConFotosActuales() {
     if (_capturedPhotos.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('📷 Toma al menos 1 foto antes de procesar tu vista 360°'),
-          backgroundColor: Colors.orangeAccent,
-          behavior: SnackBarBehavior.floating,
-        ),
+      AppSnackBar.show(
+        context,
+        '📷 Toma al menos 1 foto antes de procesar tu vista 360°',
+        backgroundColor: Colors.orangeAccent,
+        floating: true,
       );
       return;
     }

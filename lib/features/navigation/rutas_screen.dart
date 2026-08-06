@@ -24,6 +24,7 @@ import 'logic/telemetry_calculator.dart';
 import 'presentation/controllers/navigation_controller.dart';
 import 'presentation/widgets/navigation_widgets.dart';
 import 'presentation/historial_rutas_screen.dart';
+import '../../shared/widgets/app_snack_bar.dart';
 
 class RutasScreen extends StatefulWidget {
   final String vehiculoId;
@@ -151,7 +152,7 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
     try {
       _searchResults = await NavigationService().searchDestination(query);
     } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+      if (mounted) AppSnackBar.show(context, e.toString());
     } finally {
       if (mounted) setState(() => _isSearching = false);
     }
@@ -187,7 +188,7 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
       );
       _mapCtrl.fitCamera(CameraFit.bounds(bounds: LatLngBounds.fromPoints([curPos, dest]), padding: const EdgeInsets.all(60)));
     } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+      if (mounted) AppSnackBar.show(context, e.toString());
     } finally {
       if (mounted) setState(() => _isLoadingRoute = false);
     }
@@ -226,9 +227,8 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
     
     if (userId == null) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Error: No se encontró sesión de usuario activa para guardar el trayecto.')),
-        );
+        AppSnackBar.show(context,
+            'Error: No se encontró sesión de usuario activa para guardar el trayecto.');
       }
       _controller.stopNavigation();
       return;
@@ -265,18 +265,16 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
       } catch (e) {
         debugPrint('Error al guardar trayecto localmente: $e');
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error al guardar el trayecto localmente: $e')),
-          );
+          AppSnackBar.show(
+              context, 'Error al guardar el trayecto localmente: $e');
         }
       }
     } else {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Recorrido demasiado corto o sin cambios de ubicación. No se guardó.'),
-            backgroundColor: Colors.orange,
-          ),
+        AppSnackBar.show(
+          context,
+          'Recorrido demasiado corto o sin cambios de ubicación. No se guardó.',
+          backgroundColor: Colors.orange,
         );
       }
     }

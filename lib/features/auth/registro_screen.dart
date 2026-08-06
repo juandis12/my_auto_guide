@@ -21,6 +21,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/logic/performance_guard.dart';
+import '../../shared/widgets/app_snack_bar.dart';
 
 class RegistroScreen extends StatefulWidget {
   const RegistroScreen({super.key});
@@ -54,31 +55,24 @@ class _RegistroScreenState extends State<RegistroScreen> {
 
     // Validaciones de entrada
     if (nombre.length < 2) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Por favor, ingresa un nombre válido.')),
-      );
+      AppSnackBar.show(context, 'Por favor, ingresa un nombre válido.');
       return;
     }
 
     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
     if (!emailRegex.hasMatch(email)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Formato de correo electrónico no válido.')),
-      );
+      AppSnackBar.show(context, 'Formato de correo electrónico no válido.');
       return;
     }
 
     if (password.length < 6) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('La contraseña debe tener al menos 6 caracteres.')),
-      );
+      AppSnackBar.show(
+          context, 'La contraseña debe tener al menos 6 caracteres.');
       return;
     }
 
     if (password != confirmPassword) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Las contraseñas no coinciden.')),
-      );
+      AppSnackBar.show(context, 'Las contraseñas no coinciden.');
       return;
     }
 
@@ -94,34 +88,25 @@ class _RegistroScreenState extends State<RegistroScreen> {
 
       // 2) Aviso con opción de reenviar
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text(
-            'Registro enviado. Revisa tu correo y confirma la cuenta para continuar.',
-          ),
-          action: SnackBarAction(
-            label: 'Reenviar',
-            onPressed: () async {
-              try {
-                await supabase.auth.resend(
-                  type: OtpType.signup,
-                  email: emailController.text.trim(),
-                );
-                if (!mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Correo reenviado. Revisa tu bandeja.'),
-                  ),
-                );
-              } on AuthException catch (e) {
-                if (!mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Error al reenviar: ${e.message}')),
-                );
-              }
-            },
-          ),
-          duration: const Duration(seconds: 8),
+      AppSnackBar.show(
+        context,
+        'Registro enviado. Revisa tu correo y confirma la cuenta para continuar.',
+        duration: const Duration(seconds: 8),
+        action: SnackBarAction(
+          label: 'Reenviar',
+          onPressed: () async {
+            try {
+              await supabase.auth.resend(
+                type: OtpType.signup,
+                email: emailController.text.trim(),
+              );
+              if (!mounted) return;
+              AppSnackBar.show(context, 'Correo reenviado. Revisa tu bandeja.');
+            } on AuthException catch (e) {
+              if (!mounted) return;
+              AppSnackBar.show(context, 'Error al reenviar: ${e.message}');
+            }
+          },
         ),
       );
 
@@ -140,12 +125,9 @@ class _RegistroScreenState extends State<RegistroScreen> {
             email: emailController.text.trim(),
           );
           if (!mounted) return;
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                'Este correo ya existe pero puede no estar confirmado. Revisa tu bandeja o usa “Reenviar”.',
-              ),
-            ),
+          AppSnackBar.show(
+            context,
+            'Este correo ya existe pero puede no estar confirmado. Revisa tu bandeja o usa “Reenviar”.',
           );
           setState(() {
             waitingForConfirm = true;
@@ -158,15 +140,11 @@ class _RegistroScreenState extends State<RegistroScreen> {
           );
         } on AuthException catch (e2) {
           if (!mounted) return;
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error al reenviar: ${e2.message}')),
-          );
+          AppSnackBar.show(context, 'Error al reenviar: ${e2.message}');
         }
       } else {
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error de autenticación: ${e.message}')),
-        );
+        AppSnackBar.show(context, 'Error de autenticación: ${e.message}');
       }
     } finally {
       if (mounted) setState(() => isLoading = false);
@@ -203,13 +181,8 @@ class _RegistroScreenState extends State<RegistroScreen> {
               waitingForConfirm = false;
               canSwitchEmail = false;
             });
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text(
-                  'Correo verificado. Inicia sesión para continuar.',
-                ),
-              ),
-            );
+            AppSnackBar.show(
+                context, 'Correo verificado. Inicia sesión para continuar.');
             Navigator.pop(context); // Volver al login
             return;
           }
@@ -225,12 +198,9 @@ class _RegistroScreenState extends State<RegistroScreen> {
           canSwitchEmail = true;
           waitingForConfirm = true;
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'No se confirmó el correo en 60 s. Puedes usar otro correo.',
-            ),
-          ),
+        AppSnackBar.show(
+          context,
+          'No se confirmó el correo en 60 s. Puedes usar otro correo.',
         );
       }
     });
