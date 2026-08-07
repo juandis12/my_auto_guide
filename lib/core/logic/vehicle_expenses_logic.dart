@@ -3,7 +3,7 @@
 // =============================================================================
 
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import '../utils/formatters.dart';
 
 class ExpenseCategory {
   final String label;
@@ -26,14 +26,7 @@ class VehicleExpensesLogic {
     ExpenseCategory(label: 'Otros', icon: Icons.more_horiz_rounded, color: Colors.purple),
   ];
 
-  static String formatCurrency(double amount) {
-    final formatter = NumberFormat.currency(
-      locale: 'es_CO',
-      symbol: '\$',
-      decimalDigits: 0,
-    );
-    return formatter.format(amount);
-  }
+  static String formatCurrency(double amount) => AppFormat.currency(amount);
 
   static Map<String, double> groupByValues(List<Map<String, dynamic>> expenses) {
     final Map<String, double> totals = {};

@@ -14,6 +14,7 @@ import 'liquid_glass_fab.dart';
 import '../../core/services/ai_bot_service.dart';
 import '../../core/services/email_service.dart';
 import '../../core/services/notification_service.dart';
+import 'app_snack_bar.dart';
 
 class SimitWebViewScreen extends StatefulWidget {
   final String placa;
@@ -196,12 +197,11 @@ class _SimitWebViewScreenState extends State<SimitWebViewScreen> {
     } catch (e) {
       debugPrint('Error al guardar en Supabase: $e');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('❌ Error al guardar datos: $e'),
-            backgroundColor: Colors.redAccent,
-            duration: const Duration(seconds: 5),
-          ),
+        AppSnackBar.show(
+          context,
+          '❌ Error al guardar datos: $e',
+          backgroundColor: Colors.redAccent,
+          duration: const Duration(seconds: 5),
         );
       }
     } finally {
@@ -463,11 +463,10 @@ class _SimitWebViewScreenState extends State<SimitWebViewScreen> {
       }
     } catch (e) {
       setState(() => _isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('❌ No se pudo auto-escanear la página: $e. Inténtalo manualmente.'),
-          backgroundColor: Colors.redAccent,
-        ),
+      AppSnackBar.show(
+        context,
+        '❌ No se pudo auto-escanear la página: $e. Inténtalo manualmente.',
+        backgroundColor: Colors.redAccent,
       );
     }
   }
@@ -548,11 +547,10 @@ class _SimitWebViewScreenState extends State<SimitWebViewScreen> {
                                 height: 32,
                                 onTap: () {
                                   Clipboard.setData(ClipboardData(text: widget.placa));
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Placa copiada al portapapeles.'),
-                                      duration: Duration(seconds: 1),
-                                    ),
+                                  AppSnackBar.show(
+                                    context,
+                                    'Placa copiada al portapapeles.',
+                                    duration: const Duration(seconds: 1),
                                   );
                                 },
                               ),
@@ -564,11 +562,10 @@ class _SimitWebViewScreenState extends State<SimitWebViewScreen> {
                                   height: 32,
                                   onTap: () {
                                     Clipboard.setData(ClipboardData(text: widget.cedula));
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text('Cédula copiada al portapapeles.'),
-                                        duration: Duration(seconds: 1),
-                                      ),
+                                    AppSnackBar.show(
+                                      context,
+                                      'Cédula copiada al portapapeles.',
+                                      duration: const Duration(seconds: 1),
                                     );
                                   },
                                 ),

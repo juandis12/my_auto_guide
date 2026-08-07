@@ -3,9 +3,9 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import '../logic/vehicle_ai_logic.dart';
+import '../utils/formatters.dart';
 
 class ReportService {
   static Future<void> generateVehicleReport({
@@ -39,7 +39,7 @@ class ReportService {
       totalCost += c.toDouble();
     }
 
-    final String dateStr = DateFormat('dd/MM/yyyy HH:mm').format(DateTime.now());
+    final String dateStr = AppFormat.dateTime(DateTime.now());
 
     pdf.addPage(
       pw.MultiPage(
@@ -90,10 +90,10 @@ class ReportService {
                           pw.Text('$brand $model', style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold)),
                         ]),
                         pw.SizedBox(height: 8),
-                        pw.Text('Kilometraje Actual: ${totalKms.toString().replaceAllMapped(RegExp(r"(\d{1,3})(?=(\d{3})+(?!\d))"), (Match m) => "${m[1]}.")} KM', 
+                        pw.Text('Kilometraje Actual: ${AppFormat.thousands(totalKms)} KM', 
                           style: const pw.TextStyle(fontSize: 14)),
                         pw.Text('Consumo Documentado: ${totalFuel.toStringAsFixed(2)} Gal', style: const pw.TextStyle(fontSize: 12, color: PdfColors.green800)),
-                        pw.Text('Gasto Estimado: \$${totalCost.toStringAsFixed(0).replaceAllMapped(RegExp(r"(\d{1,3})(?=(\d{3})+(?!\d))"), (Match m) => "${m[1]}.")} COP', 
+                        pw.Text('Gasto Estimado: \$${AppFormat.thousands(totalCost)} COP', 
                           style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold, color: PdfColors.blue800)),
                         pw.SizedBox(height: 8),
                         pw.Text('Fecha de Emisión: $dateStr', style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey600)),
@@ -181,7 +181,8 @@ class ReportService {
                   data: routeHistory.map((r) {
                     final fechaRaw = r['fecha'] ?? r['created_at'];
                     final date = fechaRaw != null ? DateTime.tryParse(fechaRaw.toString()) : null;
-                    final displayDate = date != null ? DateFormat('dd/MM HH:mm').format(date) : '-';
+                    final displayDate =
+                        date != null ? AppFormat.shortDateTime(date) : '-';
                     final ori = r['origen'] ?? r['origen_name'] ?? 'Desconocido';
                     final des = r['destino'] ?? r['destino_name'] ?? 'Desconocido';
                     final dist = (r['distancia'] ?? r['distancia_km'] ?? 0.0) as num;

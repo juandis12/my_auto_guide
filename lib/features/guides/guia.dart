@@ -32,6 +32,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../shared/widgets/app_snack_bar.dart';
 
 // =============================================================
 //                   GUIA DE CONDUCCIÓN Y ACCIDENTES
@@ -364,9 +365,7 @@ class _AccidenteScreenState extends State<AccidenteScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error al usar la cámara o guardar foto: $e')),
-        );
+        AppSnackBar.show(context, 'Error al usar la cámara o guardar foto: $e');
       }
     }
   }
