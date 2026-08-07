@@ -50,7 +50,36 @@ Future<void> main() async {
       await PerformanceGuard().initialize();
     }
 
-    // 2.1 Inicializar Sentry (solo si hay DSN configurado)
+    // 2. Inicializar Supabase
+    await Supabase.initialize(
+      url: dotenv.get('SUPABASE_URL',
+          fallback: const String.fromEnvironment('SUPABASE_URL')),
+      anonKey: dotenv.get('SUPABASE_ANON_KEY',
+          fallback: const String.fromEnvironment('SUPABASE_ANON_KEY')),
+    );
+
+    // 3. Inicializar Firebase (Push Notifications)
+    try {
+      await Firebase.initializeApp();
+      await FirebaseMessaging.instance.requestPermission();
+    } catch (e) {
+      debugPrint("Advertencia: Firebase no se pudo inicializar (falta google-services.json): $e");
+    }
+
+    // 4. Inicializar Sync Service para sincronización offline
+    SyncService().initialize();
+
+    // 5. Inicializar Notificaciones y Zonas Horarias
+    if (!kIsWeb) {
+      await NotificationService().init();
+      await BackgroundNavService.initializeService();
+      await AppWidgetLogic.initializeWidgetInteraction();
+      
+      // Detectar si la app se abrió desde un widget
+      _checkWidgetLaunch();
+    }
+
+    // 6. Inicializar Sentry y arrancar la app
     final sentryDsn = dotenv.get('SENTRY_DSN', fallback: '');
     if (sentryDsn.isNotEmpty) {
       await SentryFlutter.init(
@@ -65,37 +94,6 @@ Future<void> main() async {
           'Sentry DSN no configurado. Saltando inicialización de Sentry.');
       runApp(const MyApp());
     }
-
-    // 2. Inicializar Supabase
-    await Supabase.initialize(
-      url: dotenv.get('SUPABASE_URL',
-          fallback: const String.fromEnvironment('SUPABASE_URL')),
-      anonKey: dotenv.get('SUPABASE_ANON_KEY',
-          fallback: const String.fromEnvironment('SUPABASE_ANON_KEY')),
-    );
-
-    // 2.5 Inicializar Firebase (Push Notifications)
-    try {
-      await Firebase.initializeApp();
-      await FirebaseMessaging.instance.requestPermission();
-    } catch (e) {
-      debugPrint("Advertencia: Firebase no se pudo inicializar (falta google-services.json): $e");
-    }
-
-    // 3. Inicializar Sync Service para sincronización offline
-    SyncService().initialize();
-
-    // 4. Inicializar Notificaciones y Zonas Horarias
-    if (!kIsWeb) {
-      await NotificationService().init();
-      await BackgroundNavService.initializeService();
-      await AppWidgetLogic.initializeWidgetInteraction();
-      
-      // Detectar si la app se abrió desde un widget
-      _checkWidgetLaunch();
-    }
-
-    // 5. El arranque se realiza dentro de Sentry o directamente arriba
   } catch (e, stackTrace) {
     // En caso de error en inicialización, mostrar pantalla de error
     runApp(MaterialApp(
