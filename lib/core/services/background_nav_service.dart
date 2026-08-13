@@ -59,7 +59,14 @@ class BackgroundNavService {
       });
     }
 
-    service.on('stopService').listen((event) {
+    StreamSubscription<Position>? gpsSubscription;
+    RealtimeChannel? supabaseChannel;
+
+    service.on('stopService').listen((event) async {
+      await gpsSubscription?.cancel();
+      try {
+        await supabaseChannel?.unsubscribe();
+      } catch (_) {}
       AppWidgetLogic.updateWidget(distance: 0, isTracking: false);
       service.stopSelf();
     });
@@ -99,9 +106,6 @@ class BackgroundNavService {
         );
       }
 
-      // Referencia a canal de Supabase si se logra conectar
-      RealtimeChannel? supabaseChannel;
-      
       // =========================================================
       // 2. INICIALIZAR SUPABASE ASÍNCRONAMENTE (NO BLOQUEANTE)
       // =========================================================
@@ -125,8 +129,6 @@ class BackgroundNavService {
       // =========================================================
       // 3. GESTIÓN DEL STREAM GPS CONTINUO (SIN INTERRUPCIONES)
       // =========================================================
-      StreamSubscription<Position>? gpsSubscription;
-
       gpsSubscription = Geolocator.getPositionStream(
         locationSettings: locationSettings,
       ).listen((Position position) async {

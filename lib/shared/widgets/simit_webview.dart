@@ -383,60 +383,63 @@ class _SimitWebViewScreenState extends State<SimitWebViewScreen> {
       });
 
       if (count > 0 || amount > 0) {
-        showDialog(
-          context: context,
-          builder: (ctx) => AlertDialog(
-            title: Row(
-              children: const [
-                Icon(Icons.warning_amber_rounded, color: Colors.orangeAccent),
-                SizedBox(width: 10),
-                Text('Multas Encontradas'),
-              ],
-            ),
-            content: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text('Se encontraron $count multas/comparendos en el portal SIMIT.'),
-                  const SizedBox(height: 10),
-                  Text(
-                    'Valor Total: \$${amount.round()} COP',
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                  if (explanations.isNotEmpty) ...[
-                    const SizedBox(height: 16),
-                    const Text(
-                      'Motivo de las Infracciones:',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 6),
-                    ...explanations.map((exp) => Padding(
-                          padding: const EdgeInsets.only(bottom: 6),
-                          child: Text(
-                            '• $exp',
-                            style: const TextStyle(fontSize: 13, color: Colors.black87),
-                          ),
-                        )),
-                  ],
+        if (mounted) {
+          showDialog(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              title: Row(
+                children: const [
+                  Icon(Icons.warning_amber_rounded, color: Colors.orangeAccent),
+                  SizedBox(width: 10),
+                  Text('Multas Encontradas'),
                 ],
               ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(ctx),
-                child: const Text('Entendido'),
+              content: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text('Se encontraron $count multas/comparendos en el portal SIMIT.'),
+                    const SizedBox(height: 10),
+                    Text(
+                      'Valor Total: \$${amount.round()} COP',
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    ),
+                    if (explanations.isNotEmpty) ...[
+                      const SizedBox(height: 16),
+                      const Text(
+                        'Motivo de las Infracciones:',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 6),
+                      ...explanations.map((exp) => Padding(
+                            padding: const EdgeInsets.only(bottom: 6),
+                            child: Text(
+                              '• $exp',
+                              style: const TextStyle(fontSize: 13, color: Colors.black87),
+                            ),
+                          )),
+                    ],
+                  ],
+                ),
               ),
-            ],
-          ),
-        );
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  child: const Text('Entendido'),
+                ),
+              ],
+            ),
+          );
+        }
 
         await _guardarResultados();
       } else {
         // No se encontraron comparendos evidentes en pantalla
-        final bool? clean = await showDialog<bool>(
-          context: context,
-          builder: (ctx) => AlertDialog(
+        if (mounted) {
+          final bool? clean = await showDialog<bool>(
+            context: context,
+            builder: (ctx) => AlertDialog(
             title: const Text('Resultado del Escaneo'),
             content: const Text('No se encontraron comparendos ni montos pendientes de pago visibles en la página.\n\n¿Quieres marcar tu estado SIMIT como "Libre de multas"?'),
             actions: [
@@ -461,13 +464,16 @@ class _SimitWebViewScreenState extends State<SimitWebViewScreen> {
           await _guardarResultados();
         }
       }
+    }
     } catch (e) {
-      setState(() => _isLoading = false);
-      AppSnackBar.show(
-        context,
-        '❌ No se pudo auto-escanear la página: $e. Inténtalo manualmente.',
-        backgroundColor: Colors.redAccent,
-      );
+      if (mounted) {
+        setState(() => _isLoading = false);
+        AppSnackBar.show(
+          context,
+          '❌ No se pudo auto-escanear la página: $e. Inténtalo manualmente.',
+          backgroundColor: Colors.redAccent,
+        );
+      }
     }
   }
 

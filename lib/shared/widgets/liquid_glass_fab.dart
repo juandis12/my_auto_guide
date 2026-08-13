@@ -63,13 +63,13 @@ class _LiquidGlassFABState extends State<LiquidGlassFAB> with SingleTickerProvid
                 borderRadius: BorderRadius.circular(28),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFF00C6FF).withOpacity(0.25 + (glowValue * 0.1)),
+                    color: const Color(0xFF00C6FF).withValues(alpha: 0.25 + (glowValue * 0.1)),
                     blurRadius: 15 + (glowValue * 5),
                     spreadRadius: 1,
                     offset: const Offset(0, 4),
                   ),
                   BoxShadow(
-                    color: const Color(0xFF0072FF).withOpacity(0.15),
+                    color: const Color(0xFF0072FF).withValues(alpha: 0.15),
                     blurRadius: 20,
                     offset: const Offset(0, 8),
                   ),
@@ -87,18 +87,18 @@ class _LiquidGlassFABState extends State<LiquidGlassFAB> with SingleTickerProvid
                       gradient: LinearGradient(
                         colors: isDark
                             ? [
-                                Colors.blue.shade900.withOpacity(0.35),
-                                Colors.purple.shade900.withOpacity(0.25),
+                                Colors.blue.shade900.withValues(alpha: 0.35),
+                                Colors.purple.shade900.withValues(alpha: 0.25),
                               ]
                             : [
-                                Colors.blue.shade400.withOpacity(0.55),
-                                Colors.purple.shade300.withOpacity(0.40),
+                                Colors.blue.shade400.withValues(alpha: 0.55),
+                                Colors.purple.shade300.withValues(alpha: 0.40),
                               ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.25 + (glowValue * 0.15)),
+                        color: Colors.white.withValues(alpha: 0.25 + (glowValue * 0.15)),
                         width: 1.5,
                       ),
                     ),
@@ -214,7 +214,7 @@ class _LiquidGlassButtonState extends State<LiquidGlassButton> with SingleTicker
                 borderRadius: BorderRadius.circular(widget.borderRadius),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFF00C6FF).withOpacity(0.20 + (glowValue * 0.05)),
+                    color: const Color(0xFF00C6FF).withValues(alpha: 0.20 + (glowValue * 0.05)),
                     blurRadius: 10 + (glowValue * 3),
                     spreadRadius: 0.5,
                     offset: const Offset(0, 3),
@@ -233,18 +233,18 @@ class _LiquidGlassButtonState extends State<LiquidGlassButton> with SingleTicker
                       gradient: LinearGradient(
                         colors: widget.customColors ?? (isDark
                             ? [
-                                Colors.blue.shade900.withOpacity(0.35),
-                                Colors.purple.shade900.withOpacity(0.25),
+                                Colors.blue.shade900.withValues(alpha: 0.35),
+                                Colors.purple.shade900.withValues(alpha: 0.25),
                               ]
                             : [
-                                Colors.blue.shade400.withOpacity(0.55),
-                                Colors.purple.shade300.withOpacity(0.40),
+                                Colors.blue.shade400.withValues(alpha: 0.55),
+                                Colors.purple.shade300.withValues(alpha: 0.40),
                               ]),
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.20 + (glowValue * 0.10)),
+                        color: Colors.white.withValues(alpha: 0.20 + (glowValue * 0.10)),
                         width: 1.2,
                       ),
                     ),
@@ -357,7 +357,7 @@ class _LiquidGlassIconButtonState extends State<LiquidGlassIconButton> with Sing
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFF00C6FF).withOpacity(0.20 + (glowValue * 0.05)),
+                    color: const Color(0xFF00C6FF).withValues(alpha: 0.20 + (glowValue * 0.05)),
                     blurRadius: 8 + (glowValue * 3),
                     spreadRadius: 0.5,
                   ),
@@ -372,18 +372,18 @@ class _LiquidGlassIconButtonState extends State<LiquidGlassIconButton> with Sing
                       gradient: LinearGradient(
                         colors: isDark
                             ? [
-                                Colors.blue.shade900.withOpacity(0.35),
-                                Colors.purple.shade900.withOpacity(0.25),
+                                Colors.blue.shade900.withValues(alpha: 0.35),
+                                Colors.purple.shade900.withValues(alpha: 0.25),
                               ]
                             : [
-                                Colors.blue.shade400.withOpacity(0.55),
-                                Colors.purple.shade300.withOpacity(0.40),
+                                Colors.blue.shade400.withValues(alpha: 0.55),
+                                Colors.purple.shade300.withValues(alpha: 0.40),
                               ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.20 + (glowValue * 0.10)),
+                        color: Colors.white.withValues(alpha: 0.20 + (glowValue * 0.10)),
                         width: 1.2,
                       ),
                     ),

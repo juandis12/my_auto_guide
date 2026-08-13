@@ -17,7 +17,7 @@ void main() {
     });
 
     test('copyWith overrides only the provided fields', () {
-      const origin = LatLng(6.2442, -75.5812);
+      final origin = LatLng(6.2442, -75.5812);
       final start = DateTime.utc(2024, 3, 1, 7);
       final base = NavigationTelemetry.empty().copyWith(
         currentPos: origin,
@@ -35,10 +35,10 @@ void main() {
     });
 
     test('copyWith without arguments keeps every value', () {
-      const origin = LatLng(6.2442, -75.5812);
+      final origin = LatLng(6.2442, -75.5812);
       final base = NavigationTelemetry(
         currentPos: origin,
-        travelledPoints: const [origin],
+        travelledPoints: [origin],
         distanceKm: 12.5,
         maxSpeedKmH: 95,
         averageSpeedKmH: 40,
@@ -62,7 +62,7 @@ void main() {
 
   group('TripStats', () {
     test('holds the summary of a finished trip', () {
-      const origin = LatLng(6.2442, -75.5812);
+      final origin = LatLng(6.2442, -75.5812);
       final stats = TripStats(
         totalDistanceKm: 42.5,
         duration: const Duration(minutes: 55),
@@ -70,7 +70,7 @@ void main() {
         avgSpeedKmH: 46,
         fuelConsumedGal: 0.31,
         totalCost: 4805,
-        route: const [origin],
+        route: [origin],
       );
 
       expect(stats.totalDistanceKm, 42.5);
