@@ -156,7 +156,7 @@ class WeeklyInsightCard extends StatelessWidget {
                       label: 'Gasto',
                       value: '\$${(stats.totalCost / 1000).toStringAsFixed(1)}k',
                       icon: Icons.payments_rounded,
-                      color: Colors.emerald,
+                      color: Colors.green,
                     ),
                   ],
                 ),
@@ -171,7 +171,7 @@ class WeeklyInsightCard extends StatelessWidget {
                             children: [
                               Icon(
                                 Icons.eco_rounded,
-                                color: efficiencyScore >= 95 ? Colors.emerald : Colors.orangeAccent,
+                                color: efficiencyScore >= 95 ? Colors.green : Colors.orangeAccent,
                                 size: 16,
                               ),
                               const SizedBox(width: 6),
@@ -203,8 +203,8 @@ class WeeklyInsightCard extends StatelessWidget {
                                   decoration: BoxDecoration(
                                     gradient: LinearGradient(
                                       colors: [
-                                        Colors.emerald.shade300,
-                                        Colors.emerald.shade600,
+                                        Colors.green.shade300,
+                                        Colors.green.shade600,
                                       ],
                                     ),
                                     borderRadius: BorderRadius.circular(4),
@@ -232,7 +232,7 @@ class WeeklyInsightCard extends StatelessWidget {
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
-                            color: savingsCOP >= 0 ? Colors.emerald : Colors.redAccent,
+                            color: savingsCOP >= 0 ? Colors.green : Colors.redAccent,
                           ),
                         ),
                       ],
