@@ -9,6 +9,8 @@ import 'package:camera/camera.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:image/image.dart' as img;
 import '../../../core/services/vehicle_storage_service.dart';
 import '../../../shared/widgets/liquid_glass_fab.dart';
 import '../../../shared/widgets/app_snack_bar.dart';
@@ -125,11 +127,10 @@ class _Captura360ScreenState extends State<Captura360Screen> {
     _procesarImagenes();
   }
 
-  // Enviar a API pública de Hugging Face y subir a Supabase
   Future<void> _procesarImagenes() async {
     setState(() {
       _isProcessing = true;
-      _processingMessage = 'Eliminando fotos anteriores...';
+      _processingMessage = 'Preparando fotos y limpiando anteriores...';
     });
 
     final storage = VehicleStorageService();
@@ -150,34 +151,39 @@ class _Captura360ScreenState extends State<Captura360Screen> {
         debugPrint('Aviso al purgar archivos 360 anteriores: $e');
       }
 
-      for (int i = 0; i < _capturedPhotos.length; i++) {
-        setState(() {
-          _processingMessage = 'Eliminando fondo con IA: Imagen ${i + 1} de ${_capturedPhotos.length}...';
-        });
+      // Procesamiento asíncrono en lotes paralelos de 3 fotos
+      final int batchSize = 3;
+      int processedCount = 0;
 
-        final bytes = await _capturedPhotos[i].readAsBytes();
-
-        Uint8List? transparentBytes;
-        try {
-          transparentBytes = await _removerFondoGratis(bytes);
-        } catch (e) {
-          debugPrint('Error en API para foto $i: $e (usando foto original)');
-        }
-
-        final finalBytes = transparentBytes ?? bytes;
+      for (int i = 0; i < _capturedPhotos.length; i += batchSize) {
+        final end = (i + batchSize < _capturedPhotos.length) ? i + batchSize : _capturedPhotos.length;
+        final batch = _capturedPhotos.sublist(i, end);
 
         setState(() {
-          _processingMessage = 'Subiendo a la nube: Imagen ${i + 1} de ${_capturedPhotos.length}...';
+          _processingMessage = 'Removiendo fondo con IA: $processedCount de ${_capturedPhotos.length} fotos...';
         });
 
-        final remotePath = '${widget.vehiculoId}/processed_360/img_$i.png';
-        
-        await storage.uploadBinary(remotePath, finalBytes, upsert: true);
+        final batchResults = await Future.wait(
+          batch.asMap().entries.map((entry) async {
+            final idx = i + entry.key;
+            final photo = entry.value;
+            final bytes = await photo.readAsBytes();
+            final transparentBytes = await _removerFondoHibrido(bytes);
 
-        final signedUrl = await storage.getSignedUrl(remotePath, {});
-        if (signedUrl != null) {
-          uploadedSignedUrls.add(signedUrl);
+            final remotePath = '${widget.vehiculoId}/processed_360/img_$idx.png';
+            await storage.uploadBinary(remotePath, transparentBytes, upsert: true);
+
+            final signedUrl = await storage.getSignedUrl(remotePath, {});
+            return MapEntry(idx, signedUrl);
+          }),
+        );
+
+        for (final entry in batchResults) {
+          if (entry.value != null) {
+            uploadedSignedUrls.add(entry.value!);
+          }
         }
+        processedCount += batch.length;
       }
 
       setState(() {
@@ -205,7 +211,7 @@ class _Captura360ScreenState extends State<Captura360Screen> {
               ],
             ),
             content: Text(
-              'Se procesaron ${_capturedPhotos.length} fotos de tu vehículo. El fondo fue recortado con Inteligencia Artificial y la nueva vista 360° ya está disponible.',
+              'Se procesaron ${_capturedPhotos.length} fotos de tu vehículo. El fondo fue removido con IA y la vista 360° ya está activa.',
               style: const TextStyle(fontSize: 14),
             ),
             actions: [
@@ -240,14 +246,61 @@ class _Captura360ScreenState extends State<Captura360Screen> {
     }
   }
 
-  // LLamada a API Gratuita de BRIA AI (RMBG) en Hugging Face para remover fondo
-  Future<Uint8List?> _removerFondoGratis(Uint8List imageBytes) async {
+  /// Motor Híbrido en Cascada para Remoción de Fondo 360°
+  Future<Uint8List> _removerFondoHibrido(Uint8List imageBytes) async {
+    // 1. Intentar Remove.bg si hay API Key configurada
+    final removeBgKey = dotenv.env['REMOVE_BG_API_KEY'];
+    if (removeBgKey != null && removeBgKey.isNotEmpty) {
+      try {
+        final res = await _removerConRemoveBg(imageBytes, removeBgKey);
+        if (res != null) return res;
+      } catch (e) {
+        debugPrint('Remove.bg API no disponible: $e');
+      }
+    }
+
+    // 2. Intentar Servidores Cloud IA Gratuitos (BRIA RMBG-2.0 / BiRefNet)
+    try {
+      final resCloud = await _removerConCloudIA(imageBytes);
+      if (resCloud != null) return resCloud;
+    } catch (e) {
+      debugPrint('Cloud IA Gratuita no disponible: $e');
+    }
+
+    // 3. Fallback Local On-Device con package:image en Dart
+    try {
+      final resLocal = await _removerFondoLocalDart(imageBytes);
+      if (resLocal != null) return resLocal;
+    } catch (e) {
+      debugPrint('Error en remoción local de fondo: $e');
+    }
+
+    return imageBytes;
+  }
+
+  /// Nivel 1: Remove.bg API
+  Future<Uint8List?> _removerConRemoveBg(Uint8List bytes, String apiKey) async {
+    final uri = Uri.parse('https://api.remove.bg/v1.0/removebg');
+    final request = http.MultipartRequest('POST', uri)
+      ..headers['X-Api-Key'] = apiKey
+      ..files.add(http.MultipartFile.fromBytes('image_file', bytes, filename: 'photo.jpg'))
+      ..fields['size'] = 'auto';
+
+    final response = await request.send().timeout(const Duration(seconds: 20));
+    if (response.statusCode == 200) {
+      return await response.stream.toBytes();
+    }
+    return null;
+  }
+
+  /// Nivel 2: Servidores Cloud IA Gratuitos
+  Future<Uint8List?> _removerConCloudIA(Uint8List imageBytes) async {
     final String base64Image = base64Encode(imageBytes);
     final String dataUri = 'data:image/jpeg;base64,$base64Image';
 
     final List<String> endpoints = [
+      'https://briaai-bria-rmbg-2-0.hf.space/call/predict',
       'https://briaai-bria-rmbg-1-4.hf.space/api/predict',
-      'https://briaai-bria-rmbg-2-0.hf.space/api/predict',
       'https://mvgorich-bria-rmbg-1-4.hf.space/api/predict',
     ];
 
@@ -259,41 +312,93 @@ class _Captura360ScreenState extends State<Captura360Screen> {
           body: jsonEncode({
             'data': [dataUri]
           }),
-        ).timeout(const Duration(seconds: 60));
+        ).timeout(const Duration(seconds: 25));
 
         if (response.statusCode == 200) {
           final jsonResponse = jsonDecode(response.body);
-          final listData = jsonResponse['data'] as List?;
-          
-          if (listData != null && listData.isNotEmpty) {
-            final result = listData[0];
-            
-            if (result is String) {
-              final String base64Str = result.contains(',') ? result.split(',').last : result;
-              return base64Decode(base64Str);
-            }
-            
-            if (result is Map) {
-              String? urlStr = result['url'] ?? result['path'];
-              if (urlStr != null) {
-                if (!urlStr.startsWith('http')) {
-                  final baseUri = Uri.parse(endpoint);
-                  urlStr = '${baseUri.scheme}://${baseUri.host}$urlStr';
-                }
-                final downloadRes = await http.get(Uri.parse(urlStr));
-                if (downloadRes.statusCode == 200) {
-                  return downloadRes.bodyBytes;
-                }
+
+          if (jsonResponse is Map && jsonResponse.containsKey('event_id')) {
+            final eventId = jsonResponse['event_id'];
+            final pollRes = await http.get(Uri.parse('$endpoint/$eventId')).timeout(const Duration(seconds: 15));
+            if (pollRes.statusCode == 200) {
+              final pollJson = jsonDecode(pollRes.body);
+              final listData = pollJson['data'] as List?;
+              if (listData != null && listData.isNotEmpty) {
+                return _extraerBytes(listData[0], endpoint);
               }
             }
           }
+
+          final listData = jsonResponse['data'] as List?;
+          if (listData != null && listData.isNotEmpty) {
+            return _extraerBytes(listData[0], endpoint);
+          }
         }
       } catch (e) {
-        debugPrint('Error en endpoint $endpoint: $e');
+        debugPrint('Aviso en endpoint cloud $endpoint: $e');
+      }
+    }
+    return null;
+  }
+
+  Future<Uint8List?> _extraerBytes(dynamic result, String endpoint) async {
+    if (result is String) {
+      final String base64Str = result.contains(',') ? result.split(',').last : result;
+      return base64Decode(base64Str);
+    }
+    if (result is Map) {
+      String? urlStr = result['url'] ?? result['path'];
+      if (urlStr != null) {
+        if (!urlStr.startsWith('http')) {
+          final baseUri = Uri.parse(endpoint);
+          urlStr = '${baseUri.scheme}://${baseUri.host}$urlStr';
+        }
+        final downloadRes = await http.get(Uri.parse(urlStr));
+        if (downloadRes.statusCode == 200) {
+          return downloadRes.bodyBytes;
+        }
+      }
+    }
+    return null;
+  }
+
+  /// Nivel 3: Algoritmo Local de Aislamiento de Fondo en Dispositivo
+  Future<Uint8List?> _removerFondoLocalDart(Uint8List bytes) async {
+    final decoded = img.decodeImage(bytes);
+    if (decoded == null) return null;
+
+    final resized = (decoded.width > 1000)
+        ? img.copyResize(decoded, width: 800)
+        : decoded;
+
+    final width = resized.width;
+    final height = resized.height;
+
+    // Calcular color promedio de fondo en las esquinas
+    final topLeft = resized.getPixel(10, 10);
+    final topRight = resized.getPixel(width - 10, 10);
+    final bottomLeft = resized.getPixel(10, height - 10);
+    final bottomRight = resized.getPixel(width - 10, height - 10);
+
+    final bgR = (topLeft.r + topRight.r + bottomLeft.r + bottomRight.r) / 4;
+    final bgG = (topLeft.g + topRight.g + bottomLeft.g + bottomRight.g) / 4;
+    final bgB = (topLeft.b + topRight.b + bottomLeft.b + bottomRight.b) / 4;
+
+    for (int y = 0; y < height; y++) {
+      for (int x = 0; x < width; x++) {
+        final p = resized.getPixel(x, y);
+        final dist = (p.r - bgR).abs() + (p.g - bgG).abs() + (p.b - bgB).abs();
+
+        final isMargin = (x < width * 0.12 || x > width * 0.88 || y < height * 0.12 || y > height * 0.88);
+        if (isMargin && dist < 80) {
+          p.a = 0;
+        } else if (dist < 40) {
+          p.a = 0;
+        }
       }
     }
 
-    return null;
+    return Uint8List.fromList(img.encodePng(resized));
   }
 
   @override
