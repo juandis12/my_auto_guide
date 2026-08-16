@@ -1917,13 +1917,20 @@ class _InicioAppState extends State<InicioApp> {
                       GradientButton(
                           icon: Icons.search_rounded,
                           text: 'Consultar RUNT',
-                          onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) => RuntWebViewScreen(
-                                      placa: 'ABC123',
-                                      cedula: '12345678',
-                                      vehiculoId: widget.vehiculoId))),
+                          onTap: () async {
+                            final String realPlaca = _cachedVehicleData?['placa'] ?? '';
+                            final String realCedula = _cachedVehicleData?['cedula'] ?? '';
+                            final updated = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => RuntWebViewScreen(
+                                        placa: realPlaca,
+                                        cedula: realCedula,
+                                        vehiculoId: widget.vehiculoId)));
+                            if (updated == true && mounted) {
+                              _cargarDatosIniciales();
+                            }
+                          },
                           brandTheme: bTheme),
                       const SizedBox(height: 16),
                       GradientButton(

@@ -1,28 +1,11 @@
 // =============================================================================
-// runt_webview.dart — CONSULTA RUNT (WebView Embebido)
-// =============================================================================
-//
-// Pantalla que integra la página oficial del RUNT (Registro Único Nacional de
-// Tránsito de Colombia) dentro de la app mediante un WebView embebido.
-// Funcionalidades:
-//   - Carga la URL oficial: https://www.runt.com.co/consultaCiudadana/
-//   - Autocompleta los campos «Placa» y «Cédula» inyectando JavaScript.
-//   - Extrae las fechas de expedición y vencimiento del SOAT y la
-//     Revisión Técnico-Mecánica directamente del DOM de la página.
-//   - Guarda las fechas extraídas en la tabla `vehiculos` de Supabase.
-//   - Muestra los resultados en un Card flotante en la parte inferior.
-//
-// Métodos principales:
-//   - [consultarFechas]: Ejecuta scripts JS para buscar tablas de SOAT y
-//     Tecnomecánica en el DOM y extrae las fechas.
-//   - [guardarFechas]: Inserta/actualiza (upsert) las fechas en Supabase.
-//   - [getTextFromJs]: Ejecuta JS con reintentos cada 2s (máx. 10 intentos).
-//
+// runt_webview.dart — CONSULTA Y EXTRACCIÓN AUTOMÁTICA RUNT COLOMBIA
 // =============================================================================
 
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../shared/widgets/app_snack_bar.dart';
 
 class RuntWebViewScreen extends StatefulWidget {
   final String placa;
@@ -55,19 +38,37 @@ class _RuntWebViewScreenState extends State<RuntWebViewScreen> {
 
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setUserAgent(
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+      )
       ..setNavigationDelegate(
         NavigationDelegate(
           onPageFinished: (url) async {
-            setState(() => _loading = false);
+            if (mounted) setState(() => _loading = false);
 
-            // Autocompletar los campos de placa y cédula automáticamente
+            // Autocompletar placa y cédula de forma resiliente
             await _controller.runJavaScript('''
               function fillInputs() {
-                const placa = document.getElementById('txtPlaca');
-                const cedula = document.getElementById('txtNumDoc');
-                if (placa && cedula) {
-                  placa.value = '${widget.placa}';
-                  cedula.value = '${widget.cedula}';
+                const placaSelectors = ['#txtPlaca', '#placa', 'input[name="placa"]', 'input[placeholder*="Placa"]', 'input[ng-model*="placa"]'];
+                const docSelectors = ['#txtNumDoc', '#noDocumento', '#numDoc', 'input[name="numDoc"]', 'input[placeholder*="Documento"]', 'input[ng-model*="numDoc"]'];
+
+                let placaEl = null;
+                for (const sel of placaSelectors) {
+                  placaEl = document.querySelector(sel);
+                  if (placaEl) break;
+                }
+
+                let docEl = null;
+                for (const sel of docSelectors) {
+                  docEl = document.querySelector(sel);
+                  if (docEl) break;
+                }
+
+                if (placaEl && docEl) {
+                  placaEl.value = '${widget.placa}';
+                  docEl.value = '${widget.cedula}';
+                  placaEl.dispatchEvent(new Event('input', { bubbles: true }));
+                  docEl.dispatchEvent(new Event('input', { bubbles: true }));
                 } else {
                   setTimeout(fillInputs, 500);
                 }
@@ -79,7 +80,7 @@ class _RuntWebViewScreenState extends State<RuntWebViewScreen> {
       )
       ..loadRequest(
         Uri.parse(
-          'https://www.runt.com.co/consultaCiudadana/#/consultaVehiculo',
+          'https://www.runt.gov.co/consultaCiudadana/#/consultaVehiculo',
         ),
       );
   }
@@ -90,149 +91,137 @@ class _RuntWebViewScreenState extends State<RuntWebViewScreen> {
   }
 
   Future<String> getTextFromJs(String js) async {
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 5; i++) {
       try {
         final result = await _controller.runJavaScriptReturningResult(js);
         final text = parseJsResult(result);
         if (text.isNotEmpty) return text;
       } catch (e) {
-        debugPrint("Error ejecutando JS: $e");
+        debugPrint("Error ejecutando JS RUNT: $e");
       }
-      await Future.delayed(const Duration(seconds: 2));
+      await Future.delayed(const Duration(seconds: 1));
     }
     return "";
   }
 
+  String? _convertToIsoDate(String rawDate) {
+    if (rawDate.trim().isEmpty) return null;
+    final match = RegExp(r'(\d{1,2})[/\-](\d{1,2})[/\-](\d{4})').firstMatch(rawDate);
+    if (match != null) {
+      final day = match.group(1)!.padLeft(2, '0');
+      final month = match.group(2)!.padLeft(2, '0');
+      final year = match.group(3)!;
+      return '$year-$month-$day';
+    }
+    final isoMatch = RegExp(r'(\d{4})[/\-](\d{1,2})[/\-](\d{1,2})').firstMatch(rawDate);
+    if (isoMatch != null) {
+      final year = isoMatch.group(1)!;
+      final month = isoMatch.group(2)!.padLeft(2, '0');
+      final day = isoMatch.group(3)!.padLeft(2, '0');
+      return '$year-$month-$day';
+    }
+    return null;
+  }
+
   Future<void> consultarFechas() async {
     setState(() => _loading = true);
-    debugPrint("🔍 Buscando fechas...");
+    debugPrint("🔍 Extrayendo fechas RUNT...");
 
-    // Buscar fechas del SOAT
-    fechaSoatExpedicion = await getTextFromJs('''
-      (function() {
-        const soatTable = [...document.querySelectorAll('table')].find(t => 
-          t.innerText.includes('PÓLIZA SOAT') || t.innerText.includes('SOAT')
-        );
-        if (!soatTable) return "";
-        const rows = soatTable.querySelectorAll('tr');
-        let expedicion = "", vencimiento = "";
-        rows.forEach(r => {
-          if (r.innerText.includes('FECHA EXPEDICIÓN')) expedicion = r.cells[1]?.innerText.trim();
-          if (r.innerText.includes('FECHA VENCIMIENTO')) vencimiento = r.cells[1]?.innerText.trim();
-        });
-        return expedicion;
-      })();
-    ''');
-
+    // Buscar fechas del SOAT en el DOM
     fechaSoatVencimiento = await getTextFromJs('''
       (function() {
-        const soatTable = [...document.querySelectorAll('table')].find(t => 
-          t.innerText.includes('PÓLIZA SOAT') || t.innerText.includes('SOAT')
-        );
-        if (!soatTable) return "";
-        const rows = soatTable.querySelectorAll('tr');
-        let vencimiento = "";
-        rows.forEach(r => {
-          if (r.innerText.includes('FECHA VENCIMIENTO')) vencimiento = r.cells[1]?.innerText.trim();
-        });
-        return vencimiento;
-      })();
-    ''');
-
-    // Buscar fechas de Tecnomecánica / RTM
-    fechaTecnoExpedicion = await getTextFromJs('''
-      (function() {
-        const tecnoTable = [...document.querySelectorAll('table')].find(t => 
-          t.innerText.includes('CERTIFICADO DE REVISIÓN TÉCNICO-MECÁNICA') || 
-          t.innerText.includes('RTM')
-        );
-        if (!tecnoTable) return "";
-        const rows = tecnoTable.querySelectorAll('tr');
-        let expedicion = "";
-        rows.forEach(r => {
-          if (r.innerText.includes('FECHA EXPEDICIÓN')) expedicion = r.cells[1]?.innerText.trim();
-        });
-        return expedicion;
+        const tables = [...document.querySelectorAll('table')];
+        for (const t of tables) {
+          const txt = (t.innerText || '').toUpperCase();
+          if (txt.includes('SOAT') || txt.includes('PÓLIZA')) {
+            const rows = [...t.querySelectorAll('tr')];
+            for (const r of rows) {
+              const rTxt = (r.innerText || '').toUpperCase();
+              const dates = rTxt.match(/\\b(\\d{2}[\\/\\-]\\d{2}[\\/\\-]\\d{4})\\b/g);
+              if (dates && dates.length > 0 && (rTxt.includes('VENCIMIENTO') || rTxt.includes('HASTA'))) {
+                return dates[0];
+              }
+            }
+          }
+        }
+        return "";
       })();
     ''');
 
     fechaTecnoVencimiento = await getTextFromJs('''
       (function() {
-        const tecnoTable = [...document.querySelectorAll('table')].find(t => 
-          t.innerText.includes('CERTIFICADO DE REVISIÓN TÉCNICO-MECÁNICA') || 
-          t.innerText.includes('RTM')
-        );
-        if (!tecnoTable) return "";
-        const rows = tecnoTable.querySelectorAll('tr');
-        let vencimiento = "";
-        rows.forEach(r => {
-          if (r.innerText.includes('FECHA VENCIMIENTO')) vencimiento = r.cells[1]?.innerText.trim();
-        });
-        return vencimiento;
+        const tables = [...document.querySelectorAll('table')];
+        for (const t of tables) {
+          const txt = (t.innerText || '').toUpperCase();
+          if (txt.includes('RTM') || txt.includes('TÉCNICO') || txt.includes('REVISIÓN')) {
+            const rows = [...t.querySelectorAll('tr')];
+            for (const r of rows) {
+              const rTxt = (r.innerText || '').toUpperCase();
+              const dates = rTxt.match(/\\b(\\d{2}[\\/\\-]\\d{2}[\\/\\-]\\d{4})\\b/g);
+              if (dates && dates.length > 0 && (rTxt.includes('VENCIMIENTO') || rTxt.includes('HASTA'))) {
+                return dates[0];
+              }
+            }
+          }
+        }
+        return "";
       })();
     ''');
-
-    debugPrint("📅 SOAT: $fechaSoatExpedicion → $fechaSoatVencimiento");
-    debugPrint("📅 TECNO: $fechaTecnoExpedicion → $fechaTecnoVencimiento");
 
     setState(() => _loading = false);
 
     await guardarFechas();
-
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.green,
-          duration: const Duration(seconds: 5),
-          content: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text("✅ Fechas consultadas y guardadas correctamente"),
-              if (fechaSoatExpedicion.isNotEmpty)
-                Text("SOAT expedido: $fechaSoatExpedicion"),
-              if (fechaSoatVencimiento.isNotEmpty)
-                Text("SOAT vence: $fechaSoatVencimiento"),
-              if (fechaTecnoExpedicion.isNotEmpty)
-                Text("Tecnomecánica expedida: $fechaTecnoExpedicion"),
-              if (fechaTecnoVencimiento.isNotEmpty)
-                Text("Tecnomecánica vence: $fechaTecnoVencimiento"),
-            ],
-          ),
-        ),
-      );
-    }
   }
 
-  /// Guardar en Supabase usando upsert (seguro y sin conflictos)
+  /// Actualizar en Supabase en la tabla `vehiculos`
   Future<void> guardarFechas() async {
     final supabase = Supabase.instance.client;
     final userId = supabase.auth.currentUser?.id;
     if (userId == null) {
-      debugPrint("❌ Usuario no autenticado");
+      if (mounted) AppSnackBar.show(context, 'Error: Usuario no autenticado');
+      return;
+    }
+
+    final String? soatIso = _convertToIsoDate(fechaSoatVencimiento);
+    final String? tecnoIso = _convertToIsoDate(fechaTecnoVencimiento);
+
+    final Map<String, dynamic> updateData = {};
+    if (soatIso != null) updateData['last_soat'] = soatIso;
+    if (tecnoIso != null) updateData['last_tecno'] = tecnoIso;
+    if (widget.placa.isNotEmpty) updateData['placa'] = widget.placa;
+    if (widget.cedula.isNotEmpty) updateData['cedula'] = widget.cedula;
+
+    if (updateData.isEmpty) {
+      if (mounted) {
+        AppSnackBar.show(
+          context,
+          'Completa la consulta en el RUNT y asegúrate que la tabla con fechas esté desplegada.',
+          backgroundColor: Colors.orange,
+        );
+      }
       return;
     }
 
     try {
-      final response = await supabase
+      await supabase
           .from('vehiculos')
-          .upsert({
-            'vehiculo_id': widget.vehiculoId,
-            'placa': widget.placa,
-            'cedula': widget.cedula,
-            'user_id': userId,
-            'soat_expedicion': fechaSoatExpedicion,
-            'soat_vencimiento': fechaSoatVencimiento,
-            'tecno_expedicion': fechaTecnoExpedicion,
-            'tecno_vencimiento': fechaTecnoVencimiento,
-            'created_at': DateTime.now().toIso8601String(),
-          })
-          .select()
-          .single();
+          .update(updateData)
+          .eq('id', widget.vehiculoId)
+          .eq('user_id', userId);
 
-      debugPrint("✅ Datos guardados en Supabase: $response");
+      debugPrint("✅ Fechas RUNT actualizadas en Supabase: $updateData");
+
+      if (mounted) {
+        AppSnackBar.show(
+          context,
+          '✅ Fechas guardadas y actualizadas en tu vehículo',
+          backgroundColor: Colors.green,
+        );
+        Navigator.pop(context, true); // Retorna true para refrescar la vista de Inicio
+      }
     } catch (e) {
-      debugPrint("❌ Error guardando en Supabase: $e");
+      debugPrint("❌ Error actualizando fechas en Supabase: $e");
+      if (mounted) AppSnackBar.show(context, 'Error actualizando fechas: $e');
     }
   }
 
@@ -240,7 +229,7 @@ class _RuntWebViewScreenState extends State<RuntWebViewScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Consulta RUNT'),
+        title: const Text('Consulta RUNT Oficial'),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -259,32 +248,28 @@ class _RuntWebViewScreenState extends State<RuntWebViewScreen> {
             child: Column(
               children: [
                 ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  ),
                   onPressed: consultarFechas,
-                  icon: const Icon(Icons.search),
-                  label: const Text("Consultar Fechas SOAT y Tecno"),
+                  icon: const Icon(Icons.download_done_rounded),
+                  label: const Text("Extraer y Guardar Fechas SOAT y Tecno"),
                 ),
                 const SizedBox(height: 10),
-                if (fechaSoatExpedicion.isNotEmpty ||
-                    fechaSoatVencimiento.isNotEmpty ||
-                    fechaTecnoExpedicion.isNotEmpty ||
-                    fechaTecnoVencimiento.isNotEmpty)
+                if (fechaSoatVencimiento.isNotEmpty || fechaTecnoVencimiento.isNotEmpty)
                   Card(
                     color: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                     child: Padding(
                       padding: const EdgeInsets.all(12),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          if (fechaSoatExpedicion.isNotEmpty)
-                            Text("SOAT expedido: $fechaSoatExpedicion"),
                           if (fechaSoatVencimiento.isNotEmpty)
-                            Text("SOAT vence: $fechaSoatVencimiento"),
-                          if (fechaTecnoExpedicion.isNotEmpty)
-                            Text(
-                              "Tecnomecánica expedida: $fechaTecnoExpedicion",
-                            ),
+                            Text("SOAT vence: $fechaSoatVencimiento", style: const TextStyle(fontWeight: FontWeight.bold)),
                           if (fechaTecnoVencimiento.isNotEmpty)
-                            Text("Tecnomecánica vence: $fechaTecnoVencimiento"),
+                            Text("Tecnomecánica vence: $fechaTecnoVencimiento", style: const TextStyle(fontWeight: FontWeight.bold)),
                         ],
                       ),
                     ),
