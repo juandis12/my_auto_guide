@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
@@ -16,7 +17,6 @@ import 'core/services/background_nav_service.dart';
 import 'core/logic/app_widget_logic.dart';
 import 'features/auth/login_screen.dart';
 import 'core/logic/performance_guard.dart';
-import 'core/theme/app_apple_theme.dart';
 
 /// Detecta si la app fue abierta desde un widget con deep link
 void _checkWidgetLaunch() async {
@@ -107,6 +107,7 @@ Future<void> main() async {
     Sentry.captureException(e, stackTrace: stackTrace);
   }
 }
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -119,8 +120,22 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'My Auto Guide',
-        theme: AppAppleTheme.lightTheme,
-        darkTheme: AppAppleTheme.darkTheme,
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color(0xFF2563EB), // Azul moderno
+            brightness: Brightness.light,
+          ),
+          useMaterial3: true,
+          textTheme: GoogleFonts.outfitTextTheme(),
+        ),
+        darkTheme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color(0xFF2563EB),
+            brightness: Brightness.dark,
+          ),
+          useMaterial3: true,
+          textTheme: GoogleFonts.outfitTextTheme(ThemeData.dark().textTheme),
+        ),
         themeMode: ThemeMode.system,
         home: const CarRentalLoginScreen(),
         debugShowCheckedModeBanner: false,
