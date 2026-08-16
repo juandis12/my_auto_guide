@@ -225,12 +225,12 @@ jobs:
                 echo "========================================="
                 echo "  ERRORS ISOLATED FROM BUILD LOG:"
                 echo "========================================="
-                grep -i -E "error:|failed|failure" /tmp/flutter_build.log | grep -v -i "warning:" | grep -v -i "note:" | tail -n 40 || true
+                grep -i -E "error|failed|failure" /tmp/flutter_build.log | grep -v -i "0 error" | tail -n 60 || true
                 echo ""
                 echo "========================================="
-                echo "  LAST 250 LINES OF BUILD LOG:"
+                echo "  LAST 300 LINES OF BUILD LOG:"
                 echo "========================================="
-                tail -n 250 /tmp/flutter_build.log
+                tail -n 300 /tmp/flutter_build.log
                 exit 1
               }
             else
@@ -240,12 +240,12 @@ jobs:
                 echo "========================================="
                 echo "  ERRORS ISOLATED FROM BUILD LOG:"
                 echo "========================================="
-                grep -i -E "error:|failed|failure" /tmp/flutter_build.log | grep -v -i "warning:" | grep -v -i "note:" | tail -n 40 || true
+                grep -i -E "error|failed|failure" /tmp/flutter_build.log | grep -v -i "0 error" | tail -n 60 || true
                 echo ""
                 echo "========================================="
-                echo "  LAST 250 LINES OF BUILD LOG:"
+                echo "  LAST 300 LINES OF BUILD LOG:"
                 echo "========================================="
-                tail -n 250 /tmp/flutter_build.log
+                tail -n 300 /tmp/flutter_build.log
                 exit 1
               }
             fi
