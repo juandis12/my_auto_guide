@@ -225,7 +225,7 @@ jobs:
                 echo "========================================="
                 echo "  BUILD FAILED - Extracting error lines:"
                 echo "========================================="
-                grep -i -E "error:|failed|failure|fatal" /tmp/flutter_build.log | grep -v -i "warning:" | grep -v -i "note:" | tail -40
+                grep -C 3 -i -E "error:|failed:" /tmp/flutter_build.log | tail -60
                 echo ""
                 echo "========================================="
                 echo "  Last 40 lines of build output:"
@@ -240,7 +240,7 @@ jobs:
                 echo "========================================="
                 echo "  BUILD FAILED - Extracting error lines:"
                 echo "========================================="
-                grep -i -E "error:|failed|failure|fatal" /tmp/flutter_build.log | grep -v -i "warning:" | grep -v -i "note:" | tail -40
+                grep -C 3 -i -E "error:|failed:" /tmp/flutter_build.log | tail -60
                 echo ""
                 echo "========================================="
                 echo "  Last 40 lines of build output:"
