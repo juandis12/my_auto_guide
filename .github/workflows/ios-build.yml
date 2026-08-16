@@ -2,7 +2,8 @@ name: iOS Build
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       build_id:
@@ -16,7 +17,7 @@ on:
         type: string
         default: 'ios'
       scheme:
-        description: 'Xcode scheme to build (auto-detected if empty)'
+        description: 'Xcode scheme to build'
         required: false
         type: string
         default: ''
@@ -41,21 +42,12 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: 'actions/checkout@v4'
 
       - name: Setup Xcode
-        uses: maxim-lobanov/setup-xcode@v1
+        uses: 'maxim-lobanov/setup-xcode@v1'
         with:
           xcode-version: 'latest-stable'
-
-      - name: Restore DerivedData cache
-        uses: actions/cache@v4
-        id: cache-deriveddata
-        with:
-          path: DerivedData
-          key: deriveddata-${{ github.run_id }}
-          restore-keys: |
-            deriveddata-
 
       - name: Detect project type
         id: detect
@@ -72,10 +64,9 @@ jobs:
 
       - name: Setup Flutter
         if: steps.detect.outputs.type == 'flutter'
-        uses: subosito/flutter-action@v2
+        uses: 'subosito/flutter-action@v2'
         with:
           channel: 'stable'
-          cache: true
 
       - name: Flutter pub get
         if: steps.detect.outputs.type == 'flutter'
@@ -83,34 +74,13 @@ jobs:
 
       - name: Setup Node.js
         if: steps.detect.outputs.type == 'reactnative' || steps.detect.outputs.type == 'expo'
-        uses: actions/setup-node@v4
+        uses: 'actions/setup-node@v4'
         with:
           node-version: '20'
 
-      - name: Restore node_modules cache
-        if: steps.detect.outputs.type == 'reactnative' || steps.detect.outputs.type == 'expo'
-        uses: actions/cache@v4
-        id: node-modules-cache
-        with:
-          path: node_modules
-          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json', 'yarn.lock') }}
-          restore-keys: |
-            node-modules-${{ runner.os }}-
-
       - name: Install npm dependencies
-        if: (steps.detect.outputs.type == 'reactnative' || steps.detect.outputs.type == 'expo') && steps.node-modules-cache.outputs.cache-hit != 'true'
+        if: steps.detect.outputs.type == 'reactnative' || steps.detect.outputs.type == 'expo'
         run: npm install
-
-      - name: Restore Pods cache
-        uses: actions/cache@v4
-        id: pods-cache
-        with:
-          path: |
-            ios/Pods
-            ~/.cocoapods/repos
-          key: pods-${{ runner.os }}-${{ hashFiles('ios/Podfile.lock') }}
-          restore-keys: |
-            pods-${{ runner.os }}-
 
       - name: Install certificate and provisioning profile
         if: inputs.use_signing == true
@@ -308,19 +278,12 @@ jobs:
           fi
 
       - name: Upload IPA artifact
-        uses: actions/upload-artifact@v4
+        uses: 'actions/upload-artifact@v4'
         with:
           name: ipa
           path: build/*.ipa
           retention-days: 7
           if-no-files-found: error
-
-      - name: Save DerivedData cache
-        uses: actions/cache@v4
-        if: always()
-        with:
-          path: DerivedData
-          key: deriveddata-${{ github.run_id }}
 
       - name: Cleanup signing
         if: always() && inputs.use_signing == true
@@ -341,9 +304,6 @@ jobs:
           echo "- **Build ID:** $BUILD_ID" >> $GITHUB_STEP_SUMMARY
           echo "- **Status:** ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Configuration:** $CONFIGURATION" >> $GITHUB_STEP_SUMMARY
-          echo "- **DerivedData Cache:** ${{ steps.cache-deriveddata.outputs.cache-hit == 'true' && 'Hit' || 'Miss' }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Pods Cache:** ${{ steps.pods-cache.outputs.cache-hit == 'true' && 'Hit' || 'Miss' }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Node Modules Cache:** ${{ steps.node-modules-cache.outputs.cache-hit == 'true' && 'Hit' || 'N/A' }}" >> $GITHUB_STEP_SUMMARY
           if [ "$USE_SIGNING" = "true" ]; then
             echo "- **Signing:** Signed (development)" >> $GITHUB_STEP_SUMMARY
           else
