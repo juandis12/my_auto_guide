@@ -1,17 +1,10 @@
 // =============================================================================
-// glass_text_field.dart — CAMPO DE TEXTO CON GLASSMORPHISM
-// =============================================================================
-//
-// Campo de entrada con efecto de vidrio (adaptativo según la gama del
-// dispositivo mediante [PerformanceGuard.adaptiveBlur]) usado en las pantallas
-// de autenticación. Antes cada campo repetía el mismo bloque de decoración y
-// colores dependientes del tema.
-//
+// glass_text_field.dart — CAMPO DE TEXTO CON GLASSMORPHISM (APPLE HIG)
 // =============================================================================
 
 import 'package:flutter/material.dart';
-
 import '../../core/logic/performance_guard.dart';
+import '../../core/theme/app_apple_theme.dart';
 
 class GlassTextField extends StatelessWidget {
   final TextEditingController controller;
@@ -33,22 +26,25 @@ class GlassTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final hintColor = isDark
-        ? Colors.white.withOpacity(0.6)
-        : Colors.black.withOpacity(0.6);
+        ? Colors.white.withValues(alpha: 0.6)
+        : Colors.black.withValues(alpha: 0.6);
 
     return PerformanceGuard.adaptiveBlur(
       borderRadius: BorderRadius.circular(16),
       fallbackColor: isDark
-          ? Colors.white.withOpacity(0.08)
-          : Colors.black.withOpacity(0.05),
+          ? const Color(0xFF0F172A).withValues(alpha: 0.75)
+          : Colors.white.withValues(alpha: 0.85),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.transparent,
+          color: isDark
+              ? AppAppleTheme.midnightSurface.withValues(alpha: 0.5)
+              : Colors.white.withValues(alpha: 0.6),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isDark
-                ? Colors.white.withOpacity(0.1)
-                : Colors.black.withOpacity(0.1),
+                ? AppAppleTheme.glassBorder
+                : AppAppleTheme.glassBorderLight,
+            width: 1.2,
           ),
         ),
         child: TextField(
