@@ -415,7 +415,13 @@
       "tickerproviderstatemixin"
     ],
     "6": [
+      "dart_io",
       "flutterlocalnotificationsplugin",
+      "lib_core_services_biometric_service",
+      "lib_core_services_biometric_service_auth",
+      "lib_core_services_biometric_service_authenticate",
+      "lib_core_services_biometric_service_biometricservice",
+      "lib_core_services_biometric_service_isbiometricavailable",
       "lib_core_services_notification_service",
       "lib_core_services_notification_service_cancelall",
       "lib_core_services_notification_service_ensureexactalarmsenabled",
@@ -426,11 +432,27 @@
       "lib_core_services_notification_service_platformchannel",
       "lib_core_services_notification_service_schedulelegalnotification",
       "lib_core_services_notification_service_showmaintenancenotification",
+      "lib_core_services_ocr_service",
+      "lib_core_services_ocr_service_dispose",
+      "lib_core_services_ocr_service_extractexpirationdate",
+      "lib_core_services_ocr_service_ocrservice",
+      "lib_core_services_ocr_service_parseflexibledate",
+      "lib_core_services_ocr_service_textrecognizer",
+      "lib_shared_widgets_app_snack_bar",
+      "lib_shared_widgets_app_snack_bar_appsnackbar",
+      "lib_shared_widgets_app_snack_bar_show",
+      "localauthentication",
       "package_flutter_local_notifications_flutter_local_notifications_dart",
+      "package_flutter_services_dart",
+      "package_google_mlkit_text_recognition_google_mlkit_text_recognition_dart",
+      "package_local_auth_android_local_auth_android_dart",
+      "package_local_auth_darwin_local_auth_darwin_dart",
+      "package_local_auth_local_auth_dart",
       "package_timezone_data_latest_dart",
       "package_timezone_timezone_dart",
       "static_const",
-      "static_final_notificationservice"
+      "static_final_notificationservice",
+      "textrecognizer"
     ],
     "7": [
       "core_services_ai_bot_service_dart",
@@ -540,6 +562,7 @@
       "agents_skills_vercel_optimize_lib_vercel_normalizewindowsshimtarget",
       "agents_skills_vercel_optimize_lib_vercel_pathexists",
       "agents_skills_vercel_optimize_lib_vercel_redactsensitivetext",
+      "agents_skills_vercel_optimize_lib_vercel_resolvecommandscope",
       "agents_skills_vercel_optimize_lib_vercel_resolvevercelcommand",
       "agents_skills_vercel_optimize_lib_vercel_resolvevercelpackageentry",
       "agents_skills_vercel_optimize_lib_vercel_resolvevercelshimentry",
@@ -926,7 +949,6 @@
       "lib_features_expenses_presentation_gastos_screen_createstate",
       "lib_features_expenses_presentation_gastos_screen_expense",
       "lib_features_expenses_presentation_gastos_screen_expenses",
-      "lib_features_expenses_presentation_gastos_screen_expensetile",
       "lib_features_expenses_presentation_gastos_screen_fetchexpenses",
       "lib_features_expenses_presentation_gastos_screen_gastosscreen",
       "lib_features_expenses_presentation_gastos_screen_gastosscreenstate",
@@ -1089,6 +1111,7 @@
     ],
     "27": [
       "lib_features_expenses_presentation_gastos_screen_buildemptystate",
+      "lib_features_expenses_presentation_gastos_screen_expensetile",
       "lib_features_guides_guia_guiascreen",
       "lib_features_guides_guia_opcioncard",
       "lib_features_guides_guia_pasocard",
@@ -1107,15 +1130,18 @@
       "lib_features_navigation_presentation_historial_rutas_screen_stat",
       "lib_features_vehicles_presentation_inicio_app_healthbar",
       "lib_features_vehicles_presentation_inicio_app_mainhero",
-      "lib_features_vehicles_presentation_widgets_dashboard_widgets_doctileinteractive",
       "lib_features_vehicles_presentation_widgets_dashboard_widgets_gradientbutton",
       "lib_features_vehicles_presentation_widgets_dashboard_widgets_indicatortile",
+      "lib_features_vehicles_presentation_widgets_dashboard_widgets_sectiontitle",
       "lib_features_vehicles_presentation_widgets_vehicle_registration_view_sidetab",
       "statelesswidget",
       "string_name_category_distance"
     ],
     "28": [
+      "bool_get",
+      "changenotifier",
       "lib_core_providers_auth_provider",
+      "lib_core_providers_auth_provider_authprovider",
       "lib_core_providers_auth_provider_init",
       "lib_core_providers_auth_provider_isauthenticated",
       "lib_core_providers_auth_provider_isloading",
@@ -1124,6 +1150,17 @@
       "lib_core_providers_auth_provider_signup",
       "lib_core_providers_auth_provider_supabaseservice",
       "lib_core_providers_auth_provider_user",
+      "lib_core_providers_vehicle_provider",
+      "lib_core_providers_vehicle_provider_addvehicle",
+      "lib_core_providers_vehicle_provider_isloading",
+      "lib_core_providers_vehicle_provider_loadvehicles",
+      "lib_core_providers_vehicle_provider_supabaseservice",
+      "lib_core_providers_vehicle_provider_updatevehiclekms",
+      "lib_core_providers_vehicle_provider_vehicleprovider",
+      "lib_core_providers_vehicle_provider_vehicles",
+      "lib_core_services_supabase_service_supabaseservice",
+      "lib_features_navigation_presentation_controllers_navigation_controller_navigationcontroller",
+      "services_supabase_service_dart",
       "user",
       "user_get"
     ],
@@ -1189,6 +1226,7 @@
       "lib_features_vehicles_presentation_widgets_dashboard_widgets_color",
       "lib_features_vehicles_presentation_widgets_dashboard_widgets_createstate",
       "lib_features_vehicles_presentation_widgets_dashboard_widgets_delay",
+      "lib_features_vehicles_presentation_widgets_dashboard_widgets_doctileinteractive",
       "lib_features_vehicles_presentation_widgets_dashboard_widgets_finescount",
       "lib_features_vehicles_presentation_widgets_dashboard_widgets_icon",
       "lib_features_vehicles_presentation_widgets_dashboard_widgets_initstate",
@@ -1202,7 +1240,6 @@
       "lib_features_vehicles_presentation_widgets_dashboard_widgets_onupload",
       "lib_features_vehicles_presentation_widgets_dashboard_widgets_onview",
       "lib_features_vehicles_presentation_widgets_dashboard_widgets_path",
-      "lib_features_vehicles_presentation_widgets_dashboard_widgets_sectiontitle",
       "lib_features_vehicles_presentation_widgets_dashboard_widgets_show",
       "lib_features_vehicles_presentation_widgets_dashboard_widgets_text",
       "lib_features_vehicles_presentation_widgets_dashboard_widgets_title",
@@ -1263,7 +1300,15 @@
     "34": [
       "annotation_pragma",
       "dart_async",
+      "lib_core_logic_app_widget_logic",
+      "lib_core_logic_app_widget_logic_androidwidgetname",
+      "lib_core_logic_app_widget_logic_appwidgetlogic",
       "lib_core_logic_app_widget_logic_backgroundcallback",
+      "lib_core_logic_app_widget_logic_healthwidgetname",
+      "lib_core_logic_app_widget_logic_initializewidgetinteraction",
+      "lib_core_logic_app_widget_logic_rendercircularindicator",
+      "lib_core_logic_app_widget_logic_updatehealthwidget",
+      "lib_core_logic_app_widget_logic_updatewidget",
       "lib_core_services_background_nav_service",
       "lib_core_services_background_nav_service_backgroundnavservice",
       "lib_core_services_background_nav_service_channelid",
@@ -1272,8 +1317,11 @@
       "lib_core_services_background_nav_service_oniosbackground",
       "lib_core_services_background_nav_service_onstart",
       "logic_app_widget_logic_dart",
+      "package_flutter_background_service_flutter_background_service_dart",
       "package_geolocator_android_geolocator_android_dart",
-      "package_geolocator_apple_geolocator_apple_dart"
+      "package_geolocator_apple_geolocator_apple_dart",
+      "package_home_widget_home_widget_dart",
+      "static_const_string"
     ],
     "35": [
       "lib_core_services_database",
@@ -1482,8 +1530,8 @@
       "agents_skills_vercel_optimize_lib_deep_dive_simplify",
       "agents_skills_vercel_optimize_lib_deep_dive_spec_generators",
       "agents_skills_vercel_optimize_lib_deep_dive_specsforcandidate",
+      "agents_skills_vercel_optimize_lib_vercel_querymetric",
       "agents_skills_vercel_optimize_lib_vercel_readprojectjson",
-      "agents_skills_vercel_optimize_lib_vercel_resolvecommandscope",
       "agents_skills_vercel_optimize_scripts_deep_dive",
       "agents_skills_vercel_optimize_scripts_deep_dive_log",
       "agents_skills_vercel_optimize_scripts_deep_dive_main",
@@ -1837,8 +1885,7 @@
       "agents_skills_vercel_optimize_lib_throttle_semaphoreaborterror",
       "agents_skills_vercel_optimize_lib_throttle_semaphoreaborterror_constructor",
       "agents_skills_vercel_optimize_lib_throttle_setdailyquotablocked",
-      "agents_skills_vercel_optimize_lib_throttle_utcmidnightafter",
-      "agents_skills_vercel_optimize_lib_vercel_querymetric"
+      "agents_skills_vercel_optimize_lib_throttle_utcmidnightafter"
     ],
     "61": [
       "android_app_src_main_java_com_example_my_auto_guide_appwidgetprovider",
@@ -1966,6 +2013,7 @@
       "agents_skills_vercel_optimize_lib_verify_claim_verifynextrouterevalidatestaticprereq"
     ],
     "68": [
+      "dart_convert",
       "lib_core_services_email_service",
       "lib_core_services_email_service_buildhtmlreport",
       "lib_core_services_email_service_emailservice",
@@ -1974,7 +2022,12 @@
       "package_flutter_dotenv_flutter_dotenv_dart",
       "package_http_http_dart",
       "package_mailer_mailer_dart",
-      "package_mailer_smtp_server_dart"
+      "package_mailer_smtp_server_dart",
+      "regexp",
+      "replace_opacity",
+      "replace_opacity_libdir",
+      "replace_opacity_main",
+      "replace_opacity_opacityregex"
     ],
     "69": [
       "chatsession",
@@ -2326,7 +2379,6 @@
       "uikit"
     ],
     "95": [
-      "bool_get",
       "dart_ui",
       "lib_core_logic_performance_guard",
       "lib_core_logic_performance_guard_adaptiveblur",
@@ -2646,68 +2698,6 @@
     ],
     "141": [
       "none_widget"
-    ],
-    "142": [
-      "dart_convert",
-      "dart_io",
-      "lib_core_services_ocr_service",
-      "lib_core_services_ocr_service_dispose",
-      "lib_core_services_ocr_service_extractexpirationdate",
-      "lib_core_services_ocr_service_ocrservice",
-      "lib_core_services_ocr_service_parseflexibledate",
-      "lib_core_services_ocr_service_textrecognizer",
-      "package_google_mlkit_text_recognition_google_mlkit_text_recognition_dart",
-      "regexp",
-      "replace_opacity",
-      "replace_opacity_libdir",
-      "replace_opacity_main",
-      "replace_opacity_opacityregex",
-      "textrecognizer"
-    ],
-    "143": [
-      "lib_core_services_biometric_service",
-      "lib_core_services_biometric_service_auth",
-      "lib_core_services_biometric_service_authenticate",
-      "lib_core_services_biometric_service_biometricservice",
-      "lib_core_services_biometric_service_isbiometricavailable",
-      "lib_shared_widgets_app_snack_bar",
-      "lib_shared_widgets_app_snack_bar_appsnackbar",
-      "lib_shared_widgets_app_snack_bar_show",
-      "localauthentication",
-      "package_flutter_services_dart",
-      "package_local_auth_android_local_auth_android_dart",
-      "package_local_auth_darwin_local_auth_darwin_dart",
-      "package_local_auth_local_auth_dart"
-    ],
-    "144": [
-      "lib_core_logic_app_widget_logic",
-      "lib_core_logic_app_widget_logic_androidwidgetname",
-      "lib_core_logic_app_widget_logic_appwidgetlogic",
-      "lib_core_logic_app_widget_logic_healthwidgetname",
-      "lib_core_logic_app_widget_logic_initializewidgetinteraction",
-      "lib_core_logic_app_widget_logic_rendercircularindicator",
-      "lib_core_logic_app_widget_logic_updatehealthwidget",
-      "lib_core_logic_app_widget_logic_updatewidget",
-      "package_flutter_background_service_flutter_background_service_dart",
-      "package_home_widget_home_widget_dart",
-      "static_const_string"
-    ],
-    "145": [
-      "lib_core_providers_vehicle_provider",
-      "lib_core_providers_vehicle_provider_addvehicle",
-      "lib_core_providers_vehicle_provider_isloading",
-      "lib_core_providers_vehicle_provider_loadvehicles",
-      "lib_core_providers_vehicle_provider_supabaseservice",
-      "lib_core_providers_vehicle_provider_updatevehiclekms",
-      "lib_core_providers_vehicle_provider_vehicles",
-      "lib_core_services_supabase_service_supabaseservice",
-      "services_supabase_service_dart"
-    ],
-    "146": [
-      "changenotifier",
-      "lib_core_providers_auth_provider_authprovider",
-      "lib_core_providers_vehicle_provider_vehicleprovider",
-      "lib_features_navigation_presentation_controllers_navigation_controller_navigationcontroller"
     ]
   },
   "cohesion": {
@@ -2717,10 +2707,10 @@
     "3": 0.0514216575922565,
     "4": 0.07581453634085213,
     "5": 0.04994192799070848,
-    "6": 0.125,
+    "6": 0.05405405405405406,
     "7": 0.057057057057057055,
     "8": 0.05405405405405406,
-    "9": 0.11932773109243698,
+    "9": 0.11746031746031746,
     "10": 0.05714285714285714,
     "11": 0.062388591800356503,
     "12": 0.06439393939393939,
@@ -2732,20 +2722,20 @@
     "18": 0.07142857142857142,
     "19": 0.07142857142857142,
     "20": 0.1339031339031339,
-    "21": 0.07407407407407407,
+    "21": 0.07692307692307693,
     "22": 0.09401709401709402,
     "23": 0.11396011396011396,
     "24": 0.09401709401709402,
     "25": 0.25846153846153846,
     "26": 0.08,
-    "27": 0.08333333333333333,
-    "28": 0.18181818181818182,
+    "27": 0.08,
+    "28": 0.09,
     "29": 0.08,
     "30": 0.08,
     "31": 0.08,
     "32": 0.18840579710144928,
     "33": 0.15579710144927536,
-    "34": 0.16666666666666666,
+    "34": 0.09420289855072464,
     "35": 0.08333333333333333,
     "36": 0.16205533596837945,
     "37": 0.09881422924901186,
@@ -2771,7 +2761,7 @@
     "57": 0.11764705882352941,
     "58": 0.11764705882352941,
     "59": 0.24166666666666667,
-    "60": 0.16176470588235295,
+    "60": 0.16666666666666666,
     "61": 0.25833333333333336,
     "62": 0.13333333333333333,
     "63": 0.125,
@@ -2779,7 +2769,7 @@
     "65": 0.13333333333333333,
     "66": 0.13333333333333333,
     "67": 0.1523809523809524,
-    "68": 0.2222222222222222,
+    "68": 0.13333333333333333,
     "69": 0.14285714285714285,
     "70": 0.14285714285714285,
     "71": 0.14285714285714285,
@@ -2806,7 +2796,7 @@
     "92": 0.2777777777777778,
     "93": 0.3055555555555556,
     "94": 0.25,
-    "95": 0.2,
+    "95": 0.2222222222222222,
     "96": 0.39285714285714285,
     "97": 0.32142857142857145,
     "98": 0.42857142857142855,
@@ -2852,12 +2842,7 @@
     "138": 1.0,
     "139": 1.0,
     "140": 1.0,
-    "141": 1.0,
-    "142": 0.13333333333333333,
-    "143": 0.16666666666666666,
-    "144": 0.18181818181818182,
-    "145": 0.2222222222222222,
-    "146": 0.5
+    "141": 1.0
   },
   "gods": [
     {
@@ -2924,17 +2909,6 @@
       "why": "inferred connection - not explicitly stated in source; bridges separate communities"
     },
     {
-      "source": "Win32Window::Win32Window()",
-      "target": "Destroy",
-      "source_files": [
-        "windows/runner/win32_window.cpp",
-        "windows/runner/win32_window.h"
-      ],
-      "confidence": "INFERRED",
-      "relation": "calls",
-      "why": "inferred connection - not explicitly stated in source; peripheral node `Win32Window::Win32Window()` unexpectedly reaches hub `Destroy`"
-    },
-    {
       "source": "wWinMain()",
       "target": "CreateAndAttachConsole()",
       "source_files": [
@@ -2946,63 +2920,41 @@
       "why": "inferred connection - not explicitly stated in source; peripheral node `CreateAndAttachConsole()` unexpectedly reaches hub `wWinMain()`"
     },
     {
-      "source": "FlutterWindow",
-      "target": "Win32Window",
+      "source": "Win32Window::Win32Window()",
+      "target": "Destroy",
       "source_files": [
-        "windows/runner/flutter_window.h",
+        "windows/runner/win32_window.cpp",
         "windows/runner/win32_window.h"
       ],
-      "confidence": "EXTRACTED",
-      "relation": "inherits",
-      "why": "bridges separate communities"
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; peripheral node `Win32Window::Win32Window()` unexpectedly reaches hub `Destroy`"
     },
     {
-      "source": "MessageHandler",
-      "target": "Win32Window",
+      "source": "main()",
+      "target": "applyAuthDisqualifier()",
       "source_files": [
-        "windows/runner/flutter_window.h",
-        "windows/runner/win32_window.h"
+        ".agents/skills/vercel-optimize/scripts/gate-investigations.mjs",
+        ".agents/skills/vercel-optimize/lib/auth-route.mjs"
+      ],
+      "confidence": "INFERRED",
+      "relation": "indirect_call",
+      "why": "inferred connection - not explicitly stated in source"
+    },
+    {
+      "source": "citationSubset()",
+      "target": "loadLibrary()",
+      "source_files": [
+        ".agents/skills/vercel-optimize/lib/investigation-brief.mjs",
+        ".agents/skills/vercel-optimize/lib/citations.mjs"
       ],
       "confidence": "EXTRACTED",
-      "relation": "references",
+      "relation": "calls",
       "why": "bridges separate communities"
     }
   ],
-  "questions": [
-    {
-      "type": "bridge_node",
-      "question": "Why does `gates` connect `gates/index.mjs` to `gate-investigations.mjs`, `lib/render-report.mjs`, `support-topics.mjs`?",
-      "why": "High betweenness centrality (0.017) - this node is a cross-community bridge."
-    },
-    {
-      "type": "bridge_node",
-      "question": "Why does `scanners` connect `gates/index.mjs` to `scanners/index.mjs`, `workspace-resolver.mjs`?",
-      "why": "High betweenness centrality (0.014) - this node is a cross-community bridge."
-    },
-    {
-      "type": "bridge_node",
-      "question": "Why does `deriveProjectFacts()` connect `verify-and-regen.mjs` to `investigation-brief.mjs`, `lib/render-report.mjs`?",
-      "why": "High betweenness centrality (0.007) - this node is a cross-community bridge."
-    },
-    {
-      "type": "isolated_nodes",
-      "question": "What connects `Candidate`, `CandidateScope`, `GateMetadata` to the rest of the system?",
-      "why": "950 weakly-connected nodes found - possible documentation gaps or missing edges."
-    },
-    {
-      "type": "low_cohesion",
-      "question": "Should `inicio_app.dart` be split into smaller, more focused modules?",
-      "why": "Cohesion score 0.02127659574468085 - nodes in this community are weakly interconnected."
-    },
-    {
-      "type": "low_cohesion",
-      "question": "Should `lib/render-report.mjs` be split into smaller, more focused modules?",
-      "why": "Cohesion score 0.05225885225885226 - nodes in this community are weakly interconnected."
-    },
-    {
-      "type": "low_cohesion",
-      "question": "Should `dedup-recs.mjs` be split into smaller, more focused modules?",
-      "why": "Cohesion score 0.07853107344632769 - nodes in this community are weakly interconnected."
-    }
-  ]
+  "tokens": {
+    "input": 0,
+    "output": 0
+  }
 }

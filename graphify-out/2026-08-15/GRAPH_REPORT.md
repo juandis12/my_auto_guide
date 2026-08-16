@@ -23,8 +23,8 @@
 - notification_service.dart
 - ai_chat_screen.dart
 - vehicle_registration_view.dart
-- vercel.mjs
 - parametrizacion_mantenimientos.dart
+- vercel.mjs
 - login_screen.dart
 - package:flutter_test/flutter_test.dart
 - extract-claims.mjs
@@ -68,13 +68,13 @@
 - State
 - win32_window.cpp
 - verify-and-regen.mjs
+- throttle.mjs
 - collect-sub-agent-outputs.mjs
 - merge-signals.mjs
 - main.dart
 - List
 - navigation_service.dart
 - prepare-investigation-brief.mjs
-- throttle.mjs
 - VehicleStatusWidgetProvider.java
 - package:supabase_flutter/supabase_flutter.dart
 - vehicle_expenses_logic.dart
@@ -221,13 +221,13 @@ Nodes (35): ../../core/services/ai_bot_service.dart, FocusNode, AIChatScreen, _A
 Cohesion: 0.05
 Nodes (36): ../../../../core/services/vehicle_catalog_service.dart, ../inicio_app.dart, _apodoController, brandColors, build, _buildField, _cambiarMarca, catalogo (+28 more)
 
-### Community 9 - "vercel.mjs"
-Cohesion: 0.12
-Nodes (34): isDailyQuotaExceeded(), baselineStack(), categorizeError(), checkAuth(), checkCliVersion(), checkObservabilityPlusConfiguration(), classifyObservabilityPlusConfiguration(), detectNextCacheComponents() (+26 more)
-
-### Community 10 - "parametrizacion_mantenimientos.dart"
+### Community 9 - "parametrizacion_mantenimientos.dart"
 Cohesion: 0.06
 Nodes (35): class, ../../../core/services/ocr_service.dart, _aceite, build, _buildKmInput, _buildMaintenanceCard, _cadena, createState (+27 more)
+
+### Community 10 - "vercel.mjs"
+Cohesion: 0.12
+Nodes (35): isDailyQuotaExceeded(), baselineStack(), categorizeError(), checkAuth(), checkCliVersion(), checkObservabilityPlusConfiguration(), classifyObservabilityPlusConfiguration(), detectNextCacheComponents() (+27 more)
 
 ### Community 11 - "login_screen.dart"
 Cohesion: 0.06
@@ -359,7 +359,7 @@ Nodes (21): build, _buildRegistrarTextField, canSwitchEmail, confirmPasswordCont
 
 ### Community 43 - "scripts/deep-dive.mjs"
 Cohesion: 0.18
-Nodes (17): escapeODataString(), mergeIntoEvidence(), odataEq(), SCANNER_KINDS, simplify(), SPEC_GENERATORS, specsForCandidate(), readProjectJson() (+9 more)
+Nodes (17): escapeODataString(), mergeIntoEvidence(), odataEq(), SCANNER_KINDS, simplify(), SPEC_GENERATORS, specsForCandidate(), queryMetric() (+9 more)
 
 ### Community 44 - "simit_webview.dart"
 Cohesion: 0.10
@@ -401,33 +401,33 @@ Nodes (14): Point, Size, wchar_t, Scale(), Create, Destroy, UpdateTheme, Win32Wi
 Cohesion: 0.22
 Nodes (14): summarizeClaimResults(), applyQualityFloor(), deriveProjectFacts(), findRecContradictions(), deriveRootFromSignals(), detectRepoRoot(), fileResolvesAt(), pickProbeFile() (+6 more)
 
-### Community 54 - "collect-sub-agent-outputs.mjs"
+### Community 54 - "throttle.mjs"
+Cohesion: 0.17
+Nodes (10): getMetricSemaphore, getMetricThrottle(), isRateLimited(), parsePositiveIntEnv(), resolveConcurrency(), resolveRateLimit(), retryOnRateLimit(), SemaphoreAbortError (+2 more)
+
+### Community 55 - "collect-sub-agent-outputs.mjs"
 Cohesion: 0.24
 Nodes (16): collectInputFiles(), escapeRegExp(), extractFenceBlocks(), extractJsonValue(), findBalancedJsonSpans(), inferCandidateRefFromFile(), isRecordObject(), log() (+8 more)
 
-### Community 55 - "merge-signals.mjs"
+### Community 56 - "merge-signals.mjs"
 Cohesion: 0.23
 Nodes (16): annotateCodebaseScan(), annotateFinding(), assertObject(), bestRouteSummary(), buildRouteMetricIndex(), exists(), formatRouteSignal(), hasTraffic() (+8 more)
 
-### Community 56 - "main.dart"
+### Community 57 - "main.dart"
 Cohesion: 0.12
 Nodes (16): core/logic/app_widget_logic.dart, core/providers/auth_provider.dart, core/providers/vehicle_provider.dart, core/services/background_nav_service.dart, core/services/notification_service.dart, core/services/sync_service.dart, features/auth/login_screen.dart, build (+8 more)
 
-### Community 57 - "List"
+### Community 58 - "List"
 Cohesion: 0.12
 Nodes (15): ../domain/models/maintenance_prediction.dart, aiAnalytics, empty, fromData, routeCount, routeHistory, totalCost, totalGallons (+7 more)
 
-### Community 58 - "navigation_service.dart"
+### Community 59 - "navigation_service.dart"
 Cohesion: 0.12
 Nodes (16): calculateRoute, displayName, distanceKm, durationMin, fromJson, _instance, lat, lon (+8 more)
 
-### Community 59 - "prepare-investigation-brief.mjs"
+### Community 60 - "prepare-investigation-brief.mjs"
 Cohesion: 0.24
 Nodes (15): citationSubset(), inferFrameworkPlaybook(), inferPlaybook(), candidateRefFor(), buildFanoutPlan(), buildManifest(), candidateFamilyKey(), HERE (+7 more)
-
-### Community 60 - "throttle.mjs"
-Cohesion: 0.16
-Nodes (11): getMetricSemaphore, getMetricThrottle(), isRateLimited(), parsePositiveIntEnv(), resolveConcurrency(), resolveRateLimit(), retryOnRateLimit(), SemaphoreAbortError (+3 more)
 
 ### Community 61 - "VehicleStatusWidgetProvider.java"
 Cohesion: 0.26
@@ -718,11 +718,9 @@ Nodes (4): ChangeNotifier, AuthProvider, VehicleProvider, NavigationController
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `gates` connect `gates/index.mjs` to `gate-investigations.mjs`, `lib/render-report.mjs`, `support-topics.mjs`?**
-  _High betweenness centrality (0.017) - this node is a cross-community bridge._
+  _High betweenness centrality (0.018) - this node is a cross-community bridge._
 - **Why does `scanners` connect `gates/index.mjs` to `scanners/index.mjs`, `workspace-resolver.mjs`?**
-  _High betweenness centrality (0.014) - this node is a cross-community bridge._
-- **Why does `deriveProjectFacts()` connect `verify-and-regen.mjs` to `investigation-brief.mjs`, `lib/render-report.mjs`?**
-  _High betweenness centrality (0.007) - this node is a cross-community bridge._
+  _High betweenness centrality (0.018) - this node is a cross-community bridge._
 - **What connects `Candidate`, `CandidateScope`, `GateMetadata` to the rest of the system?**
   _950 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `inicio_app.dart` be split into smaller, more focused modules?**
@@ -731,3 +729,5 @@ _Questions this graph is uniquely positioned to answer:_
   _Cohesion score 0.05225885225885226 - nodes in this community are weakly interconnected._
 - **Should `dedup-recs.mjs` be split into smaller, more focused modules?**
   _Cohesion score 0.07853107344632769 - nodes in this community are weakly interconnected._
+- **Should `sanitizers/index.mjs` be split into smaller, more focused modules?**
+  _Cohesion score 0.0514216575922565 - nodes in this community are weakly interconnected._
