@@ -396,6 +396,8 @@
       "lib_features_navigation_rutas_screen_oncontrollerstateupdate",
       "lib_features_navigation_rutas_screen_pulsinglocationmarker",
       "lib_features_navigation_rutas_screen_pulsinglocationmarkerstate",
+      "lib_features_navigation_rutas_screen_rutasscreen",
+      "lib_features_navigation_rutas_screen_rutasscreenstate",
       "lib_features_navigation_rutas_screen_searchctrl",
       "lib_features_navigation_rutas_screen_searchresults",
       "lib_features_navigation_rutas_screen_seleccionardestino",
@@ -409,7 +411,8 @@
       "package_permission_handler_permission_handler_dart",
       "presentation_controllers_navigation_controller_dart",
       "presentation_historial_rutas_screen_dart",
-      "presentation_widgets_navigation_widgets_dart"
+      "presentation_widgets_navigation_widgets_dart",
+      "tickerproviderstatemixin"
     ],
     "6": [
       "agents_skills_vercel_optimize_lib_verify_claim_rectext",
@@ -2705,11 +2708,6 @@
       "lib_core_providers_auth_provider_authprovider",
       "lib_core_providers_vehicle_provider_vehicleprovider",
       "lib_features_navigation_presentation_controllers_navigation_controller_navigationcontroller"
-    ],
-    "147": [
-      "lib_features_navigation_rutas_screen_rutasscreen",
-      "lib_features_navigation_rutas_screen_rutasscreenstate",
-      "tickerproviderstatemixin"
     ]
   },
   "cohesion": {
@@ -2718,7 +2716,7 @@
     "2": 0.07853107344632769,
     "3": 0.0514216575922565,
     "4": 0.07581453634085213,
-    "5": 0.05263157894736842,
+    "5": 0.04994192799070848,
     "6": 0.18421052631578946,
     "7": 0.125,
     "8": 0.057057057057057055,
@@ -2859,8 +2857,7 @@
     "143": 0.16666666666666666,
     "144": 0.18181818181818182,
     "145": 0.2222222222222222,
-    "146": 0.5,
-    "147": 0.6666666666666666
+    "146": 0.5
   },
   "gods": [
     {
@@ -2975,12 +2972,17 @@
     {
       "type": "bridge_node",
       "question": "Why does `gates` connect `gates/index.mjs` to `lib/render-report.mjs`, `gate-investigations.mjs`, `support-topics.mjs`?",
-      "why": "High betweenness centrality (0.018) - this node is a cross-community bridge."
+      "why": "High betweenness centrality (0.017) - this node is a cross-community bridge."
     },
     {
       "type": "bridge_node",
       "question": "Why does `scanners` connect `gates/index.mjs` to `scanners/index.mjs`, `workspace-resolver.mjs`?",
       "why": "High betweenness centrality (0.014) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `deriveProjectFacts()` connect `verify-and-regen.mjs` to `investigation-brief.mjs`, `lib/render-report.mjs`?",
+      "why": "High betweenness centrality (0.009) - this node is a cross-community bridge."
     },
     {
       "type": "isolated_nodes",
@@ -3001,11 +3003,6 @@
       "type": "low_cohesion",
       "question": "Should `dedup-recs.mjs` be split into smaller, more focused modules?",
       "why": "Cohesion score 0.07853107344632769 - nodes in this community are weakly interconnected."
-    },
-    {
-      "type": "low_cohesion",
-      "question": "Should `sanitizers/index.mjs` be split into smaller, more focused modules?",
-      "why": "Cohesion score 0.0514216575922565 - nodes in this community are weakly interconnected."
     }
   ]
 }

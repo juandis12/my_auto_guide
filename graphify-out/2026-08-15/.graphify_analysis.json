@@ -396,8 +396,6 @@
       "lib_features_navigation_rutas_screen_oncontrollerstateupdate",
       "lib_features_navigation_rutas_screen_pulsinglocationmarker",
       "lib_features_navigation_rutas_screen_pulsinglocationmarkerstate",
-      "lib_features_navigation_rutas_screen_rutasscreen",
-      "lib_features_navigation_rutas_screen_rutasscreenstate",
       "lib_features_navigation_rutas_screen_searchctrl",
       "lib_features_navigation_rutas_screen_searchresults",
       "lib_features_navigation_rutas_screen_seleccionardestino",
@@ -411,57 +409,32 @@
       "package_permission_handler_permission_handler_dart",
       "presentation_controllers_navigation_controller_dart",
       "presentation_historial_rutas_screen_dart",
-      "presentation_widgets_navigation_widgets_dart",
-      "tickerproviderstatemixin"
+      "presentation_widgets_navigation_widgets_dart"
     ],
     "6": [
-      "agents_skills_vercel_optimize_lib_project_facts_findreccontradictions",
-      "agents_skills_vercel_optimize_lib_verify_claim",
-      "agents_skills_vercel_optimize_lib_verify_claim_cacheinvalidationfilecache",
-      "agents_skills_vercel_optimize_lib_verify_claim_cleanheadervalue",
-      "agents_skills_vercel_optimize_lib_verify_claim_extractheadervalues",
-      "agents_skills_vercel_optimize_lib_verify_claim_hasemptycachedirective",
-      "agents_skills_vercel_optimize_lib_verify_claim_hasheadervalue",
       "agents_skills_vercel_optimize_lib_verify_claim_rectext",
-      "agents_skills_vercel_optimize_lib_verify_claim_routeerrorfixbroadlycatchesnotfound",
-      "agents_skills_vercel_optimize_lib_verify_claim_routeerrorfixexplicitlyconvertsunexpectederrorstonotfound",
       "agents_skills_vercel_optimize_lib_verify_claim_verifyauthguardparallelizationsafety",
       "agents_skills_vercel_optimize_lib_verify_claim_verifycache404longttlsafety",
-      "agents_skills_vercel_optimize_lib_verify_claim_verifycachecontrolheaderscitation",
-      "agents_skills_vercel_optimize_lib_verify_claim_verifycachecontrolheadersyntax",
       "agents_skills_vercel_optimize_lib_verify_claim_verifycachepolicypositiveornoreadyrec",
       "agents_skills_vercel_optimize_lib_verify_claim_verifycachevarycardinalitysafe",
-      "agents_skills_vercel_optimize_lib_verify_claim_verifycachevarymatchesdynamicinputs",
-      "agents_skills_vercel_optimize_lib_verify_claim_verifycitationappliestoversion",
-      "agents_skills_vercel_optimize_lib_verify_claim_verifycitationinlibrary",
       "agents_skills_vercel_optimize_lib_verify_claim_verifyclaim",
-      "agents_skills_vercel_optimize_lib_verify_claim_verifyimageresponseheaderscitation",
       "agents_skills_vercel_optimize_lib_verify_claim_verifyimmutabledynamicroutesafety",
       "agents_skills_vercel_optimize_lib_verify_claim_verifynextcachecomponentsroutesegmentconfig",
       "agents_skills_vercel_optimize_lib_verify_claim_verifynextcachecomponentsruntimecachepreference",
       "agents_skills_vercel_optimize_lib_verify_claim_verifynextcachednotfoundcausalsupport",
-      "agents_skills_vercel_optimize_lib_verify_claim_verifynextcachelifecdnheadersemantics",
       "agents_skills_vercel_optimize_lib_verify_claim_verifynextcachelifesingleexecution",
       "agents_skills_vercel_optimize_lib_verify_claim_verifynextimagepriorityapiforversion",
       "agents_skills_vercel_optimize_lib_verify_claim_verifynextruntimecacheapiforversion",
       "agents_skills_vercel_optimize_lib_verify_claim_verifynextstablecacheapiforversion",
-      "agents_skills_vercel_optimize_lib_verify_claim_verifynoprojectconfigcontradiction",
       "agents_skills_vercel_optimize_lib_verify_claim_verifyparallelizationimpactnotoverclaimed",
       "agents_skills_vercel_optimize_lib_verify_claim_verifyparallelizationnotcpuboundwork",
-      "agents_skills_vercel_optimize_lib_verify_claim_verifyrouteerrornotfoundstatusandscope",
       "agents_skills_vercel_optimize_lib_verify_claim_verifyruntimeerrorcausesupported",
       "agents_skills_vercel_optimize_lib_verify_claim_verifyvercelignorecommandprojectstate",
       "agents_skills_vercel_optimize_scripts_verify_finding",
       "agents_skills_vercel_optimize_scripts_verify_finding_main"
     ],
     "7": [
-      "dart_io",
       "flutterlocalnotificationsplugin",
-      "lib_core_services_biometric_service",
-      "lib_core_services_biometric_service_auth",
-      "lib_core_services_biometric_service_authenticate",
-      "lib_core_services_biometric_service_biometricservice",
-      "lib_core_services_biometric_service_isbiometricavailable",
       "lib_core_services_notification_service",
       "lib_core_services_notification_service_cancelall",
       "lib_core_services_notification_service_ensureexactalarmsenabled",
@@ -472,27 +445,11 @@
       "lib_core_services_notification_service_platformchannel",
       "lib_core_services_notification_service_schedulelegalnotification",
       "lib_core_services_notification_service_showmaintenancenotification",
-      "lib_core_services_ocr_service",
-      "lib_core_services_ocr_service_dispose",
-      "lib_core_services_ocr_service_extractexpirationdate",
-      "lib_core_services_ocr_service_ocrservice",
-      "lib_core_services_ocr_service_parseflexibledate",
-      "lib_core_services_ocr_service_textrecognizer",
-      "lib_shared_widgets_app_snack_bar",
-      "lib_shared_widgets_app_snack_bar_appsnackbar",
-      "lib_shared_widgets_app_snack_bar_show",
-      "localauthentication",
       "package_flutter_local_notifications_flutter_local_notifications_dart",
-      "package_flutter_services_dart",
-      "package_google_mlkit_text_recognition_google_mlkit_text_recognition_dart",
-      "package_local_auth_android_local_auth_android_dart",
-      "package_local_auth_darwin_local_auth_darwin_dart",
-      "package_local_auth_local_auth_dart",
       "package_timezone_data_latest_dart",
       "package_timezone_timezone_dart",
       "static_const",
-      "static_final_notificationservice",
-      "textrecognizer"
+      "static_final_notificationservice"
     ],
     "8": [
       "core_services_ai_bot_service_dart",
@@ -955,6 +912,7 @@
       "lib_features_expenses_presentation_gastos_screen_createstate",
       "lib_features_expenses_presentation_gastos_screen_expense",
       "lib_features_expenses_presentation_gastos_screen_expenses",
+      "lib_features_expenses_presentation_gastos_screen_expensetile",
       "lib_features_expenses_presentation_gastos_screen_fetchexpenses",
       "lib_features_expenses_presentation_gastos_screen_gastosscreen",
       "lib_features_expenses_presentation_gastos_screen_gastosscreenstate",
@@ -1117,7 +1075,6 @@
     ],
     "27": [
       "lib_features_expenses_presentation_gastos_screen_buildemptystate",
-      "lib_features_expenses_presentation_gastos_screen_expensetile",
       "lib_features_guides_guia_guiascreen",
       "lib_features_guides_guia_opcioncard",
       "lib_features_guides_guia_pasocard",
@@ -1136,18 +1093,15 @@
       "lib_features_navigation_presentation_historial_rutas_screen_stat",
       "lib_features_vehicles_presentation_inicio_app_healthbar",
       "lib_features_vehicles_presentation_inicio_app_mainhero",
+      "lib_features_vehicles_presentation_widgets_dashboard_widgets_doctileinteractive",
       "lib_features_vehicles_presentation_widgets_dashboard_widgets_gradientbutton",
       "lib_features_vehicles_presentation_widgets_dashboard_widgets_indicatortile",
-      "lib_features_vehicles_presentation_widgets_dashboard_widgets_sectiontitle",
       "lib_features_vehicles_presentation_widgets_vehicle_registration_view_sidetab",
       "statelesswidget",
       "string_name_category_distance"
     ],
     "28": [
-      "bool_get",
-      "changenotifier",
       "lib_core_providers_auth_provider",
-      "lib_core_providers_auth_provider_authprovider",
       "lib_core_providers_auth_provider_init",
       "lib_core_providers_auth_provider_isauthenticated",
       "lib_core_providers_auth_provider_isloading",
@@ -1156,17 +1110,6 @@
       "lib_core_providers_auth_provider_signup",
       "lib_core_providers_auth_provider_supabaseservice",
       "lib_core_providers_auth_provider_user",
-      "lib_core_providers_vehicle_provider",
-      "lib_core_providers_vehicle_provider_addvehicle",
-      "lib_core_providers_vehicle_provider_isloading",
-      "lib_core_providers_vehicle_provider_loadvehicles",
-      "lib_core_providers_vehicle_provider_supabaseservice",
-      "lib_core_providers_vehicle_provider_updatevehiclekms",
-      "lib_core_providers_vehicle_provider_vehicleprovider",
-      "lib_core_providers_vehicle_provider_vehicles",
-      "lib_core_services_supabase_service_supabaseservice",
-      "lib_features_navigation_presentation_controllers_navigation_controller_navigationcontroller",
-      "services_supabase_service_dart",
       "user",
       "user_get"
     ],
@@ -1232,7 +1175,6 @@
       "lib_features_vehicles_presentation_widgets_dashboard_widgets_color",
       "lib_features_vehicles_presentation_widgets_dashboard_widgets_createstate",
       "lib_features_vehicles_presentation_widgets_dashboard_widgets_delay",
-      "lib_features_vehicles_presentation_widgets_dashboard_widgets_doctileinteractive",
       "lib_features_vehicles_presentation_widgets_dashboard_widgets_finescount",
       "lib_features_vehicles_presentation_widgets_dashboard_widgets_icon",
       "lib_features_vehicles_presentation_widgets_dashboard_widgets_initstate",
@@ -1246,6 +1188,7 @@
       "lib_features_vehicles_presentation_widgets_dashboard_widgets_onupload",
       "lib_features_vehicles_presentation_widgets_dashboard_widgets_onview",
       "lib_features_vehicles_presentation_widgets_dashboard_widgets_path",
+      "lib_features_vehicles_presentation_widgets_dashboard_widgets_sectiontitle",
       "lib_features_vehicles_presentation_widgets_dashboard_widgets_show",
       "lib_features_vehicles_presentation_widgets_dashboard_widgets_text",
       "lib_features_vehicles_presentation_widgets_dashboard_widgets_title",
@@ -1306,15 +1249,7 @@
     "34": [
       "annotation_pragma",
       "dart_async",
-      "lib_core_logic_app_widget_logic",
-      "lib_core_logic_app_widget_logic_androidwidgetname",
-      "lib_core_logic_app_widget_logic_appwidgetlogic",
       "lib_core_logic_app_widget_logic_backgroundcallback",
-      "lib_core_logic_app_widget_logic_healthwidgetname",
-      "lib_core_logic_app_widget_logic_initializewidgetinteraction",
-      "lib_core_logic_app_widget_logic_rendercircularindicator",
-      "lib_core_logic_app_widget_logic_updatehealthwidget",
-      "lib_core_logic_app_widget_logic_updatewidget",
       "lib_core_services_background_nav_service",
       "lib_core_services_background_nav_service_backgroundnavservice",
       "lib_core_services_background_nav_service_channelid",
@@ -1323,11 +1258,8 @@
       "lib_core_services_background_nav_service_oniosbackground",
       "lib_core_services_background_nav_service_onstart",
       "logic_app_widget_logic_dart",
-      "package_flutter_background_service_flutter_background_service_dart",
       "package_geolocator_android_geolocator_android_dart",
-      "package_geolocator_apple_geolocator_apple_dart",
-      "package_home_widget_home_widget_dart",
-      "static_const_string"
+      "package_geolocator_apple_geolocator_apple_dart"
     ],
     "35": [
       "lib_core_services_database",
@@ -1965,12 +1897,14 @@
       "agents_skills_vercel_optimize_lib_grade_recommendation_applyqualityfloor",
       "agents_skills_vercel_optimize_lib_project_facts",
       "agents_skills_vercel_optimize_lib_project_facts_deriveprojectfacts",
+      "agents_skills_vercel_optimize_lib_project_facts_findreccontradictions",
       "agents_skills_vercel_optimize_lib_repo_root",
       "agents_skills_vercel_optimize_lib_repo_root_deriverootfromsignals",
       "agents_skills_vercel_optimize_lib_repo_root_detectreporoot",
       "agents_skills_vercel_optimize_lib_repo_root_fileresolvesat",
       "agents_skills_vercel_optimize_lib_repo_root_pickprobefile",
       "agents_skills_vercel_optimize_lib_repo_root_resolvereporoot",
+      "agents_skills_vercel_optimize_lib_verify_claim_verifynoprojectconfigcontradiction",
       "agents_skills_vercel_optimize_scripts_verify_and_regen",
       "agents_skills_vercel_optimize_scripts_verify_and_regen_log",
       "agents_skills_vercel_optimize_scripts_verify_and_regen_main",
@@ -1995,24 +1929,17 @@
       "agents_skills_vercel_optimize_lib_verify_claim_verifynextrouterevalidatestaticprereq"
     ],
     "67": [
-      "agents_skills_vercel_optimize_lib_verify_claim_buildscripthasmigrationsideeffect",
       "agents_skills_vercel_optimize_lib_verify_claim_compilepattern",
-      "agents_skills_vercel_optimize_lib_verify_claim_parsejsonlike",
       "agents_skills_vercel_optimize_lib_verify_claim_readclaimfile",
-      "agents_skills_vercel_optimize_lib_verify_claim_readoptionaljsonfile",
-      "agents_skills_vercel_optimize_lib_verify_claim_recseparatesturbobuildsideeffects",
-      "agents_skills_vercel_optimize_lib_verify_claim_siblingpackagejson",
       "agents_skills_vercel_optimize_lib_verify_claim_snippetfoundelsewhere",
       "agents_skills_vercel_optimize_lib_verify_claim_verifycodesnippet",
       "agents_skills_vercel_optimize_lib_verify_claim_verifypatternabsent",
       "agents_skills_vercel_optimize_lib_verify_claim_verifypatterncount",
       "agents_skills_vercel_optimize_lib_verify_claim_verifypatternexists",
       "agents_skills_vercel_optimize_lib_verify_claim_verifyrepocount",
-      "agents_skills_vercel_optimize_lib_verify_claim_verifyturbobuildcachesafety",
       "agents_skills_vercel_optimize_lib_verify_claim_walkfiles"
     ],
     "68": [
-      "dart_convert",
       "lib_core_services_email_service",
       "lib_core_services_email_service_buildhtmlreport",
       "lib_core_services_email_service_emailservice",
@@ -2021,26 +1948,16 @@
       "package_flutter_dotenv_flutter_dotenv_dart",
       "package_http_http_dart",
       "package_mailer_mailer_dart",
-      "package_mailer_smtp_server_dart",
-      "regexp",
-      "replace_opacity",
-      "replace_opacity_libdir",
-      "replace_opacity_main",
-      "replace_opacity_opacityregex"
+      "package_mailer_smtp_server_dart"
     ],
     "69": [
       "agents_skills_vercel_optimize_lib_verify_claim_cachelifeneedscontentfreshnessproof",
-      "agents_skills_vercel_optimize_lib_verify_claim_configcontainstag",
       "agents_skills_vercel_optimize_lib_verify_claim_dedupecachetags",
-      "agents_skills_vercel_optimize_lib_verify_claim_escaperegexp",
       "agents_skills_vercel_optimize_lib_verify_claim_execfilep",
       "agents_skills_vercel_optimize_lib_verify_claim_extractcachetags",
       "agents_skills_vercel_optimize_lib_verify_claim_extractcachetagsfromfiles",
-      "agents_skills_vercel_optimize_lib_verify_claim_hasconfigdriveninvalidation",
-      "agents_skills_vercel_optimize_lib_verify_claim_hasliteralinvalidation",
       "agents_skills_vercel_optimize_lib_verify_claim_readcacheinvalidationfiles",
       "agents_skills_vercel_optimize_lib_verify_claim_rgrelevantfiles",
-      "agents_skills_vercel_optimize_lib_verify_claim_taghasmatchinginvalidation",
       "agents_skills_vercel_optimize_lib_verify_claim_verifynextcachelifetimefreshnesssupported",
       "agents_skills_vercel_optimize_lib_verify_claim_verifynextcachetaginvalidationsupported"
     ],
@@ -2372,6 +2289,7 @@
       "uikit"
     ],
     "94": [
+      "bool_get",
       "dart_ui",
       "lib_core_logic_performance_guard",
       "lib_core_logic_performance_guard_adaptiveblur",
@@ -2590,11 +2508,38 @@
       "agents_skills_vercel_optimize_lib_gates_usage_spike_triage_metadata"
     ],
     "119": [
+      "agents_skills_vercel_optimize_lib_verify_claim",
+      "agents_skills_vercel_optimize_lib_verify_claim_buildscripthasmigrationsideeffect",
+      "agents_skills_vercel_optimize_lib_verify_claim_cacheinvalidationfilecache",
+      "agents_skills_vercel_optimize_lib_verify_claim_cleanheadervalue",
+      "agents_skills_vercel_optimize_lib_verify_claim_configcontainstag",
+      "agents_skills_vercel_optimize_lib_verify_claim_escaperegexp",
+      "agents_skills_vercel_optimize_lib_verify_claim_extractheadervalues",
       "agents_skills_vercel_optimize_lib_verify_claim_formatpct",
       "agents_skills_vercel_optimize_lib_verify_claim_functionstatusforroute",
+      "agents_skills_vercel_optimize_lib_verify_claim_hasconfigdriveninvalidation",
+      "agents_skills_vercel_optimize_lib_verify_claim_hasemptycachedirective",
+      "agents_skills_vercel_optimize_lib_verify_claim_hasheadervalue",
+      "agents_skills_vercel_optimize_lib_verify_claim_hasliteralinvalidation",
       "agents_skills_vercel_optimize_lib_verify_claim_numbervalue",
+      "agents_skills_vercel_optimize_lib_verify_claim_parsejsonlike",
+      "agents_skills_vercel_optimize_lib_verify_claim_readoptionaljsonfile",
+      "agents_skills_vercel_optimize_lib_verify_claim_recseparatesturbobuildsideeffects",
+      "agents_skills_vercel_optimize_lib_verify_claim_routeerrorfixbroadlycatchesnotfound",
+      "agents_skills_vercel_optimize_lib_verify_claim_routeerrorfixexplicitlyconvertsunexpectederrorstonotfound",
       "agents_skills_vercel_optimize_lib_verify_claim_routefromcandidateref",
-      "agents_skills_vercel_optimize_lib_verify_claim_verifycacherecnoterrordominatedoracknowledged"
+      "agents_skills_vercel_optimize_lib_verify_claim_siblingpackagejson",
+      "agents_skills_vercel_optimize_lib_verify_claim_taghasmatchinginvalidation",
+      "agents_skills_vercel_optimize_lib_verify_claim_verifycachecontrolheaderscitation",
+      "agents_skills_vercel_optimize_lib_verify_claim_verifycachecontrolheadersyntax",
+      "agents_skills_vercel_optimize_lib_verify_claim_verifycacherecnoterrordominatedoracknowledged",
+      "agents_skills_vercel_optimize_lib_verify_claim_verifycachevarymatchesdynamicinputs",
+      "agents_skills_vercel_optimize_lib_verify_claim_verifycitationappliestoversion",
+      "agents_skills_vercel_optimize_lib_verify_claim_verifycitationinlibrary",
+      "agents_skills_vercel_optimize_lib_verify_claim_verifyimageresponseheaderscitation",
+      "agents_skills_vercel_optimize_lib_verify_claim_verifynextcachelifecdnheadersemantics",
+      "agents_skills_vercel_optimize_lib_verify_claim_verifyrouteerrornotfoundstatusandscope",
+      "agents_skills_vercel_optimize_lib_verify_claim_verifyturbobuildcachesafety"
     ],
     "120": [
       "android_app_src_main_kotlin_com_example_my_auto_guide_mainactivity",
@@ -2698,6 +2643,73 @@
     ],
     "141": [
       "none_widget"
+    ],
+    "142": [
+      "dart_convert",
+      "dart_io",
+      "lib_core_services_ocr_service",
+      "lib_core_services_ocr_service_dispose",
+      "lib_core_services_ocr_service_extractexpirationdate",
+      "lib_core_services_ocr_service_ocrservice",
+      "lib_core_services_ocr_service_parseflexibledate",
+      "lib_core_services_ocr_service_textrecognizer",
+      "package_google_mlkit_text_recognition_google_mlkit_text_recognition_dart",
+      "regexp",
+      "replace_opacity",
+      "replace_opacity_libdir",
+      "replace_opacity_main",
+      "replace_opacity_opacityregex",
+      "textrecognizer"
+    ],
+    "143": [
+      "lib_core_services_biometric_service",
+      "lib_core_services_biometric_service_auth",
+      "lib_core_services_biometric_service_authenticate",
+      "lib_core_services_biometric_service_biometricservice",
+      "lib_core_services_biometric_service_isbiometricavailable",
+      "lib_shared_widgets_app_snack_bar",
+      "lib_shared_widgets_app_snack_bar_appsnackbar",
+      "lib_shared_widgets_app_snack_bar_show",
+      "localauthentication",
+      "package_flutter_services_dart",
+      "package_local_auth_android_local_auth_android_dart",
+      "package_local_auth_darwin_local_auth_darwin_dart",
+      "package_local_auth_local_auth_dart"
+    ],
+    "144": [
+      "lib_core_logic_app_widget_logic",
+      "lib_core_logic_app_widget_logic_androidwidgetname",
+      "lib_core_logic_app_widget_logic_appwidgetlogic",
+      "lib_core_logic_app_widget_logic_healthwidgetname",
+      "lib_core_logic_app_widget_logic_initializewidgetinteraction",
+      "lib_core_logic_app_widget_logic_rendercircularindicator",
+      "lib_core_logic_app_widget_logic_updatehealthwidget",
+      "lib_core_logic_app_widget_logic_updatewidget",
+      "package_flutter_background_service_flutter_background_service_dart",
+      "package_home_widget_home_widget_dart",
+      "static_const_string"
+    ],
+    "145": [
+      "lib_core_providers_vehicle_provider",
+      "lib_core_providers_vehicle_provider_addvehicle",
+      "lib_core_providers_vehicle_provider_isloading",
+      "lib_core_providers_vehicle_provider_loadvehicles",
+      "lib_core_providers_vehicle_provider_supabaseservice",
+      "lib_core_providers_vehicle_provider_updatevehiclekms",
+      "lib_core_providers_vehicle_provider_vehicles",
+      "lib_core_services_supabase_service_supabaseservice",
+      "services_supabase_service_dart"
+    ],
+    "146": [
+      "changenotifier",
+      "lib_core_providers_auth_provider_authprovider",
+      "lib_core_providers_vehicle_provider_vehicleprovider",
+      "lib_features_navigation_presentation_controllers_navigation_controller_navigationcontroller"
+    ],
+    "147": [
+      "lib_features_navigation_rutas_screen_rutasscreen",
+      "lib_features_navigation_rutas_screen_rutasscreenstate",
+      "tickerproviderstatemixin"
     ]
   },
   "cohesion": {
@@ -2706,9 +2718,9 @@
     "2": 0.07853107344632769,
     "3": 0.0514216575922565,
     "4": 0.07581453634085213,
-    "5": 0.04994192799070848,
-    "6": 0.12944523470839261,
-    "7": 0.05405405405405406,
+    "5": 0.05263157894736842,
+    "6": 0.18421052631578946,
+    "7": 0.125,
     "8": 0.057057057057057055,
     "9": 0.05405405405405406,
     "10": 0.11746031746031746,
@@ -2722,20 +2734,20 @@
     "18": 0.07142857142857142,
     "19": 0.07142857142857142,
     "20": 0.1339031339031339,
-    "21": 0.07692307692307693,
+    "21": 0.07407407407407407,
     "22": 0.09401709401709402,
     "23": 0.11396011396011396,
     "24": 0.09401709401709402,
     "25": 0.25846153846153846,
     "26": 0.08,
-    "27": 0.08,
-    "28": 0.09,
+    "27": 0.08333333333333333,
+    "28": 0.18181818181818182,
     "29": 0.08,
     "30": 0.08,
     "31": 0.08,
     "32": 0.18840579710144928,
     "33": 0.15579710144927536,
-    "34": 0.09420289855072464,
+    "34": 0.16666666666666666,
     "35": 0.08333333333333333,
     "36": 0.16205533596837945,
     "37": 0.09881422924901186,
@@ -2766,11 +2778,11 @@
     "62": 0.125,
     "63": 0.13333333333333333,
     "64": 0.13333333333333333,
-    "65": 0.26666666666666666,
+    "65": 0.22058823529411764,
     "66": 0.1523809523809524,
-    "67": 0.17142857142857143,
-    "68": 0.13333333333333333,
-    "69": 0.18681318681318682,
+    "67": 0.3055555555555556,
+    "68": 0.2222222222222222,
+    "69": 0.2777777777777778,
     "70": 0.14285714285714285,
     "71": 0.14285714285714285,
     "72": 0.14285714285714285,
@@ -2795,7 +2807,7 @@
     "91": 0.3611111111111111,
     "92": 0.4166666666666667,
     "93": 0.25,
-    "94": 0.2222222222222222,
+    "94": 0.2,
     "95": 0.39285714285714285,
     "96": 0.32142857142857145,
     "97": 0.42857142857142855,
@@ -2820,7 +2832,7 @@
     "116": 0.6,
     "117": 0.6,
     "118": 0.6,
-    "119": 0.4,
+    "119": 0.10685483870967742,
     "120": 0.6,
     "121": 0.4,
     "122": 0.4,
@@ -2842,7 +2854,13 @@
     "138": 1.0,
     "139": 1.0,
     "140": 1.0,
-    "141": 1.0
+    "141": 1.0,
+    "142": 0.13333333333333333,
+    "143": 0.16666666666666666,
+    "144": 0.18181818181818182,
+    "145": 0.2222222222222222,
+    "146": 0.5,
+    "147": 0.6666666666666666
   },
   "gods": [
     {
@@ -2909,17 +2927,6 @@
       "why": "inferred connection - not explicitly stated in source; bridges separate communities"
     },
     {
-      "source": "wWinMain()",
-      "target": "CreateAndAttachConsole()",
-      "source_files": [
-        "windows/runner/main.cpp",
-        "windows/runner/utils.cpp"
-      ],
-      "confidence": "INFERRED",
-      "relation": "calls",
-      "why": "inferred connection - not explicitly stated in source; peripheral node `CreateAndAttachConsole()` unexpectedly reaches hub `wWinMain()`"
-    },
-    {
       "source": "Win32Window::Win32Window()",
       "target": "Destroy",
       "source_files": [
@@ -2931,30 +2938,74 @@
       "why": "inferred connection - not explicitly stated in source; peripheral node `Win32Window::Win32Window()` unexpectedly reaches hub `Destroy`"
     },
     {
-      "source": "main()",
-      "target": "applyAuthDisqualifier()",
+      "source": "wWinMain()",
+      "target": "CreateAndAttachConsole()",
       "source_files": [
-        ".agents/skills/vercel-optimize/scripts/gate-investigations.mjs",
-        ".agents/skills/vercel-optimize/lib/auth-route.mjs"
+        "windows/runner/main.cpp",
+        "windows/runner/utils.cpp"
       ],
       "confidence": "INFERRED",
-      "relation": "indirect_call",
-      "why": "inferred connection - not explicitly stated in source"
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; peripheral node `CreateAndAttachConsole()` unexpectedly reaches hub `wWinMain()`"
     },
     {
-      "source": "citationSubset()",
-      "target": "loadLibrary()",
+      "source": "FlutterWindow",
+      "target": "Win32Window",
       "source_files": [
-        ".agents/skills/vercel-optimize/lib/investigation-brief.mjs",
-        ".agents/skills/vercel-optimize/lib/citations.mjs"
+        "windows/runner/flutter_window.h",
+        "windows/runner/win32_window.h"
       ],
       "confidence": "EXTRACTED",
-      "relation": "calls",
+      "relation": "inherits",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "MessageHandler",
+      "target": "Win32Window",
+      "source_files": [
+        "windows/runner/flutter_window.h",
+        "windows/runner/win32_window.h"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
       "why": "bridges separate communities"
     }
   ],
-  "tokens": {
-    "input": 0,
-    "output": 0
-  }
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `gates` connect `gates/index.mjs` to `lib/render-report.mjs`, `gate-investigations.mjs`, `support-topics.mjs`?",
+      "why": "High betweenness centrality (0.018) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `scanners` connect `gates/index.mjs` to `scanners/index.mjs`, `workspace-resolver.mjs`?",
+      "why": "High betweenness centrality (0.014) - this node is a cross-community bridge."
+    },
+    {
+      "type": "isolated_nodes",
+      "question": "What connects `Candidate`, `CandidateScope`, `GateMetadata` to the rest of the system?",
+      "why": "950 weakly-connected nodes found - possible documentation gaps or missing edges."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `inicio_app.dart` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.02127659574468085 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `lib/render-report.mjs` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.05225885225885226 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `dedup-recs.mjs` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.07853107344632769 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `sanitizers/index.mjs` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.0514216575922565 - nodes in this community are weakly interconnected."
+    }
+  ]
 }
