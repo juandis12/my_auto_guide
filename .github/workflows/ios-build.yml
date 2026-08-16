@@ -223,9 +223,14 @@ jobs:
               flutter build ios --debug --no-codesign 2>&1 | tee /tmp/flutter_build.log || {
                 echo ""
                 echo "========================================="
-                echo "  BUILD FAILED - Last 150 lines of build log:"
+                echo "  ERRORS ISOLATED FROM BUILD LOG:"
                 echo "========================================="
-                tail -n 150 /tmp/flutter_build.log
+                grep -i -E "error:|failed|failure" /tmp/flutter_build.log | grep -v -i "warning:" | grep -v -i "note:" | tail -n 40 || true
+                echo ""
+                echo "========================================="
+                echo "  LAST 250 LINES OF BUILD LOG:"
+                echo "========================================="
+                tail -n 250 /tmp/flutter_build.log
                 exit 1
               }
             else
@@ -233,9 +238,14 @@ jobs:
               flutter build ios --release --no-codesign 2>&1 | tee /tmp/flutter_build.log || {
                 echo ""
                 echo "========================================="
-                echo "  BUILD FAILED - Last 150 lines of build log:"
+                echo "  ERRORS ISOLATED FROM BUILD LOG:"
                 echo "========================================="
-                tail -n 150 /tmp/flutter_build.log
+                grep -i -E "error:|failed|failure" /tmp/flutter_build.log | grep -v -i "warning:" | grep -v -i "note:" | tail -n 40 || true
+                echo ""
+                echo "========================================="
+                echo "  LAST 250 LINES OF BUILD LOG:"
+                echo "========================================="
+                tail -n 250 /tmp/flutter_build.log
                 exit 1
               }
             fi
