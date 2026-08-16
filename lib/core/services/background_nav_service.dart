@@ -135,7 +135,10 @@ class BackgroundNavService {
         if (lastPos != null) {
           final distance = Geolocator.distanceBetween(lastPos!.latitude,
               lastPos!.longitude, currentPos.latitude, currentPos.longitude);
-          totalDistance += distance;
+          // Filtrar ruido: ignorar movimientos < 3.0m (estacionado/semáforo) o saltos irreales > 300m
+          if (distance >= 3.0 && distance <= 300.0) {
+            totalDistance += distance;
+          }
         }
         lastPos = currentPos;
 

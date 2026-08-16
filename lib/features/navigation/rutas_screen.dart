@@ -245,13 +245,23 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
       isCar: _controller.isCar
     );
 
-    if (t.distanceKm > 0.05) {
+    // Calcular kilómetros a sumar al odómetro del vehículo.
+    // Si recorrió >= 0.1 km (100 metros) y < 1.0 km, se suma al menos 1 km al vehículo.
+    final int kmsToAdd = (t.distanceKm >= 0.1)
+        ? (t.distanceKm < 1.0 ? 1 : t.distanceKm.round())
+        : 0;
+
+    final String destName = (_controller.destinationName.trim().isNotEmpty)
+        ? _controller.destinationName
+        : 'Recorrido Libre';
+
+    if (t.distanceKm >= 0.01) {
       try {
         await SyncService().saveRouteOfflineFirst(
           userId: userId,
           vehicleId: widget.vehiculoId,
           originName: 'Ubicación Actual',
-          destinationName: _controller.destinationName,
+          destinationName: destName,
           distanceKm: t.distanceKm,
           durationSeconds: durationSec,
           consumoGalones: impact['gallons']!,
@@ -261,7 +271,9 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
           viaPuntos: t.travelledPoints.map((p) => {'lat': p.latitude, 'lng': p.longitude}).toList(),
         );
         
-        await SyncService().updateVehicleKmsOfflineFirst(widget.vehiculoId, t.distanceKm.round());
+        if (kmsToAdd > 0) {
+          await SyncService().updateVehicleKmsOfflineFirst(widget.vehiculoId, kmsToAdd);
+        }
       } catch (e) {
         debugPrint('Error al guardar trayecto localmente: $e');
         if (mounted) {

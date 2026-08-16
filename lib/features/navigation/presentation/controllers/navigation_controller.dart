@@ -73,7 +73,7 @@ class NavigationController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateCurrentPosition(LatLng pos, {double? speedMs}) {
+  void updateCurrentPosition(LatLng pos, {double? speedMs, double? bgDistanceKm}) {
     final oldPos = _telemetry.currentPos;
     
     // Actualizar puntos recorridos y distancia si estamos navegando
@@ -84,7 +84,9 @@ class NavigationController extends ChangeNotifier {
     if (_state == NavigationState.navigating || _state == NavigationState.freeTracking) {
       pts = TelemetryCalculator.optimizeRoutePoints(pts, pos);
       
-      if (oldPos != null) {
+      if (bgDistanceKm != null && bgDistanceKm > dist) {
+        dist = bgDistanceKm;
+      } else if (oldPos != null) {
         dist += TelemetryCalculator.calculateIncrementalDistance(oldPos, pos);
       }
 
@@ -137,9 +139,10 @@ class NavigationController extends ChangeNotifier {
       final double lat = (event?['lat'] as num?)?.toDouble() ?? 0.0;
       final double lng = (event?['lng'] as num?)?.toDouble() ?? 0.0;
       final double speedMs = (event?['speed'] as num?)?.toDouble() ?? 0.0;
+      final double bgDistanceKm = (event?['distance'] as num?)?.toDouble() ?? 0.0;
       
       if (lat != 0.0 && lng != 0.0) {
-        updateCurrentPosition(LatLng(lat, lng), speedMs: speedMs);
+        updateCurrentPosition(LatLng(lat, lng), speedMs: speedMs, bgDistanceKm: bgDistanceKm);
       }
     });
   }

@@ -50,11 +50,25 @@ class TelemetryCalculator {
     };
   }
 
-  /// Limita la cantidad de puntos en memoria para evitar el temido "App Crash" por OOM.
-  /// Mantiene los últimos 5000 puntos (suficiente para rutas largas).
+  /// Limita y filtra los puntos de la ruta para generar una línea suave (Polyline)
+  /// e impedir zigzags o distorsiones por temblor de GPS cuando el vehículo se detiene.
   static List<LatLng> optimizeRoutePoints(List<LatLng> currentPoints, LatLng newPoint) {
     final updated = List<LatLng>.from(currentPoints);
-    if (updated.isEmpty || updated.last != newPoint) {
+    if (updated.isEmpty) {
+      updated.add(newPoint);
+      return updated;
+    }
+
+    final lastPoint = updated.last;
+    final distMeters = Geolocator.distanceBetween(
+      lastPoint.latitude,
+      lastPoint.longitude,
+      newPoint.latitude,
+      newPoint.longitude,
+    );
+
+    // Solo agregar el nuevo punto a la polilínea si el desplazamiento es >= 4.0 metros
+    if (distMeters >= 4.0) {
       updated.add(newPoint);
       if (updated.length > 5000) {
         updated.removeAt(0);
