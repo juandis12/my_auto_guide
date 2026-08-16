@@ -154,6 +154,7 @@ class _Captura360ScreenState extends State<Captura360Screen> {
       // Procesamiento asíncrono en lotes paralelos de 3 fotos
       final int batchSize = 3;
       int processedCount = 0;
+      final List<String?> uploadedUrlsList = List.filled(_capturedPhotos.length, null);
 
       for (int i = 0; i < _capturedPhotos.length; i += batchSize) {
         final end = (i + batchSize < _capturedPhotos.length) ? i + batchSize : _capturedPhotos.length;
@@ -180,11 +181,13 @@ class _Captura360ScreenState extends State<Captura360Screen> {
 
         for (final entry in batchResults) {
           if (entry.value != null) {
-            uploadedSignedUrls.add(entry.value!);
+            uploadedUrlsList[entry.key] = entry.value!;
           }
         }
         processedCount += batch.length;
       }
+
+      final uploadedSignedUrls = uploadedUrlsList.whereType<String>().toList();
 
       setState(() {
         _processingMessage = 'Guardando vista 360° en tu garaje...';
@@ -280,17 +283,42 @@ class _Captura360ScreenState extends State<Captura360Screen> {
     return imageBytes;
   }
 
-  /// Nivel 1: Remove.bg API
-  Future<Uint8List?> _removerConRemoveBg(Uint8List bytes, String apiKey) async {
-    final uri = Uri.parse('https://api.remove.bg/v1.0/removebg');
-    final request = http.MultipartRequest('POST', uri)
-      ..headers['X-Api-Key'] = apiKey
-      ..files.add(http.MultipartFile.fromBytes('image_file', bytes, filename: 'photo.jpg'))
-      ..fields['size'] = 'auto';
+  Future<Uint8List> _comprimirParaApi(Uint8List bytes) async {
+    try {
+      final decoded = img.decodeImage(bytes);
+      if (decoded == null) return bytes;
+      if (decoded.width <= 1200) return bytes;
+      final resized = img.copyResize(decoded, width: 1024);
+      return Uint8List.fromList(img.encodeJpg(resized, quality: 85));
+    } catch (_) {
+      return bytes;
+    }
+  }
 
-    final response = await request.send().timeout(const Duration(seconds: 20));
-    if (response.statusCode == 200) {
-      return await response.stream.toBytes();
+  /// Nivel 1: Remove.bg API (JSON Base64 API Endpoint)
+  Future<Uint8List?> _removerConRemoveBg(Uint8List bytes, String apiKey) async {
+    try {
+      final compressedBytes = await _comprimirParaApi(bytes);
+      final base64Img = base64Encode(compressedBytes);
+
+      final response = await http.post(
+        Uri.parse('https://api.remove.bg/v1.0/removebg'),
+        headers: {
+          'X-Api-Key': apiKey.trim(),
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'image_file_b64': base64Img,
+          'size': 'auto',
+        }),
+      ).timeout(const Duration(seconds: 20));
+
+      if (response.statusCode == 200) {
+        return response.bodyBytes;
+      }
+      debugPrint('Remove.bg API Error ${response.statusCode}: ${response.body}');
+    } catch (e) {
+      debugPrint('Excepción llamando a Remove.bg: $e');
     }
     return null;
   }
