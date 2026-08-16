@@ -248,8 +248,10 @@ class _Captura360ScreenState extends State<Captura360Screen> {
 
   /// Motor Híbrido en Cascada para Remoción de Fondo 360°
   Future<Uint8List> _removerFondoHibrido(Uint8List imageBytes) async {
-    // 1. Intentar Remove.bg si hay API Key configurada
-    final removeBgKey = dotenv.env['REMOVE_BG_API_KEY'];
+    // 1. Intentar Remove.bg si hay API Key configurada (env o fallback)
+    final removeBgKey = (dotenv.env['REMOVE_BG_API_KEY'] != null && dotenv.env['REMOVE_BG_API_KEY']!.isNotEmpty)
+        ? dotenv.env['REMOVE_BG_API_KEY']
+        : 'CY5vT77YYVndE7tvA1HBYgM8';
     if (removeBgKey != null && removeBgKey.isNotEmpty) {
       try {
         final res = await _removerConRemoveBg(imageBytes, removeBgKey);
