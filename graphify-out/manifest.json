@@ -1,0 +1,674 @@
+{
+  "android/app/build.gradle.kts": {
+    "mtime": 1786131645.3059366,
+    "seen": 1786842111.527649,
+    "ast_hash": "1e07a962d852ff8b4fb4ccb9e36f90f5",
+    "semantic_hash": "1e07a962d852ff8b4fb4ccb9e36f90f5"
+  },
+  "android/app/src/main/java/com/example/my_auto_guide/AppWidgetProvider.java": {
+    "mtime": 1780112638.4706552,
+    "seen": 1786842111.527649,
+    "ast_hash": "fcdfee784298c40317f8532a1c84abc5",
+    "semantic_hash": "fcdfee784298c40317f8532a1c84abc5"
+  },
+  "android/app/src/main/java/com/example/my_auto_guide/VehicleStatusWidgetProvider.java": {
+    "mtime": 1780112638.4706552,
+    "seen": 1786842111.527649,
+    "ast_hash": "f4fa770b811494f2a71e3c6abe3f130b",
+    "semantic_hash": "f4fa770b811494f2a71e3c6abe3f130b"
+  },
+  "android/app/src/main/kotlin/com/example/my_auto_guide/MainActivity.kt": {
+    "mtime": 1780112638.4706552,
+    "seen": 1786842111.527649,
+    "ast_hash": "16968ea72bb54ad930f69fc1d600cc46",
+    "semantic_hash": "16968ea72bb54ad930f69fc1d600cc46"
+  },
+  "android/build.gradle.kts": {
+    "mtime": 1786131881.6127286,
+    "seen": 1786842111.527649,
+    "ast_hash": "f34426598d041ad3291bea9777a219f9",
+    "semantic_hash": "f34426598d041ad3291bea9777a219f9"
+  },
+  "android/settings.gradle.kts": {
+    "mtime": 1786131642.6524885,
+    "seen": 1786842111.527649,
+    "ast_hash": "d86b4ec0a4ed83f0e2255061523b3160",
+    "semantic_hash": "d86b4ec0a4ed83f0e2255061523b3160"
+  },
+  "ios/RunnerTests/RunnerTests.swift": {
+    "mtime": 1780112640.9338307,
+    "seen": 1786842111.527649,
+    "ast_hash": "24e5d095048eb86c30423f4e04b6e57b",
+    "semantic_hash": "24e5d095048eb86c30423f4e04b6e57b"
+  },
+  "ios/RunnerWidget/RunnerWidget.swift": {
+    "mtime": 1784251655.785429,
+    "seen": 1786842111.527649,
+    "ast_hash": "8cc9cf5c01f594deadb75afc93be45a9",
+    "semantic_hash": "8cc9cf5c01f594deadb75afc93be45a9"
+  },
+  "ios/Runner/AppDelegate.swift": {
+    "mtime": 1780112640.9086473,
+    "seen": 1786842111.527649,
+    "ast_hash": "e277c49e98c9f80e9e71c0524a5cb60f",
+    "semantic_hash": "e277c49e98c9f80e9e71c0524a5cb60f"
+  },
+  "ios/Runner/Runner-Bridging-Header.h": {
+    "mtime": 1780112640.9332988,
+    "seen": 1786842111.527649,
+    "ast_hash": "7ad7b5cea096132de13ba526b2b9efbe",
+    "semantic_hash": "7ad7b5cea096132de13ba526b2b9efbe"
+  },
+  "ios/add_widget_extension.rb": {
+    "mtime": 1784253640.2566094,
+    "seen": 1786842111.527649,
+    "ast_hash": "a93620ff2a336e91a058e201f8ddb889",
+    "semantic_hash": "a93620ff2a336e91a058e201f8ddb889"
+  },
+  "lib/core/logic/app_widget_logic.dart": {
+    "mtime": 1780112640.9349263,
+    "seen": 1786842111.527649,
+    "ast_hash": "9ff0dade841af8b70c4e73c0e890c43f",
+    "semantic_hash": "9ff0dade841af8b70c4e73c0e890c43f"
+  },
+  "lib/core/logic/fuel_efficiency_logic.dart": {
+    "mtime": 1780112640.9349263,
+    "seen": 1786842111.527649,
+    "ast_hash": "94c8c792f73de72951d067b5fda557ad",
+    "semantic_hash": "94c8c792f73de72951d067b5fda557ad"
+  },
+  "lib/core/logic/pdf_report_logic.dart": {
+    "mtime": 1780112640.935463,
+    "seen": 1786842111.527649,
+    "ast_hash": "a0b14e5850d5db0b727c5a0158d590f6",
+    "semantic_hash": "a0b14e5850d5db0b727c5a0158d590f6"
+  },
+  "lib/core/logic/performance_guard.dart": {
+    "mtime": 1780112640.9361138,
+    "seen": 1786842111.527649,
+    "ast_hash": "ee3455cf5a84fa0e54646313e85102a7",
+    "semantic_hash": "ee3455cf5a84fa0e54646313e85102a7"
+  },
+  "lib/core/logic/vehicle_ai_logic.dart": {
+    "mtime": 1780112640.9364765,
+    "seen": 1786842111.527649,
+    "ast_hash": "2c06ddc03b405c4e8abf83f5267ea1e7",
+    "semantic_hash": "2c06ddc03b405c4e8abf83f5267ea1e7"
+  },
+  "lib/core/logic/vehicle_expenses_logic.dart": {
+    "mtime": 1786132328.082785,
+    "seen": 1786842111.527649,
+    "ast_hash": "42ac2531b7e910e20b452dd473f329ac",
+    "semantic_hash": "42ac2531b7e910e20b452dd473f329ac"
+  },
+  "lib/core/logic/vehicle_health_logic.dart": {
+    "mtime": 1784247180.5055878,
+    "seen": 1786842111.527649,
+    "ast_hash": "4a5721e2e102415ab41d04e39045ff1b",
+    "semantic_hash": "4a5721e2e102415ab41d04e39045ff1b"
+  },
+  "lib/core/logic/vehicle_performance_logic.dart": {
+    "mtime": 1780112640.9382267,
+    "seen": 1786842111.527649,
+    "ast_hash": "b813771506db72bdcb975e0682c7ad47",
+    "semantic_hash": "b813771506db72bdcb975e0682c7ad47"
+  },
+  "lib/core/providers/auth_provider.dart": {
+    "mtime": 1780112640.9387827,
+    "seen": 1786842111.527649,
+    "ast_hash": "46f7e0d2f3f1e9d0407ebd9bfb1c65d4",
+    "semantic_hash": "46f7e0d2f3f1e9d0407ebd9bfb1c65d4"
+  },
+  "lib/core/providers/vehicle_provider.dart": {
+    "mtime": 1780112640.9387827,
+    "seen": 1786842111.527649,
+    "ast_hash": "d1821c5c33773dab9969c6ca020b143a",
+    "semantic_hash": "d1821c5c33773dab9969c6ca020b143a"
+  },
+  "lib/core/services/ai_bot_service.dart": {
+    "mtime": 1780112640.9397905,
+    "seen": 1786842111.527649,
+    "ast_hash": "adfbd6c6db28f331965f36e38c7f3880",
+    "semantic_hash": "adfbd6c6db28f331965f36e38c7f3880"
+  },
+  "lib/core/services/auth_service.dart": {
+    "mtime": 1784595417.179445,
+    "seen": 1786842111.527649,
+    "ast_hash": "c02526150bdb85ec8ab422dbdddf666f",
+    "semantic_hash": "c02526150bdb85ec8ab422dbdddf666f"
+  },
+  "lib/core/services/background_nav_service.dart": {
+    "mtime": 1786585007.6102898,
+    "seen": 1786842111.527649,
+    "ast_hash": "7c5fe92920e1b3bb79ef976259b72236",
+    "semantic_hash": "7c5fe92920e1b3bb79ef976259b72236"
+  },
+  "lib/core/services/biometric_service.dart": {
+    "mtime": 1780112640.9413054,
+    "seen": 1786842111.527649,
+    "ast_hash": "e4e6e4030d0d24898f4a11b687edb655",
+    "semantic_hash": "e4e6e4030d0d24898f4a11b687edb655"
+  },
+  "lib/core/services/calendar_sync_service.dart": {
+    "mtime": 1784595407.6183524,
+    "seen": 1786842111.527649,
+    "ast_hash": "f0466d009e0eeecb48a3881e5a00b6a8",
+    "semantic_hash": "f0466d009e0eeecb48a3881e5a00b6a8"
+  },
+  "lib/core/services/database.dart": {
+    "mtime": 1780112640.9413054,
+    "seen": 1786842111.527649,
+    "ast_hash": "22c4209e397e296f0d83de088b642c12",
+    "semantic_hash": "22c4209e397e296f0d83de088b642c12"
+  },
+  "lib/core/services/email_service.dart": {
+    "mtime": 1784594768.344592,
+    "seen": 1786842111.527649,
+    "ast_hash": "a6c95c69e7d0d50482475ba34e256955",
+    "semantic_hash": "a6c95c69e7d0d50482475ba34e256955"
+  },
+  "lib/core/services/fuel_tracker_service.dart": {
+    "mtime": 1784595393.557109,
+    "seen": 1786842111.527649,
+    "ast_hash": "7a01bb525eabf38b7c9b9492182b860b",
+    "semantic_hash": "7a01bb525eabf38b7c9b9492182b860b"
+  },
+  "lib/core/services/maintenance_config_service.dart": {
+    "mtime": 1780112640.9423046,
+    "seen": 1786842111.527649,
+    "ast_hash": "16e71989f45d8107b777cceb6c37bcbd",
+    "semantic_hash": "16e71989f45d8107b777cceb6c37bcbd"
+  },
+  "lib/core/services/navigation_service.dart": {
+    "mtime": 1780112640.9423046,
+    "seen": 1786842111.527649,
+    "ast_hash": "7ffbaabe2f20addb357e5e187fefe521",
+    "semantic_hash": "7ffbaabe2f20addb357e5e187fefe521"
+  },
+  "lib/core/services/notification_service.dart": {
+    "mtime": 1784239158.7473624,
+    "seen": 1786842111.527649,
+    "ast_hash": "b74c3b80bb2d2605855ff1f09614a536",
+    "semantic_hash": "b74c3b80bb2d2605855ff1f09614a536"
+  },
+  "lib/core/services/ocr_service.dart": {
+    "mtime": 1780112640.943305,
+    "seen": 1786842111.527649,
+    "ast_hash": "d943457bc84d550f21dcfb7c80d936c7",
+    "semantic_hash": "d943457bc84d550f21dcfb7c80d936c7"
+  },
+  "lib/core/services/report_service.dart": {
+    "mtime": 1786132328.082785,
+    "seen": 1786842111.527649,
+    "ast_hash": "9f8f4736d521cc74328fbe60c6884307",
+    "semantic_hash": "9f8f4736d521cc74328fbe60c6884307"
+  },
+  "lib/core/services/supabase_service.dart": {
+    "mtime": 1784565714.5442095,
+    "seen": 1786842111.527649,
+    "ast_hash": "e21ce703dea6752fef131e61d08698b0",
+    "semantic_hash": "e21ce703dea6752fef131e61d08698b0"
+  },
+  "lib/core/services/sync_service.dart": {
+    "mtime": 1780112640.9443047,
+    "seen": 1786842111.527649,
+    "ast_hash": "3e5722139853cac62fdd1d105fdd59a4",
+    "semantic_hash": "3e5722139853cac62fdd1d105fdd59a4"
+  },
+  "lib/core/services/vehicle_catalog_service.dart": {
+    "mtime": 1780112640.9443047,
+    "seen": 1786842111.527649,
+    "ast_hash": "485f942c9e360fcff27f3218e3cdd12a",
+    "semantic_hash": "485f942c9e360fcff27f3218e3cdd12a"
+  },
+  "lib/core/services/vehicle_pdf_report_service.dart": {
+    "mtime": 1786132328.0938115,
+    "seen": 1786842111.527649,
+    "ast_hash": "d1a42608352e154a90753f5ede9cb307",
+    "semantic_hash": "d1a42608352e154a90753f5ede9cb307"
+  },
+  "lib/core/services/vehicle_storage_service.dart": {
+    "mtime": 1784593191.1699798,
+    "seen": 1786842111.527649,
+    "ast_hash": "55905be41e89fff9b86ca2ed7960e02f",
+    "semantic_hash": "55905be41e89fff9b86ca2ed7960e02f"
+  },
+  "lib/core/theme/brand_theme.dart": {
+    "mtime": 1780112640.945305,
+    "seen": 1786842111.527649,
+    "ast_hash": "0cd2398a6603e433e261f1383c718777",
+    "semantic_hash": "0cd2398a6603e433e261f1383c718777"
+  },
+  "lib/core/utils/formatters.dart": {
+    "mtime": 1786132328.0948248,
+    "seen": 1786842111.527649,
+    "ast_hash": "4236025975b11447247548ed317cc9c1",
+    "semantic_hash": "4236025975b11447247548ed317cc9c1"
+  },
+  "lib/features/ai_bot/presentation/ai_chat_screen.dart": {
+    "mtime": 1780112640.9463055,
+    "seen": 1786842111.527649,
+    "ast_hash": "d59927ef95c8fb8754afbc82b7861897",
+    "semantic_hash": "d59927ef95c8fb8754afbc82b7861897"
+  },
+  "lib/features/auth/login_screen.dart": {
+    "mtime": 1786132328.0948248,
+    "seen": 1786842111.527649,
+    "ast_hash": "0845281cb306ae0a96fadf188465706e",
+    "semantic_hash": "0845281cb306ae0a96fadf188465706e"
+  },
+  "lib/features/auth/registro_screen.dart": {
+    "mtime": 1786132328.096842,
+    "seen": 1786842111.527649,
+    "ast_hash": "e12f4cd96139705d9a8c544a8d456163",
+    "semantic_hash": "e12f4cd96139705d9a8c544a8d456163"
+  },
+  "lib/features/expenses/domain/models/fuel_log_model.dart": {
+    "mtime": 1784595386.7646523,
+    "seen": 1786842111.527649,
+    "ast_hash": "4879d2bab0f1191865c4dc892e4b9598",
+    "semantic_hash": "4879d2bab0f1191865c4dc892e4b9598"
+  },
+  "lib/features/expenses/presentation/bitacora_tanqueo_screen.dart": {
+    "mtime": 1786132328.1407611,
+    "seen": 1786842111.527649,
+    "ast_hash": "1806ac0052bd84fcd82a5ea30626503e",
+    "semantic_hash": "1806ac0052bd84fcd82a5ea30626503e"
+  },
+  "lib/features/expenses/presentation/gastos_screen.dart": {
+    "mtime": 1780112640.948304,
+    "seen": 1786842111.527649,
+    "ast_hash": "eaa09b27920857309f1f43541a67dc49",
+    "semantic_hash": "eaa09b27920857309f1f43541a67dc49"
+  },
+  "lib/features/guides/guia.dart": {
+    "mtime": 1786132328.142515,
+    "seen": 1786842111.527649,
+    "ast_hash": "34d1c7fbd888338c0d7f68eb430bc0a7",
+    "semantic_hash": "34d1c7fbd888338c0d7f68eb430bc0a7"
+  },
+  "lib/features/marketplace/presentation/marketplace_talleres_screen.dart": {
+    "mtime": 1780112640.950811,
+    "seen": 1786842111.527649,
+    "ast_hash": "3154e82a9f77592872ae87fb9e1420bb",
+    "semantic_hash": "3154e82a9f77592872ae87fb9e1420bb"
+  },
+  "lib/features/navigation/domain/models/navigation_telemetry.dart": {
+    "mtime": 1780112640.95182,
+    "seen": 1786842111.527649,
+    "ast_hash": "e3ecc35eb50bfb75fbfac3de9731e76c",
+    "semantic_hash": "e3ecc35eb50bfb75fbfac3de9731e76c"
+  },
+  "lib/features/navigation/logic/telemetry_calculator.dart": {
+    "mtime": 1784588433.7698472,
+    "seen": 1786842111.527649,
+    "ast_hash": "33422636fcfc5676859188fb14faad5d",
+    "semantic_hash": "33422636fcfc5676859188fb14faad5d"
+  },
+  "lib/features/navigation/presentation/controllers/navigation_controller.dart": {
+    "mtime": 1786584986.442595,
+    "seen": 1786842111.527649,
+    "ast_hash": "c353ba12b426fa16b7d1ae41faf7ca79",
+    "semantic_hash": "c353ba12b426fa16b7d1ae41faf7ca79"
+  },
+  "lib/features/navigation/presentation/historial_rutas_screen.dart": {
+    "mtime": 1780112640.9538531,
+    "seen": 1786842111.527649,
+    "ast_hash": "47172d17c0fcc8ef62cc31b42ab32f28",
+    "semantic_hash": "47172d17c0fcc8ef62cc31b42ab32f28"
+  },
+  "lib/features/navigation/presentation/widgets/navigation_widgets.dart": {
+    "mtime": 1780112640.9543614,
+    "seen": 1786842111.527649,
+    "ast_hash": "d38b630c71221d7cde309a82f1cff2bf",
+    "semantic_hash": "d38b630c71221d7cde309a82f1cff2bf"
+  },
+  "lib/features/navigation/rutas_screen.dart": {
+    "mtime": 1786584993.2826467,
+    "seen": 1786842111.527649,
+    "ast_hash": "877b498c7c8677b64cbac504d31203ba",
+    "semantic_hash": "877b498c7c8677b64cbac504d31203ba"
+  },
+  "lib/features/vehicles/domain/models/maintenance_prediction.dart": {
+    "mtime": 1780112640.9564915,
+    "seen": 1786842111.527649,
+    "ast_hash": "bced11479285070e2f8746dedbddc14f",
+    "semantic_hash": "bced11479285070e2f8746dedbddc14f"
+  },
+  "lib/features/vehicles/domain/models/vehicle_analytics.dart": {
+    "mtime": 1780112640.9570467,
+    "seen": 1786842111.527649,
+    "ast_hash": "69e776c6cff267659a3edd83c738084f",
+    "semantic_hash": "69e776c6cff267659a3edd83c738084f"
+  },
+  "lib/features/vehicles/domain/models/weekly_stats.dart": {
+    "mtime": 1780112640.9570467,
+    "seen": 1786842111.527649,
+    "ast_hash": "f735f7cc995700abaa7dded56f1340a8",
+    "semantic_hash": "f735f7cc995700abaa7dded56f1340a8"
+  },
+  "lib/features/vehicles/presentation/Agregar_carro.dart": {
+    "mtime": 1786132328.1465409,
+    "seen": 1786842111.527649,
+    "ast_hash": "782d7c2d8853b3342b956eec646b984c",
+    "semantic_hash": "782d7c2d8853b3342b956eec646b984c"
+  },
+  "lib/features/vehicles/presentation/Agregar_vehiculo.dart": {
+    "mtime": 1786132328.1465409,
+    "seen": 1786842111.527649,
+    "ast_hash": "eb9a9fcfd046e16d100d7527ebd99298",
+    "semantic_hash": "eb9a9fcfd046e16d100d7527ebd99298"
+  },
+  "lib/features/vehicles/presentation/captura_360_screen.dart": {
+    "mtime": 1786132328.1596034,
+    "seen": 1786842111.527649,
+    "ast_hash": "f50fa81e4cb91b3c705d86227b0a8808",
+    "semantic_hash": "f50fa81e4cb91b3c705d86227b0a8808"
+  },
+  "lib/features/vehicles/presentation/inicio_app.dart": {
+    "mtime": 1786132328.1596034,
+    "seen": 1786842111.527649,
+    "ast_hash": "b837522da0cca0b1b4a3938d6d0a9ae0",
+    "semantic_hash": "b837522da0cca0b1b4a3938d6d0a9ae0"
+  },
+  "lib/features/vehicles/presentation/parametrizacion_mantenimientos.dart": {
+    "mtime": 1786132328.1596034,
+    "seen": 1786842111.527649,
+    "ast_hash": "b13be704fba8f47c3affdc8e011530b4",
+    "semantic_hash": "b13be704fba8f47c3affdc8e011530b4"
+  },
+  "lib/features/vehicles/presentation/widgets/achievements_card.dart": {
+    "mtime": 1784252284.3690503,
+    "seen": 1786842111.527649,
+    "ast_hash": "770a647bc745bb13248521561312e4fa",
+    "semantic_hash": "770a647bc745bb13248521561312e4fa"
+  },
+  "lib/features/vehicles/presentation/widgets/ai_insights_panel.dart": {
+    "mtime": 1780112640.9603095,
+    "seen": 1786842111.527649,
+    "ast_hash": "43d4fef9384fbf48b9b96714cc0fff90",
+    "semantic_hash": "43d4fef9384fbf48b9b96714cc0fff90"
+  },
+  "lib/features/vehicles/presentation/widgets/dashboard_widgets.dart": {
+    "mtime": 1784590171.6817281,
+    "seen": 1786842111.527649,
+    "ast_hash": "86c0a1b24e0c2ab4bcf4942b81407b81",
+    "semantic_hash": "86c0a1b24e0c2ab4bcf4942b81407b81"
+  },
+  "lib/features/vehicles/presentation/widgets/proactive_predictions_card.dart": {
+    "mtime": 1780112640.9613776,
+    "seen": 1786842111.527649,
+    "ast_hash": "b5a6965d561a826957c6f871f0101c7a",
+    "semantic_hash": "b5a6965d561a826957c6f871f0101c7a"
+  },
+  "lib/features/vehicles/presentation/widgets/vehicle_registration_view.dart": {
+    "mtime": 1786132328.171142,
+    "seen": 1786842111.527649,
+    "ast_hash": "9785dbe28c49f49b81f1f9e8eb560458",
+    "semantic_hash": "9785dbe28c49f49b81f1f9e8eb560458"
+  },
+  "lib/features/vehicles/presentation/widgets/weekly_insight_card.dart": {
+    "mtime": 1786587943.9770224,
+    "seen": 1786842111.527649,
+    "ast_hash": "1dd2eab20548167d12f8be156d886880",
+    "semantic_hash": "1dd2eab20548167d12f8be156d886880"
+  },
+  "lib/l10n/app_localizations.dart": {
+    "mtime": 1780112640.9629653,
+    "seen": 1786842111.527649,
+    "ast_hash": "a616361d815f82b72fe4352e6610826d",
+    "semantic_hash": "a616361d815f82b72fe4352e6610826d"
+  },
+  "lib/l10n/app_localizations_en.dart": {
+    "mtime": 1780112640.9629653,
+    "seen": 1786842111.527649,
+    "ast_hash": "d8a725e27606525ae79712aa458ce995",
+    "semantic_hash": "d8a725e27606525ae79712aa458ce995"
+  },
+  "lib/l10n/app_localizations_es.dart": {
+    "mtime": 1780112640.9634929,
+    "seen": 1786842111.527649,
+    "ast_hash": "af946a069201e0774910435f349166c5",
+    "semantic_hash": "af946a069201e0774910435f349166c5"
+  },
+  "lib/main.dart": {
+    "mtime": 1786129445.4124234,
+    "seen": 1786842111.527649,
+    "ast_hash": "530cec52e47d487f27cf1959a39c298c",
+    "semantic_hash": "530cec52e47d487f27cf1959a39c298c"
+  },
+  "lib/shared/widgets/app_snack_bar.dart": {
+    "mtime": 1786132328.171142,
+    "seen": 1786842111.527649,
+    "ast_hash": "cc800099145da131cdeec71d29a87f28",
+    "semantic_hash": "cc800099145da131cdeec71d29a87f28"
+  },
+  "lib/shared/widgets/glass_text_field.dart": {
+    "mtime": 1786585850.297778,
+    "seen": 1786842111.527649,
+    "ast_hash": "10bc504e4cf83c25fb713b67625034ed",
+    "semantic_hash": "10bc504e4cf83c25fb713b67625034ed"
+  },
+  "lib/shared/widgets/liquid_glass_fab.dart": {
+    "mtime": 1786586484.367551,
+    "seen": 1786842111.527649,
+    "ast_hash": "3a50111c3b8dbbb555e2086f0854db15",
+    "semantic_hash": "3a50111c3b8dbbb555e2086f0854db15"
+  },
+  "lib/shared/widgets/runt_webview.dart": {
+    "mtime": 1786587472.5124407,
+    "seen": 1786842111.527649,
+    "ast_hash": "b2125ccf8c9a13e05a0f1f158f8df2b3",
+    "semantic_hash": "b2125ccf8c9a13e05a0f1f158f8df2b3"
+  },
+  "lib/shared/widgets/simit_webview.dart": {
+    "mtime": 1786586225.1280146,
+    "seen": 1786842111.527649,
+    "ast_hash": "fe1ed70d005643902e1af1b3ae603dec",
+    "semantic_hash": "fe1ed70d005643902e1af1b3ae603dec"
+  },
+  "lib/test_yt2.dart": {
+    "mtime": 1780112640.9634929,
+    "seen": 1786842111.527649,
+    "ast_hash": "93a3a00ae9d1c745da0a0c157cde0331",
+    "semantic_hash": "93a3a00ae9d1c745da0a0c157cde0331"
+  },
+  "linux/flutter/generated_plugin_registrant.cc": {
+    "mtime": 1786585615.0487006,
+    "seen": 1786842111.527649,
+    "ast_hash": "f3bcb835af916c3a48d7c13edc302434",
+    "semantic_hash": "f3bcb835af916c3a48d7c13edc302434"
+  },
+  "linux/flutter/generated_plugin_registrant.h": {
+    "mtime": 1784248999.394587,
+    "seen": 1786842111.527649,
+    "ast_hash": "d295462c9da9f7fef22dc86c34492318",
+    "semantic_hash": "d295462c9da9f7fef22dc86c34492318"
+  },
+  "linux/runner/main.cc": {
+    "mtime": 1780112640.9681518,
+    "seen": 1786842111.527649,
+    "ast_hash": "539395bcd63dba20afed0838d136189f",
+    "semantic_hash": "539395bcd63dba20afed0838d136189f"
+  },
+  "linux/runner/my_application.cc": {
+    "mtime": 1780112640.9681518,
+    "seen": 1786842111.527649,
+    "ast_hash": "e98f927fb44b6593a858519811674366",
+    "semantic_hash": "e98f927fb44b6593a858519811674366"
+  },
+  "linux/runner/my_application.h": {
+    "mtime": 1780112640.969163,
+    "seen": 1786842111.527649,
+    "ast_hash": "f6b37d58752c8671078b6f660e33e8c1",
+    "semantic_hash": "f6b37d58752c8671078b6f660e33e8c1"
+  },
+  "macos/Flutter/GeneratedPluginRegistrant.swift": {
+    "mtime": 1786585615.0735698,
+    "seen": 1786842111.527649,
+    "ast_hash": "75d792c95de4cbd4d1690c4aafa097f1",
+    "semantic_hash": "75d792c95de4cbd4d1690c4aafa097f1"
+  },
+  "macos/RunnerTests/RunnerTests.swift": {
+    "mtime": 1780112640.9849339,
+    "seen": 1786842111.527649,
+    "ast_hash": "8059f5d27a19c556eeafb49b3f9b7bdd",
+    "semantic_hash": "8059f5d27a19c556eeafb49b3f9b7bdd"
+  },
+  "macos/Runner/AppDelegate.swift": {
+    "mtime": 1780112640.9743445,
+    "seen": 1786842111.527649,
+    "ast_hash": "4b52e0b89ebfef9baf45b04548c463d6",
+    "semantic_hash": "4b52e0b89ebfef9baf45b04548c463d6"
+  },
+  "macos/Runner/MainFlutterWindow.swift": {
+    "mtime": 1780112640.9843879,
+    "seen": 1786842111.527649,
+    "ast_hash": "93c22dae2d93f3dc1402e121901f582b",
+    "semantic_hash": "93c22dae2d93f3dc1402e121901f582b"
+  },
+  "replace_opacity.dart": {
+    "mtime": 1786588565.405865,
+    "seen": 1786842111.527649,
+    "ast_hash": "d6ad25d0cadd071efdd018d09ea3f4e6",
+    "semantic_hash": "d6ad25d0cadd071efdd018d09ea3f4e6"
+  },
+  "test/auth_provider_test.dart": {
+    "mtime": 1786132328.1746683,
+    "seen": 1786842111.527649,
+    "ast_hash": "66d49771b3b27722fd938be993ff8492",
+    "semantic_hash": "66d49771b3b27722fd938be993ff8492"
+  },
+  "test/core/logic/fuel_efficiency_logic_test.dart": {
+    "mtime": 1786132328.1746683,
+    "seen": 1786842111.527649,
+    "ast_hash": "ffea759c9339c9bbaf13794f4a5c104b",
+    "semantic_hash": "ffea759c9339c9bbaf13794f4a5c104b"
+  },
+  "test/core/logic/vehicle_ai_logic_test.dart": {
+    "mtime": 1786132328.1766791,
+    "seen": 1786842111.527649,
+    "ast_hash": "a070e239a4a93564b5fc7e9f00e9f90c",
+    "semantic_hash": "a070e239a4a93564b5fc7e9f00e9f90c"
+  },
+  "test/core/logic/vehicle_expenses_logic_test.dart": {
+    "mtime": 1786132328.1766791,
+    "seen": 1786842111.527649,
+    "ast_hash": "3061f5e93c82e108352684a12ddc7ff2",
+    "semantic_hash": "3061f5e93c82e108352684a12ddc7ff2"
+  },
+  "test/core/logic/vehicle_health_logic_test.dart": {
+    "mtime": 1786132328.1766791,
+    "seen": 1786842111.527649,
+    "ast_hash": "b4f144764bd15f27282e4e305043deb9",
+    "semantic_hash": "b4f144764bd15f27282e4e305043deb9"
+  },
+  "test/core/logic/vehicle_performance_logic_test.dart": {
+    "mtime": 1786132328.178934,
+    "seen": 1786842111.527649,
+    "ast_hash": "58186790009a0811552e98cc44f2f877",
+    "semantic_hash": "58186790009a0811552e98cc44f2f877"
+  },
+  "test/features/expenses/domain/models/fuel_log_model_test.dart": {
+    "mtime": 1786132328.178934,
+    "seen": 1786842111.527649,
+    "ast_hash": "fbfa30b649fe5a95b2cf1d92da0c279c",
+    "semantic_hash": "fbfa30b649fe5a95b2cf1d92da0c279c"
+  },
+  "test/features/navigation/domain/models/navigation_telemetry_test.dart": {
+    "mtime": 1786585205.9139273,
+    "seen": 1786842111.527649,
+    "ast_hash": "a450593d6c21c822ad2a56739dd63dc1",
+    "semantic_hash": "a450593d6c21c822ad2a56739dd63dc1"
+  },
+  "test/features/navigation/logic/telemetry_calculator_test.dart": {
+    "mtime": 1786585211.6307397,
+    "seen": 1786842111.527649,
+    "ast_hash": "cdce40ca55d29c778700f98c6d0a55e8",
+    "semantic_hash": "cdce40ca55d29c778700f98c6d0a55e8"
+  },
+  "test/features/vehicles/domain/models/maintenance_prediction_test.dart": {
+    "mtime": 1786132328.1842322,
+    "seen": 1786842111.527649,
+    "ast_hash": "fcc703a5bd115269d8aa9f83162f7fc8",
+    "semantic_hash": "fcc703a5bd115269d8aa9f83162f7fc8"
+  },
+  "test/features/vehicles/domain/models/vehicle_analytics_test.dart": {
+    "mtime": 1786132328.1842322,
+    "seen": 1786842111.527649,
+    "ast_hash": "30362373a8a313a80cb44b3af84f7229",
+    "semantic_hash": "30362373a8a313a80cb44b3af84f7229"
+  },
+  "test/features/vehicles/domain/models/weekly_stats_test.dart": {
+    "mtime": 1786132328.1862454,
+    "seen": 1786842111.527649,
+    "ast_hash": "bb78087f4b703ae564047cfa7dcd4558",
+    "semantic_hash": "bb78087f4b703ae564047cfa7dcd4558"
+  },
+  "web/manifest.json": {
+    "mtime": 1780112640.9934127,
+    "seen": 1786842111.527649,
+    "ast_hash": "32f12943d3a813ae51ba0179b6b56c02",
+    "semantic_hash": "32f12943d3a813ae51ba0179b6b56c02"
+  },
+  "windows/flutter/generated_plugin_registrant.cc": {
+    "mtime": 1786585615.0576842,
+    "seen": 1786842111.527649,
+    "ast_hash": "70dcc081e91a12481cb62ff021839979",
+    "semantic_hash": "70dcc081e91a12481cb62ff021839979"
+  },
+  "windows/flutter/generated_plugin_registrant.h": {
+    "mtime": 1784248999.4056666,
+    "seen": 1786842111.527649,
+    "ast_hash": "0ea33875f9f8e118f9c2ded03e2e2835",
+    "semantic_hash": "0ea33875f9f8e118f9c2ded03e2e2835"
+  },
+  "windows/runner/flutter_window.cpp": {
+    "mtime": 1780112640.9975505,
+    "seen": 1786842111.527649,
+    "ast_hash": "2f463f9b7da67a2d692a012f9ea85e0c",
+    "semantic_hash": "2f463f9b7da67a2d692a012f9ea85e0c"
+  },
+  "windows/runner/flutter_window.h": {
+    "mtime": 1780112640.9980838,
+    "seen": 1786842111.527649,
+    "ast_hash": "7defcc89d4a26d56e801241d624d48fb",
+    "semantic_hash": "7defcc89d4a26d56e801241d624d48fb"
+  },
+  "windows/runner/main.cpp": {
+    "mtime": 1780112640.9980838,
+    "seen": 1786842111.527649,
+    "ast_hash": "881b9dce2f31e7bebf808cceea59fbd0",
+    "semantic_hash": "881b9dce2f31e7bebf808cceea59fbd0"
+  },
+  "windows/runner/resource.h": {
+    "mtime": 1780112640.99862,
+    "seen": 1786842111.527649,
+    "ast_hash": "1ade5dd15e613479a15e8832ed276f2b",
+    "semantic_hash": "1ade5dd15e613479a15e8832ed276f2b"
+  },
+  "windows/runner/utils.cpp": {
+    "mtime": 1780112641.0002177,
+    "seen": 1786842111.527649,
+    "ast_hash": "432461b09d862a2f8dadf380ff0e34e5",
+    "semantic_hash": "432461b09d862a2f8dadf380ff0e34e5"
+  },
+  "windows/runner/utils.h": {
+    "mtime": 1780112641.0007513,
+    "seen": 1786842111.527649,
+    "ast_hash": "fd81e143f5614eb6fd75efe539002853",
+    "semantic_hash": "fd81e143f5614eb6fd75efe539002853"
+  },
+  "windows/runner/win32_window.cpp": {
+    "mtime": 1780112641.001285,
+    "seen": 1786842111.527649,
+    "ast_hash": "571eb8234dbc2661be03aa5f2a4d2fca",
+    "semantic_hash": "571eb8234dbc2661be03aa5f2a4d2fca"
+  },
+  "windows/runner/win32_window.h": {
+    "mtime": 1780112641.001285,
+    "seen": 1786842111.527649,
+    "ast_hash": "7569387d58711ab975940f4df3b4bcda",
+    "semantic_hash": "7569387d58711ab975940f4df3b4bcda"
+  }
+}

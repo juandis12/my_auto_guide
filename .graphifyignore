@@ -1,0 +1,42 @@
+# Build & output directories
+build/
+build_old/
+build_prod/
+dist/
+.dart_tool/
+.pub-cache/
+.pub/
+.flutter-plugins-dependencies
+
+# Assets with bundled minified web code
+assets/
+
+# Native build artifacts
+android/.gradle/
+android/build/
+android/app/build/
+ios/Pods/
+ios/.symlinks/
+ios/Runner.xcworkspace/
+ios/Runner.xcodeproj/project.xcworkspace/
+
+# Binaries and heavy assets
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.ico
+*.pdf
+*.zip
+*.tar.gz
+*.exe
+*.dll
+*.so
+*.dylib
+*.apk
+*.aab
+*.ipa
+*.avif
+*.js
+*.html
+*.css

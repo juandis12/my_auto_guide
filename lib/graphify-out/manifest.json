@@ -1,0 +1,410 @@
+{
+  "core/logic/app_widget_logic.dart": {
+    "mtime": 1780112640.9349263,
+    "seen": 1786842031.988579,
+    "ast_hash": "9ff0dade841af8b70c4e73c0e890c43f",
+    "semantic_hash": "9ff0dade841af8b70c4e73c0e890c43f"
+  },
+  "core/logic/fuel_efficiency_logic.dart": {
+    "mtime": 1780112640.9349263,
+    "seen": 1786842031.988579,
+    "ast_hash": "94c8c792f73de72951d067b5fda557ad",
+    "semantic_hash": "94c8c792f73de72951d067b5fda557ad"
+  },
+  "core/logic/pdf_report_logic.dart": {
+    "mtime": 1780112640.935463,
+    "seen": 1786842031.988579,
+    "ast_hash": "a0b14e5850d5db0b727c5a0158d590f6",
+    "semantic_hash": "a0b14e5850d5db0b727c5a0158d590f6"
+  },
+  "core/logic/performance_guard.dart": {
+    "mtime": 1780112640.9361138,
+    "seen": 1786842031.988579,
+    "ast_hash": "ee3455cf5a84fa0e54646313e85102a7",
+    "semantic_hash": "ee3455cf5a84fa0e54646313e85102a7"
+  },
+  "core/logic/vehicle_ai_logic.dart": {
+    "mtime": 1780112640.9364765,
+    "seen": 1786842031.988579,
+    "ast_hash": "2c06ddc03b405c4e8abf83f5267ea1e7",
+    "semantic_hash": "2c06ddc03b405c4e8abf83f5267ea1e7"
+  },
+  "core/logic/vehicle_expenses_logic.dart": {
+    "mtime": 1786132328.082785,
+    "seen": 1786842031.988579,
+    "ast_hash": "42ac2531b7e910e20b452dd473f329ac",
+    "semantic_hash": "42ac2531b7e910e20b452dd473f329ac"
+  },
+  "core/logic/vehicle_health_logic.dart": {
+    "mtime": 1784247180.5055878,
+    "seen": 1786842031.988579,
+    "ast_hash": "4a5721e2e102415ab41d04e39045ff1b",
+    "semantic_hash": "4a5721e2e102415ab41d04e39045ff1b"
+  },
+  "core/logic/vehicle_performance_logic.dart": {
+    "mtime": 1780112640.9382267,
+    "seen": 1786842031.988579,
+    "ast_hash": "b813771506db72bdcb975e0682c7ad47",
+    "semantic_hash": "b813771506db72bdcb975e0682c7ad47"
+  },
+  "core/providers/auth_provider.dart": {
+    "mtime": 1780112640.9387827,
+    "seen": 1786842031.988579,
+    "ast_hash": "46f7e0d2f3f1e9d0407ebd9bfb1c65d4",
+    "semantic_hash": "46f7e0d2f3f1e9d0407ebd9bfb1c65d4"
+  },
+  "core/providers/vehicle_provider.dart": {
+    "mtime": 1780112640.9387827,
+    "seen": 1786842031.988579,
+    "ast_hash": "d1821c5c33773dab9969c6ca020b143a",
+    "semantic_hash": "d1821c5c33773dab9969c6ca020b143a"
+  },
+  "core/services/ai_bot_service.dart": {
+    "mtime": 1780112640.9397905,
+    "seen": 1786842031.988579,
+    "ast_hash": "adfbd6c6db28f331965f36e38c7f3880",
+    "semantic_hash": "adfbd6c6db28f331965f36e38c7f3880"
+  },
+  "core/services/auth_service.dart": {
+    "mtime": 1784595417.179445,
+    "seen": 1786842031.988579,
+    "ast_hash": "c02526150bdb85ec8ab422dbdddf666f",
+    "semantic_hash": "c02526150bdb85ec8ab422dbdddf666f"
+  },
+  "core/services/background_nav_service.dart": {
+    "mtime": 1786585007.6102898,
+    "seen": 1786842031.988579,
+    "ast_hash": "7c5fe92920e1b3bb79ef976259b72236",
+    "semantic_hash": "7c5fe92920e1b3bb79ef976259b72236"
+  },
+  "core/services/biometric_service.dart": {
+    "mtime": 1780112640.9413054,
+    "seen": 1786842031.988579,
+    "ast_hash": "e4e6e4030d0d24898f4a11b687edb655",
+    "semantic_hash": "e4e6e4030d0d24898f4a11b687edb655"
+  },
+  "core/services/calendar_sync_service.dart": {
+    "mtime": 1784595407.6183524,
+    "seen": 1786842031.988579,
+    "ast_hash": "f0466d009e0eeecb48a3881e5a00b6a8",
+    "semantic_hash": "f0466d009e0eeecb48a3881e5a00b6a8"
+  },
+  "core/services/database.dart": {
+    "mtime": 1780112640.9413054,
+    "seen": 1786842031.988579,
+    "ast_hash": "22c4209e397e296f0d83de088b642c12",
+    "semantic_hash": "22c4209e397e296f0d83de088b642c12"
+  },
+  "core/services/email_service.dart": {
+    "mtime": 1784594768.344592,
+    "seen": 1786842031.988579,
+    "ast_hash": "a6c95c69e7d0d50482475ba34e256955",
+    "semantic_hash": "a6c95c69e7d0d50482475ba34e256955"
+  },
+  "core/services/fuel_tracker_service.dart": {
+    "mtime": 1784595393.557109,
+    "seen": 1786842031.988579,
+    "ast_hash": "7a01bb525eabf38b7c9b9492182b860b",
+    "semantic_hash": "7a01bb525eabf38b7c9b9492182b860b"
+  },
+  "core/services/maintenance_config_service.dart": {
+    "mtime": 1780112640.9423046,
+    "seen": 1786842031.988579,
+    "ast_hash": "16e71989f45d8107b777cceb6c37bcbd",
+    "semantic_hash": "16e71989f45d8107b777cceb6c37bcbd"
+  },
+  "core/services/navigation_service.dart": {
+    "mtime": 1780112640.9423046,
+    "seen": 1786842031.988579,
+    "ast_hash": "7ffbaabe2f20addb357e5e187fefe521",
+    "semantic_hash": "7ffbaabe2f20addb357e5e187fefe521"
+  },
+  "core/services/notification_service.dart": {
+    "mtime": 1784239158.7473624,
+    "seen": 1786842031.988579,
+    "ast_hash": "b74c3b80bb2d2605855ff1f09614a536",
+    "semantic_hash": "b74c3b80bb2d2605855ff1f09614a536"
+  },
+  "core/services/ocr_service.dart": {
+    "mtime": 1780112640.943305,
+    "seen": 1786842031.988579,
+    "ast_hash": "d943457bc84d550f21dcfb7c80d936c7",
+    "semantic_hash": "d943457bc84d550f21dcfb7c80d936c7"
+  },
+  "core/services/report_service.dart": {
+    "mtime": 1786132328.082785,
+    "seen": 1786842031.988579,
+    "ast_hash": "9f8f4736d521cc74328fbe60c6884307",
+    "semantic_hash": "9f8f4736d521cc74328fbe60c6884307"
+  },
+  "core/services/supabase_service.dart": {
+    "mtime": 1784565714.5442095,
+    "seen": 1786842031.988579,
+    "ast_hash": "e21ce703dea6752fef131e61d08698b0",
+    "semantic_hash": "e21ce703dea6752fef131e61d08698b0"
+  },
+  "core/services/sync_service.dart": {
+    "mtime": 1780112640.9443047,
+    "seen": 1786842031.988579,
+    "ast_hash": "3e5722139853cac62fdd1d105fdd59a4",
+    "semantic_hash": "3e5722139853cac62fdd1d105fdd59a4"
+  },
+  "core/services/vehicle_catalog_service.dart": {
+    "mtime": 1780112640.9443047,
+    "seen": 1786842031.988579,
+    "ast_hash": "485f942c9e360fcff27f3218e3cdd12a",
+    "semantic_hash": "485f942c9e360fcff27f3218e3cdd12a"
+  },
+  "core/services/vehicle_pdf_report_service.dart": {
+    "mtime": 1786132328.0938115,
+    "seen": 1786842031.988579,
+    "ast_hash": "d1a42608352e154a90753f5ede9cb307",
+    "semantic_hash": "d1a42608352e154a90753f5ede9cb307"
+  },
+  "core/services/vehicle_storage_service.dart": {
+    "mtime": 1784593191.1699798,
+    "seen": 1786842031.988579,
+    "ast_hash": "55905be41e89fff9b86ca2ed7960e02f",
+    "semantic_hash": "55905be41e89fff9b86ca2ed7960e02f"
+  },
+  "core/theme/brand_theme.dart": {
+    "mtime": 1780112640.945305,
+    "seen": 1786842031.988579,
+    "ast_hash": "0cd2398a6603e433e261f1383c718777",
+    "semantic_hash": "0cd2398a6603e433e261f1383c718777"
+  },
+  "core/utils/formatters.dart": {
+    "mtime": 1786132328.0948248,
+    "seen": 1786842031.988579,
+    "ast_hash": "4236025975b11447247548ed317cc9c1",
+    "semantic_hash": "4236025975b11447247548ed317cc9c1"
+  },
+  "features/ai_bot/presentation/ai_chat_screen.dart": {
+    "mtime": 1780112640.9463055,
+    "seen": 1786842031.988579,
+    "ast_hash": "d59927ef95c8fb8754afbc82b7861897",
+    "semantic_hash": "d59927ef95c8fb8754afbc82b7861897"
+  },
+  "features/auth/login_screen.dart": {
+    "mtime": 1786132328.0948248,
+    "seen": 1786842031.988579,
+    "ast_hash": "0845281cb306ae0a96fadf188465706e",
+    "semantic_hash": "0845281cb306ae0a96fadf188465706e"
+  },
+  "features/auth/registro_screen.dart": {
+    "mtime": 1786132328.096842,
+    "seen": 1786842031.988579,
+    "ast_hash": "e12f4cd96139705d9a8c544a8d456163",
+    "semantic_hash": "e12f4cd96139705d9a8c544a8d456163"
+  },
+  "features/expenses/domain/models/fuel_log_model.dart": {
+    "mtime": 1784595386.7646523,
+    "seen": 1786842031.988579,
+    "ast_hash": "4879d2bab0f1191865c4dc892e4b9598",
+    "semantic_hash": "4879d2bab0f1191865c4dc892e4b9598"
+  },
+  "features/expenses/presentation/bitacora_tanqueo_screen.dart": {
+    "mtime": 1786132328.1407611,
+    "seen": 1786842031.988579,
+    "ast_hash": "1806ac0052bd84fcd82a5ea30626503e",
+    "semantic_hash": "1806ac0052bd84fcd82a5ea30626503e"
+  },
+  "features/expenses/presentation/gastos_screen.dart": {
+    "mtime": 1780112640.948304,
+    "seen": 1786842031.988579,
+    "ast_hash": "eaa09b27920857309f1f43541a67dc49",
+    "semantic_hash": "eaa09b27920857309f1f43541a67dc49"
+  },
+  "features/guides/guia.dart": {
+    "mtime": 1786132328.142515,
+    "seen": 1786842031.988579,
+    "ast_hash": "34d1c7fbd888338c0d7f68eb430bc0a7",
+    "semantic_hash": "34d1c7fbd888338c0d7f68eb430bc0a7"
+  },
+  "features/marketplace/presentation/marketplace_talleres_screen.dart": {
+    "mtime": 1780112640.950811,
+    "seen": 1786842031.988579,
+    "ast_hash": "3154e82a9f77592872ae87fb9e1420bb",
+    "semantic_hash": "3154e82a9f77592872ae87fb9e1420bb"
+  },
+  "features/navigation/domain/models/navigation_telemetry.dart": {
+    "mtime": 1780112640.95182,
+    "seen": 1786842031.988579,
+    "ast_hash": "e3ecc35eb50bfb75fbfac3de9731e76c",
+    "semantic_hash": "e3ecc35eb50bfb75fbfac3de9731e76c"
+  },
+  "features/navigation/logic/telemetry_calculator.dart": {
+    "mtime": 1784588433.7698472,
+    "seen": 1786842031.988579,
+    "ast_hash": "33422636fcfc5676859188fb14faad5d",
+    "semantic_hash": "33422636fcfc5676859188fb14faad5d"
+  },
+  "features/navigation/presentation/controllers/navigation_controller.dart": {
+    "mtime": 1786584986.442595,
+    "seen": 1786842031.988579,
+    "ast_hash": "c353ba12b426fa16b7d1ae41faf7ca79",
+    "semantic_hash": "c353ba12b426fa16b7d1ae41faf7ca79"
+  },
+  "features/navigation/presentation/historial_rutas_screen.dart": {
+    "mtime": 1780112640.9538531,
+    "seen": 1786842031.988579,
+    "ast_hash": "47172d17c0fcc8ef62cc31b42ab32f28",
+    "semantic_hash": "47172d17c0fcc8ef62cc31b42ab32f28"
+  },
+  "features/navigation/presentation/widgets/navigation_widgets.dart": {
+    "mtime": 1780112640.9543614,
+    "seen": 1786842031.988579,
+    "ast_hash": "d38b630c71221d7cde309a82f1cff2bf",
+    "semantic_hash": "d38b630c71221d7cde309a82f1cff2bf"
+  },
+  "features/navigation/rutas_screen.dart": {
+    "mtime": 1786584993.2826467,
+    "seen": 1786842031.988579,
+    "ast_hash": "877b498c7c8677b64cbac504d31203ba",
+    "semantic_hash": "877b498c7c8677b64cbac504d31203ba"
+  },
+  "features/vehicles/domain/models/maintenance_prediction.dart": {
+    "mtime": 1780112640.9564915,
+    "seen": 1786842031.988579,
+    "ast_hash": "bced11479285070e2f8746dedbddc14f",
+    "semantic_hash": "bced11479285070e2f8746dedbddc14f"
+  },
+  "features/vehicles/domain/models/vehicle_analytics.dart": {
+    "mtime": 1780112640.9570467,
+    "seen": 1786842031.988579,
+    "ast_hash": "69e776c6cff267659a3edd83c738084f",
+    "semantic_hash": "69e776c6cff267659a3edd83c738084f"
+  },
+  "features/vehicles/domain/models/weekly_stats.dart": {
+    "mtime": 1780112640.9570467,
+    "seen": 1786842031.988579,
+    "ast_hash": "f735f7cc995700abaa7dded56f1340a8",
+    "semantic_hash": "f735f7cc995700abaa7dded56f1340a8"
+  },
+  "features/vehicles/presentation/Agregar_carro.dart": {
+    "mtime": 1786132328.1465409,
+    "seen": 1786842031.988579,
+    "ast_hash": "782d7c2d8853b3342b956eec646b984c",
+    "semantic_hash": "782d7c2d8853b3342b956eec646b984c"
+  },
+  "features/vehicles/presentation/Agregar_vehiculo.dart": {
+    "mtime": 1786132328.1465409,
+    "seen": 1786842031.988579,
+    "ast_hash": "eb9a9fcfd046e16d100d7527ebd99298",
+    "semantic_hash": "eb9a9fcfd046e16d100d7527ebd99298"
+  },
+  "features/vehicles/presentation/captura_360_screen.dart": {
+    "mtime": 1786132328.1596034,
+    "seen": 1786842031.988579,
+    "ast_hash": "f50fa81e4cb91b3c705d86227b0a8808",
+    "semantic_hash": "f50fa81e4cb91b3c705d86227b0a8808"
+  },
+  "features/vehicles/presentation/inicio_app.dart": {
+    "mtime": 1786132328.1596034,
+    "seen": 1786842031.988579,
+    "ast_hash": "b837522da0cca0b1b4a3938d6d0a9ae0",
+    "semantic_hash": "b837522da0cca0b1b4a3938d6d0a9ae0"
+  },
+  "features/vehicles/presentation/parametrizacion_mantenimientos.dart": {
+    "mtime": 1786132328.1596034,
+    "seen": 1786842031.988579,
+    "ast_hash": "b13be704fba8f47c3affdc8e011530b4",
+    "semantic_hash": "b13be704fba8f47c3affdc8e011530b4"
+  },
+  "features/vehicles/presentation/widgets/achievements_card.dart": {
+    "mtime": 1784252284.3690503,
+    "seen": 1786842031.988579,
+    "ast_hash": "770a647bc745bb13248521561312e4fa",
+    "semantic_hash": "770a647bc745bb13248521561312e4fa"
+  },
+  "features/vehicles/presentation/widgets/ai_insights_panel.dart": {
+    "mtime": 1780112640.9603095,
+    "seen": 1786842031.988579,
+    "ast_hash": "43d4fef9384fbf48b9b96714cc0fff90",
+    "semantic_hash": "43d4fef9384fbf48b9b96714cc0fff90"
+  },
+  "features/vehicles/presentation/widgets/dashboard_widgets.dart": {
+    "mtime": 1784590171.6817281,
+    "seen": 1786842031.988579,
+    "ast_hash": "86c0a1b24e0c2ab4bcf4942b81407b81",
+    "semantic_hash": "86c0a1b24e0c2ab4bcf4942b81407b81"
+  },
+  "features/vehicles/presentation/widgets/proactive_predictions_card.dart": {
+    "mtime": 1780112640.9613776,
+    "seen": 1786842031.988579,
+    "ast_hash": "b5a6965d561a826957c6f871f0101c7a",
+    "semantic_hash": "b5a6965d561a826957c6f871f0101c7a"
+  },
+  "features/vehicles/presentation/widgets/vehicle_registration_view.dart": {
+    "mtime": 1786132328.171142,
+    "seen": 1786842031.988579,
+    "ast_hash": "9785dbe28c49f49b81f1f9e8eb560458",
+    "semantic_hash": "9785dbe28c49f49b81f1f9e8eb560458"
+  },
+  "features/vehicles/presentation/widgets/weekly_insight_card.dart": {
+    "mtime": 1786587943.9770224,
+    "seen": 1786842031.988579,
+    "ast_hash": "1dd2eab20548167d12f8be156d886880",
+    "semantic_hash": "1dd2eab20548167d12f8be156d886880"
+  },
+  "l10n/app_localizations.dart": {
+    "mtime": 1780112640.9629653,
+    "seen": 1786842031.988579,
+    "ast_hash": "a616361d815f82b72fe4352e6610826d",
+    "semantic_hash": "a616361d815f82b72fe4352e6610826d"
+  },
+  "l10n/app_localizations_en.dart": {
+    "mtime": 1780112640.9629653,
+    "seen": 1786842031.988579,
+    "ast_hash": "d8a725e27606525ae79712aa458ce995",
+    "semantic_hash": "d8a725e27606525ae79712aa458ce995"
+  },
+  "l10n/app_localizations_es.dart": {
+    "mtime": 1780112640.9634929,
+    "seen": 1786842031.988579,
+    "ast_hash": "af946a069201e0774910435f349166c5",
+    "semantic_hash": "af946a069201e0774910435f349166c5"
+  },
+  "main.dart": {
+    "mtime": 1786129445.4124234,
+    "seen": 1786842031.988579,
+    "ast_hash": "530cec52e47d487f27cf1959a39c298c",
+    "semantic_hash": "530cec52e47d487f27cf1959a39c298c"
+  },
+  "shared/widgets/app_snack_bar.dart": {
+    "mtime": 1786132328.171142,
+    "seen": 1786842031.988579,
+    "ast_hash": "cc800099145da131cdeec71d29a87f28",
+    "semantic_hash": "cc800099145da131cdeec71d29a87f28"
+  },
+  "shared/widgets/glass_text_field.dart": {
+    "mtime": 1786585850.297778,
+    "seen": 1786842031.988579,
+    "ast_hash": "10bc504e4cf83c25fb713b67625034ed",
+    "semantic_hash": "10bc504e4cf83c25fb713b67625034ed"
+  },
+  "shared/widgets/liquid_glass_fab.dart": {
+    "mtime": 1786586484.367551,
+    "seen": 1786842031.988579,
+    "ast_hash": "3a50111c3b8dbbb555e2086f0854db15",
+    "semantic_hash": "3a50111c3b8dbbb555e2086f0854db15"
+  },
+  "shared/widgets/runt_webview.dart": {
+    "mtime": 1786587472.5124407,
+    "seen": 1786842031.988579,
+    "ast_hash": "b2125ccf8c9a13e05a0f1f158f8df2b3",
+    "semantic_hash": "b2125ccf8c9a13e05a0f1f158f8df2b3"
+  },
+  "shared/widgets/simit_webview.dart": {
+    "mtime": 1786586225.1280146,
+    "seen": 1786842031.988579,
+    "ast_hash": "fe1ed70d005643902e1af1b3ae603dec",
+    "semantic_hash": "fe1ed70d005643902e1af1b3ae603dec"
+  },
+  "test_yt2.dart": {
+    "mtime": 1780112640.9634929,
+    "seen": 1786842031.988579,
+    "ast_hash": "93a3a00ae9d1c745da0a0c157cde0331",
+    "semantic_hash": "93a3a00ae9d1c745da0a0c157cde0331"
+  }
+}
