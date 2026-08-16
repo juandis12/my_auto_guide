@@ -562,7 +562,6 @@
       "agents_skills_vercel_optimize_lib_vercel_normalizewindowsshimtarget",
       "agents_skills_vercel_optimize_lib_vercel_pathexists",
       "agents_skills_vercel_optimize_lib_vercel_redactsensitivetext",
-      "agents_skills_vercel_optimize_lib_vercel_resolvecommandscope",
       "agents_skills_vercel_optimize_lib_vercel_resolvevercelcommand",
       "agents_skills_vercel_optimize_lib_vercel_resolvevercelpackageentry",
       "agents_skills_vercel_optimize_lib_vercel_resolvevercelshimentry",
@@ -1471,8 +1470,8 @@
       "agents_skills_vercel_optimize_lib_deep_dive_simplify",
       "agents_skills_vercel_optimize_lib_deep_dive_spec_generators",
       "agents_skills_vercel_optimize_lib_deep_dive_specsforcandidate",
-      "agents_skills_vercel_optimize_lib_vercel_querymetric",
       "agents_skills_vercel_optimize_lib_vercel_readprojectjson",
+      "agents_skills_vercel_optimize_lib_vercel_resolvecommandscope",
       "agents_skills_vercel_optimize_scripts_deep_dive",
       "agents_skills_vercel_optimize_scripts_deep_dive_log",
       "agents_skills_vercel_optimize_scripts_deep_dive_main",
@@ -1785,7 +1784,8 @@
       "agents_skills_vercel_optimize_lib_throttle_semaphoreaborterror",
       "agents_skills_vercel_optimize_lib_throttle_semaphoreaborterror_constructor",
       "agents_skills_vercel_optimize_lib_throttle_setdailyquotablocked",
-      "agents_skills_vercel_optimize_lib_throttle_utcmidnightafter"
+      "agents_skills_vercel_optimize_lib_throttle_utcmidnightafter",
+      "agents_skills_vercel_optimize_lib_vercel_querymetric"
     ],
     "59": [
       "android_app_src_main_java_com_example_my_auto_guide_appwidgetprovider",
@@ -2721,7 +2721,7 @@
     "7": 0.125,
     "8": 0.057057057057057055,
     "9": 0.05405405405405406,
-    "10": 0.11746031746031746,
+    "10": 0.11932773109243698,
     "11": 0.05714285714285714,
     "12": 0.062388591800356503,
     "13": 0.06439393939393939,
@@ -2769,7 +2769,7 @@
     "55": 0.11764705882352941,
     "56": 0.11764705882352941,
     "57": 0.24166666666666667,
-    "58": 0.16666666666666666,
+    "58": 0.16176470588235295,
     "59": 0.25833333333333336,
     "60": 0.13333333333333333,
     "61": 0.125,
@@ -2972,12 +2972,12 @@
     {
       "type": "bridge_node",
       "question": "Why does `gates` connect `gates/index.mjs` to `lib/render-report.mjs`, `gate-investigations.mjs`, `support-topics.mjs`?",
-      "why": "High betweenness centrality (0.017) - this node is a cross-community bridge."
+      "why": "High betweenness centrality (0.019) - this node is a cross-community bridge."
     },
     {
       "type": "bridge_node",
       "question": "Why does `scanners` connect `gates/index.mjs` to `scanners/index.mjs`, `workspace-resolver.mjs`?",
-      "why": "High betweenness centrality (0.014) - this node is a cross-community bridge."
+      "why": "High betweenness centrality (0.015) - this node is a cross-community bridge."
     },
     {
       "type": "bridge_node",

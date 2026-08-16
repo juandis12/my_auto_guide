@@ -1577,6 +1577,18 @@
       "id": "agents_skills_vercel_optimize_lib_vercel_redactsensitivetext"
     },
     {
+      "label": "resolveCommandScope()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/vercel.mjs",
+      "source_location": "L210",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 10,
+      "norm_label": "resolvecommandscope()",
+      "community_name": "vercel.mjs",
+      "id": "agents_skills_vercel_optimize_lib_vercel_resolvecommandscope"
+    },
+    {
       "label": "resolveVercelCommand()",
       "file_type": "code",
       "source_file": ".agents/skills/vercel-optimize/lib/vercel.mjs",
@@ -6473,6 +6485,18 @@
       "id": "agents_skills_vercel_optimize_lib_deep_dive_specsforcandidate"
     },
     {
+      "label": "queryMetric()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/vercel.mjs",
+      "source_location": "L496",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 43,
+      "norm_label": "querymetric()",
+      "community_name": "scripts/deep-dive.mjs",
+      "id": "agents_skills_vercel_optimize_lib_vercel_querymetric"
+    },
+    {
       "label": "readProjectJson()",
       "file_type": "code",
       "source_file": ".agents/skills/vercel-optimize/lib/vercel.mjs",
@@ -6483,18 +6507,6 @@
       "norm_label": "readprojectjson()",
       "community_name": "scripts/deep-dive.mjs",
       "id": "agents_skills_vercel_optimize_lib_vercel_readprojectjson"
-    },
-    {
-      "label": "resolveCommandScope()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/vercel.mjs",
-      "source_location": "L210",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 43,
-      "norm_label": "resolvecommandscope()",
-      "community_name": "scripts/deep-dive.mjs",
-      "id": "agents_skills_vercel_optimize_lib_vercel_resolvecommandscope"
     },
     {
       "label": "log()",
@@ -7575,18 +7587,6 @@
       "norm_label": "utcmidnightafter()",
       "community_name": "throttle.mjs",
       "id": "agents_skills_vercel_optimize_lib_throttle_utcmidnightafter"
-    },
-    {
-      "label": "queryMetric()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/vercel.mjs",
-      "source_location": "L496",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 58,
-      "norm_label": "querymetric()",
-      "community_name": "throttle.mjs",
-      "id": "agents_skills_vercel_optimize_lib_vercel_querymetric"
     },
     {
       "label": ".onUpdate()",
