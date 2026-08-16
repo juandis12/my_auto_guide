@@ -19,6 +19,18 @@
       "skillPath": "skills/apple-design/SKILL.md",
       "computedHash": "0d19303902efa64eace10e6b183eb29ef3220d424c1a7fd1eafc52adde216932"
     },
+    "continuous-learning": {
+      "source": "affaan-m/ecc",
+      "sourceType": "github",
+      "skillPath": "skills/continuous-learning/SKILL.md",
+      "computedHash": "f3b65ee4a5354d19f8da430ad4151eda99223d741555249996cdabca061b352c"
+    },
+    "deep-agents-memory": {
+      "source": "langchain-ai/langchain-skills",
+      "sourceType": "github",
+      "skillPath": "config/skills/deep-agents-memory/SKILL.md",
+      "computedHash": "cd4f906c303a13bb740ce310a9918bbaac190150fe2e943c5c3ddea010417a69"
+    },
     "deploy-to-vercel": {
       "source": "vercel-labs/agent-skills",
       "sourceType": "github",
@@ -61,6 +73,12 @@
       "skillPath": "skills/ios-application-dev/SKILL.md",
       "computedHash": "be8c6216bbaed2c627da45ae04e01cfb8a9c8b35afc00fdf051d2c978c5e1bcf"
     },
+    "lesson-learned": {
+      "source": "softaworks/agent-toolkit",
+      "sourceType": "github",
+      "skillPath": "skills/lesson-learned/SKILL.md",
+      "computedHash": "58e2a4062f3f113177658ef822dfc52ca10997a41b71098a6ae809b8f5ab316c"
+    },
     "mobile-android-design": {
       "source": "wshobson/agents",
       "sourceType": "github",
@@ -72,6 +90,18 @@
       "sourceType": "github",
       "skillPath": "plugins/ui-design/skills/mobile-ios-design/SKILL.md",
       "computedHash": "30f9f969f4fa664addff529ca3f62352f951cd672e6f10b8a9ea26fb5c55b9b5"
+    },
+    "remember": {
+      "source": "rohitg00/agentmemory",
+      "sourceType": "github",
+      "skillPath": "plugin/skills/remember/SKILL.md",
+      "computedHash": "367f8b564b58b93a02c7c4d99cfce917182b2fe44f6e8096928de25200aa745d"
+    },
+    "self-learning": {
+      "source": "philschmid/self-learning-skill",
+      "sourceType": "github",
+      "skillPath": "skills/self-learning/SKILL.md",
+      "computedHash": "49adf9d6e9027ad37066afa0b7d894b5c59c62bc429b4cc7a914d3617b764861"
     },
     "vercel-cli-with-tokens": {
       "source": "vercel-labs/agent-skills",

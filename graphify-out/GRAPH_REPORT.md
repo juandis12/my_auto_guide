@@ -227,7 +227,7 @@ Nodes (36): ../../../../core/services/vehicle_catalog_service.dart, ../inicio_ap
 
 ### Community 10 - "vercel.mjs"
 Cohesion: 0.12
-Nodes (35): isDailyQuotaExceeded(), baselineStack(), categorizeError(), checkAuth(), checkCliVersion(), checkObservabilityPlusConfiguration(), classifyObservabilityPlusConfiguration(), detectNextCacheComponents() (+27 more)
+Nodes (34): isDailyQuotaExceeded(), baselineStack(), categorizeError(), checkAuth(), checkCliVersion(), checkObservabilityPlusConfiguration(), classifyObservabilityPlusConfiguration(), detectNextCacheComponents() (+26 more)
 
 ### Community 11 - "parametrizacion_mantenimientos.dart"
 Cohesion: 0.06
@@ -359,7 +359,7 @@ Nodes (21): build, _buildRegistrarTextField, canSwitchEmail, confirmPasswordCont
 
 ### Community 43 - "scripts/deep-dive.mjs"
 Cohesion: 0.18
-Nodes (17): escapeODataString(), mergeIntoEvidence(), odataEq(), SCANNER_KINDS, simplify(), SPEC_GENERATORS, specsForCandidate(), queryMetric() (+9 more)
+Nodes (17): escapeODataString(), mergeIntoEvidence(), odataEq(), SCANNER_KINDS, simplify(), SPEC_GENERATORS, specsForCandidate(), readProjectJson() (+9 more)
 
 ### Community 44 - "simit_webview.dart"
 Cohesion: 0.10
@@ -418,8 +418,8 @@ Cohesion: 0.24
 Nodes (15): citationSubset(), inferFrameworkPlaybook(), inferPlaybook(), candidateRefFor(), buildFanoutPlan(), buildManifest(), candidateFamilyKey(), HERE (+7 more)
 
 ### Community 58 - "throttle.mjs"
-Cohesion: 0.17
-Nodes (10): getMetricSemaphore, getMetricThrottle(), isRateLimited(), parsePositiveIntEnv(), resolveConcurrency(), resolveRateLimit(), retryOnRateLimit(), SemaphoreAbortError (+2 more)
+Cohesion: 0.16
+Nodes (11): getMetricSemaphore, getMetricThrottle(), isRateLimited(), parsePositiveIntEnv(), resolveConcurrency(), resolveRateLimit(), retryOnRateLimit(), SemaphoreAbortError (+3 more)
 
 ### Community 59 - "VehicleStatusWidgetProvider.java"
 Cohesion: 0.26
@@ -718,9 +718,9 @@ Nodes (4): ChangeNotifier, AuthProvider, VehicleProvider, NavigationController
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `gates` connect `gates/index.mjs` to `lib/render-report.mjs`, `gate-investigations.mjs`, `support-topics.mjs`?**
-  _High betweenness centrality (0.017) - this node is a cross-community bridge._
+  _High betweenness centrality (0.019) - this node is a cross-community bridge._
 - **Why does `scanners` connect `gates/index.mjs` to `scanners/index.mjs`, `workspace-resolver.mjs`?**
-  _High betweenness centrality (0.014) - this node is a cross-community bridge._
+  _High betweenness centrality (0.015) - this node is a cross-community bridge._
 - **Why does `deriveProjectFacts()` connect `verify-and-regen.mjs` to `investigation-brief.mjs`, `lib/render-report.mjs`?**
   _High betweenness centrality (0.009) - this node is a cross-community bridge._
 - **What connects `Candidate`, `CandidateScope`, `GateMetadata` to the rest of the system?**

@@ -4,7 +4,7 @@
 - cluster-only mode — file stats not available
 
 ## Summary
-- 2415 nodes · 3991 edges · 148 communities (138 shown, 10 thin omitted)
+- 2415 nodes · 3991 edges · 147 communities (137 shown, 10 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 31 edges (avg confidence: 0.69)
 - Token cost: 0 input · 0 output
 
@@ -155,7 +155,6 @@
 - app_widget_logic.dart
 - vehicle_provider.dart
 - ChangeNotifier
-- _RutasScreenState
 
 ## God Nodes (most connected - your core abstractions)
 1. `verifyClaim()` - 42 edges
@@ -184,7 +183,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (148 total, 10 thin omitted)
+## Communities (147 total, 10 thin omitted)
 
 ### Community 0 - "inicio_app.dart"
 Cohesion: 0.02
@@ -208,7 +207,7 @@ Nodes (54): buildPackageLookup(), buildResolver(), DEFAULT_RESOLVE_OPTIONS, dete
 
 ### Community 5 - "rutas_screen.dart"
 Cohesion: 0.05
-Nodes (38): ../../../core/services/navigation_service.dart, _animCtrl, build, _buildBottomPanel, _buildMap, _buscarDestino, _cargarInfoVehiculo, _controller (+30 more)
+Nodes (41): ../../../core/services/navigation_service.dart, _animCtrl, build, _buildBottomPanel, _buildMap, _buscarDestino, _cargarInfoVehiculo, _controller (+33 more)
 
 ### Community 6 - "verifyClaim"
 Cohesion: 0.18
@@ -710,10 +709,6 @@ Nodes (8): addVehicle, _isLoading, loadVehicles, _supabaseService, updateVehicle
 Cohesion: 0.50
 Nodes (4): ChangeNotifier, AuthProvider, VehicleProvider, NavigationController
 
-### Community 147 - "_RutasScreenState"
-Cohesion: 0.67
-Nodes (3): RutasScreen, _RutasScreenState, TickerProviderStateMixin
-
 ## Knowledge Gaps
 - **950 isolated node(s):** `Candidate`, `CandidateScope`, `GateMetadata`, `Signals`, `_agendarCalendarioDoc` (+945 more)
   These have ≤1 connection - possible missing edges or undocumented components.
@@ -723,9 +718,11 @@ Nodes (3): RutasScreen, _RutasScreenState, TickerProviderStateMixin
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `gates` connect `gates/index.mjs` to `lib/render-report.mjs`, `gate-investigations.mjs`, `support-topics.mjs`?**
-  _High betweenness centrality (0.018) - this node is a cross-community bridge._
+  _High betweenness centrality (0.017) - this node is a cross-community bridge._
 - **Why does `scanners` connect `gates/index.mjs` to `scanners/index.mjs`, `workspace-resolver.mjs`?**
   _High betweenness centrality (0.014) - this node is a cross-community bridge._
+- **Why does `deriveProjectFacts()` connect `verify-and-regen.mjs` to `investigation-brief.mjs`, `lib/render-report.mjs`?**
+  _High betweenness centrality (0.009) - this node is a cross-community bridge._
 - **What connects `Candidate`, `CandidateScope`, `GateMetadata` to the rest of the system?**
   _950 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `inicio_app.dart` be split into smaller, more focused modules?**
@@ -734,5 +731,3 @@ _Questions this graph is uniquely positioned to answer:_
   _Cohesion score 0.05225885225885226 - nodes in this community are weakly interconnected._
 - **Should `dedup-recs.mjs` be split into smaller, more focused modules?**
   _Cohesion score 0.07853107344632769 - nodes in this community are weakly interconnected._
-- **Should `sanitizers/index.mjs` be split into smaller, more focused modules?**
-  _Cohesion score 0.0514216575922565 - nodes in this community are weakly interconnected._
