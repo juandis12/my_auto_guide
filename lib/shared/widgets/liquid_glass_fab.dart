@@ -1,9 +1,9 @@
+// =============================================================================
+// liquid_glass_fab.dart — BOTÓN FLOTANTE ESTILO LIQUID GLASS
+// =============================================================================
 import 'dart:ui' show ImageFilter;
 import 'package:flutter/material.dart';
-import '../../core/theme/app_apple_theme.dart';
 
-/// Botón Flotante Estilo Apple HIG Liquid Glass
-/// Utiliza desfoque pesado (sigma: 20) y paleta Medianoche Dinámico
 class LiquidGlassFAB extends StatefulWidget {
   final VoidCallback onTap;
   final IconData icon;
@@ -45,8 +45,7 @@ class _LiquidGlassFABState extends State<LiquidGlassFAB> with SingleTickerProvid
 
     return AnimatedScale(
       scale: _isPressed ? 0.94 : 1.0,
-      duration: const Duration(milliseconds: 120),
-      curve: AppAppleTheme.springCurve,
+      duration: const Duration(milliseconds: 100),
       child: GestureDetector(
         onTapDown: (_) => setState(() => _isPressed = true),
         onTapUp: (_) => setState(() => _isPressed = false),
@@ -55,6 +54,7 @@ class _LiquidGlassFABState extends State<LiquidGlassFAB> with SingleTickerProvid
         child: AnimatedBuilder(
           animation: _pulseController,
           builder: (context, child) {
+            // Sutil animación de brillo pulsante en los bordes
             final double glowValue = _pulseController.value;
             
             return Container(
@@ -63,14 +63,14 @@ class _LiquidGlassFABState extends State<LiquidGlassFAB> with SingleTickerProvid
                 borderRadius: BorderRadius.circular(28),
                 boxShadow: [
                   BoxShadow(
-                    color: AppAppleTheme.electricCyan.withValues(alpha: 0.25 + (glowValue * 0.10)),
-                    blurRadius: 16 + (glowValue * 6),
+                    color: const Color(0xFF00C6FF).withOpacity(0.25 + (glowValue * 0.1)),
+                    blurRadius: 15 + (glowValue * 5),
                     spreadRadius: 1,
                     offset: const Offset(0, 4),
                   ),
                   BoxShadow(
-                    color: AppAppleTheme.electricBlue.withValues(alpha: 0.20),
-                    blurRadius: 22,
+                    color: const Color(0xFF0072FF).withOpacity(0.15),
+                    blurRadius: 20,
                     offset: const Offset(0, 8),
                   ),
                 ],
@@ -78,32 +78,28 @@ class _LiquidGlassFABState extends State<LiquidGlassFAB> with SingleTickerProvid
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(28),
                 child: BackdropFilter(
-                  filter: ImageFilter.blur(
-                    sigmaX: AppAppleTheme.glassBlurSigma,
-                    sigmaY: AppAppleTheme.glassBlurSigma,
-                  ),
+                  filter: ImageFilter.blur(sigmaX: 12.0, sigmaY: 12.0),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(28),
+                      // Combinación de gradiente translúcido para el efecto de cristal líquido
                       gradient: LinearGradient(
                         colors: isDark
                             ? [
-                                AppAppleTheme.electricBlue.withValues(alpha: 0.50),
-                                AppAppleTheme.midnightSurface.withValues(alpha: 0.70),
+                                Colors.blue.shade900.withOpacity(0.35),
+                                Colors.purple.shade900.withOpacity(0.25),
                               ]
                             : [
-                                AppAppleTheme.electricBlue.withValues(alpha: 0.75),
-                                AppAppleTheme.electricBlueLight.withValues(alpha: 0.60),
+                                Colors.blue.shade400.withOpacity(0.55),
+                                Colors.purple.shade300.withOpacity(0.40),
                               ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
                       border: Border.all(
-                        color: isDark
-                            ? AppAppleTheme.electricCyan.withValues(alpha: 0.30 + (glowValue * 0.15))
-                            : Colors.white.withValues(alpha: 0.35),
-                        width: 1.2,
+                        color: Colors.white.withOpacity(0.25 + (glowValue * 0.15)),
+                        width: 1.5,
                       ),
                     ),
                     child: Row(
@@ -113,6 +109,13 @@ class _LiquidGlassFABState extends State<LiquidGlassFAB> with SingleTickerProvid
                           widget.icon,
                           color: Colors.white,
                           size: 20,
+                          shadows: const [
+                            Shadow(
+                              color: Colors.black45,
+                              blurRadius: 4,
+                              offset: Offset(0, 2),
+                            )
+                          ],
                         ),
                         const SizedBox(width: 10),
                         Text(
@@ -120,8 +123,15 @@ class _LiquidGlassFABState extends State<LiquidGlassFAB> with SingleTickerProvid
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 15,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 0.3,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 0.8,
+                            shadows: [
+                              Shadow(
+                                color: Colors.black54,
+                                blurRadius: 4,
+                                offset: Offset(0, 1.5),
+                              )
+                            ],
                           ),
                         ),
                       ],
@@ -152,7 +162,7 @@ class LiquidGlassButton extends StatefulWidget {
     this.icon,
     required this.label,
     this.width,
-    this.height = 48,
+    this.height = 46,
     this.borderRadius = 20,
     this.customColors,
   });
@@ -186,8 +196,7 @@ class _LiquidGlassButtonState extends State<LiquidGlassButton> with SingleTicker
 
     return AnimatedScale(
       scale: _isPressed ? 0.95 : 1.0,
-      duration: const Duration(milliseconds: 120),
-      curve: AppAppleTheme.springCurve,
+      duration: const Duration(milliseconds: 100),
       child: GestureDetector(
         onTapDown: (_) => setState(() => _isPressed = true),
         onTapUp: (_) => setState(() => _isPressed = false),
@@ -205,43 +214,37 @@ class _LiquidGlassButtonState extends State<LiquidGlassButton> with SingleTicker
                 borderRadius: BorderRadius.circular(widget.borderRadius),
                 boxShadow: [
                   BoxShadow(
-                    color: AppAppleTheme.electricBlue.withValues(alpha: 0.20 + (glowValue * 0.05)),
-                    blurRadius: 12 + (glowValue * 4),
+                    color: const Color(0xFF00C6FF).withOpacity(0.20 + (glowValue * 0.05)),
+                    blurRadius: 10 + (glowValue * 3),
                     spreadRadius: 0.5,
-                    offset: const Offset(0, 4),
+                    offset: const Offset(0, 3),
                   ),
                 ],
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(widget.borderRadius),
                 child: BackdropFilter(
-                  filter: ImageFilter.blur(
-                    sigmaX: AppAppleTheme.glassBlurSigma,
-                    sigmaY: AppAppleTheme.glassBlurSigma,
-                  ),
+                  filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 18),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(widget.borderRadius),
                       gradient: LinearGradient(
-                        colors: widget.customColors ??
-                            (isDark
-                                ? [
-                                    AppAppleTheme.electricBlue.withValues(alpha: 0.45),
-                                    AppAppleTheme.midnightSurface.withValues(alpha: 0.65),
-                                  ]
-                                : [
-                                    AppAppleTheme.electricBlue.withValues(alpha: 0.75),
-                                    AppAppleTheme.electricBlueLight.withValues(alpha: 0.60),
-                                  ]),
+                        colors: widget.customColors ?? (isDark
+                            ? [
+                                Colors.blue.shade900.withOpacity(0.35),
+                                Colors.purple.shade900.withOpacity(0.25),
+                              ]
+                            : [
+                                Colors.blue.shade400.withOpacity(0.55),
+                                Colors.purple.shade300.withOpacity(0.40),
+                              ]),
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
                       border: Border.all(
-                        color: isDark
-                            ? AppAppleTheme.electricCyan.withValues(alpha: 0.25 + (glowValue * 0.10))
-                            : Colors.white.withValues(alpha: 0.35),
+                        color: Colors.white.withOpacity(0.20 + (glowValue * 0.10)),
                         width: 1.2,
                       ),
                     ),
@@ -254,6 +257,13 @@ class _LiquidGlassButtonState extends State<LiquidGlassButton> with SingleTicker
                             widget.icon,
                             color: Colors.white,
                             size: 18,
+                            shadows: const [
+                              Shadow(
+                                color: Colors.black45,
+                                blurRadius: 3,
+                                offset: Offset(0, 1.5),
+                              )
+                            ],
                           ),
                           const SizedBox(width: 8),
                         ],
@@ -261,9 +271,16 @@ class _LiquidGlassButtonState extends State<LiquidGlassButton> with SingleTicker
                           widget.label,
                           style: const TextStyle(
                             color: Colors.white,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 0.3,
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.5,
+                            shadows: [
+                              Shadow(
+                                color: Colors.black45,
+                                blurRadius: 3,
+                                offset: Offset(0, 1),
+                              )
+                            ],
                           ),
                         ),
                       ],
@@ -289,8 +306,8 @@ class LiquidGlassIconButton extends StatefulWidget {
     super.key,
     required this.onTap,
     required this.icon,
-    this.size = 38,
-    this.iconSize = 18,
+    this.size = 36,
+    this.iconSize = 16,
   });
 
   @override
@@ -322,8 +339,7 @@ class _LiquidGlassIconButtonState extends State<LiquidGlassIconButton> with Sing
 
     return AnimatedScale(
       scale: _isPressed ? 0.92 : 1.0,
-      duration: const Duration(milliseconds: 120),
-      curve: AppAppleTheme.springCurve,
+      duration: const Duration(milliseconds: 100),
       child: GestureDetector(
         onTapDown: (_) => setState(() => _isPressed = true),
         onTapUp: (_) => setState(() => _isPressed = false),
@@ -341,38 +357,33 @@ class _LiquidGlassIconButtonState extends State<LiquidGlassIconButton> with Sing
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: AppAppleTheme.electricBlue.withValues(alpha: 0.20 + (glowValue * 0.05)),
-                    blurRadius: 10 + (glowValue * 3),
+                    color: const Color(0xFF00C6FF).withOpacity(0.20 + (glowValue * 0.05)),
+                    blurRadius: 8 + (glowValue * 3),
                     spreadRadius: 0.5,
                   ),
                 ],
               ),
               child: ClipOval(
                 child: BackdropFilter(
-                  filter: ImageFilter.blur(
-                    sigmaX: AppAppleTheme.glassBlurSigma,
-                    sigmaY: AppAppleTheme.glassBlurSigma,
-                  ),
+                  filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
                   child: Container(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       gradient: LinearGradient(
                         colors: isDark
                             ? [
-                                AppAppleTheme.electricBlue.withValues(alpha: 0.45),
-                                AppAppleTheme.midnightSurface.withValues(alpha: 0.65),
+                                Colors.blue.shade900.withOpacity(0.35),
+                                Colors.purple.shade900.withOpacity(0.25),
                               ]
                             : [
-                                AppAppleTheme.electricBlue.withValues(alpha: 0.75),
-                                AppAppleTheme.electricBlueLight.withValues(alpha: 0.60),
+                                Colors.blue.shade400.withOpacity(0.55),
+                                Colors.purple.shade300.withOpacity(0.40),
                               ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
                       border: Border.all(
-                        color: isDark
-                            ? AppAppleTheme.electricCyan.withValues(alpha: 0.25 + (glowValue * 0.10))
-                            : Colors.white.withValues(alpha: 0.35),
+                        color: Colors.white.withOpacity(0.20 + (glowValue * 0.10)),
                         width: 1.2,
                       ),
                     ),
@@ -381,6 +392,13 @@ class _LiquidGlassIconButtonState extends State<LiquidGlassIconButton> with Sing
                         widget.icon,
                         color: Colors.white,
                         size: widget.iconSize,
+                        shadows: const [
+                          Shadow(
+                            color: Colors.black45,
+                            blurRadius: 3,
+                            offset: Offset(0, 1.5),
+                          )
+                        ],
                       ),
                     ),
                   ),

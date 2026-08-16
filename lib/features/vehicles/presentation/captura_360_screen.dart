@@ -259,7 +259,7 @@ class _Captura360ScreenState extends State<Captura360Screen> {
           body: jsonEncode({
             'data': [dataUri]
           }),
-        ).timeout(const Duration(seconds: 12));
+        ).timeout(const Duration(seconds: 60));
 
         if (response.statusCode == 200) {
           final jsonResponse = jsonDecode(response.body);

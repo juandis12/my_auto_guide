@@ -166,7 +166,7 @@ jobs:
           USE_SIGNING: ${{ inputs.use_signing }}
           CONFIGURATION: ${{ inputs.configuration }}
         run: |
-          set -e -o pipefail
+          set -e
 
           # Create .env file from secrets or fallback to .env.example
           echo "Creando archivo .env..."
@@ -195,8 +195,8 @@ jobs:
 
           # Install pods if Podfile exists (always run to ensure sync with Podfile.lock)
           if [ -f "Podfile" ]; then
-            echo "Running pod install --repo-update..."
-            pod install --repo-update
+            echo "Running pod install..."
+            pod install
             WORKSPACE=$(find . -maxdepth 1 -name "*.xcworkspace" | head -1)
           fi
 
@@ -220,24 +220,10 @@ jobs:
             cd "${GITHUB_WORKSPACE}"
             if [ "$CONFIGURATION" = "Debug" ]; then
               echo "Building Flutter iOS Debug..."
-              flutter build ios --debug --no-codesign 2>&1 | tee /tmp/flutter_build.log || {
-                echo ""
-                echo "========================================="
-                echo "  BUILD FAILED - Last 150 lines of build log:"
-                echo "========================================="
-                tail -n 150 /tmp/flutter_build.log
-                exit 1
-              }
+              flutter build ios --debug --no-codesign
             else
               echo "Building Flutter iOS Release..."
-              flutter build ios --release --no-codesign 2>&1 | tee /tmp/flutter_build.log || {
-                echo ""
-                echo "========================================="
-                echo "  BUILD FAILED - Last 150 lines of build log:"
-                echo "========================================="
-                tail -n 150 /tmp/flutter_build.log
-                exit 1
-              }
+              flutter build ios --release --no-codesign
             fi
             cd "${GITHUB_WORKSPACE}/${IOS_PATH}"
           elif [ "$PROJECT_TYPE" = "reactnative" ] || [ "$PROJECT_TYPE" = "expo" ]; then

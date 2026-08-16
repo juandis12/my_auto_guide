@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
@@ -16,7 +17,6 @@ import 'core/services/background_nav_service.dart';
 import 'core/logic/app_widget_logic.dart';
 import 'features/auth/login_screen.dart';
 import 'core/logic/performance_guard.dart';
-import 'core/theme/app_apple_theme.dart';
 
 /// Detecta si la app fue abierta desde un widget con deep link
 void _checkWidgetLaunch() async {
@@ -50,7 +50,36 @@ Future<void> main() async {
       await PerformanceGuard().initialize();
     }
 
-    // 2.1 Inicializar Sentry (solo si hay DSN configurado)
+    // 2. Inicializar Supabase
+    await Supabase.initialize(
+      url: dotenv.get('SUPABASE_URL',
+          fallback: const String.fromEnvironment('SUPABASE_URL')),
+      anonKey: dotenv.get('SUPABASE_ANON_KEY',
+          fallback: const String.fromEnvironment('SUPABASE_ANON_KEY')),
+    );
+
+    // 3. Inicializar Firebase (Push Notifications)
+    try {
+      await Firebase.initializeApp();
+      await FirebaseMessaging.instance.requestPermission();
+    } catch (e) {
+      debugPrint("Advertencia: Firebase no se pudo inicializar (falta google-services.json): $e");
+    }
+
+    // 4. Inicializar Sync Service para sincronización offline
+    SyncService().initialize();
+
+    // 5. Inicializar Notificaciones y Zonas Horarias
+    if (!kIsWeb) {
+      await NotificationService().init();
+      await BackgroundNavService.initializeService();
+      await AppWidgetLogic.initializeWidgetInteraction();
+      
+      // Detectar si la app se abrió desde un widget
+      _checkWidgetLaunch();
+    }
+
+    // 6. Inicializar Sentry y arrancar la app
     final sentryDsn = dotenv.get('SENTRY_DSN', fallback: '');
     if (sentryDsn.isNotEmpty) {
       await SentryFlutter.init(
@@ -65,37 +94,6 @@ Future<void> main() async {
           'Sentry DSN no configurado. Saltando inicialización de Sentry.');
       runApp(const MyApp());
     }
-
-    // 2. Inicializar Supabase
-    await Supabase.initialize(
-      url: dotenv.get('SUPABASE_URL',
-          fallback: const String.fromEnvironment('SUPABASE_URL')),
-      anonKey: dotenv.get('SUPABASE_ANON_KEY',
-          fallback: const String.fromEnvironment('SUPABASE_ANON_KEY')),
-    );
-
-    // 2.5 Inicializar Firebase (Push Notifications)
-    try {
-      await Firebase.initializeApp();
-      await FirebaseMessaging.instance.requestPermission();
-    } catch (e) {
-      debugPrint("Advertencia: Firebase no se pudo inicializar (falta google-services.json): $e");
-    }
-
-    // 3. Inicializar Sync Service para sincronización offline
-    SyncService().initialize();
-
-    // 4. Inicializar Notificaciones y Zonas Horarias
-    if (!kIsWeb) {
-      await NotificationService().init();
-      await BackgroundNavService.initializeService();
-      await AppWidgetLogic.initializeWidgetInteraction();
-      
-      // Detectar si la app se abrió desde un widget
-      _checkWidgetLaunch();
-    }
-
-    // 5. El arranque se realiza dentro de Sentry o directamente arriba
   } catch (e, stackTrace) {
     // En caso de error en inicialización, mostrar pantalla de error
     runApp(MaterialApp(
@@ -122,8 +120,22 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'My Auto Guide',
-        theme: AppAppleTheme.lightTheme,
-        darkTheme: AppAppleTheme.darkTheme,
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color(0xFF2563EB), // Azul moderno
+            brightness: Brightness.light,
+          ),
+          useMaterial3: true,
+          textTheme: GoogleFonts.outfitTextTheme(),
+        ),
+        darkTheme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color(0xFF2563EB),
+            brightness: Brightness.dark,
+          ),
+          useMaterial3: true,
+          textTheme: GoogleFonts.outfitTextTheme(ThemeData.dark().textTheme),
+        ),
         themeMode: ThemeMode.system,
         home: const CarRentalLoginScreen(),
         debugShowCheckedModeBanner: false,
