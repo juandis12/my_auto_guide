@@ -19,10 +19,10 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: 'actions/checkout@v4'
+        uses: actions/checkout@v4.2.2
 
       - name: Setup Flutter
-        uses: 'subosito/flutter-action@v2'
+        uses: subosito/flutter-action@v2.18.0
         with:
           channel: 'stable'
 
@@ -80,7 +80,7 @@ jobs:
           echo "IPA creado exitosamente: build/my_auto_guide_$BUILD_ID.ipa"
 
       - name: Upload IPA Artifact
-        uses: 'actions/upload-artifact@v4'
+        uses: actions/upload-artifact@v4.6.1
         with:
           name: 'ios-ipa'
           path: 'build/*.ipa'
