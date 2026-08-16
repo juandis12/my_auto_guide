@@ -65,7 +65,7 @@ dependencies:
   path: ^1.8.3
 
   # Analytics y monitoreo
-  sentry_flutter: ^9.0.0
+  sentry_flutter: ^8.13.0
 
   # Compresión de imágenes
   image: ^4.1.3
