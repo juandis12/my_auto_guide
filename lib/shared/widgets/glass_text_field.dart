@@ -102,7 +102,7 @@ class _GlassTextFieldState extends State<GlassTextField> {
           obscureText: widget.obscureText,
           keyboardType: widget.keyboardType,
           style: TextStyle(
-            color: isDark ? Colors.white : Colors.black90,
+            color: isDark ? Colors.white : Colors.black87,
             fontSize: 15,
             letterSpacing: -0.1,
           ),

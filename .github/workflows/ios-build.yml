@@ -153,16 +153,19 @@ jobs:
           PROJECT_TYPE: ${{ steps.detect.outputs.type }}
           USE_SIGNING: ${{ inputs.use_signing || false }}
           CONFIGURATION: ${{ inputs.configuration || 'Release' }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           set -e
 
           # Create .env file from secrets or fallback to .env.example
           echo "Creando archivo .env..."
-          if [ -n "${{ secrets.SUPABASE_URL }}" ]; then
-            echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" > "${GITHUB_WORKSPACE}/.env"
-            echo "SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}" >> "${GITHUB_WORKSPACE}/.env"
-            if [ -n "${{ secrets.GEMINI_API_KEY }}" ]; then
-              echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" >> "${GITHUB_WORKSPACE}/.env"
+          if [ -n "$SUPABASE_URL" ]; then
+            echo "SUPABASE_URL=$SUPABASE_URL" > "${GITHUB_WORKSPACE}/.env"
+            echo "SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY" >> "${GITHUB_WORKSPACE}/.env"
+            if [ -n "$GEMINI_API_KEY" ]; then
+              echo "GEMINI_API_KEY=$GEMINI_API_KEY" >> "${GITHUB_WORKSPACE}/.env"
             fi
             echo "Secretos inyectados correctamente."
           else
