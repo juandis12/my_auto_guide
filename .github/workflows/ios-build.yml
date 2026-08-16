@@ -166,7 +166,7 @@ jobs:
           USE_SIGNING: ${{ inputs.use_signing }}
           CONFIGURATION: ${{ inputs.configuration }}
         run: |
-          set -e
+          set -e -o pipefail
 
           # Create .env file from secrets or fallback to .env.example
           echo "Creando archivo .env..."
@@ -220,10 +220,34 @@ jobs:
             cd "${GITHUB_WORKSPACE}"
             if [ "$CONFIGURATION" = "Debug" ]; then
               echo "Building Flutter iOS Debug..."
-              flutter build ios --debug --no-codesign
+              flutter build ios --debug --no-codesign 2>&1 | tee /tmp/flutter_build.log || {
+                echo ""
+                echo "========================================="
+                echo "  BUILD FAILED - Extracting error lines:"
+                echo "========================================="
+                grep -i -E "error:|failed|failure|fatal" /tmp/flutter_build.log | grep -v -i "warning:" | grep -v -i "note:" | tail -40
+                echo ""
+                echo "========================================="
+                echo "  Last 40 lines of build output:"
+                echo "========================================="
+                tail -40 /tmp/flutter_build.log
+                exit 1
+              }
             else
               echo "Building Flutter iOS Release..."
-              flutter build ios --release --no-codesign
+              flutter build ios --release --no-codesign 2>&1 | tee /tmp/flutter_build.log || {
+                echo ""
+                echo "========================================="
+                echo "  BUILD FAILED - Extracting error lines:"
+                echo "========================================="
+                grep -i -E "error:|failed|failure|fatal" /tmp/flutter_build.log | grep -v -i "warning:" | grep -v -i "note:" | tail -40
+                echo ""
+                echo "========================================="
+                echo "  Last 40 lines of build output:"
+                echo "========================================="
+                tail -40 /tmp/flutter_build.log
+                exit 1
+              }
             fi
             cd "${GITHUB_WORKSPACE}/${IOS_PATH}"
           elif [ "$PROJECT_TYPE" = "reactnative" ] || [ "$PROJECT_TYPE" = "expo" ]; then
