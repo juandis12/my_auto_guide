@@ -77,22 +77,12 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ inputs.flutter_version || '' }}
-          channel: ${{ inputs.flutter_version && 'stable' || 'stable' }}
+          channel: 'stable'
           cache: true
 
       - name: Flutter pub get
         if: steps.detect.outputs.type == 'flutter'
         run: flutter pub get
-
-      # NOTE: iOS Widget Extension is disabled in CI for now.
-      # flutter build ios manages the Xcode project internally and adding
-      # extra native targets via script causes "Multiple commands produce .appex"
-      # conflicts. The widget will be configured when building from Xcode on a Mac.
-      # - name: Configure iOS Widget Target
-      #   if: steps.detect.outputs.type == 'flutter'
-      #   run: |
-      #     gem install xcodeproj --no-document
-      #     ruby ios/add_widget_extension.rb
 
       - name: Setup Node.js
         if: steps.detect.outputs.type == 'reactnative' || steps.detect.outputs.type == 'expo'
@@ -119,14 +109,14 @@ jobs:
         id: pods-cache
         with:
           path: |
-            ${{ inputs.ios_path }}/Pods
+            ios/Pods
             ~/.cocoapods/repos
-          key: pods-${{ runner.os }}-${{ hashFiles(format('{0}/Podfile.lock', inputs.ios_path)) }}
+          key: pods-${{ runner.os }}-${{ hashFiles('ios/Podfile.lock') }}
           restore-keys: |
             pods-${{ runner.os }}-
 
       - name: Install certificate and provisioning profile
-        if: inputs.use_signing
+        if: inputs.use_signing == true || inputs.use_signing == 'true'
         env:
           IOS_CERTIFICATE: ${{ secrets.IOS_CERTIFICATE }}
           IOS_CERTIFICATE_PASSWORD: ${{ secrets.IOS_CERTIFICATE_PASSWORD }}
@@ -230,7 +220,6 @@ jobs:
             fi
             cd "${GITHUB_WORKSPACE}/${IOS_PATH}"
           elif [ "$PROJECT_TYPE" = "reactnative" ] || [ "$PROJECT_TYPE" = "expo" ]; then
-            # Use xcodebuild directly for React Native/Expo
             echo "Building React Native iOS ($CONFIGURATION)..."
             BUILD_CMD="xcodebuild"
             if [ -n "$WORKSPACE" ]; then
@@ -239,7 +228,6 @@ jobs:
               BUILD_CMD="$BUILD_CMD -project $PROJECT"
             fi
 
-            # Auto-detect scheme from workspace name (e.g., MyApp.xcworkspace -> MyApp)
             if [ -n "$WORKSPACE" ]; then
               SCHEME=$(basename "$WORKSPACE" .xcworkspace)
             elif [ -n "$PROJECT" ]; then
@@ -269,21 +257,17 @@ jobs:
             BUILD_CMD="$BUILD_CMD -destination 'generic/platform=iOS'"
             BUILD_CMD="$BUILD_CMD -derivedDataPath $DERIVED_DATA_PATH"
 
-            # Speed optimization flags
             BUILD_CMD="$BUILD_CMD COMPILER_INDEX_STORE_ENABLE=NO"
             BUILD_CMD="$BUILD_CMD DEBUG_INFORMATION_FORMAT=dwarf"
             BUILD_CMD="$BUILD_CMD ONLY_ACTIVE_ARCH=YES"
             BUILD_CMD="$BUILD_CMD -quiet"
 
-            # Xcode 16+ native compilation caching
             BUILD_CMD="$BUILD_CMD SWIFT_ENABLE_COMPILE_CACHE=YES"
             BUILD_CMD="$BUILD_CMD CLANG_ENABLE_COMPILE_CACHE=YES"
 
             if [ "$USE_SIGNING" = "true" ]; then
-              # For signed builds, use archive
               BUILD_CMD="$BUILD_CMD -archivePath ../build/App.xcarchive archive"
             else
-              # For unsigned builds, use faster 'build' action
               BUILD_CMD="$BUILD_CMD CODE_SIGNING_ALLOWED=NO build"
             fi
 
@@ -293,7 +277,6 @@ jobs:
 
           # Create IPA
           if [ "$USE_SIGNING" = "true" ]; then
-            # For signed builds, use xcodebuild -exportArchive
             cd "${GITHUB_WORKSPACE}"
             printf '%s\n' \
               '<?xml version="1.0" encoding="UTF-8"?>' \
@@ -311,16 +294,12 @@ jobs:
               -exportOptionsPlist ExportOptions.plist \
               -exportPath build/export
 
-            # Move IPA to expected location
             mv build/export/*.ipa "build/$BUILD_ID.ipa"
             echo "Created signed IPA: build/$BUILD_ID.ipa"
           else
-            # For unsigned builds, find .app and create IPA
             if [ "$PROJECT_TYPE" = "flutter" ]; then
-              # Flutter outputs to build/ios/iphoneos/
               APP_PATH=$(find "${GITHUB_WORKSPACE}/build/ios/iphoneos" -name "*.app" -type d | head -1)
             else
-              # Native and React Native/Expo use DerivedData
               APP_PATH=$(find "$DERIVED_DATA_PATH/Build/Products/${CONFIGURATION}-iphoneos" -name "*.app" -type d | head -1)
             fi
 
@@ -354,7 +333,7 @@ jobs:
           key: deriveddata-${{ github.run_id }}
 
       - name: Cleanup signing
-        if: always() && inputs.use_signing
+        if: always() && (inputs.use_signing == true || inputs.use_signing == 'true')
         run: |
           if [ -n "$KEYCHAIN_PATH" ] && [ -f "$KEYCHAIN_PATH" ]; then
             security delete-keychain "$KEYCHAIN_PATH" || true
@@ -363,12 +342,13 @@ jobs:
       - name: Build summary
         if: always()
         env:
-          USE_SIGNING: ${{ inputs.use_signing }}
-          CONFIGURATION: ${{ inputs.configuration }}
+          BUILD_ID: ${{ inputs.build_id || github.run_number }}
+          USE_SIGNING: ${{ inputs.use_signing || false }}
+          CONFIGURATION: ${{ inputs.configuration || 'Release' }}
         run: |
           echo "## Build Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "- **Build ID:** ${{ inputs.build_id }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Build ID:** $BUILD_ID" >> $GITHUB_STEP_SUMMARY
           echo "- **Status:** ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Configuration:** $CONFIGURATION" >> $GITHUB_STEP_SUMMARY
           echo "- **DerivedData Cache:** ${{ steps.cache-deriveddata.outputs.cache-hit == 'true' && 'Hit' || 'Miss' }}" >> $GITHUB_STEP_SUMMARY
