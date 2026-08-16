@@ -1928,7 +1928,7 @@ class _InicioAppState extends State<InicioApp> {
                                         cedula: realCedula,
                                         vehiculoId: widget.vehiculoId)));
                             if (updated == true && mounted) {
-                              _cargarDatosIniciales();
+                              setState(() {});
                             }
                           },
                           brandTheme: bTheme),
