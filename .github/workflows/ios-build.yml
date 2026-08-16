@@ -1,12 +1,15 @@
 name: iOS Build
 
 on:
+  push:
+    branches: [ main ]
   workflow_dispatch:
     inputs:
       build_id:
         description: 'Unique build identifier'
-        required: true
+        required: false
         type: string
+        default: '1'
       ios_path:
         description: 'Path to iOS project (e.g., "ios" for React Native)'
         required: false
@@ -26,7 +29,7 @@ on:
         description: 'Build configuration (Debug is faster, Release for production)'
         required: false
         type: string
-        default: 'Debug'
+        default: 'Release'
       flutter_version:
         description: 'Flutter version to use (e.g., 3.24.0). Empty means latest stable.'
         required: false
@@ -159,12 +162,12 @@ jobs:
 
       - name: Build IPA
         env:
-          BUILD_ID: ${{ inputs.build_id }}
-          IOS_PATH: ${{ inputs.ios_path }}
-          SCHEME: ${{ inputs.scheme }}
+          BUILD_ID: ${{ inputs.build_id || github.run_number }}
+          IOS_PATH: ${{ inputs.ios_path || 'ios' }}
+          SCHEME: ${{ inputs.scheme || '' }}
           PROJECT_TYPE: ${{ steps.detect.outputs.type }}
-          USE_SIGNING: ${{ inputs.use_signing }}
-          CONFIGURATION: ${{ inputs.configuration }}
+          USE_SIGNING: ${{ inputs.use_signing || false }}
+          CONFIGURATION: ${{ inputs.configuration || 'Release' }}
         run: |
           set -e
 
