@@ -76,7 +76,6 @@ jobs:
         if: steps.detect.outputs.type == 'flutter'
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: ${{ inputs.flutter_version || '' }}
           channel: 'stable'
           cache: true
 
@@ -116,7 +115,7 @@ jobs:
             pods-${{ runner.os }}-
 
       - name: Install certificate and provisioning profile
-        if: inputs.use_signing == true || inputs.use_signing == 'true'
+        if: inputs.use_signing == true
         env:
           IOS_CERTIFICATE: ${{ secrets.IOS_CERTIFICATE }}
           IOS_CERTIFICATE_PASSWORD: ${{ secrets.IOS_CERTIFICATE_PASSWORD }}
@@ -333,7 +332,7 @@ jobs:
           key: deriveddata-${{ github.run_id }}
 
       - name: Cleanup signing
-        if: always() && (inputs.use_signing == true || inputs.use_signing == 'true')
+        if: always() && inputs.use_signing == true
         run: |
           if [ -n "$KEYCHAIN_PATH" ] && [ -f "$KEYCHAIN_PATH" ]; then
             security delete-keychain "$KEYCHAIN_PATH" || true
