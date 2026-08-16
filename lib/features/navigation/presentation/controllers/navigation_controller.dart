@@ -10,26 +10,29 @@ enum NavigationState { idle, routeReady, navigating, completed, freeTracking }
 /// Controlador de estado para la navegación GPS.
 /// Orquestador central entre el GPS, el Servicio de Fondo y la UI.
 class NavigationController extends ChangeNotifier {
-  String _vehicleModel;
-  bool _isCar;
+  final String vehicleId;
+  final String vehicleModel;
+  final bool isCar;
+
+  NavigationState _state = NavigationState.idle;
+  NavigationTelemetry _telemetry = NavigationTelemetry.empty();
+  
+  LatLng? _destination;
+  String _destinationName = '';
+  List<LatLng> _routePoints = [];
+  double _routeDistanceKm = 0.0;
+  double _routeDurationMin = 0.0;
+
+  StreamSubscription<Map<String, dynamic>?>? _serviceSubscription;
 
   NavigationController({
     required this.vehicleId,
-    required String vehicleModel,
-    required bool isCar,
-  })  : _vehicleModel = vehicleModel,
-        _isCar = isCar;
+    required this.vehicleModel,
+    required this.isCar,
+  });
 
   // Getters
-  String get vehicleModel => _vehicleModel;
-  bool get isCar => _isCar;
   NavigationState get state => _state;
-
-  void updateVehicleInfo({required String model, required bool isCar}) {
-    _vehicleModel = model;
-    _isCar = isCar;
-    notifyListeners();
-  }
   NavigationTelemetry get telemetry => _telemetry;
   LatLng? get destination => _destination;
   String get destinationName => _destinationName;

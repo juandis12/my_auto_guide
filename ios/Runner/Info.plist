@@ -56,21 +56,11 @@
 		<string>location</string>
 		<string>fetch</string>
 		<string>processing</string>
-		<string>remote-notification</string>
-	</array>
-	<key>LSApplicationQueriesSchemes</key>
-	<array>
-		<string>https</string>
-		<string>http</string>
-		<string>tel</string>
-		<string>mailto</string>
 	</array>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Necesitamos acceso a Face ID para autenticarte de forma rápida y segura en la aplicación.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Necesitamos acceso a la cámara para tomar las fotos en 360 grados de tu motocicleta.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Necesitamos acceso a tu galería de fotos para subir imágenes de tu vehículo y documentos.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Necesitamos acceso al micrófono para el correcto funcionamiento de la cámara.</string>
 </dict>

@@ -93,7 +93,12 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
         _vehicleImagePath = data['image_path'] as String?;
       });
       
-      _controller.updateVehicleInfo(model: modelo, isCar: isCar);
+      _controller = NavigationController(
+        vehicleId: widget.vehiculoId,
+        vehicleModel: modelo,
+        isCar: isCar,
+      );
+      _controller.addListener(_onControllerStateUpdate);
     } catch (_) {}
   }
 
@@ -113,7 +118,7 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
     if (defaultTargetPlatform == TargetPlatform.iOS || defaultTargetPlatform == TargetPlatform.macOS) {
       settings = AppleSettings(
         accuracy: LocationAccuracy.high,
-        distanceFilter: 15, // Optimizado para reposo (ahorro de batería en iOS)
+        distanceFilter: 3,
         pauseLocationUpdatesAutomatically: false,
         allowBackgroundLocationUpdates: true,
         showBackgroundLocationIndicator: true,
@@ -121,11 +126,11 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
     } else if (defaultTargetPlatform == TargetPlatform.android) {
       settings = AndroidSettings(
         accuracy: LocationAccuracy.high,
-        distanceFilter: 15, // Optimizado para reposo (ahorro de batería en Android)
-        intervalDuration: const Duration(seconds: 5),
+        distanceFilter: 3,
+        intervalDuration: const Duration(seconds: 2),
       );
     } else {
-      settings = const LocationSettings(accuracy: LocationAccuracy.high, distanceFilter: 15);
+      settings = const LocationSettings(accuracy: LocationAccuracy.high, distanceFilter: 3);
     }
 
     _idlePositionSubscription = Geolocator.getPositionStream(

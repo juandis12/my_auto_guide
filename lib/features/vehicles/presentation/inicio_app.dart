@@ -601,10 +601,8 @@ class _InicioAppState extends State<InicioApp> {
   }
 
   Future<void> _abrirGarajeSelector() async {
-    HapticFeedback.selectionClick();
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
@@ -612,41 +610,25 @@ class _InicioAppState extends State<InicioApp> {
       builder: (ctx) {
         final isDark = Theme.of(context).brightness == Brightness.dark;
         return Container(
-          padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
+          padding: const EdgeInsets.all(24),
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 🍎 Apple HIG Drag Handle Pill
-              Container(
-                width: 36,
-                height: 5,
-                decoration: BoxDecoration(
-                  color: isDark
-                      ? Colors.white.withValues(alpha: 0.25)
-                      : Colors.black.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(2.5),
-                ),
-              ),
-              const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text(
                     'Mi Garaje',
                     style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w700,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
                       fontFamily: 'Outfit',
-                      letterSpacing: -0.3,
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.close_rounded),
-                    onPressed: () {
-                      HapticFeedback.selectionClick();
-                      Navigator.pop(ctx);
-                    },
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.pop(ctx),
                   ),
                 ],
               ),
@@ -675,7 +657,7 @@ class _InicioAppState extends State<InicioApp> {
                     );
                   }
                   return ConstrainedBox(
-                    constraints: const BoxConstraints(maxHeight: 280),
+                    constraints: const BoxConstraints(maxHeight: 250),
                     child: ListView.builder(
                       shrinkWrap: true,
                       itemCount: list.length,
@@ -690,12 +672,10 @@ class _InicioAppState extends State<InicioApp> {
                         return Card(
                           elevation: 0,
                           color: isCurrent
-                              ? Theme.of(context).primaryColor.withValues(alpha: 0.12)
-                              : (isDark
-                                  ? Colors.white.withValues(alpha: 0.05)
-                                  : Colors.black.withValues(alpha: 0.03)),
+                              ? Theme.of(context).primaryColor.withOpacity(0.1)
+                              : (isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.03)),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(18),
+                            borderRadius: BorderRadius.circular(16),
                             side: BorderSide(
                               color: isCurrent
                                   ? Theme.of(context).primaryColor
@@ -705,16 +685,10 @@ class _InicioAppState extends State<InicioApp> {
                           ),
                           margin: const EdgeInsets.only(bottom: 8),
                           child: ListTile(
-                            leading: Icon(
-                              Icons.directions_car_filled_outlined,
-                              color: isCurrent ? Theme.of(context).primaryColor : null,
-                            ),
+                            leading: const Icon(Icons.directions_car_filled_outlined),
                             title: Text(
                               nickname.isNotEmpty ? nickname : '$brand $model',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: -0.1,
-                              ),
+                              style: const TextStyle(fontWeight: FontWeight.bold),
                             ),
                             subtitle: Text('$brand $model • ${item['kms'] ?? 0} KM'),
                             trailing: isCurrent
@@ -722,8 +696,8 @@ class _InicioAppState extends State<InicioApp> {
                                 : IconButton(
                                     icon: const Icon(Icons.swap_horiz_rounded),
                                     onPressed: () {
-                                      HapticFeedback.mediumImpact();
-                                      Navigator.pop(ctx);
+                                      Navigator.pop(ctx); // Close sheet
+                                      // Switch vehicle!
                                       Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute(
@@ -745,7 +719,6 @@ class _InicioAppState extends State<InicioApp> {
                   Expanded(
                     child: OutlinedButton.icon(
                       onPressed: () {
-                        HapticFeedback.selectionClick();
                         Navigator.pop(ctx);
                         Navigator.push(
                           context,
@@ -768,7 +741,6 @@ class _InicioAppState extends State<InicioApp> {
                   Expanded(
                     child: OutlinedButton.icon(
                       onPressed: () {
-                        HapticFeedback.selectionClick();
                         Navigator.pop(ctx);
                         Navigator.push(
                           context,

@@ -179,28 +179,29 @@ class _RuntWebViewScreenState extends State<RuntWebViewScreen> {
 
     await guardarFechas();
 
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: Colors.green,
-        duration: const Duration(seconds: 5),
-        content: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text("✅ Fechas consultadas y guardadas correctamente"),
-            if (fechaSoatExpedicion.isNotEmpty)
-              Text("SOAT expedido: $fechaSoatExpedicion"),
-            if (fechaSoatVencimiento.isNotEmpty)
-              Text("SOAT vence: $fechaSoatVencimiento"),
-            if (fechaTecnoExpedicion.isNotEmpty)
-              Text("Tecnomecánica expedida: $fechaTecnoExpedicion"),
-            if (fechaTecnoVencimiento.isNotEmpty)
-              Text("Tecnomecánica vence: $fechaTecnoVencimiento"),
-          ],
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.green,
+          duration: const Duration(seconds: 5),
+          content: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text("✅ Fechas consultadas y guardadas correctamente"),
+              if (fechaSoatExpedicion.isNotEmpty)
+                Text("SOAT expedido: $fechaSoatExpedicion"),
+              if (fechaSoatVencimiento.isNotEmpty)
+                Text("SOAT vence: $fechaSoatVencimiento"),
+              if (fechaTecnoExpedicion.isNotEmpty)
+                Text("Tecnomecánica expedida: $fechaTecnoExpedicion"),
+              if (fechaTecnoVencimiento.isNotEmpty)
+                Text("Tecnomecánica vence: $fechaTecnoVencimiento"),
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
 
   /// Guardar en Supabase usando upsert (seguro y sin conflictos)
