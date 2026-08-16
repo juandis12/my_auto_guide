@@ -142,6 +142,7 @@ class _CarRentalLoginScreenState extends State<CarRentalLoginScreen> {
   }
 
   Future<void> signIn() async {
+    HapticFeedback.lightImpact();
     setState(() => isLoading = true);
     try {
       await _auth.signIn(
@@ -467,7 +468,7 @@ class _CarRentalLoginScreenState extends State<CarRentalLoginScreen> {
   }
 }
 
-class _SocialButton extends StatelessWidget {
+class _SocialButton extends StatefulWidget {
   final String icon;
   final IconData? fallbackIcon;
   final Color? iconColor;
@@ -481,32 +482,55 @@ class _SocialButton extends StatelessWidget {
   });
 
   @override
+  State<_SocialButton> createState() => _SocialButtonState();
+}
+
+class _SocialButtonState extends State<_SocialButton> {
+  bool _isPressed = false;
+
+  @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: Theme.of(context).brightness == Brightness.dark
-              ? Colors.white.withOpacity(0.08)
-              : Colors.black.withOpacity(0.04),
-          shape: BoxShape.circle,
-          border: Border.all(
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? Colors.white.withOpacity(0.15)
-                  : Colors.black.withOpacity(0.12)),
-          boxShadow: PerformanceGuard().isLowEnd
-              ? []
-              : [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 10,
-                  ),
-                ],
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return AnimatedScale(
+      scale: _isPressed ? 0.90 : 1.0,
+      duration: const Duration(milliseconds: 150),
+      curve: Curves.easeOutCubic,
+      child: GestureDetector(
+        onTapDown: (_) {
+          HapticFeedback.selectionClick();
+          setState(() => _isPressed = true);
+        },
+        onTapUp: (_) => setState(() => _isPressed = false),
+        onTapCancel: () => setState(() => _isPressed = false),
+        onTap: widget.onTap,
+        child: Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.10)
+                : Colors.black.withValues(alpha: 0.05),
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.20)
+                  : Colors.black.withValues(alpha: 0.12),
+              width: 1.0,
+            ),
+            boxShadow: PerformanceGuard().isLowEnd
+                ? []
+                : [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.08),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+          ),
+          child: widget.fallbackIcon != null
+              ? Icon(widget.fallbackIcon, size: 28, color: widget.iconColor ?? Colors.white)
+              : Image.asset(widget.icon, height: 28),
         ),
-        child: fallbackIcon != null
-            ? Icon(fallbackIcon, size: 28, color: iconColor ?? Colors.white)
-            : Image.asset(icon, height: 28),
       ),
     );
   }
