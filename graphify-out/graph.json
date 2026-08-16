@@ -2225,66 +2225,6 @@
       "id": "agents_skills_vercel_optimize_lib_gates_usage_spike_triage_gate"
     },
     {
-      "label": "buildScriptHasMigrationSideEffect()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
-      "source_location": "L870",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 119,
-      "norm_label": "buildscripthasmigrationsideeffect()",
-      "community_name": "verify-claim.mjs",
-      "id": "agents_skills_vercel_optimize_lib_verify_claim_buildscripthasmigrationsideeffect"
-    },
-    {
-      "label": "cleanHeaderValue()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
-      "source_location": "L899",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 119,
-      "norm_label": "cleanheadervalue()",
-      "community_name": "verify-claim.mjs",
-      "id": "agents_skills_vercel_optimize_lib_verify_claim_cleanheadervalue"
-    },
-    {
-      "label": "configContainsTag()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
-      "source_location": "L1041",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 119,
-      "norm_label": "configcontainstag()",
-      "community_name": "verify-claim.mjs",
-      "id": "agents_skills_vercel_optimize_lib_verify_claim_configcontainstag"
-    },
-    {
-      "label": "escapeRegExp()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
-      "source_location": "L1202",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 119,
-      "norm_label": "escaperegexp()",
-      "community_name": "verify-claim.mjs",
-      "id": "agents_skills_vercel_optimize_lib_verify_claim_escaperegexp"
-    },
-    {
-      "label": "extractHeaderValues()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
-      "source_location": "L885",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 119,
-      "norm_label": "extractheadervalues()",
-      "community_name": "verify-claim.mjs",
-      "id": "agents_skills_vercel_optimize_lib_verify_claim_extractheadervalues"
-    },
-    {
       "label": "formatPct()",
       "file_type": "code",
       "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
@@ -2293,7 +2233,7 @@
       "_origin": "ast",
       "community": 119,
       "norm_label": "formatpct()",
-      "community_name": "verify-claim.mjs",
+      "community_name": "verifyCacheRecNotErrorDominatedOrAcknowledged",
       "id": "agents_skills_vercel_optimize_lib_verify_claim_formatpct"
     },
     {
@@ -2305,56 +2245,8 @@
       "_origin": "ast",
       "community": 119,
       "norm_label": "functionstatusforroute()",
-      "community_name": "verify-claim.mjs",
+      "community_name": "verifyCacheRecNotErrorDominatedOrAcknowledged",
       "id": "agents_skills_vercel_optimize_lib_verify_claim_functionstatusforroute"
-    },
-    {
-      "label": "hasConfigDrivenInvalidation()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
-      "source_location": "L1036",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 119,
-      "norm_label": "hasconfigdriveninvalidation()",
-      "community_name": "verify-claim.mjs",
-      "id": "agents_skills_vercel_optimize_lib_verify_claim_hasconfigdriveninvalidation"
-    },
-    {
-      "label": "hasEmptyCacheDirective()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
-      "source_location": "L906",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 119,
-      "norm_label": "hasemptycachedirective()",
-      "community_name": "verify-claim.mjs",
-      "id": "agents_skills_vercel_optimize_lib_verify_claim_hasemptycachedirective"
-    },
-    {
-      "label": "hasHeaderValue()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
-      "source_location": "L895",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 119,
-      "norm_label": "hasheadervalue()",
-      "community_name": "verify-claim.mjs",
-      "id": "agents_skills_vercel_optimize_lib_verify_claim_hasheadervalue"
-    },
-    {
-      "label": "hasLiteralInvalidation()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
-      "source_location": "L1027",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 119,
-      "norm_label": "hasliteralinvalidation()",
-      "community_name": "verify-claim.mjs",
-      "id": "agents_skills_vercel_optimize_lib_verify_claim_hasliteralinvalidation"
     },
     {
       "label": "numberValue()",
@@ -2365,68 +2257,8 @@
       "_origin": "ast",
       "community": 119,
       "norm_label": "numbervalue()",
-      "community_name": "verify-claim.mjs",
+      "community_name": "verifyCacheRecNotErrorDominatedOrAcknowledged",
       "id": "agents_skills_vercel_optimize_lib_verify_claim_numbervalue"
-    },
-    {
-      "label": "parseJsonLike()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
-      "source_location": "L861",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 119,
-      "norm_label": "parsejsonlike()",
-      "community_name": "verify-claim.mjs",
-      "id": "agents_skills_vercel_optimize_lib_verify_claim_parsejsonlike"
-    },
-    {
-      "label": "readOptionalJsonFile()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
-      "source_location": "L852",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 119,
-      "norm_label": "readoptionaljsonfile()",
-      "community_name": "verify-claim.mjs",
-      "id": "agents_skills_vercel_optimize_lib_verify_claim_readoptionaljsonfile"
-    },
-    {
-      "label": "recSeparatesTurboBuildSideEffects()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
-      "source_location": "L874",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 119,
-      "norm_label": "recseparatesturbobuildsideeffects()",
-      "community_name": "verify-claim.mjs",
-      "id": "agents_skills_vercel_optimize_lib_verify_claim_recseparatesturbobuildsideeffects"
-    },
-    {
-      "label": "routeErrorFixBroadlyCatchesNotFound()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
-      "source_location": "L704",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 119,
-      "norm_label": "routeerrorfixbroadlycatchesnotfound()",
-      "community_name": "verify-claim.mjs",
-      "id": "agents_skills_vercel_optimize_lib_verify_claim_routeerrorfixbroadlycatchesnotfound"
-    },
-    {
-      "label": "routeErrorFixExplicitlyConvertsUnexpectedErrorsToNotFound()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
-      "source_location": "L698",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 119,
-      "norm_label": "routeerrorfixexplicitlyconvertsunexpectederrorstonotfound()",
-      "community_name": "verify-claim.mjs",
-      "id": "agents_skills_vercel_optimize_lib_verify_claim_routeerrorfixexplicitlyconvertsunexpectederrorstonotfound"
     },
     {
       "label": "routeFromCandidateRef()",
@@ -2437,56 +2269,8 @@
       "_origin": "ast",
       "community": 119,
       "norm_label": "routefromcandidateref()",
-      "community_name": "verify-claim.mjs",
+      "community_name": "verifyCacheRecNotErrorDominatedOrAcknowledged",
       "id": "agents_skills_vercel_optimize_lib_verify_claim_routefromcandidateref"
-    },
-    {
-      "label": "siblingPackageJson()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
-      "source_location": "L848",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 119,
-      "norm_label": "siblingpackagejson()",
-      "community_name": "verify-claim.mjs",
-      "id": "agents_skills_vercel_optimize_lib_verify_claim_siblingpackagejson"
-    },
-    {
-      "label": "tagHasMatchingInvalidation()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
-      "source_location": "L1020",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 119,
-      "norm_label": "taghasmatchinginvalidation()",
-      "community_name": "verify-claim.mjs",
-      "id": "agents_skills_vercel_optimize_lib_verify_claim_taghasmatchinginvalidation"
-    },
-    {
-      "label": "verifyCacheControlHeadersCitation()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
-      "source_location": "L611",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 119,
-      "norm_label": "verifycachecontrolheaderscitation()",
-      "community_name": "verify-claim.mjs",
-      "id": "agents_skills_vercel_optimize_lib_verify_claim_verifycachecontrolheaderscitation"
-    },
-    {
-      "label": "verifyCacheControlHeaderSyntax()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
-      "source_location": "L591",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 119,
-      "norm_label": "verifycachecontrolheadersyntax()",
-      "community_name": "verify-claim.mjs",
-      "id": "agents_skills_vercel_optimize_lib_verify_claim_verifycachecontrolheadersyntax"
     },
     {
       "label": "verifyCacheRecNotErrorDominatedOrAcknowledged()",
@@ -2497,92 +2281,8 @@
       "_origin": "ast",
       "community": 119,
       "norm_label": "verifycacherecnoterrordominatedoracknowledged()",
-      "community_name": "verify-claim.mjs",
+      "community_name": "verifyCacheRecNotErrorDominatedOrAcknowledged",
       "id": "agents_skills_vercel_optimize_lib_verify_claim_verifycacherecnoterrordominatedoracknowledged"
-    },
-    {
-      "label": "verifyCacheVaryMatchesDynamicInputs()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
-      "source_location": "L196",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 119,
-      "norm_label": "verifycachevarymatchesdynamicinputs()",
-      "community_name": "verify-claim.mjs",
-      "id": "agents_skills_vercel_optimize_lib_verify_claim_verifycachevarymatchesdynamicinputs"
-    },
-    {
-      "label": "verifyCitationAppliesToVersion()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
-      "source_location": "L179",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 119,
-      "norm_label": "verifycitationappliestoversion()",
-      "community_name": "verify-claim.mjs",
-      "id": "agents_skills_vercel_optimize_lib_verify_claim_verifycitationappliestoversion"
-    },
-    {
-      "label": "verifyCitationInLibrary()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
-      "source_location": "L168",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 119,
-      "norm_label": "verifycitationinlibrary()",
-      "community_name": "verify-claim.mjs",
-      "id": "agents_skills_vercel_optimize_lib_verify_claim_verifycitationinlibrary"
-    },
-    {
-      "label": "verifyImageResponseHeadersCitation()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
-      "source_location": "L446",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 119,
-      "norm_label": "verifyimageresponseheaderscitation()",
-      "community_name": "verify-claim.mjs",
-      "id": "agents_skills_vercel_optimize_lib_verify_claim_verifyimageresponseheaderscitation"
-    },
-    {
-      "label": "verifyNextCacheLifeCdnHeaderSemantics()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
-      "source_location": "L433",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 119,
-      "norm_label": "verifynextcachelifecdnheadersemantics()",
-      "community_name": "verify-claim.mjs",
-      "id": "agents_skills_vercel_optimize_lib_verify_claim_verifynextcachelifecdnheadersemantics"
-    },
-    {
-      "label": "verifyRouteErrorNotFoundStatusAndScope()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
-      "source_location": "L663",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 119,
-      "norm_label": "verifyrouteerrornotfoundstatusandscope()",
-      "community_name": "verify-claim.mjs",
-      "id": "agents_skills_vercel_optimize_lib_verify_claim_verifyrouteerrornotfoundstatusandscope"
-    },
-    {
-      "label": "verifyTurboBuildCacheSafety()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
-      "source_location": "L806",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 119,
-      "norm_label": "verifyturbobuildcachesafety()",
-      "community_name": "verify-claim.mjs",
-      "id": "agents_skills_vercel_optimize_lib_verify_claim_verifyturbobuildcachesafety"
     },
     {
       "label": ".configureFlutterEngine()",
@@ -7625,6 +7325,66 @@
       "id": "android_app_src_main_java_com_example_my_auto_guide_vehiclestatuswidgetprovider_vehiclestatuswidgetprovider_setwidgetimage"
     },
     {
+      "label": "findRecContradictions()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/project-facts.mjs",
+      "source_location": "L84",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "norm_label": "findreccontradictions()",
+      "community_name": "verify-claim.mjs",
+      "id": "agents_skills_vercel_optimize_lib_project_facts_findreccontradictions"
+    },
+    {
+      "label": "cleanHeaderValue()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
+      "source_location": "L899",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "norm_label": "cleanheadervalue()",
+      "community_name": "verify-claim.mjs",
+      "id": "agents_skills_vercel_optimize_lib_verify_claim_cleanheadervalue"
+    },
+    {
+      "label": "extractHeaderValues()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
+      "source_location": "L885",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "norm_label": "extractheadervalues()",
+      "community_name": "verify-claim.mjs",
+      "id": "agents_skills_vercel_optimize_lib_verify_claim_extractheadervalues"
+    },
+    {
+      "label": "hasEmptyCacheDirective()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
+      "source_location": "L906",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "norm_label": "hasemptycachedirective()",
+      "community_name": "verify-claim.mjs",
+      "id": "agents_skills_vercel_optimize_lib_verify_claim_hasemptycachedirective"
+    },
+    {
+      "label": "hasHeaderValue()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
+      "source_location": "L895",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "norm_label": "hasheadervalue()",
+      "community_name": "verify-claim.mjs",
+      "id": "agents_skills_vercel_optimize_lib_verify_claim_hasheadervalue"
+    },
+    {
       "label": "recText()",
       "file_type": "code",
       "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
@@ -7633,8 +7393,32 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": "rectext()",
-      "community_name": "verifyClaim",
+      "community_name": "verify-claim.mjs",
       "id": "agents_skills_vercel_optimize_lib_verify_claim_rectext"
+    },
+    {
+      "label": "routeErrorFixBroadlyCatchesNotFound()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
+      "source_location": "L704",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "norm_label": "routeerrorfixbroadlycatchesnotfound()",
+      "community_name": "verify-claim.mjs",
+      "id": "agents_skills_vercel_optimize_lib_verify_claim_routeerrorfixbroadlycatchesnotfound"
+    },
+    {
+      "label": "routeErrorFixExplicitlyConvertsUnexpectedErrorsToNotFound()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
+      "source_location": "L698",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "norm_label": "routeerrorfixexplicitlyconvertsunexpectederrorstonotfound()",
+      "community_name": "verify-claim.mjs",
+      "id": "agents_skills_vercel_optimize_lib_verify_claim_routeerrorfixexplicitlyconvertsunexpectederrorstonotfound"
     },
     {
       "label": "verifyAuthGuardParallelizationSafety()",
@@ -7645,7 +7429,7 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": "verifyauthguardparallelizationsafety()",
-      "community_name": "verifyClaim",
+      "community_name": "verify-claim.mjs",
       "id": "agents_skills_vercel_optimize_lib_verify_claim_verifyauthguardparallelizationsafety"
     },
     {
@@ -7657,8 +7441,32 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": "verifycache404longttlsafety()",
-      "community_name": "verifyClaim",
+      "community_name": "verify-claim.mjs",
       "id": "agents_skills_vercel_optimize_lib_verify_claim_verifycache404longttlsafety"
+    },
+    {
+      "label": "verifyCacheControlHeadersCitation()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
+      "source_location": "L611",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "norm_label": "verifycachecontrolheaderscitation()",
+      "community_name": "verify-claim.mjs",
+      "id": "agents_skills_vercel_optimize_lib_verify_claim_verifycachecontrolheaderscitation"
+    },
+    {
+      "label": "verifyCacheControlHeaderSyntax()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
+      "source_location": "L591",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "norm_label": "verifycachecontrolheadersyntax()",
+      "community_name": "verify-claim.mjs",
+      "id": "agents_skills_vercel_optimize_lib_verify_claim_verifycachecontrolheadersyntax"
     },
     {
       "label": "verifyCachePolicyPositiveOrNoReadyRec()",
@@ -7669,7 +7477,7 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": "verifycachepolicypositiveornoreadyrec()",
-      "community_name": "verifyClaim",
+      "community_name": "verify-claim.mjs",
       "id": "agents_skills_vercel_optimize_lib_verify_claim_verifycachepolicypositiveornoreadyrec"
     },
     {
@@ -7681,8 +7489,44 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": "verifycachevarycardinalitysafe()",
-      "community_name": "verifyClaim",
+      "community_name": "verify-claim.mjs",
       "id": "agents_skills_vercel_optimize_lib_verify_claim_verifycachevarycardinalitysafe"
+    },
+    {
+      "label": "verifyCacheVaryMatchesDynamicInputs()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
+      "source_location": "L196",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "norm_label": "verifycachevarymatchesdynamicinputs()",
+      "community_name": "verify-claim.mjs",
+      "id": "agents_skills_vercel_optimize_lib_verify_claim_verifycachevarymatchesdynamicinputs"
+    },
+    {
+      "label": "verifyCitationAppliesToVersion()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
+      "source_location": "L179",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "norm_label": "verifycitationappliestoversion()",
+      "community_name": "verify-claim.mjs",
+      "id": "agents_skills_vercel_optimize_lib_verify_claim_verifycitationappliestoversion"
+    },
+    {
+      "label": "verifyCitationInLibrary()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
+      "source_location": "L168",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "norm_label": "verifycitationinlibrary()",
+      "community_name": "verify-claim.mjs",
+      "id": "agents_skills_vercel_optimize_lib_verify_claim_verifycitationinlibrary"
     },
     {
       "label": "verifyClaim()",
@@ -7693,8 +7537,20 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": "verifyclaim()",
-      "community_name": "verifyClaim",
+      "community_name": "verify-claim.mjs",
       "id": "agents_skills_vercel_optimize_lib_verify_claim_verifyclaim"
+    },
+    {
+      "label": "verifyImageResponseHeadersCitation()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
+      "source_location": "L446",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "norm_label": "verifyimageresponseheaderscitation()",
+      "community_name": "verify-claim.mjs",
+      "id": "agents_skills_vercel_optimize_lib_verify_claim_verifyimageresponseheaderscitation"
     },
     {
       "label": "verifyImmutableDynamicRouteSafety()",
@@ -7705,7 +7561,7 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": "verifyimmutabledynamicroutesafety()",
-      "community_name": "verifyClaim",
+      "community_name": "verify-claim.mjs",
       "id": "agents_skills_vercel_optimize_lib_verify_claim_verifyimmutabledynamicroutesafety"
     },
     {
@@ -7717,7 +7573,7 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": "verifynextcachecomponentsroutesegmentconfig()",
-      "community_name": "verifyClaim",
+      "community_name": "verify-claim.mjs",
       "id": "agents_skills_vercel_optimize_lib_verify_claim_verifynextcachecomponentsroutesegmentconfig"
     },
     {
@@ -7729,7 +7585,7 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": "verifynextcachecomponentsruntimecachepreference()",
-      "community_name": "verifyClaim",
+      "community_name": "verify-claim.mjs",
       "id": "agents_skills_vercel_optimize_lib_verify_claim_verifynextcachecomponentsruntimecachepreference"
     },
     {
@@ -7741,8 +7597,20 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": "verifynextcachednotfoundcausalsupport()",
-      "community_name": "verifyClaim",
+      "community_name": "verify-claim.mjs",
       "id": "agents_skills_vercel_optimize_lib_verify_claim_verifynextcachednotfoundcausalsupport"
+    },
+    {
+      "label": "verifyNextCacheLifeCdnHeaderSemantics()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
+      "source_location": "L433",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "norm_label": "verifynextcachelifecdnheadersemantics()",
+      "community_name": "verify-claim.mjs",
+      "id": "agents_skills_vercel_optimize_lib_verify_claim_verifynextcachelifecdnheadersemantics"
     },
     {
       "label": "verifyNextCacheLifeSingleExecution()",
@@ -7753,7 +7621,7 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": "verifynextcachelifesingleexecution()",
-      "community_name": "verifyClaim",
+      "community_name": "verify-claim.mjs",
       "id": "agents_skills_vercel_optimize_lib_verify_claim_verifynextcachelifesingleexecution"
     },
     {
@@ -7765,7 +7633,7 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": "verifynextimagepriorityapiforversion()",
-      "community_name": "verifyClaim",
+      "community_name": "verify-claim.mjs",
       "id": "agents_skills_vercel_optimize_lib_verify_claim_verifynextimagepriorityapiforversion"
     },
     {
@@ -7777,7 +7645,7 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": "verifynextruntimecacheapiforversion()",
-      "community_name": "verifyClaim",
+      "community_name": "verify-claim.mjs",
       "id": "agents_skills_vercel_optimize_lib_verify_claim_verifynextruntimecacheapiforversion"
     },
     {
@@ -7789,8 +7657,20 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": "verifynextstablecacheapiforversion()",
-      "community_name": "verifyClaim",
+      "community_name": "verify-claim.mjs",
       "id": "agents_skills_vercel_optimize_lib_verify_claim_verifynextstablecacheapiforversion"
+    },
+    {
+      "label": "verifyNoProjectConfigContradiction()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
+      "source_location": "L63",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "norm_label": "verifynoprojectconfigcontradiction()",
+      "community_name": "verify-claim.mjs",
+      "id": "agents_skills_vercel_optimize_lib_verify_claim_verifynoprojectconfigcontradiction"
     },
     {
       "label": "verifyParallelizationImpactNotOverclaimed()",
@@ -7801,7 +7681,7 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": "verifyparallelizationimpactnotoverclaimed()",
-      "community_name": "verifyClaim",
+      "community_name": "verify-claim.mjs",
       "id": "agents_skills_vercel_optimize_lib_verify_claim_verifyparallelizationimpactnotoverclaimed"
     },
     {
@@ -7813,8 +7693,20 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": "verifyparallelizationnotcpuboundwork()",
-      "community_name": "verifyClaim",
+      "community_name": "verify-claim.mjs",
       "id": "agents_skills_vercel_optimize_lib_verify_claim_verifyparallelizationnotcpuboundwork"
+    },
+    {
+      "label": "verifyRouteErrorNotFoundStatusAndScope()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
+      "source_location": "L663",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "norm_label": "verifyrouteerrornotfoundstatusandscope()",
+      "community_name": "verify-claim.mjs",
+      "id": "agents_skills_vercel_optimize_lib_verify_claim_verifyrouteerrornotfoundstatusandscope"
     },
     {
       "label": "verifyRuntimeErrorCauseSupported()",
@@ -7825,7 +7717,7 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": "verifyruntimeerrorcausesupported()",
-      "community_name": "verifyClaim",
+      "community_name": "verify-claim.mjs",
       "id": "agents_skills_vercel_optimize_lib_verify_claim_verifyruntimeerrorcausesupported"
     },
     {
@@ -7837,7 +7729,7 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": "verifyvercelignorecommandprojectstate()",
-      "community_name": "verifyClaim",
+      "community_name": "verify-claim.mjs",
       "id": "agents_skills_vercel_optimize_lib_verify_claim_verifyvercelignorecommandprojectstate"
     },
     {
@@ -7849,7 +7741,7 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": "main()",
-      "community_name": "verifyClaim",
+      "community_name": "verify-claim.mjs",
       "id": "agents_skills_vercel_optimize_scripts_verify_finding_main"
     },
     {
@@ -7899,18 +7791,6 @@
       "norm_label": "deriveprojectfacts()",
       "community_name": "verify-and-regen.mjs",
       "id": "agents_skills_vercel_optimize_lib_project_facts_deriveprojectfacts"
-    },
-    {
-      "label": "findRecContradictions()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/project-facts.mjs",
-      "source_location": "L84",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 65,
-      "norm_label": "findreccontradictions()",
-      "community_name": "verify-and-regen.mjs",
-      "id": "agents_skills_vercel_optimize_lib_project_facts_findreccontradictions"
     },
     {
       "label": "deriveRootFromSignals()",
@@ -7971,18 +7851,6 @@
       "norm_label": "resolvereporoot()",
       "community_name": "verify-and-regen.mjs",
       "id": "agents_skills_vercel_optimize_lib_repo_root_resolvereporoot"
-    },
-    {
-      "label": "verifyNoProjectConfigContradiction()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
-      "source_location": "L63",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 65,
-      "norm_label": "verifynoprojectconfigcontradiction()",
-      "community_name": "verify-and-regen.mjs",
-      "id": "agents_skills_vercel_optimize_lib_verify_claim_verifynoprojectconfigcontradiction"
     },
     {
       "label": "log()",
@@ -8213,6 +8081,18 @@
       "id": "agents_skills_vercel_optimize_lib_verify_claim_verifynextrouterevalidatestaticprereq"
     },
     {
+      "label": "buildScriptHasMigrationSideEffect()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
+      "source_location": "L870",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 67,
+      "norm_label": "buildscripthasmigrationsideeffect()",
+      "community_name": "readClaimFile",
+      "id": "agents_skills_vercel_optimize_lib_verify_claim_buildscripthasmigrationsideeffect"
+    },
+    {
       "label": "compilePattern()",
       "file_type": "code",
       "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
@@ -8225,6 +8105,18 @@
       "id": "agents_skills_vercel_optimize_lib_verify_claim_compilepattern"
     },
     {
+      "label": "parseJsonLike()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
+      "source_location": "L861",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 67,
+      "norm_label": "parsejsonlike()",
+      "community_name": "readClaimFile",
+      "id": "agents_skills_vercel_optimize_lib_verify_claim_parsejsonlike"
+    },
+    {
       "label": "readClaimFile()",
       "file_type": "code",
       "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
@@ -8235,6 +8127,42 @@
       "norm_label": "readclaimfile()",
       "community_name": "readClaimFile",
       "id": "agents_skills_vercel_optimize_lib_verify_claim_readclaimfile"
+    },
+    {
+      "label": "readOptionalJsonFile()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
+      "source_location": "L852",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 67,
+      "norm_label": "readoptionaljsonfile()",
+      "community_name": "readClaimFile",
+      "id": "agents_skills_vercel_optimize_lib_verify_claim_readoptionaljsonfile"
+    },
+    {
+      "label": "recSeparatesTurboBuildSideEffects()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
+      "source_location": "L874",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 67,
+      "norm_label": "recseparatesturbobuildsideeffects()",
+      "community_name": "readClaimFile",
+      "id": "agents_skills_vercel_optimize_lib_verify_claim_recseparatesturbobuildsideeffects"
+    },
+    {
+      "label": "siblingPackageJson()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
+      "source_location": "L848",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 67,
+      "norm_label": "siblingpackagejson()",
+      "community_name": "readClaimFile",
+      "id": "agents_skills_vercel_optimize_lib_verify_claim_siblingpackagejson"
     },
     {
       "label": "snippetFoundElsewhere()",
@@ -8309,6 +8237,18 @@
       "id": "agents_skills_vercel_optimize_lib_verify_claim_verifyrepocount"
     },
     {
+      "label": "verifyTurboBuildCacheSafety()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
+      "source_location": "L806",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 67,
+      "norm_label": "verifyturbobuildcachesafety()",
+      "community_name": "readClaimFile",
+      "id": "agents_skills_vercel_optimize_lib_verify_claim_verifyturbobuildcachesafety"
+    },
+    {
       "label": "walkFiles()",
       "file_type": "code",
       "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
@@ -8333,6 +8273,18 @@
       "id": "agents_skills_vercel_optimize_lib_verify_claim_cachelifeneedscontentfreshnessproof"
     },
     {
+      "label": "configContainsTag()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
+      "source_location": "L1041",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 69,
+      "norm_label": "configcontainstag()",
+      "community_name": "verifyNextCacheLifetimeFreshnessSupported",
+      "id": "agents_skills_vercel_optimize_lib_verify_claim_configcontainstag"
+    },
+    {
       "label": "dedupeCacheTags()",
       "file_type": "code",
       "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
@@ -8343,6 +8295,18 @@
       "norm_label": "dedupecachetags()",
       "community_name": "verifyNextCacheLifetimeFreshnessSupported",
       "id": "agents_skills_vercel_optimize_lib_verify_claim_dedupecachetags"
+    },
+    {
+      "label": "escapeRegExp()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
+      "source_location": "L1202",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 69,
+      "norm_label": "escaperegexp()",
+      "community_name": "verifyNextCacheLifetimeFreshnessSupported",
+      "id": "agents_skills_vercel_optimize_lib_verify_claim_escaperegexp"
     },
     {
       "label": "extractCacheTags()",
@@ -8369,6 +8333,30 @@
       "id": "agents_skills_vercel_optimize_lib_verify_claim_extractcachetagsfromfiles"
     },
     {
+      "label": "hasConfigDrivenInvalidation()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
+      "source_location": "L1036",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 69,
+      "norm_label": "hasconfigdriveninvalidation()",
+      "community_name": "verifyNextCacheLifetimeFreshnessSupported",
+      "id": "agents_skills_vercel_optimize_lib_verify_claim_hasconfigdriveninvalidation"
+    },
+    {
+      "label": "hasLiteralInvalidation()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
+      "source_location": "L1027",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 69,
+      "norm_label": "hasliteralinvalidation()",
+      "community_name": "verifyNextCacheLifetimeFreshnessSupported",
+      "id": "agents_skills_vercel_optimize_lib_verify_claim_hasliteralinvalidation"
+    },
+    {
       "label": "readCacheInvalidationFiles()",
       "file_type": "code",
       "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
@@ -8391,6 +8379,18 @@
       "norm_label": "rgrelevantfiles()",
       "community_name": "verifyNextCacheLifetimeFreshnessSupported",
       "id": "agents_skills_vercel_optimize_lib_verify_claim_rgrelevantfiles"
+    },
+    {
+      "label": "tagHasMatchingInvalidation()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
+      "source_location": "L1020",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 69,
+      "norm_label": "taghasmatchinginvalidation()",
+      "community_name": "verifyNextCacheLifetimeFreshnessSupported",
+      "id": "agents_skills_vercel_optimize_lib_verify_claim_taghasmatchinginvalidation"
     },
     {
       "label": "verifyNextCacheLifetimeFreshnessSupported()",
@@ -11694,28 +11694,6 @@
       "norm_label": "metadata",
       "community_name": "usage-spike-triage.mjs",
       "id": "agents_skills_vercel_optimize_lib_gates_usage_spike_triage_metadata"
-    },
-    {
-      "label": "verify-claim.mjs",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
-      "source_location": "L1",
-      "_origin": "ast",
-      "community": 119,
-      "norm_label": "verify-claim.mjs",
-      "community_name": "verify-claim.mjs",
-      "id": "agents_skills_vercel_optimize_lib_verify_claim"
-    },
-    {
-      "label": "cacheInvalidationFileCache",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
-      "source_location": "L12",
-      "_origin": "ast",
-      "community": 119,
-      "norm_label": "cacheinvalidationfilecache",
-      "community_name": "verify-claim.mjs",
-      "id": "agents_skills_vercel_optimize_lib_verify_claim_cacheinvalidationfilecache"
     },
     {
       "label": "../../core/services/auth_service.dart",
@@ -22697,6 +22675,28 @@
       "id": "remoteviews"
     },
     {
+      "label": "verify-claim.mjs",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
+      "source_location": "L1",
+      "_origin": "ast",
+      "community": 6,
+      "norm_label": "verify-claim.mjs",
+      "community_name": "verify-claim.mjs",
+      "id": "agents_skills_vercel_optimize_lib_verify_claim"
+    },
+    {
+      "label": "cacheInvalidationFileCache",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/verify-claim.mjs",
+      "source_location": "L12",
+      "_origin": "ast",
+      "community": 6,
+      "norm_label": "cacheinvalidationfilecache",
+      "community_name": "verify-claim.mjs",
+      "id": "agents_skills_vercel_optimize_lib_verify_claim_cacheinvalidationfilecache"
+    },
+    {
       "label": "verify-finding.mjs",
       "file_type": "code",
       "source_file": ".agents/skills/vercel-optimize/scripts/verify-finding.mjs",
@@ -22704,7 +22704,7 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": "verify-finding.mjs",
-      "community_name": "verifyClaim",
+      "community_name": "verify-claim.mjs",
       "id": "agents_skills_vercel_optimize_scripts_verify_finding"
     },
     {

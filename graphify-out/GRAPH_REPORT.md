@@ -20,7 +20,7 @@
 - sanitizers/index.mjs
 - workspace-resolver.mjs
 - rutas_screen.dart
-- verifyClaim
+- verify-claim.mjs
 - notification_service.dart
 - ai_chat_screen.dart
 - vehicle_registration_view.dart
@@ -133,7 +133,7 @@
 - platform-bot-protection.mjs
 - platform-fluid-compute.mjs
 - usage-spike-triage.mjs
-- verify-claim.mjs
+- verifyCacheRecNotErrorDominatedOrAcknowledged
 - MainActivity.kt
 - RunnerTests
 - calendar_sync_service.dart
@@ -209,9 +209,9 @@ Nodes (54): buildPackageLookup(), buildResolver(), DEFAULT_RESOLVE_OPTIONS, dete
 Cohesion: 0.05
 Nodes (41): ../../../core/services/navigation_service.dart, _animCtrl, build, _buildBottomPanel, _buildMap, _buscarDestino, _cargarInfoVehiculo, _controller (+33 more)
 
-### Community 6 - "verifyClaim"
-Cohesion: 0.18
-Nodes (19): recText(), verifyAuthGuardParallelizationSafety(), verifyCache404LongTtlSafety(), verifyCachePolicyPositiveOrNoReadyRec(), verifyCacheVaryCardinalitySafe(), verifyClaim(), verifyImmutableDynamicRouteSafety(), verifyNextCacheComponentsRouteSegmentConfig() (+11 more)
+### Community 6 - "verify-claim.mjs"
+Cohesion: 0.13
+Nodes (36): findRecContradictions(), cacheInvalidationFileCache, cleanHeaderValue(), extractHeaderValues(), hasEmptyCacheDirective(), hasHeaderValue(), recText(), routeErrorFixBroadlyCatchesNotFound() (+28 more)
 
 ### Community 7 - "notification_service.dart"
 Cohesion: 0.12
@@ -446,24 +446,24 @@ Cohesion: 0.13
 Nodes (13): unique_ptr, DartProject, HWND, LPARAM, LRESULT, UINT, WPARAM, FlutterWindow (+5 more)
 
 ### Community 65 - "verify-and-regen.mjs"
-Cohesion: 0.22
-Nodes (14): summarizeClaimResults(), applyQualityFloor(), deriveProjectFacts(), findRecContradictions(), deriveRootFromSignals(), detectRepoRoot(), fileResolvesAt(), pickProbeFile() (+6 more)
+Cohesion: 0.27
+Nodes (12): summarizeClaimResults(), applyQualityFloor(), deriveProjectFacts(), deriveRootFromSignals(), detectRepoRoot(), fileResolvesAt(), pickProbeFile(), resolveRepoRoot() (+4 more)
 
 ### Community 66 - "verifyNextCacheComponentsRouteChainFile"
 Cohesion: 0.15
 Nodes (15): asArray(), firstAccessiblePath(), firstDynamicRouteChainReason(), isCatchAllPlaceholder(), isDynamicPlaceholder(), layoutAppliesToCandidateRoute(), normalizeProjectRootDirectory(), normalizeRouteForLayoutMatch() (+7 more)
 
 ### Community 67 - "readClaimFile"
-Cohesion: 0.31
-Nodes (9): compilePattern(), readClaimFile(), snippetFoundElsewhere(), verifyCodeSnippet(), verifyPatternAbsent(), verifyPatternCount(), verifyPatternExists(), verifyRepoCount() (+1 more)
+Cohesion: 0.17
+Nodes (15): buildScriptHasMigrationSideEffect(), compilePattern(), parseJsonLike(), readClaimFile(), readOptionalJsonFile(), recSeparatesTurboBuildSideEffects(), siblingPackageJson(), snippetFoundElsewhere() (+7 more)
 
 ### Community 68 - "email_service.dart"
 Cohesion: 0.22
 Nodes (8): _buildHtmlReport, EmailService, _fmtDate, sendSimitReport, package:flutter_dotenv/flutter_dotenv.dart, package:http/http.dart, package:mailer/mailer.dart, package:mailer/smtp_server.dart
 
 ### Community 69 - "verifyNextCacheLifetimeFreshnessSupported"
-Cohesion: 0.28
-Nodes (9): cacheLifeNeedsContentFreshnessProof(), dedupeCacheTags(), execFileP, extractCacheTags(), extractCacheTagsFromFiles(), readCacheInvalidationFiles(), rgRelevantFiles(), verifyNextCacheLifetimeFreshnessSupported() (+1 more)
+Cohesion: 0.19
+Nodes (14): cacheLifeNeedsContentFreshnessProof(), configContainsTag(), dedupeCacheTags(), escapeRegExp(), execFileP, extractCacheTags(), extractCacheTagsFromFiles(), hasConfigDrivenInvalidation() (+6 more)
 
 ### Community 70 - "ai_bot_service.dart"
 Cohesion: 0.14
@@ -649,9 +649,9 @@ Nodes (4): extractHighColdRoutes(), extractSlowHotRoutes(), gate(), metadata
 Cohesion: 0.60
 Nodes (4): aggregateSkuStats(), dayTotal(), gate(), metadata
 
-### Community 119 - "verify-claim.mjs"
-Cohesion: 0.11
-Nodes (31): buildScriptHasMigrationSideEffect(), cacheInvalidationFileCache, cleanHeaderValue(), configContainsTag(), escapeRegExp(), extractHeaderValues(), formatPct(), functionStatusForRoute() (+23 more)
+### Community 119 - "verifyCacheRecNotErrorDominatedOrAcknowledged"
+Cohesion: 0.40
+Nodes (5): formatPct(), functionStatusForRoute(), numberValue(), routeFromCandidateRef(), verifyCacheRecNotErrorDominatedOrAcknowledged()
 
 ### Community 120 - "MainActivity.kt"
 Cohesion: 0.60
