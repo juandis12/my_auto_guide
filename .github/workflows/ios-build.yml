@@ -211,10 +211,10 @@ jobs:
             cd "${GITHUB_WORKSPACE}"
             if [ "$CONFIGURATION" = "Debug" ]; then
               echo "Building Flutter iOS Debug..."
-              flutter build ios --debug --no-codesign
+              flutter build ios --debug --no-codesign || (echo "=== FLUTTER BUILD FAILED - DIAGNOSTIC XCODEBUILD ===" && xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner -configuration Debug -destination 'generic/platform=iOS' CODE_SIGNING_ALLOWED=NO CODE_SIGN_IDENTITY="")
             else
               echo "Building Flutter iOS Release..."
-              flutter build ios --release --no-codesign
+              flutter build ios --release --no-codesign || (echo "=== FLUTTER BUILD FAILED - DIAGNOSTIC XCODEBUILD ===" && xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner -configuration Release -destination 'generic/platform=iOS' CODE_SIGNING_ALLOWED=NO CODE_SIGN_IDENTITY="")
             fi
             cd "${GITHUB_WORKSPACE}/${IOS_PATH}"
           elif [ "$PROJECT_TYPE" = "reactnative" ] || [ "$PROJECT_TYPE" = "expo" ]; then
