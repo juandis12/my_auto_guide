@@ -82,7 +82,7 @@ jobs:
       - name: Upload IPA Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ios-ipa
-          path: build/*.ipa
+          name: 'ios-ipa'
+          path: 'build/*.ipa'
           retention-days: 7
-          if-no-files-found: error
+          if-no-files-found: 'error'
