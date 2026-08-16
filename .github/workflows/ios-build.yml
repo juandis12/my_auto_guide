@@ -195,8 +195,8 @@ jobs:
 
           # Install pods if Podfile exists (always run to ensure sync with Podfile.lock)
           if [ -f "Podfile" ]; then
-            echo "Running pod install..."
-            pod install
+            echo "Running pod install --repo-update..."
+            pod install --repo-update
             WORKSPACE=$(find . -maxdepth 1 -name "*.xcworkspace" | head -1)
           fi
 
