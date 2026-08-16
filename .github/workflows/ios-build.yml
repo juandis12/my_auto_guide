@@ -35,7 +35,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-14
+    runs-on: macos-latest
     timeout-minutes: 30
 
     steps:
@@ -220,34 +220,10 @@ jobs:
             cd "${GITHUB_WORKSPACE}"
             if [ "$CONFIGURATION" = "Debug" ]; then
               echo "Building Flutter iOS Debug..."
-              flutter build ios --debug --no-codesign 2>&1 | tee /tmp/flutter_build.log || {
-                echo ""
-                echo "========================================="
-                echo "  ERRORS ISOLATED FROM BUILD LOG:"
-                echo "========================================="
-                grep -i -E "error|failed|failure" /tmp/flutter_build.log | grep -v -i "0 error" | tail -n 60 || true
-                echo ""
-                echo "========================================="
-                echo "  LAST 300 LINES OF BUILD LOG:"
-                echo "========================================="
-                tail -n 300 /tmp/flutter_build.log
-                exit 1
-              }
+              flutter build ios --debug --no-codesign
             else
               echo "Building Flutter iOS Release..."
-              flutter build ios --release --no-codesign 2>&1 | tee /tmp/flutter_build.log || {
-                echo ""
-                echo "========================================="
-                echo "  ERRORS ISOLATED FROM BUILD LOG:"
-                echo "========================================="
-                grep -i -E "error|failed|failure" /tmp/flutter_build.log | grep -v -i "0 error" | tail -n 60 || true
-                echo ""
-                echo "========================================="
-                echo "  LAST 300 LINES OF BUILD LOG:"
-                echo "========================================="
-                tail -n 300 /tmp/flutter_build.log
-                exit 1
-              }
+              flutter build ios --release --no-codesign
             fi
             cd "${GITHUB_WORKSPACE}/${IOS_PATH}"
           elif [ "$PROJECT_TYPE" = "reactnative" ] || [ "$PROJECT_TYPE" = "expo" ]; then
