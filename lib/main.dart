@@ -16,6 +16,7 @@ import 'core/services/sync_service.dart';
 import 'core/services/background_nav_service.dart';
 import 'core/logic/app_widget_logic.dart';
 import 'features/auth/login_screen.dart';
+import 'core/logic/performance_guard.dart';
 import 'core/theme/app_apple_theme.dart';
 
 /// Detecta si la app fue abierta desde un widget con deep link
