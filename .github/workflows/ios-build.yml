@@ -6,6 +6,14 @@ on:
       - main
   workflow_dispatch:
     inputs:
+      configuration:
+        description: 'Build Configuration (Release for production, Debug for development)'
+        required: true
+        type: choice
+        default: 'Release'
+        options:
+          - Release
+          - Debug
       build_id:
         description: 'Unique build identifier'
         required: false
@@ -34,8 +42,9 @@ jobs:
           cd ios
           pod install --repo-update
 
-      - name: Build Flutter iOS Release (Unsigned)
+      - name: Build Flutter iOS App (Unsigned)
         env:
+          CONFIGURATION: ${{ inputs.configuration || 'Release' }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -58,8 +67,13 @@ jobs:
             touch .env
           fi
 
-          echo "Compilando iOS App..."
-          flutter build ios --release --no-codesign
+          if [ "$CONFIGURATION" = "Debug" ]; then
+            echo "Compilando iOS App en Modo Debug..."
+            flutter build ios --debug --no-codesign
+          else
+            echo "Compilando iOS App en Modo Release..."
+            flutter build ios --release --no-codesign
+          fi
 
       - name: Create IPA Package
         env:
@@ -68,7 +82,10 @@ jobs:
           set -e
           APP_PATH=$(find build/ios/iphoneos -name "*.app" -type d | head -1)
           if [ -z "$APP_PATH" ]; then
-            echo "Error: .app bundle not found"
+            APP_PATH=$(find build/ios/Runner.app -type d 2>/dev/null | head -1)
+          fi
+          if [ -z "$APP_PATH" ]; then
+            echo "Error: .app bundle no encontrado"
             exit 1
           fi
           echo "App bundle encontrado en: $APP_PATH"
