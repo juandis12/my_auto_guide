@@ -9,6 +9,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'core/theme/app_apple_theme.dart';
 import 'core/services/notification_service.dart';
 import 'core/providers/auth_provider.dart';
 import 'core/providers/vehicle_provider.dart';
@@ -120,22 +121,8 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'My Auto Guide',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color(0xFF2563EB), // Azul moderno
-            brightness: Brightness.light,
-          ),
-          useMaterial3: true,
-          textTheme: GoogleFonts.outfitTextTheme(),
-        ),
-        darkTheme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color(0xFF2563EB),
-            brightness: Brightness.dark,
-          ),
-          useMaterial3: true,
-          textTheme: GoogleFonts.outfitTextTheme(ThemeData.dark().textTheme),
-        ),
+        theme: AppAppleTheme.lightTheme,
+        darkTheme: AppAppleTheme.darkTheme,
         themeMode: ThemeMode.system,
         home: const CarRentalLoginScreen(),
         debugShowCheckedModeBanner: false,

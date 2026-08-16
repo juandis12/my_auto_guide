@@ -1667,48 +1667,42 @@ class _InicioAppState extends State<InicioApp> {
                   child: RepaintBoundary(
                     child: PerformanceGuard.adaptiveBlur(
                       borderRadius: BorderRadius.circular(24),
-                      sigma: Theme.of(context).platform == TargetPlatform.iOS ? 15.0 : 5.0,
+                      sigma: 15.0,
                       fallbackColor:
                           Theme.of(context).brightness == Brightness.dark
                               ? Colors.white.withOpacity(0.08)
                               : Colors.black.withOpacity(0.03),
                       child: Container(
                         padding: const EdgeInsets.all(20),
-                        decoration: Theme.of(context).platform == TargetPlatform.iOS
-                            ? BoxDecoration(
-                                borderRadius: BorderRadius.circular(24),
-                                gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: isDark
-                                      ? [
-                                          Colors.white.withOpacity(0.08),
-                                          Colors.white.withOpacity(0.02),
-                                        ]
-                                      : [
-                                          Colors.black.withOpacity(0.03),
-                                          Colors.black.withOpacity(0.01),
-                                        ],
-                                ),
-                                border: Border.all(
-                                  color: isDark
-                                      ? Colors.white.withOpacity(0.15)
-                                      : Colors.black.withOpacity(0.08),
-                                  width: 1.0,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(isDark ? 0.15 : 0.05),
-                                    blurRadius: 16,
-                                    offset: const Offset(0, 8),
-                                  ),
-                                ],
-                              )
-                            : BoxDecoration(
-                                color: Colors.transparent,
-                                borderRadius: BorderRadius.circular(24),
-                                border: Border.all(
-                                    color: bTheme.primaryColor.withOpacity(0.1))),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(24),
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: isDark
+                                ? [
+                                    Colors.white.withOpacity(0.08),
+                                    Colors.white.withOpacity(0.02),
+                                  ]
+                                : [
+                                    Colors.black.withOpacity(0.03),
+                                    Colors.black.withOpacity(0.01),
+                                  ],
+                          ),
+                          border: Border.all(
+                            color: isDark
+                                ? Colors.white.withOpacity(0.15)
+                                : Colors.black.withOpacity(0.08),
+                            width: 1.0,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(isDark ? 0.15 : 0.05),
+                              blurRadius: 16,
+                              offset: const Offset(0, 8),
+                            ),
+                          ],
+                        ),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1848,7 +1842,7 @@ class _InicioAppState extends State<InicioApp> {
                   delay: const Duration(milliseconds: 500),
                   child: PerformanceGuard.adaptiveBlur(
                     borderRadius: BorderRadius.circular(24),
-                    sigma: Theme.of(context).platform == TargetPlatform.iOS ? 15.0 : 5.0,
+                    sigma: 15.0,
                     fallbackColor:
                         Theme.of(context).brightness == Brightness.dark
                             ? Colors.white.withOpacity(0.08)
@@ -1958,51 +1952,47 @@ class _InicioAppState extends State<InicioApp> {
             ),
           );
 
-          if (isIOS) {
-            return Stack(
-              children: [
-                Positioned(
-                  top: -80,
-                  left: -80,
-                  child: Container(
-                    width: 280,
-                    height: 280,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: bTheme.primaryColor.withOpacity(isDark ? 0.15 : 0.1),
-                    ),
+          return Stack(
+            children: [
+              Positioned(
+                top: -80,
+                left: -80,
+                child: Container(
+                  width: 280,
+                  height: 280,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: bTheme.primaryColor.withOpacity(isDark ? 0.15 : 0.1),
                   ),
                 ),
-                Positioned(
-                  top: 350,
-                  right: -100,
-                  child: Container(
-                    width: 320,
-                    height: 320,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.blueAccent.withOpacity(isDark ? 0.12 : 0.08),
-                    ),
+              ),
+              Positioned(
+                top: 350,
+                right: -100,
+                child: Container(
+                  width: 320,
+                  height: 320,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.blueAccent.withOpacity(isDark ? 0.12 : 0.08),
                   ),
                 ),
-                Positioned(
-                  bottom: 100,
-                  left: -120,
-                  child: Container(
-                    width: 380,
-                    height: 380,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.purpleAccent.withOpacity(isDark ? 0.1 : 0.06),
-                    ),
+              ),
+              Positioned(
+                bottom: 100,
+                left: -120,
+                child: Container(
+                  width: 380,
+                  height: 380,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.purpleAccent.withOpacity(isDark ? 0.1 : 0.06),
                   ),
                 ),
-                mainContent,
-              ],
-            );
-          }
-
-          return mainContent;
+              ),
+              mainContent,
+            ],
+          );
         },
       ),
       floatingActionButton: LiquidGlassFAB(

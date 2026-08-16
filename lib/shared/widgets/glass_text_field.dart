@@ -33,22 +33,26 @@ class GlassTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final hintColor = isDark
-        ? Colors.white.withOpacity(0.6)
-        : Colors.black.withOpacity(0.6);
+        ? Colors.white.withValues(alpha: 0.6)
+        : Colors.black.withValues(alpha: 0.6);
 
     return PerformanceGuard.adaptiveBlur(
       borderRadius: BorderRadius.circular(16),
+      sigma: 15.0,
       fallbackColor: isDark
-          ? Colors.white.withOpacity(0.08)
-          : Colors.black.withOpacity(0.05),
+          ? Colors.white.withValues(alpha: 0.08)
+          : Colors.black.withValues(alpha: 0.05),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.transparent,
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.04)
+              : Colors.black.withValues(alpha: 0.02),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isDark
-                ? Colors.white.withOpacity(0.1)
-                : Colors.black.withOpacity(0.1),
+                ? const Color(0xFF38BDF8).withValues(alpha: 0.25)
+                : Colors.black.withValues(alpha: 0.12),
+            width: 1.2,
           ),
         ),
         child: TextField(
