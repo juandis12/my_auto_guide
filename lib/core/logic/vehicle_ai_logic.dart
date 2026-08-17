@@ -1,9 +1,12 @@
+// =============================================================================
+// vehicle_ai_logic.dart — MOTOR IA DE DIAGNÓSTICO PREDICTIVO & TELEMETRÍA 2.0
+// =============================================================================
+
 import 'dart:math';
 import 'vehicle_performance_logic.dart';
 
 class VehicleAILogic {
   /// Analiza patrones de conducción y genera "AI Insights".
-  /// Simula el procesamiento de telemetría para detectar irregularidades.
   static Map<String, dynamic> analyzeJourneyPatterns({
     required List<Map<String, dynamic>> routeHistory,
     required String modelName,
@@ -42,7 +45,7 @@ class VehicleAILogic {
     double stdDev = sqrt(variance);
 
     // Factor de intensidad (Basado en km/día promedio)
-    double kmPerDay = totalKm / 7; // Asumiendo última semana
+    double kmPerDay = totalKm / 7;
     String intensity = kmPerDay > 50 ? 'Alta' : (kmPerDay > 15 ? 'Media' : 'Baja');
 
     // AI Advice dinámico
@@ -70,6 +73,40 @@ class VehicleAILogic {
     if (intensity == 'Alta') score -= 15;
     if (stdDev > avgDist * 0.5) score -= 10;
     return score.clamp(0.0, 100.0);
+  }
+
+  /// Mantenimiento Adaptativo 2.0 por Clima y Terreno
+  static Map<String, dynamic> analyzeAdaptiveMaintenance({
+    required int totalKms,
+    required String terreno, // 'Pavimento', 'Destapado', 'Montaña'
+    required String clima,   // 'Seco', 'Lluvioso', 'Cálido'
+    bool isCar = false,
+  }) {
+    double wearMultiplier = 1.0;
+
+    if (terreno == 'Destapado') wearMultiplier += 0.35;
+    if (terreno == 'Montaña') wearMultiplier += 0.25;
+    if (clima == 'Lluvioso') wearMultiplier += 0.15;
+    if (clima == 'Cálido') wearMultiplier += 0.10;
+
+    final recommendedOilInterval = (isCar ? 5000 : 3000) / wearMultiplier;
+    final recommendedChainInterval = (isCar ? 10000 : 2000) / wearMultiplier;
+
+    final kmsToNextOil = recommendedOilInterval - (totalKms % recommendedOilInterval.toInt());
+    final kmsToNextChain = recommendedChainInterval - (totalKms % recommendedChainInterval.toInt());
+
+    String recommendation = 'Condiciones normales de manejo.';
+    if (wearMultiplier > 1.3) {
+      recommendation = 'Terreno y clima exigentes. Se recomienda adelantar el mantenimiento un ${(wearMultiplier * 10).round()}%';
+    }
+
+    return {
+      'wearMultiplier': wearMultiplier,
+      'kmsToNextOil': kmsToNextOil.clamp(0, 5000).round(),
+      'kmsToNextChain': kmsToNextChain.clamp(0, 5000).round(),
+      'recommendation': recommendation,
+      'healthPercentage': (100 - (wearMultiplier - 1.0) * 40).clamp(50.0, 100.0),
+    };
   }
 
   /// Calcula el ahorro real potenciado por IA (considerando variabilidad de precios).
@@ -114,40 +151,39 @@ class VehicleAILogic {
   }) {
     List<Map<String, dynamic>> issues = [];
     
-    // Multiplicador de desgaste basado en intensidad
     double wearFactor = intensity == 'Alta' ? 1.4 : (intensity == 'Media' ? 1.0 : 0.8);
 
-    // 1. Kit de Arrastre / Cadena (Periodo crítico cada 20,000km)
     int chainLife = (totalKms % 20000);
     if (chainLife > 17000 * (1/wearFactor)) {
       issues.add({
-        'item': 'Kit de Arrastre',
+        'item': 'Kit de Arrastre / Transmisión',
         'risk': 'Alto',
         'reason': 'Kilometraje próximo al límite de vida útil técnica.',
+        'estimatedCostCop': 180000,
         'icon': 'settings_input_component',
         'color': '0xFFF44336',
       });
     }
 
-    // 2. Pastillas de Freno (Periodo medio cada 12,000km)
     int brakeLife = (totalKms % 12000);
     if (brakeLife > 10000 * (1/wearFactor)) {
       issues.add({
         'item': 'Pastillas de Freno',
         'risk': 'Medio',
         'reason': 'Se detecta desgaste avanzado por fricción acumulada.',
+        'estimatedCostCop': 85000,
         'icon': 'eject',
         'color': '0xFFFF9800',
       });
     }
 
-    // 3. Sistema de Inyección / Bujías (Periodo cada 15,000km cada vez más frecuente con intensidad alta)
     int sparkLife = (totalKms % 15000);
     if (sparkLife > 13000 * (1/wearFactor)) {
       issues.add({
         'item': 'Bujías / Inyección',
         'risk': 'Medio',
         'reason': 'Posible pérdida de eficiencia en la combustión detectada.',
+        'estimatedCostCop': 65000,
         'icon': 'bolt',
         'color': '0xFFFF9800',
       });

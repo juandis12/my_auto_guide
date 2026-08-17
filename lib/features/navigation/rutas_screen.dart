@@ -25,6 +25,7 @@ import 'presentation/controllers/navigation_controller.dart';
 import 'presentation/widgets/navigation_widgets.dart';
 import 'presentation/historial_rutas_screen.dart';
 import '../../shared/widgets/app_snack_bar.dart';
+import '../../../core/services/camera_radar_service.dart';
 
 class RutasScreen extends StatefulWidget {
   final String vehiculoId;
@@ -66,6 +67,7 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
     _obtenerUbicacionInicial();
     _iniciarSeguimientoIdle();
     _cargarInfoVehiculo();
+    CameraRadarService().startRadar();
   }
 
   void _onControllerStateUpdate() {
@@ -74,6 +76,7 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
 
   @override
   void dispose() {
+    CameraRadarService().stopRadar();
     _controller.removeListener(_onControllerStateUpdate);
     _idlePositionSubscription?.cancel();
     _searchCtrl.dispose();
@@ -347,6 +350,95 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
             _buildMap(t),
             if (_showSuccessOverlay) const SuccessCheckmark(),
             _buildTopSearch(),
+            StreamBuilder<RadarAlertState>(
+              stream: CameraRadarService().alertStream,
+              builder: (context, snapshot) {
+                final alert = snapshot.data ?? RadarAlertState.clear();
+                final isSpeeding = alert.isSpeeding;
+                final isNear = alert.isNearCamera;
+
+                return Stack(
+                  children: [
+                    Positioned(
+                      top: 0, left: 0, right: 0,
+                      height: 5,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: isSpeeding
+                              ? Colors.redAccent
+                              : (isNear ? Colors.orangeAccent : const Color(0xFF00FF87)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: isSpeeding
+                                  ? Colors.red.withOpacity(0.8)
+                                  : (isNear ? Colors.orange.withOpacity(0.8) : const Color(0xFF00FF87).withOpacity(0.5)),
+                              blurRadius: 10,
+                              spreadRadius: 2,
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                    if (isNear && alert.nearestCamera != null)
+                      Positioned(
+                        top: 110, left: 20, right: 20,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                              decoration: BoxDecoration(
+                                color: isSpeeding
+                                    ? const Color(0xFFFF3B30).withOpacity(0.85)
+                                    : const Color(0xFF1C1C1E).withOpacity(0.8),
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(
+                                  color: isSpeeding ? Colors.redAccent : Colors.orangeAccent.withOpacity(0.5),
+                                  width: 1.5,
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.camera_alt_rounded,
+                                    color: isSpeeding ? Colors.white : Colors.orangeAccent,
+                                    size: 20,
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          '📷 FOTOMULTA a ${alert.distanceMeters.round()}m (${alert.nearestCamera!.city})',
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Text(
+                                          'Límite: ${alert.nearestCamera!.speedLimitKmH.round()} km/h | Actual: ${alert.currentSpeedKmH.round()} km/h',
+                                          style: TextStyle(
+                                            color: Colors.white.withOpacity(0.8),
+                                            fontSize: 11,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                );
+              },
+            ),
             _buildBottomPanel(t, state),
             if (_isLoadingRoute) const Center(child: CircularProgressIndicator()),
           ],
