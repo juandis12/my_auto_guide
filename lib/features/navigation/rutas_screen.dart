@@ -457,7 +457,7 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
         TileLayer(
           urlTemplate: Theme.of(context).brightness == Brightness.dark
               ? 'https://basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}@2x.png'
-              : 'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', // Google Maps standard tiles
+              : 'https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png',
           userAgentPackageName: 'com.example.my_auto_guide',
         ),
         if (_controller.routePoints.isNotEmpty)
@@ -527,31 +527,31 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
       child: Column(
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(24),
             child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
               child: Container(
                 decoration: BoxDecoration(
-                  color: isDark ? Colors.black.withOpacity(0.4) : Colors.white.withOpacity(0.65),
-                   borderRadius: BorderRadius.circular(20),
-                   border: Border.all(
-                     color: isDark ? Colors.white10 : Colors.white.withOpacity(0.3),
-                     width: 1.5,
-                   ),
-                   boxShadow: [
-                     BoxShadow(
-                       color: Colors.black.withOpacity(0.05),
-                       blurRadius: 10,
-                       offset: const Offset(0, 4),
-                     )
-                   ],
+                  color: isDark ? const Color(0xFF1C1C1E).withOpacity(0.8) : Colors.white.withOpacity(0.85),
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(
+                    color: isDark ? Colors.white.withOpacity(0.12) : Colors.black.withOpacity(0.08),
+                    width: 1.2,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(isDark ? 0.4 : 0.08),
+                      blurRadius: 15,
+                      offset: const Offset(0, 4),
+                    )
+                  ],
                 ),
                 child: TextField(
                   controller: _searchCtrl,
                   style: TextStyle(color: isDark ? Colors.white : Colors.black87),
                   decoration: InputDecoration(
                     hintText: '¿A dónde vas?',
-                    hintStyle: TextStyle(color: isDark ? Colors.white60 : Colors.black54),
+                    hintStyle: TextStyle(color: isDark ? Colors.white54 : Colors.black45),
                     prefixIcon: Icon(Icons.search, color: isDark ? Colors.white70 : Colors.black54),
                     suffixIcon: IconButton(
                       icon: Icon(Icons.history, color: isDark ? Colors.white70 : Colors.black54), 
@@ -569,15 +569,15 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
             ClipRRect(
               borderRadius: BorderRadius.circular(20),
               child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
                 child: Container(
                   height: 250,
                   margin: const EdgeInsets.only(top: 8),
                   decoration: BoxDecoration(
-                    color: isDark ? Colors.black.withOpacity(0.6) : Colors.white.withOpacity(0.8),
+                    color: isDark ? const Color(0xFF1C1C1E).withOpacity(0.85) : Colors.white.withOpacity(0.9),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: isDark ? Colors.white10 : Colors.white.withOpacity(0.3),
+                      color: isDark ? Colors.white.withOpacity(0.12) : Colors.black.withOpacity(0.08),
                     ),
                   ),
                   child: ListView.builder(
