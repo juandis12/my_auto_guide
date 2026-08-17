@@ -38,6 +38,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
+import 'package:printing/printing.dart';
 import 'dart:io';
 import 'dart:async';
 
@@ -500,6 +501,103 @@ class _InicioAppState extends State<InicioApp> {
   }
         
   Future<void> _exportarPdfHojaVida() async {
+    await _mostrarOpcionesPdfHojaVida();
+  }
+
+  Future<void> _mostrarOpcionesPdfHojaVida() async {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) {
+        return Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.3),
+                blurRadius: 20,
+                offset: const Offset(0, -5),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF0A84FF).withValues(alpha: 0.15),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.picture_as_pdf_rounded, color: Color(0xFF0A84FF), size: 22),
+                  ),
+                  const SizedBox(width: 14),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'HOJA DE VIDA PDF',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        'Certificado de Historial del Vehículo',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: isDark ? Colors.white54 : Colors.black45,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              ListTile(
+                leading: const Icon(Icons.print_rounded, color: Color(0xFF30D158)),
+                title: const Text('Previsualizar e Imprimir PDF', style: TextStyle(fontWeight: FontWeight.w600)),
+                subtitle: const Text('Abre el visor interactivo para zoom e impresión'),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _generarYAccionarPdf(modo: 'imprimir');
+                },
+              ),
+              const Divider(height: 1),
+              ListTile(
+                leading: const Icon(Icons.share_rounded, color: Color(0xFF0A84FF)),
+                title: const Text('Compartir Documento', style: TextStyle(fontWeight: FontWeight.w600)),
+                subtitle: const Text('Envía por WhatsApp, Correo o guarda en archivos'),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _generarYAccionarPdf(modo: 'compartir');
+                },
+              ),
+              const Divider(height: 1),
+              ListTile(
+                leading: const Icon(Icons.verified_user_rounded, color: Color(0xFFFF9500)),
+                title: const Text('Certificado Criptográfico QR', style: TextStyle(fontWeight: FontWeight.w600)),
+                subtitle: const Text('Genera reporte certificado para compra/venta'),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _generarYAccionarPdf(modo: 'compartir');
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _generarYAccionarPdf({required String modo}) async {
     final vData = _cachedVehicleData;
     final String placa = vData?['placa'] ?? 'MOTO-360';
     final String marca = vData?['marca'] ?? 'Moto';
@@ -534,7 +632,7 @@ class _InicioAppState extends State<InicioApp> {
         modelo: modelo,
         apodo: apodo,
         kms: kms,
-        healthIndex: 95.0,
+        healthIndex: 98.0,
         simitStatus: simitStatus,
         simitFinesCount: _simitFinesCount,
         simitTotalAmount: simitTotalAmount,
@@ -545,10 +643,17 @@ class _InicioAppState extends State<InicioApp> {
         vehicleImageUrl: imagePath,
       );
 
-      await VehiclePdfReportService.sharePdfReport(
-        filename: 'Hoja_de_Vida_$placa.pdf',
-        pdfBytes: pdfBytes,
-      );
+      if (modo == 'imprimir') {
+        await Printing.layoutPdf(
+          onLayout: (format) async => pdfBytes,
+          name: 'Hoja_de_Vida_$placa.pdf',
+        );
+      } else {
+        await VehiclePdfReportService.sharePdfReport(
+          filename: 'Hoja_de_Vida_$placa.pdf',
+          pdfBytes: pdfBytes,
+        );
+      }
     } catch (e) {
       if (mounted) {
         AppSnackBar.show(context, 'Error al generar PDF: $e');
