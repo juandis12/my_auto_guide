@@ -26,6 +26,8 @@ import 'presentation/widgets/navigation_widgets.dart';
 import 'presentation/historial_rutas_screen.dart';
 import '../../shared/widgets/app_snack_bar.dart';
 import '../../../core/services/camera_radar_service.dart';
+import '../../../core/services/waze_community_alerts_service.dart';
+import 'presentation/widgets/waze_report_sheet.dart';
 
 class RutasScreen extends StatefulWidget {
   final String vehiculoId;
@@ -68,6 +70,7 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
     _iniciarSeguimientoIdle();
     _cargarInfoVehiculo();
     CameraRadarService().startRadar();
+    WazeCommunityAlertsService().initRealtimeAlerts();
   }
 
   void _onControllerStateUpdate() {
@@ -439,6 +442,21 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
                 );
               },
             ),
+            Positioned(
+              right: 16,
+              bottom: 160,
+              child: FloatingActionButton(
+                heroTag: 'btn_waze_report',
+                backgroundColor: const Color(0xFF0A84FF),
+                onPressed: () {
+                  final pos = t.currentPos;
+                  if (pos != null) {
+                    WazeReportSheet.show(context, lat: pos.latitude, lng: pos.longitude);
+                  }
+                },
+                child: const Icon(Icons.add_location_alt_rounded, color: Colors.white),
+              ),
+            ),
             _buildBottomPanel(t, state),
             if (_isLoadingRoute) const Center(child: CircularProgressIndicator()),
           ],
@@ -516,6 +534,91 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
             child: PulsingLocationMarker(imagePath: _vehicleImagePath),
           ),
         ]),
+        StreamBuilder<List<WazeIncidentReport>>(
+          stream: WazeCommunityAlertsService().incidentsStream,
+          initialData: WazeCommunityAlertsService().currentIncidents,
+          builder: (context, snapshot) {
+            final alerts = snapshot.data ?? [];
+            final markers = alerts.map((a) {
+              IconData iconData = Icons.warning_rounded;
+              Color iconColor = Colors.orange;
+
+              switch (a.type) {
+                case WazeIncidentType.police:
+                  iconData = Icons.local_police_rounded;
+                  iconColor = const Color(0xFF0A84FF);
+                  break;
+                case WazeIncidentType.radar:
+                  iconData = Icons.camera_alt_rounded;
+                  iconColor = const Color(0xFFFF9500);
+                  break;
+                case WazeIncidentType.accident:
+                  iconData = Icons.car_crash_rounded;
+                  iconColor = const Color(0xFFFF3B30);
+                  break;
+                case WazeIncidentType.construction:
+                  iconData = Icons.construction_rounded;
+                  iconColor = const Color(0xFFFFCC00);
+                  break;
+                case WazeIncidentType.flooding:
+                  iconData = Icons.water_drop_rounded;
+                  iconColor = const Color(0xFF30D158);
+                  break;
+              }
+
+              return Marker(
+                point: LatLng(a.latitude, a.longitude),
+                width: 40,
+                height: 40,
+                child: GestureDetector(
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (ctx) => AlertDialog(
+                        title: Text(a.title),
+                        content: const Text('Reportado por la comunidad. ¿Sigue ahí el incidente?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              WazeCommunityAlertsService().voteIncident(id: a.id, isStillThere: false);
+                              Navigator.pop(ctx);
+                              AppSnackBar.show(context, 'Gracias por confirmar.');
+                            },
+                            child: const Text('No / Se retiró', style: TextStyle(color: Colors.red)),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              WazeCommunityAlertsService().voteIncident(id: a.id, isStillThere: true);
+                              Navigator.pop(ctx);
+                              AppSnackBar.show(context, '¡Gracias por confirmar!', backgroundColor: Colors.green);
+                            },
+                            child: const Text('Sí, sigue ahí'),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: iconColor.withOpacity(0.4),
+                          blurRadius: 8,
+                          spreadRadius: 2,
+                        ),
+                      ],
+                    ),
+                    child: Icon(iconData, color: iconColor, size: 22),
+                  ),
+                ),
+              );
+            }).toList();
+
+            return MarkerLayer(markers: markers);
+          },
+        ),
       ],
     );
   }
