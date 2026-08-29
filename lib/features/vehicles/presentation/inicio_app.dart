@@ -129,6 +129,7 @@ class _InicioAppState extends State<InicioApp> {
   final Map<String, dynamic> _urlCache = {};
   bool _notificacionesProcesadas = false;
   bool _checkedKm24h = false;
+  late Future<Map<String, dynamic>> _initAppFuture;
 
   Color _getSimitColor() {
     final status = _cachedVehicleData?['simit_status'] ?? 'unchecked';
@@ -1375,14 +1376,37 @@ class _InicioAppState extends State<InicioApp> {
   @override
   void initState() {
     super.initState();
-    unawaited(_cargarWeeklyStats());
+    _initAppFuture = _inicializarTodo();
   }
 
-  Future<void> _cargarWeeklyStats() async {
-    if (!mounted) return;
+  Future<Map<String, dynamic>> _inicializarTodo() async {
+    // Ejecutar en paralelo: Carga de BD + Estadísticas e IA + Timer mínimo de 3 segundos
+    final results = await Future.wait([
+      _cargar(),
+      _cargarWeeklyStatsAsync(),
+      Future.delayed(const Duration(seconds: 3)),
+    ]);
+
+    final vehicleData = (results[0] as Map<String, dynamic>?) ?? {};
+
+    // Precargar URLs firmadas antes de pintar la UI
+    if (vehicleData.isNotEmpty) {
+      _soatPath = vehicleData['soat_path'] as String?;
+      _tecnoPath = vehicleData['tecno_path'] as String?;
+      _seguroPath = vehicleData['seguro_path'] as String?;
+      _propPath = vehicleData['propiedad_path'] as String?;
+
+      if (_soatPath != null) _soatSigned = await _signedUrlCachedFor(_soatPath!);
+      if (_tecnoPath != null) _tecnoSigned = await _signedUrlCachedFor(_tecnoPath!);
+      if (_seguroPath != null) _seguroSigned = await _signedUrlCachedFor(_seguroPath!);
+      if (_propPath != null) _propSigned = await _signedUrlCachedFor(_propPath!);
+    }
+
+    return vehicleData;
+  }
+
+  Future<void> _cargarWeeklyStatsAsync() async {
     try {
-      if (mounted) setState(() => _loadingWeekly = true);
-      
       final totalHistory = await SyncService().getCombinedRouteHistory(widget.vehiculoId);
       final weekAgo = DateTime.now().subtract(const Duration(days: 7));
       final recentStatsData = totalHistory.where((s) {
@@ -1398,8 +1422,6 @@ class _InicioAppState extends State<InicioApp> {
         cost += _asDouble(s['costo_estimado']);
       }
 
-      // Cargar datos del vehículo PRIMERO para que las fechas estén disponibles
-      // al calcular predicciones (Bug #4: antes dependía de _lastX que se seteaban tarde)
       final vehicleData = await _cargar();
       final modelName = vehicleData['modelo'] as String? ?? '';
       final marca = (vehicleData['marca'] as String? ?? '').toUpperCase();
@@ -1436,28 +1458,33 @@ class _InicioAppState extends State<InicioApp> {
         }
       }
 
-      if (mounted) {
-        setState(() {
-          _weeklyStatsModel = WeeklyStats.fromData(
-            km: km,
-            gallons: gallons,
-            cost: cost,
-            count: totalHistory.length,
-            history: recentStatsData,
-            analytics: analytics,
-          );
-          _predictionsList = MaintenancePrediction.fromList(rawPreds);
-          _loadingWeekly = false;
-        });
+      _weeklyStatsModel = WeeklyStats.fromData(
+        km: km,
+        gallons: gallons,
+        cost: cost,
+        count: totalHistory.length,
+        history: recentStatsData,
+        analytics: analytics,
+      );
+      _predictionsList = MaintenancePrediction.fromList(rawPreds);
+      _loadingWeekly = false;
 
-        if (rawPreds.isEmpty && vehicleData['kms'] != null) {
-          _recalculateAI(vehicleData);
-        }
+      if (rawPreds.isEmpty && vehicleData['kms'] != null) {
+        final int kmsInt = _asDouble(vehicleData['kms']).toInt();
+        final aiIssues = VehicleAILogic.predictUpcomingIssues(
+          totalKms: kmsInt,
+          intensity: analytics.intensity,
+        );
+        _predictionsList = MaintenancePrediction.fromList(aiIssues);
       }
     } catch (e) {
-      debugPrint('Error en _cargarWeeklyStats: $e');
-      if (mounted) setState(() => _loadingWeekly = false);
+      debugPrint('Error en _cargarWeeklyStatsAsync: $e');
     }
+  }
+
+  Future<void> _cargarWeeklyStats() async {
+    await _cargarWeeklyStatsAsync();
+    if (mounted) setState(() {});
   }
 
   @override
@@ -1564,7 +1591,7 @@ class _InicioAppState extends State<InicioApp> {
         ],
       ),
       body: FutureBuilder<Map<String, dynamic>>(
-        future: _cargar(),
+        future: _initAppFuture,
         builder: (context, s) {
           if (s.connectionState != ConnectionState.done) {
             return const CinematicVehicleLoader();
@@ -1587,38 +1614,10 @@ class _InicioAppState extends State<InicioApp> {
           final kms = v['kms']?.toString() ?? '0';
           final imagePath = v['image_path'] as String? ?? '';
 
-          // La llamada a IA ya no se hará aquí en build(). Fue transportada
-          // a `_cargarWeeklyStats()` para integrarse limpiamente con la data local.
-
           _soatPath ??= v['soat_path'] as String?;
           _tecnoPath ??= v['tecno_path'] as String?;
           _seguroPath ??= v['seguro_path'] as String?;
           _propPath ??= v['propiedad_path'] as String?;
-
-          if (_soatSigned == null && _soatPath != null) {
-            WidgetsBinding.instance.addPostFrameCallback((_) async {
-              final u = await _signedUrlCachedFor(_soatPath!);
-              if (mounted) setState(() => _soatSigned = u);
-            });
-          }
-          if (_tecnoSigned == null && _tecnoPath != null) {
-            WidgetsBinding.instance.addPostFrameCallback((_) async {
-              final u = await _signedUrlCachedFor(_tecnoPath!);
-              if (mounted) setState(() => _tecnoSigned = u);
-            });
-          }
-          if (_seguroSigned == null && _seguroPath != null) {
-            WidgetsBinding.instance.addPostFrameCallback((_) async {
-              final u = await _signedUrlCachedFor(_seguroPath!);
-              if (mounted) setState(() => _seguroSigned = u);
-            });
-          }
-          if (_propSigned == null && _propPath != null) {
-            WidgetsBinding.instance.addPostFrameCallback((_) async {
-              final u = await _signedUrlCachedFor(_propPath!);
-              if (mounted) setState(() => _propSigned = u);
-            });
-          }
 
           final dc = v['last_cadena'] != null
               ? DateTime.parse(v['last_cadena'])

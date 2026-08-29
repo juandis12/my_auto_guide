@@ -42,7 +42,7 @@ class _CinematicVehicleLoaderState extends State<CinematicVehicleLoader>
       duration: const Duration(milliseconds: 1800),
     )..repeat(reverse: true);
 
-    _rpmAnimation = Tween<double>(begin: 0.1, end: 0.88).animate(
+    _rpmAnimation = Tween<double>(begin: 0.15, end: 0.92).animate(
       CurvedAnimation(parent: _rpmController, curve: Curves.easeInOutCubic),
     );
 
@@ -52,7 +52,7 @@ class _CinematicVehicleLoaderState extends State<CinematicVehicleLoader>
       duration: const Duration(milliseconds: 1200),
     )..repeat(reverse: true);
 
-    _pulseAnimation = Tween<double>(begin: 0.6, end: 1.0).animate(
+    _pulseAnimation = Tween<double>(begin: 0.65, end: 1.0).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
   }
@@ -81,46 +81,46 @@ class _CinematicVehicleLoaderState extends State<CinematicVehicleLoader>
             ),
           ),
 
-          // Contenido Central: Tacómetro + Silueta + Escaneo
+          // Contenido Central: Tacómetro + Silueta BMW M4 + Escaneo Láser
           AnimatedBuilder(
             animation: Listenable.merge([_scanAnimation, _rpmAnimation, _pulseAnimation]),
             builder: (context, child) {
               final double rpmVal = _rpmAnimation.value;
               final double scanVal = _scanAnimation.value;
               final double pulseVal = _pulseAnimation.value;
-              final int speedDisplay = (rpmVal * 160).round();
+              final int speedDisplay = (rpmVal * 190).round();
 
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Anillo / Tacómetro de Inicio
+                  // Anillo / Tacómetro M-Performance
                   SizedBox(
-                    width: 240,
-                    height: 240,
+                    width: 260,
+                    height: 260,
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
                         // Custom Painter del Tacómetro
                         CustomPaint(
-                          size: const Size(240, 240),
+                          size: const Size(260, 260),
                           painter: _TachometerPainter(
                             progress: rpmVal,
                             pulse: pulseVal,
                           ),
                         ),
 
-                        // Silueta del Vehículo con Laser Scan
+                        // Silueta BMW M4 Coupé con Laser Scan
                         CustomPaint(
-                          size: const Size(140, 100),
-                          painter: _VehicleSilhouettePainter(
+                          size: const Size(180, 110),
+                          painter: _BmwM4SilhouettePainter(
                             scanProgress: scanVal,
                             pulse: pulseVal,
                           ),
                         ),
 
-                        // Velocidad Digital en el Centro Inferior
+                        // Velocidad Digital y Badge M
                         Positioned(
-                          bottom: 28,
+                          bottom: 24,
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -128,26 +128,41 @@ class _CinematicVehicleLoaderState extends State<CinematicVehicleLoader>
                                 '$speedDisplay',
                                 style: const TextStyle(
                                   fontFamily: 'monospace',
-                                  fontSize: 26,
+                                  fontSize: 28,
                                   fontWeight: FontWeight.w900,
                                   color: Colors.white,
                                   letterSpacing: 2.0,
                                   shadows: [
                                     Shadow(
                                       color: Color(0xFF00E5FF),
-                                      blurRadius: 16,
+                                      blurRadius: 18,
                                     ),
                                   ],
                                 ),
                               ),
-                              const Text(
-                                'KM/H • SYS OK',
-                                style: TextStyle(
-                                  fontSize: 9,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 1.5,
-                                  color: Color(0xFF00E5FF),
-                                ),
+                              const Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    '///M4',
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w900,
+                                      letterSpacing: 1.5,
+                                      color: Color(0xFFFF1744),
+                                    ),
+                                  ),
+                                  SizedBox(width: 6),
+                                  Text(
+                                    'KM/H • SYS READY',
+                                    style: TextStyle(
+                                      fontSize: 9,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 1.2,
+                                      color: Color(0xFF00E5FF),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
@@ -156,11 +171,11 @@ class _CinematicVehicleLoaderState extends State<CinematicVehicleLoader>
                     ),
                   ),
 
-                  const SizedBox(height: 36),
+                  const SizedBox(height: 32),
 
-                  // Barra de Carga Neón
+                  // Barra de Carga Neón M-Power
                   Container(
-                    width: 180,
+                    width: 200,
                     height: 4,
                     decoration: BoxDecoration(
                       color: Colors.white10,
@@ -173,12 +188,16 @@ class _CinematicVehicleLoaderState extends State<CinematicVehicleLoader>
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(2),
                           gradient: const LinearGradient(
-                            colors: [Color(0xFF00E5FF), Color(0xFF2979FF), Color(0xFF30D158)],
+                            colors: [
+                              Color(0xFF00E5FF), // Cyan M
+                              Color(0xFF2979FF), // Blue M
+                              Color(0xFFFF1744), // Red M
+                            ],
                           ),
                           boxShadow: const [
                             BoxShadow(
                               color: Color(0xFF00E5FF),
-                              blurRadius: 8,
+                              blurRadius: 10,
                             ),
                           ],
                         ),
@@ -196,7 +215,7 @@ class _CinematicVehicleLoaderState extends State<CinematicVehicleLoader>
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 2.0,
-                      color: Colors.white.withValues(alpha: 0.85),
+                      color: Colors.white.withValues(alpha: 0.9),
                     ),
                   ),
 
@@ -228,12 +247,12 @@ class _CinematicVehicleLoaderState extends State<CinematicVehicleLoader>
   }
 
   String _getStatusText(double progress) {
-    if (progress < 0.35) {
-      return 'INICIALIZANDO SENSORES...';
-    } else if (progress < 0.70) {
-      return 'SINCRONIZANDO TELEMETRÍA...';
+    if (progress < 0.40) {
+      return 'INICIALIZANDO TELEMETRÍA BMW M4...';
+    } else if (progress < 0.75) {
+      return 'SINCRONIZANDO GARAJE Y SENSORES...';
     } else {
-      return 'CALIBRANDO DIAGNÓSTICO IA...';
+      return 'DIAGNÓSTICO IA LISTO • ACCEDIENDO';
     }
   }
 }
@@ -254,7 +273,6 @@ class _CyberGridPainter extends CustomPainter {
       canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
     }
 
-    // Viñeta radial oscura
     final vignettePaint = Paint()
       ..shader = RadialGradient(
         colors: [
@@ -271,7 +289,7 @@ class _CyberGridPainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
-/// CustomPainter para el Tacómetro Digital (Arco de RPM con Neon Glow)
+/// CustomPainter para el Tacómetro M-Performance
 class _TachometerPainter extends CustomPainter {
   final double progress;
   final double pulse;
@@ -301,7 +319,7 @@ class _TachometerPainter extends CustomPainter {
       basePaint,
     );
 
-    // 2. Arco activo iluminado con gradiente
+    // 2. Arco activo iluminado con gradiente M-Power
     final activePaint = Paint()
       ..shader = const SweepGradient(
         startAngle: startAngle,
@@ -312,10 +330,10 @@ class _TachometerPainter extends CustomPainter {
           Color(0xFFFF9100),
           Color(0xFFFF1744),
         ],
-        stops: [0.0, 0.5, 0.8, 1.0],
+        stops: [0.0, 0.45, 0.78, 1.0],
       ).createShader(Rect.fromCircle(center: center, radius: radius))
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 7.0
+      ..strokeWidth = 7.5
       ..strokeCap = StrokeCap.round;
 
     canvas.drawArc(
@@ -328,13 +346,13 @@ class _TachometerPainter extends CustomPainter {
 
     // 3. Ticks de revoluciones
     final tickPaint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.3)
+      ..color = Colors.white.withValues(alpha: 0.35)
       ..strokeWidth = 1.5;
 
-    const int totalTicks = 16;
+    const int totalTicks = 18;
     for (int i = 0; i <= totalTicks; i++) {
       final double angle = startAngle + (sweepTotal * (i / totalTicks));
-      final double innerR = radius - (i % 4 == 0 ? 14 : 8);
+      final double innerR = radius - (i % 3 == 0 ? 15 : 8);
       final double outerR = radius - 4;
 
       final p1 = Offset(center.dx + innerR * math.cos(angle), center.dy + innerR * math.sin(angle));
@@ -348,62 +366,99 @@ class _TachometerPainter extends CustomPainter {
       oldDelegate.progress != progress || oldDelegate.pulse != pulse;
 }
 
-/// CustomPainter para la silueta del vehículo con rayo láser de escaneo
-class _VehicleSilhouettePainter extends CustomPainter {
+/// CustomPainter para la silueta icónica del BMW M4 Coupé con Rayo Láser
+class _BmwM4SilhouettePainter extends CustomPainter {
   final double scanProgress;
   final double pulse;
 
-  _VehicleSilhouettePainter({required this.scanProgress, required this.pulse});
+  _BmwM4SilhouettePainter({required this.scanProgress, required this.pulse});
 
   @override
   void paint(Canvas canvas, Size size) {
-    // Dibujar contorno deportivo de vehículo
-    final path = Path();
     final double w = size.width;
-    final double h = size.height * 0.7;
+    final double h = size.height * 0.75;
     final double ox = (size.width - w) / 2;
-    final double oy = (size.height - h) / 2 - 8;
+    final double oy = (size.height - h) / 2 - 10;
 
-    path.moveTo(ox + w * 0.05, oy + h * 0.75);
-    path.lineTo(ox + w * 0.18, oy + h * 0.75);
-    // Rueda delantera arco
-    path.arcToPoint(
-      Offset(ox + w * 0.34, oy + h * 0.75),
-      radius: Radius.circular(w * 0.08),
+    // 1. Contorno exterior fiel al BMW M4 Coupé
+    final bodyPath = Path();
+
+    // Splitter delantero bajo
+    bodyPath.moveTo(ox + w * 0.03, oy + h * 0.82);
+    // Talonera frontal
+    bodyPath.lineTo(ox + w * 0.08, oy + h * 0.82);
+    // Arco de rueda delantera M-Sport
+    bodyPath.arcToPoint(
+      Offset(ox + w * 0.28, oy + h * 0.82),
+      radius: Radius.circular(w * 0.10),
       clockwise: false,
     );
-    path.lineTo(ox + w * 0.66, oy + h * 0.75);
-    // Rueda trasera arco
-    path.arcToPoint(
-      Offset(ox + w * 0.82, oy + h * 0.75),
-      radius: Radius.circular(w * 0.08),
+    // Faldón lateral aerodinámico
+    bodyPath.lineTo(ox + w * 0.68, oy + h * 0.82);
+    // Arco de rueda trasera ensanchada
+    bodyPath.arcToPoint(
+      Offset(ox + w * 0.88, oy + h * 0.82),
+      radius: Radius.circular(w * 0.10),
       clockwise: false,
     );
-    path.lineTo(ox + w * 0.95, oy + h * 0.75);
-    // Parte trasera
-    path.lineTo(ox + w * 0.96, oy + h * 0.45);
-    // Techo
-    path.lineTo(ox + w * 0.68, oy + h * 0.15);
-    path.lineTo(ox + w * 0.38, oy + h * 0.15);
-    // Parabrisas
-    path.lineTo(ox + w * 0.18, oy + h * 0.45);
-    path.lineTo(ox + w * 0.04, oy + h * 0.52);
-    path.close();
+    // Difusor trasero M y salidas de escape
+    bodyPath.lineTo(ox + w * 0.98, oy + h * 0.80);
+    bodyPath.lineTo(ox + w * 0.99, oy + h * 0.58);
+    // Alerón trasero Ducktail integrado del BMW M4
+    bodyPath.lineTo(ox + w * 0.97, oy + h * 0.44);
+    bodyPath.lineTo(ox + w * 0.93, oy + h * 0.42);
+    // Luneta trasera Fastback
+    bodyPath.lineTo(ox + w * 0.72, oy + h * 0.16);
+    // Techo de fibra de carbono con canal central (Double Bubble)
+    bodyPath.lineTo(ox + w * 0.52, oy + h * 0.13);
+    bodyPath.lineTo(ox + w * 0.38, oy + h * 0.14);
+    // Pilar A y Parabrisas bajo agresivo
+    bodyPath.lineTo(ox + w * 0.22, oy + h * 0.42);
+    // Capó largo con abultamiento Powerdome característico del M4
+    bodyPath.lineTo(ox + w * 0.07, oy + h * 0.52);
+    // Riñones verticales y frontal afilado
+    bodyPath.lineTo(ox + w * 0.02, oy + h * 0.66);
+    bodyPath.close();
 
-    // Silueta con resplandor neón
+    // 2. Ventanas y Hofmeister Kink (Firma de diseño BMW)
+    final windowPath = Path();
+    windowPath.moveTo(ox + w * 0.25, oy + h * 0.44);
+    windowPath.lineTo(ox + w * 0.38, oy + h * 0.20);
+    windowPath.lineTo(ox + w * 0.68, oy + h * 0.20);
+    // Hofmeister Kink
+    windowPath.lineTo(ox + w * 0.73, oy + h * 0.44);
+    windowPath.close();
+
+    // Resplandor y Relleno Neón
     final bodyGlowPaint = Paint()
       ..color = const Color(0xFF00E5FF).withValues(alpha: 0.12 * pulse)
       ..style = PaintingStyle.fill;
 
     final bodyStrokePaint = Paint()
-      ..color = const Color(0xFF00E5FF).withValues(alpha: 0.75 * pulse)
+      ..color = const Color(0xFF00E5FF).withValues(alpha: 0.85 * pulse)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.0;
 
-    canvas.drawPath(path, bodyGlowPaint);
-    canvas.drawPath(path, bodyStrokePaint);
+    final innerLinePaint = Paint()
+      ..color = const Color(0xFF00E5FF).withValues(alpha: 0.50 * pulse)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.2;
 
-    // Línea de escaneo láser vertical
+    // Ruedas M con Rines de Estrella
+    final wheelPaint = Paint()
+      ..color = const Color(0xFF2979FF).withValues(alpha: 0.7 * pulse)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.0;
+
+    canvas.drawPath(bodyPath, bodyGlowPaint);
+    canvas.drawPath(bodyPath, bodyStrokePaint);
+    canvas.drawPath(windowPath, innerLinePaint);
+
+    // Rines delanteros y traseros
+    canvas.drawCircle(Offset(ox + w * 0.18, oy + h * 0.82), w * 0.07, wheelPaint);
+    canvas.drawCircle(Offset(ox + w * 0.78, oy + h * 0.82), w * 0.07, wheelPaint);
+
+    // Línea de Escaneo Láser Vertical
     final double laserX = ox + (w * scanProgress);
     final laserPaint = Paint()
       ..shader = LinearGradient(
@@ -411,21 +466,21 @@ class _VehicleSilhouettePainter extends CustomPainter {
         end: Alignment.bottomCenter,
         colors: [
           Colors.transparent,
-          const Color(0xFF00E5FF).withValues(alpha: 0.9),
-          const Color(0xFF30D158).withValues(alpha: 0.9),
+          const Color(0xFF00E5FF).withValues(alpha: 0.95),
+          const Color(0xFFFF1744).withValues(alpha: 0.95),
           Colors.transparent,
         ],
-      ).createShader(Rect.fromLTWH(laserX - 2, oy, 4, h + 10))
+      ).createShader(Rect.fromLTWH(laserX - 2, oy, 4, h + 15))
       ..strokeWidth = 3.0;
 
     canvas.drawLine(
-      Offset(laserX, oy - 4),
-      Offset(laserX, oy + h + 8),
+      Offset(laserX, oy - 6),
+      Offset(laserX, oy + h + 12),
       laserPaint,
     );
   }
 
   @override
-  bool shouldRepaint(covariant _VehicleSilhouettePainter oldDelegate) =>
+  bool shouldRepaint(covariant _BmwM4SilhouettePainter oldDelegate) =>
       oldDelegate.scanProgress != scanProgress || oldDelegate.pulse != pulse;
 }
