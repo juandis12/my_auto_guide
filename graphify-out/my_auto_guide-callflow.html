@@ -60,7 +60,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 <div class="container">
 
 <h1>my_auto_guide — Complete Call Flow &amp; Architecture Documentation</h1>
-<p class="subtitle">Generated from graphify knowledge graph: 5128 nodes, 6537 edges, 480 communities. Commit: f55b0fc</p>
+<p class="subtitle">Generated from graphify knowledge graph: 5127 nodes, 6536 edges, 485 communities. Commit: f1207c5</p>
 
 <div class="nav">
     <a href="#overview">Architecture Overview</a>
@@ -90,11 +90,11 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 flowchart LR
     EXTRACT_PIPELINE_5F350230("Extraction Pipeline<br/><small>166 nodes</small>")
     class EXTRACT_PIPELINE_5F350230 module;
-    BUILD_GRAPH_321CBB04("Graph Build<br/><small>536 nodes</small>")
+    BUILD_GRAPH_321CBB04("Graph Build<br/><small>500 nodes</small>")
     class BUILD_GRAPH_321CBB04 module;
     ANALYSIS_CLUSTERING_C79796DA("Analysis &amp; Clustering<br/><small>111 nodes</small>")
     class ANALYSIS_CLUSTERING_C79796DA module;
-    OUTPUTS_DOCS_ED82387C("Outputs &amp; Docs<br/><small>175 nodes</small>")
+    OUTPUTS_DOCS_ED82387C("Outputs &amp; Docs<br/><small>163 nodes</small>")
     class OUTPUTS_DOCS_ED82387C module;
     CLI_SKILLS_9964CBB8("CLI &amp; Skill Installers<br/><small>818 nodes</small>")
     class CLI_SKILLS_9964CBB8 module;
@@ -104,7 +104,7 @@ flowchart LR
     class SERVE_API_35EC8E86 module;
     SECURITY_GLOBAL_5B9C6A04("Security &amp; Global Graph<br/><small>49 nodes</small>")
     class SECURITY_GLOBAL_5B9C6A04 module;
-    TESTS_FIXTURES_B84B1DCC("Tests &amp; Fixtures<br/><small>104 nodes</small>")
+    TESTS_FIXTURES_B84B1DCC("Tests &amp; Fixtures<br/><small>88 nodes</small>")
     class TESTS_FIXTURES_B84B1DCC module;
     WORKSPACE_RESOLVER_MJS_84209BB7("workspace-resolver.mjs<br/><small>57 nodes</small>")
     class WORKSPACE_RESOLVER_MJS_84209BB7 module;
@@ -116,20 +116,20 @@ flowchart LR
     class LOGIN_SCREEN_DART_DFD329A0 module;
     VEHICLE_REGISTRATION_VIEW_DART_9181DE34("vehicle_registration_view.dart<br/><small>41 nodes</small>")
     class VEHICLE_REGISTRATION_VIEW_DART_9181DE34 module;
-    OTHER_D0941E68("Other<br/><small>2594 nodes</small>")
+    OTHER_D0941E68("Other<br/><small>2657 nodes</small>")
     class OTHER_D0941E68 module;
-    OTHER_D0941E68 -->|inherits x68| BUILD_GRAPH_321CBB04
+    OTHER_D0941E68 -->|inherits x64| BUILD_GRAPH_321CBB04
     VERIFY_CLAIM_MJS_BDB9C893 -->|contains x64| OTHER_D0941E68
-    BUILD_GRAPH_321CBB04 -->|references x47| OTHER_D0941E68
-    CLI_SKILLS_9964CBB8 -->|references x38| OTHER_D0941E68
-    OTHER_D0941E68 -->|imports x27| CLI_SKILLS_9964CBB8
-    OTHER_D0941E68 -->|imports x23| TESTS_FIXTURES_B84B1DCC
-    OTHER_D0941E68 -->|imports x18| OUTPUTS_DOCS_ED82387C
+    CLI_SKILLS_9964CBB8 -->|references x40| OTHER_D0941E68
+    BUILD_GRAPH_321CBB04 -->|references x40| OTHER_D0941E68
+    OUTPUTS_DOCS_ED82387C -->|calls x31| OTHER_D0941E68
+    OTHER_D0941E68 -->|imports x31| OUTPUTS_DOCS_ED82387C
+    OTHER_D0941E68 -->|imports x27| TESTS_FIXTURES_B84B1DCC
+    OTHER_D0941E68 -->|imports x26| CLI_SKILLS_9964CBB8
     BUILD_GRAPH_321CBB04 -->|imports x17| CLI_SKILLS_9964CBB8
-    OTHER_D0941E68 -->|imports x15| EXTRACT_PIPELINE_5F350230
-    OTHER_D0941E68 -->|imports x15| INGEST_CACHE_UPDATE_FF457338
-    OUTPUTS_DOCS_ED82387C -->|calls x14| BUILD_GRAPH_321CBB04
-    INGEST_CACHE_UPDATE_FF457338 -->|imports x12| OTHER_D0941E68
+    OUTPUTS_DOCS_ED82387C -->|calls x12| BUILD_GRAPH_321CBB04
+    INGEST_CACHE_UPDATE_FF457338 -->|imports x11| OTHER_D0941E68
+    OTHER_D0941E68 -->|imports x11| INGEST_CACHE_UPDATE_FF457338
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
     classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
     classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
@@ -146,7 +146,7 @@ flowchart LR
     <h4>Architecture Layers</h4>
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>Layer</th><th>Nodes</th><th>Communities</th></tr>
-      <tr><td>Extraction Pipeline</td><td>166</td><td><code>14, 33, 171, 172, 59, 175, 247, 378, 381, 436, 443</code></td></tr><tr><td>Graph Build</td><td>536</td><td><code>0, 37, 2, 18, 16, 26, 47, 17, 278, 189, 196, 98, 104, 282, 286, 300, 123, 351, 356, 384, 386, 431, 133, 134</code></td></tr><tr><td>Analysis &amp; Clustering</td><td>111</td><td><code>74, 100, 35, 204, 255, 272, 294</code></td></tr><tr><td>Outputs &amp; Docs</td><td>175</td><td><code>1, 22, 194, 32, 209, 217, 225, 402, 410</code></td></tr><tr><td>CLI &amp; Skill Installers</td><td>818</td><td><code>25, 27, 54, 95, 119, 130, 24, 144, 145, 147, 150, 154, 158, 149, 163, 169, 52, 176, 178, 182, 187, 190, 191, 192, 81, 162, 197, 205, 207, 210, 215, 216, 219, 221, 226, 231, 233, 236, 244, 248, 84, 109, 251, 252, 253, 254, 271, 120, 275, 276, 277, 321, 322, 323, 143, 324, 326, 327, 329, 344, 347, 350, 475, 476, 477, 479</code></td></tr><tr><td>Ingestion &amp; Updates</td><td>295</td><td><code>3, 50, 142, 157, 8, 166, 70, 85, 103, 106, 131, 287, 288, 289, 301, 305, 307, 309, 313, 317, 259, 328, 330, 346, 348, 352, 357, 388, 389, 390, 429, 430</code></td></tr><tr><td>Serving API</td><td>46</td><td><code>198, 345, 261, 115, 308, 310, 374, 398</code></td></tr><tr><td>Security &amp; Global Graph</td><td>49</td><td><code>69, 240, 471</code></td></tr><tr><td>Tests &amp; Fixtures</td><td>104</td><td><code>62, 13, 186, 80, 83, 138</code></td></tr><tr><td>workspace-resolver.mjs</td><td>57</td><td><code>4</code></td></tr><tr><td>cinematic_vehicle_loader.dart</td><td>49</td><td><code>273</code></td></tr><tr><td>verify-claim.mjs</td><td>45</td><td><code>6</code></td></tr><tr><td>login_screen.dart</td><td>42</td><td><code>12</code></td></tr><tr><td>vehicle_registration_view.dart</td><td>41</td><td><code>9</code></td></tr><tr><td>Other</td><td>2594</td><td><code>15, 5, 55, 10, 11, 148, 66, 67, 48, 78, 19, 21, 102, 127, 20, 23, 30, 28, 29, 151, 34, 65, 152, 153, 167, 36, 31, 38, 39, 40, 46, 155, 156, 41, 42, 43, 44, 45, 159, 161, 60, 146, 164, 165, 49, 51, 168, 56, 126, 170, 58, 63, 64, 7, 173, 174, 177, 179, 180, 181, 61, 183, 184, 185, 71, 72, 75, 188, 334, 77, 193, 195, 79, 199, 274, 82, 200, 201, 202, 203, 206, 208, 211, 212, 213, 349, 53, 57, 88, 90, 214, 218, 220, 222, 223, 224, 481, 68, 73, 91, 93, 94, 160, 227, 228, 229, 230, 232, 76, 97, 99, 101, 105, 107, 235, 237, 238, 239, 241, 242, 243, 245, 246, 249, 250, 89, 108, 111, 112, 113, 257, 258, 260, 262, 263, 264, 265, 266, 267, 268, 269, 270, 484, 86, 87, 92, 110, 116, 117, 118, 121, 279, 281, 283, 284, 285, 290, 291, 292, 293, 295, 296, 297, 298, 299, 302, 303, 304, 306, 311, 312, 314, 315, 316, 318, 319, 320, 96, 114, 122, 124, 125, 128, 129, 132, 234, 256, 332, 335, 336, 337, 338, 339, 340, 341, 342, 343, 353, 354, 355, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 375, 376, 377, 379, 380, 382, 383, 385, 387, 391, 392, 393, 394, 395, 396, 397, 399, 400, 401, 403, 404, 405, 406, 407, 408, 409, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 432, 433, 434, 435, 437, 438, 439, 440, 441, 442, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 472, 473, 474, 478, 135, 136, 137, 139, 140, 141, 325, 480</code></td></tr>
+      <tr><td>Extraction Pipeline</td><td>166</td><td><code>14, 33, 171, 172, 59, 175, 247, 378, 381, 436, 443</code></td></tr><tr><td>Graph Build</td><td>500</td><td><code>0, 37, 18, 16, 26, 2, 47, 278, 126, 189, 196, 98, 104, 282, 286, 300, 123, 351, 356, 384, 386, 431, 133, 134</code></td></tr><tr><td>Analysis &amp; Clustering</td><td>111</td><td><code>74, 100, 35, 204, 255, 272, 294</code></td></tr><tr><td>Outputs &amp; Docs</td><td>163</td><td><code>1, 22, 94, 32, 194, 209, 217, 225, 402, 410</code></td></tr><tr><td>CLI &amp; Skill Installers</td><td>818</td><td><code>25, 27, 54, 95, 119, 130, 24, 144, 145, 147, 150, 154, 158, 149, 163, 169, 52, 176, 178, 182, 187, 190, 191, 192, 81, 162, 197, 205, 207, 210, 215, 216, 219, 221, 226, 231, 233, 236, 244, 248, 84, 109, 251, 252, 253, 254, 271, 120, 275, 276, 277, 321, 322, 323, 143, 324, 326, 327, 329, 344, 347, 350, 475, 476, 477, 479</code></td></tr><tr><td>Ingestion &amp; Updates</td><td>295</td><td><code>3, 50, 142, 157, 8, 166, 70, 85, 103, 106, 131, 287, 288, 289, 301, 305, 307, 309, 313, 317, 259, 328, 330, 346, 348, 352, 357, 388, 389, 390, 429, 430</code></td></tr><tr><td>Serving API</td><td>46</td><td><code>198, 345, 261, 115, 308, 310, 374, 398</code></td></tr><tr><td>Security &amp; Global Graph</td><td>49</td><td><code>69, 240, 471</code></td></tr><tr><td>Tests &amp; Fixtures</td><td>88</td><td><code>13, 62, 186, 80, 83, 138</code></td></tr><tr><td>workspace-resolver.mjs</td><td>57</td><td><code>4</code></td></tr><tr><td>cinematic_vehicle_loader.dart</td><td>49</td><td><code>273</code></td></tr><tr><td>verify-claim.mjs</td><td>45</td><td><code>6</code></td></tr><tr><td>login_screen.dart</td><td>42</td><td><code>12</code></td></tr><tr><td>vehicle_registration_view.dart</td><td>41</td><td><code>9</code></td></tr><tr><td>Other</td><td>2657</td><td><code>15, 5, 55, 10, 11, 148, 66, 67, 48, 78, 19, 21, 102, 127, 20, 23, 30, 29, 151, 28, 34, 65, 152, 153, 167, 36, 31, 38, 39, 40, 46, 155, 156, 41, 42, 43, 44, 45, 159, 161, 280, 60, 146, 164, 165, 17, 49, 51, 168, 56, 170, 331, 333, 58, 63, 64, 7, 173, 174, 177, 179, 180, 181, 61, 183, 184, 185, 71, 72, 75, 188, 334, 482, 77, 193, 195, 79, 199, 274, 82, 200, 201, 202, 203, 206, 208, 211, 212, 213, 349, 53, 57, 73, 88, 90, 214, 218, 220, 222, 223, 224, 481, 68, 91, 93, 160, 227, 228, 229, 230, 232, 76, 97, 99, 101, 105, 107, 235, 237, 238, 239, 241, 242, 243, 245, 246, 249, 250, 89, 108, 111, 112, 113, 257, 258, 260, 262, 263, 264, 265, 266, 267, 268, 269, 270, 483, 484, 86, 87, 92, 110, 116, 117, 118, 121, 279, 281, 283, 284, 285, 290, 291, 292, 293, 295, 296, 297, 298, 299, 302, 303, 304, 306, 311, 312, 314, 315, 316, 318, 319, 320, 96, 114, 122, 124, 125, 128, 129, 132, 234, 256, 332, 335, 336, 337, 338, 339, 340, 341, 342, 343, 353, 354, 355, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 375, 376, 377, 379, 380, 382, 383, 385, 387, 391, 392, 393, 394, 395, 396, 397, 399, 400, 401, 403, 404, 405, 406, 407, 408, 409, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 432, 433, 434, 435, 437, 438, 439, 440, 441, 442, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 472, 473, 474, 478, 135, 136, 137, 139, 140, 141, 325, 480</code></td></tr>
     </table>
   </div>
   <div class="card">
@@ -158,7 +158,7 @@ flowchart LR
   <div class="card">
     <h4>Graph Report Highlights</h4>
     <ul>
-      <li>5128 nodes · 6537 edges · 480 communities (345 shown, 135 thin omitted)</li>
+      <li>5127 nodes · 6536 edges · 485 communities (350 shown, 135 thin omitted)</li>
       <li>Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 31 edges (avg confidence: 0.69)</li>
       <li>Token cost: 0 input · 0 output</li>
       <li>1. `verifyClaim()` - 42 edges</li>
@@ -524,12 +524,12 @@ flowchart LR
 
 <!-- ====== 3. Graph Build ====== -->
 <h2 id="build-graph">3. Graph Build</h2>
-<p>Graph Build groups implementation around features, presentation, skills, agents, mostly in vehicles/presentation/inicio_app.dart, navigation/presentation/historial_rutas_screen.dart, presentation/widgets/dashboard_widgets.dart. This section covers 536 nodes and 749 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>Graph Build groups implementation around features, presentation, vehicles, skills, mostly in vehicles/presentation/inicio_app.dart, navigation/presentation/historial_rutas_screen.dart, presentation/widgets/dashboard_widgets.dart. This section covers 500 nodes and 661 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Graph Build (536 nodes, 749 edges)
+    %% Section: Graph Build (500 nodes, 661 edges)
     subgraph build_graph_lib_scanners_edge_heavy_import_mjs_676e97a8["lib/scanners/edge-heavy-import.mjs"]
         agents_skills_vercel_optimize_lib_scanners_edge_80708de2("isEdgeRuntimeFile()<br/><small>lib/scanners/edge-heavy-import.mjs</small>")
         agents_skills_vercel_optimize_lib_scanners_edge_e6dd340a("isMiddleware()<br/><small>lib/scanners/edge-heavy-import.mjs</small>")
@@ -546,29 +546,29 @@ flowchart LR
         agents_skills_vercel_optimize_lib_gates_build_mi_72add03b("gate()<br/><small>lib/gates/build-minutes-fanout.mjs</small>")
         agents_skills_vercel_optimize_lib_gates_build_mi_be233cea("unique()<br/><small>lib/gates/build-minutes-fanout.mjs</small>")
     end
-    subgraph build_graph_lib_gates_cold_start_mjs_e4a06b27["lib/gates/cold-start.mjs"]
-        agents_skills_vercel_optimize_lib_gates_cold_sta_01b9d7c6("gate()<br/><small>lib/gates/cold-start.mjs</small>")
-        agents_skills_vercel_optimize_lib_gates_cold_sta_15da48ca("extractColdStarts()<br/><small>lib/gates/cold-start.mjs</small>")
+    subgraph build_graph_lib_scanners_middleware_broad_matche_1b61ff62["lib/scanners/middleware-broad-matcher.mjs"]
+        agents_skills_vercel_optimize_lib_scanners_middl_7289a82a("scan()<br/><small>lib/scanners/middleware-broad-matcher.mjs</small>")
+        agents_skills_vercel_optimize_lib_scanners_middl_fb3eac4e("isApplicable()<br/><small>lib/scanners/middleware-broad-matcher.mjs</small>")
     end
-    subgraph build_graph_vercel_optimize_scripts_render_repor_aae4a9b0["vercel-optimize/scripts/render-report.mjs"]
-        agents_skills_vercel_optimize_scripts_render_rep_829fcff0("main()<br/><small>vercel-optimize/scripts/render-report.mjs</small>")
-        agents_skills_vercel_optimize_scripts_render_rep_8cab6820("scripts/render-report.mjs")
+    subgraph build_graph_vercel_optimize_lib_dedup_recs_mjs_0325940e["vercel-optimize/lib/dedup-recs.mjs"]
+        agents_skills_vercel_optimize_lib_dedup_recs_ded_5bea36c6("dedupIntent()<br/><small>vercel-optimize/lib/dedup-recs.mjs</small>")
+        agents_skills_vercel_optimize_lib_dedup_recs_mer_42f724e7("mergeDuplicateRecs()<br/><small>vercel-optimize/lib/dedup-recs.mjs</small>")
     end
+    lib_features_navigation_presentation_historial_r_812c0091("historial_rutas_screen.dart")
     lib_features_vehicles_presentation_widgets_weekl_93c03ff7("weekly_insight_card.dart")
     lib_features_vehicles_presentation_inicio_app_a69a8ab3("inicio_app.dart")
-    agents_skills_vercel_optimize_lib_observation_sa_b13467fa("unsupportedObservationReason()<br/><small>vercel-optimize/lib/observation-safety.mjs</small>")
     agents_skills_vercel_optimize_scripts_merge_sign_a481240d("main()<br/><small>vercel-optimize/scripts/merge-signals.mjs</small>")
     agents_skills_vercel_optimize_lib_scanners_edge_80708de2 -->|calls| agents_skills_vercel_optimize_lib_scanners_edge_e6dd340a
     agents_skills_vercel_optimize_lib_scanners_edge_286ceead -->|calls| agents_skills_vercel_optimize_lib_scanners_edge_80708de2
     agents_skills_vercel_optimize_lib_scanners_edge_286ceead -->|calls| agents_skills_vercel_optimize_lib_scanners_edge_89ff82e9
     agents_skills_vercel_optimize_lib_scanners_edge_286ceead -->|calls| agents_skills_vercel_optimize_lib_scanners_edge_e6dd340a
     agents_skills_vercel_optimize_lib_gates_build_mi_72add03b -->|calls| agents_skills_vercel_optimize_lib_gates_build_mi_be233cea
-    agents_skills_vercel_optimize_lib_gates_cold_sta_01b9d7c6 -->|calls| agents_skills_vercel_optimize_lib_gates_cold_sta_15da48ca
+    agents_skills_vercel_optimize_lib_scanners_middl_7289a82a -->|calls| agents_skills_vercel_optimize_lib_scanners_middl_fb3eac4e
     agents_skills_vercel_optimize_scripts_build_docs_b92166d4 -->|calls| agents_skills_vercel_optimize_scripts_build_docs_a2ff083a
     agents_skills_vercel_optimize_scripts_build_docs_b92166d4 -->|calls| agents_skills_vercel_optimize_scripts_build_docs_16e75210
     agents_skills_vercel_optimize_scripts_build_docs_16e75210 -->|calls| agents_skills_vercel_optimize_scripts_build_docs_f603f3ac
     agents_skills_vercel_optimize_scripts_build_docs_a2ff083a -->|calls| agents_skills_vercel_optimize_scripts_build_docs_f603f3ac
-    %% Omitted for readability: 518 nodes, 0 edges
+    %% Omitted for readability: 482 nodes, 0 edges
     class agents_skills_vercel_optimize_lib_scanners_edge_80708de2 function;
     class agents_skills_vercel_optimize_lib_scanners_edge_e6dd340a function;
     class agents_skills_vercel_optimize_lib_scanners_edge_286ceead function;
@@ -579,13 +579,13 @@ flowchart LR
     class agents_skills_vercel_optimize_scripts_build_docs_f603f3ac function;
     class agents_skills_vercel_optimize_lib_gates_build_mi_72add03b function;
     class agents_skills_vercel_optimize_lib_gates_build_mi_be233cea function;
-    class agents_skills_vercel_optimize_lib_gates_cold_sta_01b9d7c6 function;
-    class agents_skills_vercel_optimize_lib_gates_cold_sta_15da48ca function;
-    class agents_skills_vercel_optimize_scripts_render_rep_829fcff0 function;
-    class agents_skills_vercel_optimize_scripts_render_rep_8cab6820 function;
+    class agents_skills_vercel_optimize_lib_scanners_middl_7289a82a function;
+    class agents_skills_vercel_optimize_lib_scanners_middl_fb3eac4e function;
+    class agents_skills_vercel_optimize_lib_dedup_recs_ded_5bea36c6 function;
+    class agents_skills_vercel_optimize_lib_dedup_recs_mer_42f724e7 function;
+    class lib_features_navigation_presentation_historial_r_812c0091 function;
     class lib_features_vehicles_presentation_widgets_weekl_93c03ff7 function;
     class lib_features_vehicles_presentation_inicio_app_a69a8ab3 function;
-    class agents_skills_vercel_optimize_lib_observation_sa_b13467fa function;
     class agents_skills_vercel_optimize_scripts_merge_sign_a481240d function;
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
     classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
@@ -867,7 +867,7 @@ flowchart LR
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: defines x266, contains x163, calls x120, inherits x60. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: defines x266, contains x129, calls x76, inherits x60. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
@@ -1211,69 +1211,69 @@ flowchart LR
 
 <!-- ====== 5. Outputs & Docs ====== -->
 <h2 id="outputs-docs">5. Outputs &amp; Docs</h2>
-<p>Outputs &amp; Docs groups implementation around skills, agents, vercel, optimize, mostly in vercel-optimize/lib/render-report.mjs, vercel-optimize/lib/display-labels.mjs, skills/vercel-react-best-practices/AGENTS.md. This section covers 175 nodes and 300 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>Outputs &amp; Docs groups implementation around skills, agents, vercel, optimize, mostly in vercel-optimize/lib/render-report.mjs, vercel-optimize/scripts/render-report.mjs, skills/vercel-react-best-practices/AGENTS.md. This section covers 163 nodes and 261 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Outputs &amp; Docs (175 nodes, 300 edges)
-    subgraph outputs_docs_vercel_optimize_lib_budget_summary_27394c7d["vercel-optimize/lib/budget-summary.mjs"]
-        agents_skills_vercel_optimize_lib_budget_summary_d4bc1f14("buildBudgetSummary()<br/><small>vercel-optimize/lib/budget-summary.mjs</small>")
-        agents_skills_vercel_optimize_lib_budget_summary_861ce8c9("buildOptions()<br/><small>vercel-optimize/lib/budget-summary.mjs</small>")
-        agents_skills_vercel_optimize_lib_budget_summary_b8a6d900("buildQuestionText()<br/><small>vercel-optimize/lib/budget-summary.mjs</small>")
-        agents_skills_vercel_optimize_lib_budget_summary_d27eb986("buildQuestionPayload()<br/><small>vercel-optimize/lib/budget-summary.mjs</small>")
-        agents_skills_vercel_optimize_lib_budget_summary_453a89f3("buildChatPreview()<br/><small>vercel-optimize/lib/budget-summary.mjs</small>")
-        agents_skills_vercel_optimize_lib_budget_summary_f2c94d41("buildExactChatMessage()<br/><small>vercel-optimize/lib/budget-summary.mjs</small>")
-        agents_skills_vercel_optimize_lib_budget_summary_a5c80773("buildPrintCheck()<br/><small>vercel-optimize/lib/budget-summary.mjs</small>")
-    end
-    subgraph outputs_docs_vercel_optimize_lib_cost_coverage_m_45576fd5["vercel-optimize/lib/cost-coverage.mjs"]
-        agents_skills_vercel_optimize_lib_cost_coverage_463ad2b2("computeCostCoverage()<br/><small>vercel-optimize/lib/cost-coverage.mjs</small>")
-        agents_skills_vercel_optimize_lib_cost_coverage_a0a9b7d3("classifyService()<br/><small>vercel-optimize/lib/cost-coverage.mjs</small>")
-        agents_skills_vercel_optimize_lib_cost_coverage_a66700b2("renderCostCoverageMarkdown()<br/><small>vercel-optimize/lib/cost-coverage.mjs</small>")
-        agents_skills_vercel_optimize_lib_cost_coverage_b77b6c6b("escapeCell()<br/><small>vercel-optimize/lib/cost-coverage.mjs</small>")
-    end
+    %% Section: Outputs &amp; Docs (163 nodes, 261 edges)
     subgraph outputs_docs_vercel_optimize_lib_render_report_m_e026d17d["vercel-optimize/lib/render-report.mjs"]
         agents_skills_vercel_optimize_lib_render_report_d5d153de("renderReport()<br/><small>vercel-optimize/lib/render-report.mjs</small>")
-        agents_skills_vercel_optimize_lib_render_report_955b966a("lib/render-report.mjs")
         agents_skills_vercel_optimize_lib_render_report_f2e61183("renderCostBreakdown()<br/><small>vercel-optimize/lib/render-report.mjs</small>")
+        agents_skills_vercel_optimize_lib_render_report_dc1560d6("candidateForDisplay()<br/><small>vercel-optimize/lib/render-report.mjs</small>")
+        agents_skills_vercel_optimize_lib_render_report_f9d0008d("parseCandidateRef()<br/><small>vercel-optimize/lib/render-report.mjs</small>")
+        agents_skills_vercel_optimize_lib_render_report_daedc911("displayCandidateObject()<br/><small>vercel-optimize/lib/render-report.mjs</small>")
+        agents_skills_vercel_optimize_lib_render_report_21431326("compactFinalText()<br/><small>vercel-optimize/lib/render-report.mjs</small>")
+        agents_skills_vercel_optimize_lib_render_report_1ae7314e("formatRecommendationText()<br/><small>vercel-optimize/lib/render-report.mjs</small>")
+        agents_skills_vercel_optimize_lib_render_report_f678f78a("displayCandidate()<br/><small>vercel-optimize/lib/render-report.mjs</small>")
+        agents_skills_vercel_optimize_lib_render_report_76135582("displayCandidateRef()<br/><small>vercel-optimize/lib/render-report.mjs</small>")
+        agents_skills_vercel_optimize_lib_render_report_81b1c359("enrichRecFromCandidates()<br/><small>vercel-optimize/lib/render-report.mjs</small>")
+        agents_skills_vercel_optimize_lib_render_report_f41215f0("canonicalRefOf()<br/><small>vercel-optimize/lib/render-report.mjs</small>")
+        agents_skills_vercel_optimize_lib_render_report_6d8c7f1d("formatGatedTargets()<br/><small>vercel-optimize/lib/render-report.mjs</small>")
+        agents_skills_vercel_optimize_lib_render_report_71ec96e8("escape()<br/><small>vercel-optimize/lib/render-report.mjs</small>")
+        agents_skills_vercel_optimize_lib_render_report_95841f62("formatEvidenceText()<br/><small>vercel-optimize/lib/render-report.mjs</small>")
     end
     lib_core_logic_pdf_report_logic_2bc535e7("pdf_report_logic.dart")
     lib_core_services_report_service_f672c14c("report_service.dart")
     lib_core_services_vehicle_pdf_report_service_831330bd("pdf report service.dart<br/><small>core/services/vehicle_pdf_report_service.dart</small>")
-    agents_skills_vercel_optimize_lib_display_labels_bcd31b69("formatCandidateLine()<br/><small>vercel-optimize/lib/display-labels.mjs</small>")
-    agents_skills_vercel_optimize_lib_budget_summary_d4bc1f14 -->|calls| agents_skills_vercel_optimize_lib_budget_summary_861ce8c9
-    agents_skills_vercel_optimize_lib_budget_summary_d4bc1f14 -->|calls| agents_skills_vercel_optimize_lib_budget_summary_b8a6d900
-    agents_skills_vercel_optimize_lib_budget_summary_d4bc1f14 -->|calls| agents_skills_vercel_optimize_lib_budget_summary_d27eb986
-    agents_skills_vercel_optimize_lib_budget_summary_d4bc1f14 -->|calls| agents_skills_vercel_optimize_lib_budget_summary_453a89f3
-    agents_skills_vercel_optimize_lib_budget_summary_d4bc1f14 -->|calls| agents_skills_vercel_optimize_lib_budget_summary_f2c94d41
-    agents_skills_vercel_optimize_lib_budget_summary_d4bc1f14 -->|calls| agents_skills_vercel_optimize_lib_budget_summary_a5c80773
-    agents_skills_vercel_optimize_lib_budget_summary_453a89f3 -->|calls| agents_skills_vercel_optimize_lib_display_labels_bcd31b69
-    agents_skills_vercel_optimize_lib_cost_coverage_463ad2b2 -->|calls| agents_skills_vercel_optimize_lib_cost_coverage_a0a9b7d3
-    agents_skills_vercel_optimize_lib_cost_coverage_a66700b2 -->|calls| agents_skills_vercel_optimize_lib_cost_coverage_b77b6c6b
+    agents_skills_vercel_optimize_scripts_render_rep_829fcff0("main()<br/><small>vercel-optimize/scripts/render-report.mjs</small>")
+    agents_skills_vercel_optimize_lib_render_report_dc1560d6 -->|calls| agents_skills_vercel_optimize_lib_render_report_f9d0008d
+    agents_skills_vercel_optimize_lib_render_report_dc1560d6 -->|calls| agents_skills_vercel_optimize_lib_render_report_daedc911
+    agents_skills_vercel_optimize_lib_render_report_21431326 -->|calls| agents_skills_vercel_optimize_lib_render_report_1ae7314e
+    agents_skills_vercel_optimize_lib_render_report_f678f78a -->|calls| agents_skills_vercel_optimize_lib_render_report_dc1560d6
+    agents_skills_vercel_optimize_lib_render_report_76135582 -->|calls| agents_skills_vercel_optimize_lib_render_report_f9d0008d
+    agents_skills_vercel_optimize_lib_render_report_76135582 -->|calls| agents_skills_vercel_optimize_lib_render_report_daedc911
+    agents_skills_vercel_optimize_lib_render_report_81b1c359 -->|calls| agents_skills_vercel_optimize_lib_render_report_f41215f0
+    agents_skills_vercel_optimize_lib_render_report_6d8c7f1d -->|calls| agents_skills_vercel_optimize_lib_render_report_71ec96e8
+    agents_skills_vercel_optimize_lib_render_report_1ae7314e -->|calls| agents_skills_vercel_optimize_lib_render_report_95841f62
+    agents_skills_vercel_optimize_lib_render_report_f2e61183 -->|calls| agents_skills_vercel_optimize_lib_render_report_71ec96e8
+    agents_skills_vercel_optimize_lib_render_report_d5d153de -->|calls| agents_skills_vercel_optimize_lib_render_report_76135582
+    agents_skills_vercel_optimize_lib_render_report_d5d153de -->|calls| agents_skills_vercel_optimize_lib_render_report_71ec96e8
+    agents_skills_vercel_optimize_lib_render_report_d5d153de -->|calls| agents_skills_vercel_optimize_lib_render_report_95841f62
+    agents_skills_vercel_optimize_lib_render_report_d5d153de -->|calls| agents_skills_vercel_optimize_lib_render_report_81b1c359
     agents_skills_vercel_optimize_lib_render_report_d5d153de -->|calls| agents_skills_vercel_optimize_lib_render_report_f2e61183
-    agents_skills_vercel_optimize_lib_render_report_d5d153de -->|calls| agents_skills_vercel_optimize_lib_cost_coverage_463ad2b2
-    agents_skills_vercel_optimize_lib_render_report_d5d153de -->|calls| agents_skills_vercel_optimize_lib_cost_coverage_a66700b2
-    agents_skills_vercel_optimize_lib_render_report_955b966a -->|imports| agents_skills_vercel_optimize_lib_cost_coverage_463ad2b2
-    agents_skills_vercel_optimize_lib_render_report_955b966a -->|imports| agents_skills_vercel_optimize_lib_cost_coverage_a66700b2
-    %% Omitted for readability: 157 nodes, 0 edges
-    class agents_skills_vercel_optimize_lib_budget_summary_d4bc1f14 function;
-    class agents_skills_vercel_optimize_lib_budget_summary_861ce8c9 function;
-    class agents_skills_vercel_optimize_lib_budget_summary_b8a6d900 function;
-    class agents_skills_vercel_optimize_lib_budget_summary_d27eb986 function;
-    class agents_skills_vercel_optimize_lib_budget_summary_453a89f3 function;
-    class agents_skills_vercel_optimize_lib_budget_summary_f2c94d41 function;
-    class agents_skills_vercel_optimize_lib_budget_summary_a5c80773 function;
-    class agents_skills_vercel_optimize_lib_cost_coverage_463ad2b2 function;
-    class agents_skills_vercel_optimize_lib_cost_coverage_a0a9b7d3 function;
-    class agents_skills_vercel_optimize_lib_cost_coverage_a66700b2 function;
-    class agents_skills_vercel_optimize_lib_cost_coverage_b77b6c6b function;
+    agents_skills_vercel_optimize_lib_render_report_d5d153de -->|calls| agents_skills_vercel_optimize_lib_render_report_dc1560d6
+    agents_skills_vercel_optimize_lib_render_report_d5d153de -->|calls| agents_skills_vercel_optimize_lib_render_report_1ae7314e
+    agents_skills_vercel_optimize_scripts_render_rep_829fcff0 -->|calls| agents_skills_vercel_optimize_lib_render_report_d5d153de
+    %% Omitted for readability: 145 nodes, 0 edges
     class agents_skills_vercel_optimize_lib_render_report_d5d153de function;
-    class agents_skills_vercel_optimize_lib_render_report_955b966a function;
     class agents_skills_vercel_optimize_lib_render_report_f2e61183 function;
+    class agents_skills_vercel_optimize_lib_render_report_dc1560d6 function;
+    class agents_skills_vercel_optimize_lib_render_report_f9d0008d function;
+    class agents_skills_vercel_optimize_lib_render_report_daedc911 function;
+    class agents_skills_vercel_optimize_lib_render_report_21431326 function;
+    class agents_skills_vercel_optimize_lib_render_report_1ae7314e function;
+    class agents_skills_vercel_optimize_lib_render_report_f678f78a function;
+    class agents_skills_vercel_optimize_lib_render_report_76135582 function;
+    class agents_skills_vercel_optimize_lib_render_report_81b1c359 function;
+    class agents_skills_vercel_optimize_lib_render_report_f41215f0 function;
+    class agents_skills_vercel_optimize_lib_render_report_6d8c7f1d function;
+    class agents_skills_vercel_optimize_lib_render_report_71ec96e8 function;
+    class agents_skills_vercel_optimize_lib_render_report_95841f62 function;
     class lib_core_logic_pdf_report_logic_2bc535e7 function;
     class lib_core_services_report_service_f672c14c function;
     class lib_core_services_vehicle_pdf_report_service_831330bd function;
-    class agents_skills_vercel_optimize_lib_display_labels_bcd31b69 function;
+    class agents_skills_vercel_optimize_scripts_render_rep_829fcff0 function;
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
     classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
     classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
@@ -1297,198 +1297,6 @@ flowchart LR
 </tr>
 <tr>
   <td>1</td>
-  <td><code>buildBudgetSummary()</code><br><small style="color:var(--muted)">vercel-optimize/lib/budget-summary.mjs</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>main()</code><br><small style="color:var(--muted)">vercel-optimize/scripts/budget-summary.mjs</small><br><code>scripts/budget-summary.mjs</code><br><small style="color:var(--muted)">vercel-optimize/scripts/budget-summary.mjs</small></td>
-  <td><code>buildChatPreview()</code><br><small style="color:var(--muted)">vercel-optimize/lib/budget-summary.mjs</small><br><code>buildExactChatMessage()</code><br><small style="color:var(--muted)">vercel-optimize/lib/budget-summary.mjs</small><br><code>buildOptions()</code><br><small style="color:var(--muted)">vercel-optimize/lib/budget-summary.mjs</small><br>+3 more</td>
-  <td>buildBudgetSummary() node in vercel-optimize/lib/budget-summary.mjs.</td>
-</tr>
-<tr>
-  <td>2</td>
-  <td><code>buildChatPreview()</code><br><small style="color:var(--muted)">vercel-optimize/lib/budget-summary.mjs</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>buildBudgetSummary()</code><br><small style="color:var(--muted)">vercel-optimize/lib/budget-summary.mjs</small></td>
-  <td><code>formatCandidateLine()</code><br><small style="color:var(--muted)">vercel-optimize/lib/display-labels.mjs</small></td>
-  <td>Supports retrieval-augmented Q&amp;A or streaming chat.</td>
-</tr>
-<tr>
-  <td>3</td>
-  <td><code>buildExactChatMessage()</code><br><small style="color:var(--muted)">vercel-optimize/lib/budget-summary.mjs</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>buildBudgetSummary()</code><br><small style="color:var(--muted)">vercel-optimize/lib/budget-summary.mjs</small></td>
-  <td>No direct outbound edge</td>
-  <td>Supports retrieval-augmented Q&amp;A or streaming chat.</td>
-</tr>
-<tr>
-  <td>4</td>
-  <td><code>buildOptions()</code><br><small style="color:var(--muted)">vercel-optimize/lib/budget-summary.mjs</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>buildBudgetSummary()</code><br><small style="color:var(--muted)">vercel-optimize/lib/budget-summary.mjs</small></td>
-  <td>No direct outbound edge</td>
-  <td>buildOptions() node in vercel-optimize/lib/budget-summary.mjs.</td>
-</tr>
-<tr>
-  <td>5</td>
-  <td><code>buildPrintCheck()</code><br><small style="color:var(--muted)">vercel-optimize/lib/budget-summary.mjs</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>buildBudgetSummary()</code><br><small style="color:var(--muted)">vercel-optimize/lib/budget-summary.mjs</small></td>
-  <td>No direct outbound edge</td>
-  <td>buildPrintCheck() node in vercel-optimize/lib/budget-summary.mjs.</td>
-</tr>
-<tr>
-  <td>6</td>
-  <td><code>buildQuestionPayload()</code><br><small style="color:var(--muted)">vercel-optimize/lib/budget-summary.mjs</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>buildBudgetSummary()</code><br><small style="color:var(--muted)">vercel-optimize/lib/budget-summary.mjs</small></td>
-  <td>No direct outbound edge</td>
-  <td>buildQuestionPayload() node in vercel-optimize/lib/budget-summary.mjs.</td>
-</tr>
-<tr>
-  <td>7</td>
-  <td><code>buildQuestionText()</code><br><small style="color:var(--muted)">vercel-optimize/lib/budget-summary.mjs</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>buildBudgetSummary()</code><br><small style="color:var(--muted)">vercel-optimize/lib/budget-summary.mjs</small></td>
-  <td>No direct outbound edge</td>
-  <td>buildQuestionText() node in vercel-optimize/lib/budget-summary.mjs.</td>
-</tr>
-<tr>
-  <td>8</td>
-  <td><code>renderBudgetSummaryMarkdown()</code><br><small style="color:var(--muted)">vercel-optimize/lib/budget-summary.mjs</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>main()</code><br><small style="color:var(--muted)">vercel-optimize/scripts/budget-summary.mjs</small><br><code>scripts/budget-summary.mjs</code><br><small style="color:var(--muted)">vercel-optimize/scripts/budget-summary.mjs</small></td>
-  <td>No direct outbound edge</td>
-  <td>Exports documentation data to a target format.</td>
-</tr>
-<tr>
-  <td>9</td>
-  <td><code>classifyService()</code><br><small style="color:var(--muted)">vercel-optimize/lib/cost-coverage.mjs</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>computeCostCoverage()</code><br><small style="color:var(--muted)">vercel-optimize/lib/cost-coverage.mjs</small></td>
-  <td>No direct outbound edge</td>
-  <td>classifyService() node in vercel-optimize/lib/cost-coverage.mjs.</td>
-</tr>
-<tr>
-  <td>10</td>
-  <td><code>computeCostCoverage()</code><br><small style="color:var(--muted)">vercel-optimize/lib/cost-coverage.mjs</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>lib/render-report.mjs</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small><br><code>renderReport()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
-  <td><code>classifyService()</code><br><small style="color:var(--muted)">vercel-optimize/lib/cost-coverage.mjs</small></td>
-  <td>Supports retrieval-augmented Q&amp;A or streaming chat.</td>
-</tr>
-<tr>
-  <td>11</td>
-  <td><code>escapeCell()</code><br><small style="color:var(--muted)">vercel-optimize/lib/cost-coverage.mjs</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>renderCostCoverageMarkdown()</code><br><small style="color:var(--muted)">vercel-optimize/lib/cost-coverage.mjs</small></td>
-  <td>No direct outbound edge</td>
-  <td>escapeCell() node in vercel-optimize/lib/cost-coverage.mjs.</td>
-</tr>
-<tr>
-  <td>12</td>
-  <td><code>renderCostCoverageMarkdown()</code><br><small style="color:var(--muted)">vercel-optimize/lib/cost-coverage.mjs</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>lib/render-report.mjs</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small><br><code>renderReport()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
-  <td><code>escapeCell()</code><br><small style="color:var(--muted)">vercel-optimize/lib/cost-coverage.mjs</small></td>
-  <td>Exports documentation data to a target format.</td>
-</tr>
-<tr>
-  <td>13</td>
-  <td><code>formatCandidateLabel()</code><br><small style="color:var(--muted)">vercel-optimize/lib/display-labels.mjs</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>buildManifest()</code><br><small style="color:var(--muted)">vercel-optimize/scripts/prepare-investigation-brief.mjs</small><br><code>displayCandidate()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small><br><code>displayCandidateRef()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small><br>+3 more</td>
-  <td><code>formatKind()</code><br><small style="color:var(--muted)">vercel-optimize/lib/display-labels.mjs</small><br><code>formatRoute()</code><br><small style="color:var(--muted)">vercel-optimize/lib/display-labels.mjs</small></td>
-  <td>formatCandidateLabel() node in vercel-optimize/lib/display-labels.mjs.</td>
-</tr>
-<tr>
-  <td>14</td>
-  <td><code>formatCandidateLine()</code><br><small style="color:var(--muted)">vercel-optimize/lib/display-labels.mjs</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>buildChatPreview()</code><br><small style="color:var(--muted)">vercel-optimize/lib/budget-summary.mjs</small><br><code>lib/budget-summary.mjs</code><br><small style="color:var(--muted)">vercel-optimize/lib/budget-summary.mjs</small></td>
-  <td><code>formatKind()</code><br><small style="color:var(--muted)">vercel-optimize/lib/display-labels.mjs</small><br><code>formatRoute()</code><br><small style="color:var(--muted)">vercel-optimize/lib/display-labels.mjs</small><br><code>formatSignal()</code><br><small style="color:var(--muted)">vercel-optimize/lib/display-labels.mjs</small></td>
-  <td>formatCandidateLine() node in vercel-optimize/lib/display-labels.mjs.</td>
-</tr>
-<tr>
-  <td>15</td>
-  <td><code>formatKind()</code><br><small style="color:var(--muted)">vercel-optimize/lib/display-labels.mjs</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>formatCandidateLabel()</code><br><small style="color:var(--muted)">vercel-optimize/lib/display-labels.mjs</small><br><code>formatCandidateLine()</code><br><small style="color:var(--muted)">vercel-optimize/lib/display-labels.mjs</small><br><code>groupGatedCandidates()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small><br>+2 more</td>
-  <td>No direct outbound edge</td>
-  <td>formatKind() node in vercel-optimize/lib/display-labels.mjs.</td>
-</tr>
-<tr>
-  <td>16</td>
-  <td><code>formatNumberLike()</code><br><small style="color:var(--muted)">vercel-optimize/lib/display-labels.mjs</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>formatSignalValue()</code><br><small style="color:var(--muted)">vercel-optimize/lib/display-labels.mjs</small></td>
-  <td>No direct outbound edge</td>
-  <td>formatNumberLike() node in vercel-optimize/lib/display-labels.mjs.</td>
-</tr>
-<tr>
-  <td>17</td>
-  <td><code>formatPublicText()</code><br><small style="color:var(--muted)">vercel-optimize/lib/display-labels.mjs</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>formatEvidenceText()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small><br><code>lib/render-report.mjs</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small><br><code>publicGatedReason()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
-  <td><code>formatSignalValue()</code><br><small style="color:var(--muted)">vercel-optimize/lib/display-labels.mjs</small><br><code>normalizeObservedWindowUnits()</code><br><small style="color:var(--muted)">vercel-optimize/lib/display-labels.mjs</small></td>
-  <td>formatPublicText() node in vercel-optimize/lib/display-labels.mjs.</td>
-</tr>
-<tr>
-  <td>18</td>
-  <td><code>formatRoute()</code><br><small style="color:var(--muted)">vercel-optimize/lib/display-labels.mjs</small></td>
-  <td><span class="tag tag-endpoint">API</span></td>
-  <td><code>formatCandidateLabel()</code><br><small style="color:var(--muted)">vercel-optimize/lib/display-labels.mjs</small><br><code>formatCandidateLine()</code><br><small style="color:var(--muted)">vercel-optimize/lib/display-labels.mjs</small><br><code>groupGatedCandidates()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small><br>+1 more</td>
-  <td><code>canonicalizeRoute()</code><br><small style="color:var(--muted)">vercel-optimize/lib/route-normalize.mjs</small></td>
-  <td>formatRoute() node in vercel-optimize/lib/display-labels.mjs.</td>
-</tr>
-<tr>
-  <td>19</td>
-  <td><code>formatSignal()</code><br><small style="color:var(--muted)">vercel-optimize/lib/display-labels.mjs</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>formatCandidateLine()</code><br><small style="color:var(--muted)">vercel-optimize/lib/display-labels.mjs</small><br><code>lib/render-report.mjs</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small><br><code>renderReport()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
-  <td><code>formatSignalPart()</code><br><small style="color:var(--muted)">vercel-optimize/lib/display-labels.mjs</small></td>
-  <td>formatSignal() node in vercel-optimize/lib/display-labels.mjs.</td>
-</tr>
-<tr>
-  <td>20</td>
-  <td><code>formatSignalPart()</code><br><small style="color:var(--muted)">vercel-optimize/lib/display-labels.mjs</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>formatSignal()</code><br><small style="color:var(--muted)">vercel-optimize/lib/display-labels.mjs</small></td>
-  <td><code>formatSignalValue()</code><br><small style="color:var(--muted)">vercel-optimize/lib/display-labels.mjs</small><br><code>signalLabel()</code><br><small style="color:var(--muted)">vercel-optimize/lib/display-labels.mjs</small></td>
-  <td>formatSignalPart() node in vercel-optimize/lib/display-labels.mjs.</td>
-</tr>
-<tr>
-  <td>21</td>
-  <td><code>formatSignalValue()</code><br><small style="color:var(--muted)">vercel-optimize/lib/display-labels.mjs</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>formatPublicText()</code><br><small style="color:var(--muted)">vercel-optimize/lib/display-labels.mjs</small><br><code>formatSignalPart()</code><br><small style="color:var(--muted)">vercel-optimize/lib/display-labels.mjs</small></td>
-  <td><code>formatNumberLike()</code><br><small style="color:var(--muted)">vercel-optimize/lib/display-labels.mjs</small></td>
-  <td>formatSignalValue() node in vercel-optimize/lib/display-labels.mjs.</td>
-</tr>
-<tr>
-  <td>22</td>
-  <td><code>humanizeKey()</code><br><small style="color:var(--muted)">vercel-optimize/lib/display-labels.mjs</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>signalLabel()</code><br><small style="color:var(--muted)">vercel-optimize/lib/display-labels.mjs</small></td>
-  <td>No direct outbound edge</td>
-  <td>humanizeKey() node in vercel-optimize/lib/display-labels.mjs.</td>
-</tr>
-<tr>
-  <td>23</td>
-  <td><code>normalizeObservedWindowUnits()</code><br><small style="color:var(--muted)">vercel-optimize/lib/display-labels.mjs</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>apply()</code><br><small style="color:var(--muted)">lib/sanitizers/window-units.mjs</small><br><code>formatPublicText()</code><br><small style="color:var(--muted)">vercel-optimize/lib/display-labels.mjs</small><br><code>window-units.mjs</code><br><small style="color:var(--muted)">lib/sanitizers/window-units.mjs</small></td>
-  <td>No direct outbound edge</td>
-  <td>normalizeObservedWindowUnits() node in vercel-optimize/lib/display-labels.mjs.</td>
-</tr>
-<tr>
-  <td>24</td>
-  <td><code>signalLabel()</code><br><small style="color:var(--muted)">vercel-optimize/lib/display-labels.mjs</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>formatSignalPart()</code><br><small style="color:var(--muted)">vercel-optimize/lib/display-labels.mjs</small></td>
-  <td><code>humanizeKey()</code><br><small style="color:var(--muted)">vercel-optimize/lib/display-labels.mjs</small></td>
-  <td>signalLabel() node in vercel-optimize/lib/display-labels.mjs.</td>
-</tr>
-<tr>
-  <td>25</td>
   <td><code>deriveProjectFacts()</code><br><small style="color:var(--muted)">vercel-optimize/lib/project-facts.mjs</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td><code>buildBrief()</code><br><small style="color:var(--muted)">vercel-optimize/lib/investigation-brief.mjs</small><br><code>investigation-brief.mjs</code><br><small style="color:var(--muted)">vercel-optimize/lib/investigation-brief.mjs</small><br><code>lib/render-report.mjs</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small><br>+4 more</td>
@@ -1496,7 +1304,7 @@ flowchart LR
   <td>deriveProjectFacts() node in vercel-optimize/lib/project-facts.mjs.</td>
 </tr>
 <tr>
-  <td>26</td>
+  <td>2</td>
   <td><code>asArray()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td><code>renderRecDetail()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small><br><code>renderRecTable()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small><br><code>renderReport()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
@@ -1504,7 +1312,7 @@ flowchart LR
   <td>asArray() node in vercel-optimize/lib/render-report.mjs.</td>
 </tr>
 <tr>
-  <td>27</td>
+  <td>3</td>
   <td><code>assertValidObservations()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
   <td><span class="tag tag-async">Async</span></td>
   <td><code>renderReport()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
@@ -1512,15 +1320,7 @@ flowchart LR
   <td>assertValidObservations() node in vercel-optimize/lib/render-report.mjs.</td>
 </tr>
 <tr>
-  <td>28</td>
-  <td><code>buildFinalReportMessage()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>main()</code><br><small style="color:var(--muted)">vercel-optimize/scripts/render-report.mjs</small><br><code>scripts/render-report.mjs</code><br><small style="color:var(--muted)">vercel-optimize/scripts/render-report.mjs</small></td>
-  <td><code>extractCoverageLine()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small><br><code>renderFinalRecommendationPreview()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small><br><code>stripDetailsLink()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
-  <td>buildFinalReportMessage() node in vercel-optimize/lib/render-report.mjs.</td>
-</tr>
-<tr>
-  <td>29</td>
+  <td>4</td>
   <td><code>candidateForDisplay()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td><code>displayCandidate()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small><br><code>renderReport()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
@@ -1528,12 +1328,212 @@ flowchart LR
   <td>candidateForDisplay() node in vercel-optimize/lib/render-report.mjs.</td>
 </tr>
 <tr>
-  <td>30</td>
+  <td>5</td>
   <td><code>canonicalRefOf()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td><code>enrichRecFromCandidates()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
   <td><code>canonicalizeRoute()</code><br><small style="color:var(--muted)">vercel-optimize/lib/route-normalize.mjs</small></td>
   <td>canonicalRefOf() node in vercel-optimize/lib/render-report.mjs.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>compactFinalText()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>renderFinalRecommendationPreview()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td><code>formatRecommendationText()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td>compactFinalText() node in vercel-optimize/lib/render-report.mjs.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>costRoundsToCents()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>renderCostBreakdown()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td>No direct outbound edge</td>
+  <td>costRoundsToCents() node in vercel-optimize/lib/render-report.mjs.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>displayCandidate()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>renderFinalRecommendationPreview()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small><br><code>renderRecDetail()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td><code>candidateForDisplay()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small><br><code>formatCandidateLabel()</code><br><small style="color:var(--muted)">vercel-optimize/lib/display-labels.mjs</small></td>
+  <td>displayCandidate() node in vercel-optimize/lib/render-report.mjs.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>displayCandidateObject()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>candidateForDisplay()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small><br><code>displayCandidateRef()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td>No direct outbound edge</td>
+  <td>displayCandidateObject() node in vercel-optimize/lib/render-report.mjs.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>displayCandidateRef()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>renderRecDetail()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small><br><code>renderReport()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td><code>displayCandidateObject()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small><br><code>formatCandidateLabel()</code><br><small style="color:var(--muted)">vercel-optimize/lib/display-labels.mjs</small><br><code>parseCandidateRef()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td>displayCandidateRef() node in vercel-optimize/lib/render-report.mjs.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>enrichRecFromCandidates()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>renderReport()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td><code>canonicalizeRoute()</code><br><small style="color:var(--muted)">vercel-optimize/lib/route-normalize.mjs</small><br><code>canonicalRefOf()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td>enrichRecFromCandidates() node in vercel-optimize/lib/render-report.mjs.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>escape()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>formatGatedTargets()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small><br><code>renderCostBreakdown()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small><br><code>renderGatedTable()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small><br>+3 more</td>
+  <td>No direct outbound edge</td>
+  <td>escape() node in vercel-optimize/lib/render-report.mjs.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>formatBytes()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>renderStrengths()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td>No direct outbound edge</td>
+  <td>formatBytes() node in vercel-optimize/lib/render-report.mjs.</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>formatEvidenceText()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>formatRecommendationText()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small><br><code>publicNoRecommendationReason()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small><br><code>renderReport()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td><code>formatPublicText()</code><br><small style="color:var(--muted)">vercel-optimize/lib/display-labels.mjs</small></td>
+  <td>formatEvidenceText() node in vercel-optimize/lib/render-report.mjs.</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>formatGatedTargets()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>renderGatedTable()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td><code>escape()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td>formatGatedTargets() node in vercel-optimize/lib/render-report.mjs.</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td><code>formatNum()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>formatUsage()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small><br><code>renderStrengths()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td>No direct outbound edge</td>
+  <td>formatNum() node in vercel-optimize/lib/render-report.mjs.</td>
+</tr>
+<tr>
+  <td>17</td>
+  <td><code>formatRecommendationText()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>compactFinalText()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small><br><code>renderRecDetail()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small><br><code>renderRecTable()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small><br>+1 more</td>
+  <td><code>formatEvidenceText()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td>formatRecommendationText() node in vercel-optimize/lib/render-report.mjs.</td>
+</tr>
+<tr>
+  <td>18</td>
+  <td><code>formatUsage()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>renderServiceCostRows()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td><code>formatNum()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td>formatUsage() node in vercel-optimize/lib/render-report.mjs.</td>
+</tr>
+<tr>
+  <td>19</td>
+  <td><code>groupGatedCandidates()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>renderGatedTable()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td><code>formatKind()</code><br><small style="color:var(--muted)">vercel-optimize/lib/display-labels.mjs</small><br><code>formatRoute()</code><br><small style="color:var(--muted)">vercel-optimize/lib/display-labels.mjs</small><br><code>publicGatedReason()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td>groupGatedCandidates() node in vercel-optimize/lib/render-report.mjs.</td>
+</tr>
+<tr>
+  <td>20</td>
+  <td><code>groupGbHoursByCanonicalRoute()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td><span class="tag tag-endpoint">API</span></td>
+  <td><code>renderCostBreakdown()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td><code>canonicalizeRoute()</code><br><small style="color:var(--muted)">vercel-optimize/lib/route-normalize.mjs</small></td>
+  <td>groupGbHoursByCanonicalRoute() node in vercel-optimize/lib/render-report.mjs.</td>
+</tr>
+<tr>
+  <td>21</td>
+  <td><code>impactString()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>renderFinalRecommendationPreview()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small><br><code>renderRecDetail()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small><br><code>renderRecTable()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small><br>+1 more</td>
+  <td><code>computeImpactLabel()</code><br><small style="color:var(--muted)">vercel-optimize/lib/impact-label.mjs</small></td>
+  <td>impactString() node in vercel-optimize/lib/render-report.mjs.</td>
+</tr>
+<tr>
+  <td>22</td>
+  <td><code>isPlatformScope()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>renderCoverageLine()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small><br><code>renderReport()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td>No direct outbound edge</td>
+  <td>isPlatformScope() node in vercel-optimize/lib/render-report.mjs.</td>
+</tr>
+<tr>
+  <td>23</td>
+  <td><code>metricState()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>renderDataGaps()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td>No direct outbound edge</td>
+  <td>metricState() node in vercel-optimize/lib/render-report.mjs.</td>
+</tr>
+<tr>
+  <td>24</td>
+  <td><code>missingUsageSentence()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>renderCostBreakdown()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small><br><code>renderDataGaps()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td>No direct outbound edge</td>
+  <td>missingUsageSentence() node in vercel-optimize/lib/render-report.mjs.</td>
+</tr>
+<tr>
+  <td>25</td>
+  <td><code>observabilityDataGap()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>renderDataGaps()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td>No direct outbound edge</td>
+  <td>observabilityDataGap() node in vercel-optimize/lib/render-report.mjs.</td>
+</tr>
+<tr>
+  <td>26</td>
+  <td><code>observabilityLabel()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>renderMetadataLine()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td>No direct outbound edge</td>
+  <td>observabilityLabel() node in vercel-optimize/lib/render-report.mjs.</td>
+</tr>
+<tr>
+  <td>27</td>
+  <td><code>parseCandidateRef()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>candidateForDisplay()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small><br><code>displayCandidateRef()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td>No direct outbound edge</td>
+  <td>parseCandidateRef() node in vercel-optimize/lib/render-report.mjs.</td>
+</tr>
+<tr>
+  <td>28</td>
+  <td><code>priorityScore()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>sortRecs()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td><code>tierScore()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td>priorityScore() node in vercel-optimize/lib/render-report.mjs.</td>
+</tr>
+<tr>
+  <td>29</td>
+  <td><code>publicGatedReason()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>groupGatedCandidates()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td><code>formatPublicText()</code><br><small style="color:var(--muted)">vercel-optimize/lib/display-labels.mjs</small></td>
+  <td>publicGatedReason() node in vercel-optimize/lib/render-report.mjs.</td>
+</tr>
+<tr>
+  <td>30</td>
+  <td><code>publicNoRecommendationReason()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>renderReport()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td><code>formatEvidenceText()</code><br><small style="color:var(--muted)">vercel-optimize/lib/render-report.mjs</small></td>
+  <td>publicNoRecommendationReason() node in vercel-optimize/lib/render-report.mjs.</td>
 </tr>
 </table>
 
@@ -1543,18 +1543,18 @@ flowchart LR
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>File</th><th>Coverage</th></tr>
       <tr><td><code>vercel-optimize/lib/render-report.mjs</code></td><td>52 nodes</td></tr>
-<tr><td><code>vercel-optimize/lib/display-labels.mjs</code></td><td>17 nodes</td></tr>
+<tr><td><code>vercel-optimize/scripts/render-report.mjs</code></td><td>17 nodes</td></tr>
 <tr><td><code>skills/vercel-react-best-practices/AGENTS.md</code></td><td>12 nodes</td></tr>
 <tr><td><code>vercel-optimize/references/scoring.md</code></td><td>10 nodes</td></tr>
 <tr><td><code>graphify/references/exports.md</code></td><td>9 nodes</td></tr>
-<tr><td><code>vercel-optimize/lib/budget-summary.mjs</code></td><td>9 nodes</td></tr>
 <tr><td><code>graphify/references/exports.md</code></td><td>9 nodes</td></tr>
 <tr><td><code>core/services/vehicle_pdf_report_service.dart</code></td><td>9 nodes</td></tr>
+<tr><td><code>presentation/widgets/waze_report_sheet.dart</code></td><td>8 nodes</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x124, calls x109, imports x32, defines x23. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x106, calls x93, defines x28, imports x27. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
@@ -2949,12 +2949,12 @@ flowchart LR
 
 <!-- ====== 10. Tests & Fixtures ====== -->
 <h2 id="tests-fixtures">10. Tests &amp; Fixtures</h2>
-<p>Tests &amp; Fixtures groups implementation around logic, testdart, vehicle, servicedart, mostly in android-native-dev/references/testing.md, core/services/auth_service.dart, core/services/vehicle_storage_service.dart. This section covers 104 nodes and 108 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>Tests &amp; Fixtures groups implementation around logic, testdart, vehicle, test, mostly in android-native-dev/references/testing.md, core/services/vehicle_storage_service.dart, navigation/logic/telemetry_calculator.dart. This section covers 88 nodes and 89 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Tests &amp; Fixtures (104 nodes, 108 edges)
+    %% Section: Tests &amp; Fixtures (88 nodes, 89 edges)
     subgraph tests_fixtures_External_generated_473753cb["External / generated"]
         package_flutter_test_flutter_test_dart_878563e1("package:flutter test/flutter test.dart")
         package_my_auto_guide_core_logic_fuel_efficiency_1d2494d2("guide/core/logic/fuel efficiency logic....")
@@ -2992,7 +2992,7 @@ flowchart LR
     test_features_vehicles_domain_models_weekly_stat_a54d8b8d -->|imports| package_flutter_test_flutter_test_dart_878563e1
     test_auth_provider_test_6f880e12 -->|imports| package_flutter_test_flutter_test_dart_878563e1
     test_features_navigation_domain_models_navigatio_08e8fb71 -->|imports| package_flutter_test_flutter_test_dart_878563e1
-    %% Omitted for readability: 86 nodes, 0 edges
+    %% Omitted for readability: 70 nodes, 0 edges
     class package_flutter_test_flutter_test_dart_878563e1 function;
     class package_my_auto_guide_core_logic_fuel_efficiency_1d2494d2 function;
     class package_my_auto_guide_core_logic_vehicle_ai_logi_89ad31eb function;
@@ -3034,243 +3034,243 @@ flowchart LR
 </tr>
 <tr>
   <td>1</td>
-  <td><code>Exception</code><br><small style="color:var(--muted)"></small></td>
-  <td><span class="tag tag-class">Class</span></td>
-  <td>External entry / no inbound edge</td>
+  <td><code>package:flutter_test/flutter_test.dart</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>auth_provider_test.dart</code><br><small style="color:var(--muted)">test/auth_provider_test.dart</small><br><code>efficiency logic test.dart</code><br><small style="color:var(--muted)">core/logic/fuel_efficiency_logic_test.dart</small><br><code>expenses logic test.dart</code><br><small style="color:var(--muted)">core/logic/vehicle_expenses_logic_test.dart</small><br>+9 more</td>
   <td>No direct outbound edge</td>
-  <td>Exception node in project.</td>
+  <td>Verifies imports, entry points, or version behavior.</td>
 </tr>
 <tr>
   <td>2</td>
-  <td><code>auth_service.dart</code><br><small style="color:var(--muted)">core/services/auth_service.dart</small></td>
+  <td><code>package:my_auto_guide/core/logic/fuel_efficiency_logic.dart</code><br><small style="color:var(--muted)"></small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td>External entry / no inbound edge</td>
-  <td><code>package:supabase flutter/supabase flutt...</code><br><code>supabase_service.dart</code></td>
-  <td>auth_service.dart node in core/services/auth_service.dart.</td>
+  <td><code>efficiency logic test.dart</code><br><small style="color:var(--muted)">core/logic/fuel_efficiency_logic_test.dart</small></td>
+  <td>No direct outbound edge</td>
+  <td>package:my_auto_guide/core/logic/fuel_efficiency_logic.dart node in project.</td>
 </tr>
 <tr>
   <td>3</td>
-  <td><code>AuthLogicException</code><br><small style="color:var(--muted)">core/services/auth_service.dart</small></td>
-  <td><span class="tag tag-class">Class</span></td>
-  <td>External entry / no inbound edge</td>
+  <td><code>package:my_auto_guide/core/logic/vehicle_ai_logic.dart</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>vehicle_ai_logic_test.dart</code><br><small style="color:var(--muted)">core/logic/vehicle_ai_logic_test.dart</small><br><code>vehicle_analytics_test.dart</code><br><small style="color:var(--muted)">domain/models/vehicle_analytics_test.dart</small></td>
   <td>No direct outbound edge</td>
-  <td>AuthLogicException node in core/services/auth_service.dart.</td>
+  <td>package:my_auto_guide/core/logic/vehicle_ai_logic.dart node in project.</td>
 </tr>
 <tr>
   <td>4</td>
-  <td><code>AuthService</code><br><small style="color:var(--muted)">core/services/auth_service.dart</small></td>
-  <td><span class="tag tag-class">Class</span></td>
-  <td>External entry / no inbound edge</td>
+  <td><code>package:my_auto_guide/core/logic/vehicle_expenses_logic.dart</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>expenses logic test.dart</code><br><small style="color:var(--muted)">core/logic/vehicle_expenses_logic_test.dart</small></td>
   <td>No direct outbound edge</td>
-  <td>AuthService node in core/services/auth_service.dart.</td>
+  <td>package:my_auto_guide/core/logic/vehicle_expenses_logic.dart node in project.</td>
 </tr>
 <tr>
   <td>5</td>
-  <td><code>currentUser</code><br><small style="color:var(--muted)">core/services/auth_service.dart</small></td>
+  <td><code>package:my_auto_guide/core/logic/vehicle_health_logic.dart</code><br><small style="color:var(--muted)"></small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td>External entry / no inbound edge</td>
+  <td><code>health logic test.dart</code><br><small style="color:var(--muted)">core/logic/vehicle_health_logic_test.dart</small></td>
   <td>No direct outbound edge</td>
-  <td>currentUser node in core/services/auth_service.dart.</td>
+  <td>package:my_auto_guide/core/logic/vehicle_health_logic.dart node in project.</td>
 </tr>
 <tr>
   <td>6</td>
-  <td><code>getFirstVehicleId</code><br><small style="color:var(--muted)">core/services/auth_service.dart</small></td>
+  <td><code>package:my_auto_guide/core/logic/vehicle_performance_logic.dart</code><br><small style="color:var(--muted)"></small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td>External entry / no inbound edge</td>
+  <td><code>performance logic test.dart</code><br><small style="color:var(--muted)">core/logic/vehicle_performance_logic_test.dart</small></td>
   <td>No direct outbound edge</td>
-  <td>getFirstVehicleId node in core/services/auth_service.dart.</td>
+  <td>package:my_auto_guide/core/logic/vehicle_performance_logic.dart node in project.</td>
 </tr>
 <tr>
   <td>7</td>
-  <td><code>_instance</code><br><small style="color:var(--muted)">core/services/auth_service.dart</small></td>
+  <td><code>package:my_auto_guide/features/expenses/domain/models/fuel_log_model.dart</code><br><small style="color:var(--muted)"></small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td>External entry / no inbound edge</td>
+  <td><code>fuel_log_model_test.dart</code><br><small style="color:var(--muted)">domain/models/fuel_log_model_test.dart</small></td>
   <td>No direct outbound edge</td>
-  <td>_instance node in core/services/auth_service.dart.</td>
+  <td>package:my_auto_guide/features/expenses/domain/models/fuel_log_model.dart node in project.</td>
 </tr>
 <tr>
   <td>8</td>
-  <td><code>isNotConfirmed</code><br><small style="color:var(--muted)">core/services/auth_service.dart</small></td>
+  <td><code>package:my_auto_guide/features/navigation/logic/telemetry_calculator.dart</code><br><small style="color:var(--muted)"></small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td>External entry / no inbound edge</td>
+  <td><code>telemetry calculator test.dart</code><br><small style="color:var(--muted)">navigation/logic/telemetry_calculator_test.dart</small></td>
   <td>No direct outbound edge</td>
-  <td>isNotConfirmed node in core/services/auth_service.dart.</td>
+  <td>package:my_auto_guide/features/navigation/logic/telemetry_calculator.dart node in project.</td>
 </tr>
 <tr>
   <td>9</td>
-  <td><code>message</code><br><small style="color:var(--muted)">core/services/auth_service.dart</small></td>
+  <td><code>package:my_auto_guide/features/vehicles/domain/models/maintenance_prediction.dart</code><br><small style="color:var(--muted)"></small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td>External entry / no inbound edge</td>
+  <td><code>maintenance prediction test.dart</code><br><small style="color:var(--muted)">domain/models/maintenance_prediction_test.dart</small></td>
   <td>No direct outbound edge</td>
-  <td>message node in core/services/auth_service.dart.</td>
+  <td>package:my_auto_guide/features/vehicles/domain/models/maintenance_prediction.dart node in project.</td>
 </tr>
 <tr>
   <td>10</td>
-  <td><code>resendConfirmationEmail</code><br><small style="color:var(--muted)">core/services/auth_service.dart</small></td>
+  <td><code>package:my_auto_guide/features/vehicles/domain/models/vehicle_analytics.dart</code><br><small style="color:var(--muted)"></small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td>External entry / no inbound edge</td>
+  <td><code>vehicle_analytics_test.dart</code><br><small style="color:var(--muted)">domain/models/vehicle_analytics_test.dart</small><br><code>weekly_stats_test.dart</code><br><small style="color:var(--muted)">domain/models/weekly_stats_test.dart</small></td>
   <td>No direct outbound edge</td>
-  <td>resendConfirmationEmail node in core/services/auth_service.dart.</td>
+  <td>Orchestrates analysis and returns structured documentation data.</td>
 </tr>
 <tr>
   <td>11</td>
-  <td><code>sendPasswordReset</code><br><small style="color:var(--muted)">core/services/auth_service.dart</small></td>
+  <td><code>package:my_auto_guide/features/vehicles/domain/models/weekly_stats.dart</code><br><small style="color:var(--muted)"></small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td>External entry / no inbound edge</td>
+  <td><code>weekly_stats_test.dart</code><br><small style="color:var(--muted)">domain/models/weekly_stats_test.dart</small></td>
   <td>No direct outbound edge</td>
-  <td>sendPasswordReset node in core/services/auth_service.dart.</td>
+  <td>package:my_auto_guide/features/vehicles/domain/models/weekly_stats.dart node in project.</td>
 </tr>
 <tr>
   <td>12</td>
-  <td><code>signIn</code><br><small style="color:var(--muted)">core/services/auth_service.dart</small></td>
-  <td><span class="tag tag-func">Function</span></td>
+  <td><code>fuel_efficiency_logic_test.dart</code><br><small style="color:var(--muted)">core/logic/fuel_efficiency_logic_test.dart</small></td>
+  <td><span class="tag tag-func">Test</span></td>
   <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>signIn node in core/services/auth_service.dart.</td>
+  <td><code>guide/core/logic/fuel efficiency logic....</code><br><code>package:flutter test/flutter test.dart</code></td>
+  <td>Verifies imports, entry points, or version behavior.</td>
 </tr>
 <tr>
   <td>13</td>
-  <td><code>signInWithFacebook</code><br><small style="color:var(--muted)">core/services/auth_service.dart</small></td>
-  <td><span class="tag tag-func">Function</span></td>
+  <td><code>main</code><br><small style="color:var(--muted)">core/logic/fuel_efficiency_logic_test.dart</small></td>
+  <td><span class="tag tag-func">Test</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>signInWithFacebook node in core/services/auth_service.dart.</td>
+  <td>main node in core/logic/fuel_efficiency_logic_test.dart.</td>
 </tr>
 <tr>
   <td>14</td>
-  <td><code>signInWithGoogle</code><br><small style="color:var(--muted)">core/services/auth_service.dart</small></td>
-  <td><span class="tag tag-func">Function</span></td>
+  <td><code>vehicle_ai_logic_test.dart</code><br><small style="color:var(--muted)">core/logic/vehicle_ai_logic_test.dart</small></td>
+  <td><span class="tag tag-func">Test</span></td>
   <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>signInWithGoogle node in core/services/auth_service.dart.</td>
+  <td><code>guide/core/logic/vehicle ai logic.dart</code><br><code>package:flutter test/flutter test.dart</code></td>
+  <td>Verifies imports, entry points, or version behavior.</td>
 </tr>
 <tr>
   <td>15</td>
-  <td><code>signOut</code><br><small style="color:var(--muted)">core/services/auth_service.dart</small></td>
-  <td><span class="tag tag-func">Function</span></td>
+  <td><code>main</code><br><small style="color:var(--muted)">core/logic/vehicle_ai_logic_test.dart</small></td>
+  <td><span class="tag tag-func">Test</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>signOut node in core/services/auth_service.dart.</td>
+  <td>main node in core/logic/vehicle_ai_logic_test.dart.</td>
 </tr>
 <tr>
   <td>16</td>
-  <td><code>_supabase</code><br><small style="color:var(--muted)">core/services/auth_service.dart</small></td>
-  <td><span class="tag tag-func">Function</span></td>
+  <td><code>vehicle_expenses_logic_test.dart</code><br><small style="color:var(--muted)">core/logic/vehicle_expenses_logic_test.dart</small></td>
+  <td><span class="tag tag-func">Test</span></td>
   <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>_supabase node in core/services/auth_service.dart.</td>
+  <td><code>guide/core/logic/vehicle expenses logic...</code><br><code>package:flutter test/flutter test.dart</code></td>
+  <td>Verifies imports, entry points, or version behavior.</td>
 </tr>
 <tr>
   <td>17</td>
-  <td><code>toString</code><br><small style="color:var(--muted)">core/services/auth_service.dart</small></td>
-  <td><span class="tag tag-func">Function</span></td>
+  <td><code>expenses</code><br><small style="color:var(--muted)">core/logic/vehicle_expenses_logic_test.dart</small></td>
+  <td><span class="tag tag-func">Test</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>toString node in core/services/auth_service.dart.</td>
+  <td>expenses node in core/logic/vehicle_expenses_logic_test.dart.</td>
 </tr>
 <tr>
   <td>18</td>
-  <td><code>NavigationLogicException</code><br><small style="color:var(--muted)">core/services/navigation_service.dart</small></td>
-  <td><span class="tag tag-class">Class</span></td>
+  <td><code>main</code><br><small style="color:var(--muted)">core/logic/vehicle_expenses_logic_test.dart</small></td>
+  <td><span class="tag tag-func">Test</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>NavigationLogicException node in core/services/navigation_service.dart.</td>
+  <td>main node in core/logic/vehicle_expenses_logic_test.dart.</td>
 </tr>
 <tr>
   <td>19</td>
-  <td><code>vehicle_storage_service.dart</code><br><small style="color:var(--muted)">core/services/vehicle_storage_service.dart</small></td>
-  <td><span class="tag tag-func">Function</span></td>
+  <td><code>vehicle_health_logic_test.dart</code><br><small style="color:var(--muted)">core/logic/vehicle_health_logic_test.dart</small></td>
+  <td><span class="tag tag-func">Test</span></td>
   <td>External entry / no inbound edge</td>
-  <td><code>package:supabase flutter/supabase flutt...</code><br><code>supabase_service.dart</code></td>
-  <td>Supports retrieval-augmented Q&amp;A or streaming chat.</td>
+  <td><code>guide/core/logic/vehicle health logic.dart</code><br><code>package:flutter test/flutter test.dart</code></td>
+  <td>Verifies imports, entry points, or version behavior.</td>
 </tr>
 <tr>
   <td>20</td>
-  <td><code>_bucketName</code><br><small style="color:var(--muted)">core/services/vehicle_storage_service.dart</small></td>
-  <td><span class="tag tag-func">Function</span></td>
+  <td><code>main</code><br><small style="color:var(--muted)">core/logic/vehicle_health_logic_test.dart</small></td>
+  <td><span class="tag tag-func">Test</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>_bucketName node in core/services/vehicle_storage_service.dart.</td>
+  <td>main node in core/logic/vehicle_health_logic_test.dart.</td>
 </tr>
 <tr>
   <td>21</td>
-  <td><code>deleteDocument</code><br><small style="color:var(--muted)">core/services/vehicle_storage_service.dart</small></td>
-  <td><span class="tag tag-func">Function</span></td>
+  <td><code>vehicle_performance_logic_test.dart</code><br><small style="color:var(--muted)">core/logic/vehicle_performance_logic_test.dart</small></td>
+  <td><span class="tag tag-func">Test</span></td>
   <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>deleteDocument node in core/services/vehicle_storage_service.dart.</td>
+  <td><code>guide/core/logic/vehicle performance lo...</code><br><code>package:flutter test/flutter test.dart</code></td>
+  <td>Verifies imports, entry points, or version behavior.</td>
 </tr>
 <tr>
   <td>22</td>
-  <td><code>getSignedUrl</code><br><small style="color:var(--muted)">core/services/vehicle_storage_service.dart</small></td>
-  <td><span class="tag tag-func">Function</span></td>
+  <td><code>main</code><br><small style="color:var(--muted)">core/logic/vehicle_performance_logic_test.dart</small></td>
+  <td><span class="tag tag-func">Test</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>getSignedUrl node in core/services/vehicle_storage_service.dart.</td>
+  <td>main node in core/logic/vehicle_performance_logic_test.dart.</td>
 </tr>
 <tr>
   <td>23</td>
-  <td><code>_instance</code><br><small style="color:var(--muted)">core/services/vehicle_storage_service.dart</small></td>
-  <td><span class="tag tag-func">Function</span></td>
+  <td><code>fuel_log_model_test.dart</code><br><small style="color:var(--muted)">domain/models/fuel_log_model_test.dart</small></td>
+  <td><span class="tag tag-func">Test</span></td>
   <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>_instance node in core/services/vehicle_storage_service.dart.</td>
+  <td><code>guide/features/expenses/domain/models/f...</code><br><code>package:flutter test/flutter test.dart</code></td>
+  <td>Verifies imports, entry points, or version behavior.</td>
 </tr>
 <tr>
   <td>24</td>
-  <td><code>listFolder</code><br><small style="color:var(--muted)">core/services/vehicle_storage_service.dart</small></td>
-  <td><span class="tag tag-func">Function</span></td>
+  <td><code>main</code><br><small style="color:var(--muted)">domain/models/fuel_log_model_test.dart</small></td>
+  <td><span class="tag tag-func">Test</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>listFolder node in core/services/vehicle_storage_service.dart.</td>
+  <td>main node in domain/models/fuel_log_model_test.dart.</td>
 </tr>
 <tr>
   <td>25</td>
-  <td><code>message</code><br><small style="color:var(--muted)">core/services/vehicle_storage_service.dart</small></td>
-  <td><span class="tag tag-func">Function</span></td>
+  <td><code>telemetry_calculator_test.dart</code><br><small style="color:var(--muted)">navigation/logic/telemetry_calculator_test.dart</small></td>
+  <td><span class="tag tag-func">Test</span></td>
   <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>message node in core/services/vehicle_storage_service.dart.</td>
+  <td><code>auto guide/features/navigation/logic/te...</code><br><code>package:flutter test/flutter test.dart</code><br><code>package:latlong2/latlong.dart</code></td>
+  <td>Verifies imports, entry points, or version behavior.</td>
 </tr>
 <tr>
   <td>26</td>
-  <td><code>_supabase</code><br><small style="color:var(--muted)">core/services/vehicle_storage_service.dart</small></td>
-  <td><span class="tag tag-func">Function</span></td>
+  <td><code>main</code><br><small style="color:var(--muted)">navigation/logic/telemetry_calculator_test.dart</small></td>
+  <td><span class="tag tag-func">Test</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>_supabase node in core/services/vehicle_storage_service.dart.</td>
+  <td>main node in navigation/logic/telemetry_calculator_test.dart.</td>
 </tr>
 <tr>
   <td>27</td>
-  <td><code>toString</code><br><small style="color:var(--muted)">core/services/vehicle_storage_service.dart</small></td>
-  <td><span class="tag tag-func">Function</span></td>
+  <td><code>origin</code><br><small style="color:var(--muted)">navigation/logic/telemetry_calculator_test.dart</small></td>
+  <td><span class="tag tag-func">Test</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>toString node in core/services/vehicle_storage_service.dart.</td>
+  <td>origin node in navigation/logic/telemetry_calculator_test.dart.</td>
 </tr>
 <tr>
   <td>28</td>
-  <td><code>uploadBinary</code><br><small style="color:var(--muted)">core/services/vehicle_storage_service.dart</small></td>
-  <td><span class="tag tag-func">Function</span></td>
+  <td><code>maintenance_prediction_test.dart</code><br><small style="color:var(--muted)">domain/models/maintenance_prediction_test.dart</small></td>
+  <td><span class="tag tag-func">Test</span></td>
   <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>uploadBinary node in core/services/vehicle_storage_service.dart.</td>
+  <td><code>auto guide/features/vehicles/domain/mod...</code><br><code>package:flutter test/flutter test.dart</code></td>
+  <td>Verifies imports, entry points, or version behavior.</td>
 </tr>
 <tr>
   <td>29</td>
-  <td><code>VehicleStorageLogicException</code><br><small style="color:var(--muted)">core/services/vehicle_storage_service.dart</small></td>
-  <td><span class="tag tag-class">Class</span></td>
+  <td><code>main</code><br><small style="color:var(--muted)">domain/models/maintenance_prediction_test.dart</small></td>
+  <td><span class="tag tag-func">Test</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Supports retrieval-augmented Q&amp;A or streaming chat.</td>
+  <td>main node in domain/models/maintenance_prediction_test.dart.</td>
 </tr>
 <tr>
   <td>30</td>
-  <td><code>VehicleStorageService</code><br><small style="color:var(--muted)">core/services/vehicle_storage_service.dart</small></td>
-  <td><span class="tag tag-class">Class</span></td>
+  <td><code>vehicle_analytics_test.dart</code><br><small style="color:var(--muted)">domain/models/vehicle_analytics_test.dart</small></td>
+  <td><span class="tag tag-func">Test</span></td>
   <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Supports retrieval-augmented Q&amp;A or streaming chat.</td>
+  <td><code>auto guide/features/vehicles/domain/mod...</code><br><code>guide/core/logic/vehicle ai logic.dart</code><br><code>package:flutter test/flutter test.dart</code></td>
+  <td>Orchestrates analysis and returns structured documentation data.</td>
 </tr>
 </table>
 
@@ -3280,18 +3280,18 @@ flowchart LR
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>File</th><th>Coverage</th></tr>
       <tr><td><code>android-native-dev/references/testing.md</code></td><td>20 nodes</td></tr>
-<tr><td><code>core/services/auth_service.dart</code></td><td>16 nodes</td></tr>
 <tr><td><code>core/services/vehicle_storage_service.dart</code></td><td>12 nodes</td></tr>
 <tr><td><code>navigation/logic/telemetry_calculator.dart</code></td><td>6 nodes</td></tr>
 <tr><td><code>core/logic/vehicle_expenses_logic_test.dart</code></td><td>3 nodes</td></tr>
 <tr><td><code>navigation/logic/telemetry_calculator_test.dart</code></td><td>3 nodes</td></tr>
 <tr><td><code>test/auth_provider_test.dart</code></td><td>2 nodes</td></tr>
 <tr><td><code>core/logic/fuel_efficiency_logic_test.dart</code></td><td>2 nodes</td></tr>
+<tr><td><code>core/logic/vehicle_ai_logic_test.dart</code></td><td>2 nodes</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: defines x45, imports x36, contains x19, references x5. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: imports x34, defines x30, contains x19, implements x3. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
@@ -4257,7 +4257,7 @@ flowchart LR
   <td>23</td>
   <td><code>verifyClaim()</code><br><small style="color:var(--muted)">vercel-optimize/lib/verify-claim.mjs</small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td><code>main()</code><br><small style="color:var(--muted)">vercel-optimize/scripts/verify-and-regen.mjs</small><br><code>main()</code><br><small style="color:var(--muted)">vercel-optimize/scripts/verify-finding.mjs</small><br><code>verify-and-regen.mjs</code><br><small style="color:var(--muted)">vercel-optimize/scripts/verify-and-regen.mjs</small><br>+1 more</td>
+  <td><code>main()</code><br><small style="color:var(--muted)">vercel-optimize/scripts/verify-finding.mjs</small><br><code>main()</code><br><small style="color:var(--muted)">vercel-optimize/scripts/verify-and-regen.mjs</small><br><code>verify-and-regen.mjs</code><br><small style="color:var(--muted)">vercel-optimize/scripts/verify-and-regen.mjs</small><br>+1 more</td>
   <td><code>verifyAuthGuardParallelizationSafety()</code><br><small style="color:var(--muted)">vercel-optimize/lib/verify-claim.mjs</small><br><code>verifyCache404LongTtlSafety()</code><br><small style="color:var(--muted)">vercel-optimize/lib/verify-claim.mjs</small><br><code>verifyCacheControlHeadersCitation()</code><br><small style="color:var(--muted)">vercel-optimize/lib/verify-claim.mjs</small><br>+34 more</td>
   <td>verifyClaim() node in vercel-optimize/lib/verify-claim.mjs.</td>
 </tr>
@@ -5003,12 +5003,12 @@ flowchart LR
 
 <!-- ====== 16. Other ====== -->
 <h2 id="other">16. Other</h2>
-<p>Other groups implementation around skills, agents, vercel, references, mostly in ios-application-dev/references/swiftui-design-guidelines.md, skills/vercel-react-view-transitions/AGENTS.md, ios-application-dev/references/swift-coding-standards.md. This section covers 2594 nodes and 2813 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>Other groups implementation around skills, agents, vercel, references, mostly in ios-application-dev/references/swiftui-design-guidelines.md, skills/vercel-react-view-transitions/AGENTS.md, ios-application-dev/references/swift-coding-standards.md. This section covers 2657 nodes and 2932 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Other (2594 nodes, 2813 edges)
+    %% Section: Other (2657 nodes, 2932 edges)
     subgraph other_ios_RunnerWidget_RunnerWidget_swift_7d30561d["ios/RunnerWidget/RunnerWidget.swift"]
         ios_runnerwidget_runnerwidget_provider_a6fef949("Provider<br/><small>ios/RunnerWidget/RunnerWidget.swift</small>")
         ios_runnerwidget_runnerwidget_provider_gettimeli_c3b5ac4c("getTimeline()<br/><small>ios/RunnerWidget/RunnerWidget.swift</small>")
@@ -5036,9 +5036,9 @@ flowchart LR
         agents_skills_vercel_optimize_scripts_collect_si_6e39bbec("main()<br/><small>vercel-optimize/scripts/collect-signals.mjs</small>")
     end
     lib_features_navigation_rutas_screen_e47f3ee3("rutas_screen.dart")
+    agents_skills_vercel_optimize_lib_gates_index_f8175e50("gates/index.mjs")
     macos_flutter_generatedpluginregistrant_d8337862("GeneratedPluginRegistrant.swift")
-    agents_skills_vercel_optimize_lib_support_topics_80b09403("supportTopicSubset()<br/><small>vercel-optimize/lib/support-topics.mjs</small>")
-    agents_skills_vercel_optimize_scripts_deep_dive_f5aa5bf4("scripts/deep-dive.mjs")
+    agents_skills_vercel_optimize_scripts_gate_inves_f81c1c86("gate-investigations.mjs")
     macos_runner_appdelegate_appdelegate_df1b3336 -->|method| macos_runner_appdelegate_appdelegate_application_49c61d80
     macos_runner_appdelegate_appdelegate_df1b3336 -->|method| macos_runner_appdelegate_appdelegate_application_2fd9d8bb
     macos_runner_mainflutterwindow_mainflutterwindow_8f5a4c66 -->|method| macos_runner_mainflutterwindow_mainflutterwindow_30135b25
@@ -5047,7 +5047,8 @@ flowchart LR
     ios_runnerwidget_runnerwidget_provider_a6fef949 -->|method| ios_runnerwidget_runnerwidget_provider_gettimeli_c3b5ac4c
     ios_runnerwidget_runnerwidget_provider_a6fef949 -->|method| ios_runnerwidget_runnerwidget_provider_readdata_f57fdd7d
     ios_runnerwidget_runnerwidget_provider_gettimeli_c3b5ac4c -->|calls| ios_runnerwidget_runnerwidget_provider_readdata_f57fdd7d
-    %% Omitted for readability: 2576 nodes, 0 edges
+    agents_skills_vercel_optimize_scripts_gate_inves_f81c1c86 -->|imports| agents_skills_vercel_optimize_lib_gates_index_f8175e50
+    %% Omitted for readability: 2639 nodes, 0 edges
     class ios_runnerwidget_runnerwidget_provider_a6fef949 klass;
     class ios_runnerwidget_runnerwidget_provider_gettimeli_c3b5ac4c function;
     class ios_runnerwidget_runnerwidget_provider_readdata_f57fdd7d function;
@@ -5063,9 +5064,9 @@ flowchart LR
     class agents_skills_vercel_optimize_scripts_collect_si_04da952a function;
     class agents_skills_vercel_optimize_scripts_collect_si_6e39bbec function;
     class lib_features_navigation_rutas_screen_e47f3ee3 function;
+    class agents_skills_vercel_optimize_lib_gates_index_f8175e50 function;
     class macos_flutter_generatedpluginregistrant_d8337862 klass;
-    class agents_skills_vercel_optimize_lib_support_topics_80b09403 function;
-    class agents_skills_vercel_optimize_scripts_deep_dive_f5aa5bf4 function;
+    class agents_skills_vercel_optimize_scripts_gate_inves_f81c1c86 function;
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
     classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
     classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
@@ -5346,7 +5347,7 @@ flowchart LR
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x1482, defines x594, calls x270, imports x201. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x1534, defines x602, calls x317, imports x200. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
@@ -5357,17 +5358,17 @@ flowchart LR
   <div class="card">
     <h4>Graph</h4>
     <table style="width:100%;font-size:0.85rem;">
-      <tr><td>Nodes</td><td>5128</td></tr>
-      <tr><td>Edges</td><td>6537</td></tr>
+      <tr><td>Nodes</td><td>5127</td></tr>
+      <tr><td>Edges</td><td>6536</td></tr>
       <tr><td>Hyperedges</td><td>0</td></tr>
-      <tr><td>Communities</td><td>480</td></tr>
+      <tr><td>Communities</td><td>485</td></tr>
       <tr><td>Documented Sections</td><td>15</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Edge Confidence</h4>
     <table style="width:100%;font-size:0.85rem;">
-      <tr><td>EXTRACTED</td><td>6506</td></tr>
+      <tr><td>EXTRACTED</td><td>6505</td></tr>
       <tr><td>INFERRED</td><td>31</td></tr>
       <tr><td>AMBIGUOUS</td><td>0</td></tr>
     </table>
@@ -5376,7 +5377,7 @@ flowchart LR
 
 <div style="text-align:center; padding:40px 0; color: var(--muted); font-size:0.9rem;">
   <p>my_auto_guide — Architecture Documentation</p>
-  <p>Generated: 2026-08-29 16:03 UTC · graphify callflow-html</p>
+  <p>Generated: 2026-08-29 16:46 UTC · graphify callflow-html</p>
 </div>
 
 </div><!-- .container -->

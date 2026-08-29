@@ -1,7 +1,6 @@
 plugins {
     id("com.android.application")
-    id("kotlin-android")
-    // Flutter plugin (maneja Kotlin de forma incorporada)
+    // Flutter plugin (maneja Kotlin de forma incorporada - Built-in Kotlin)
     id("dev.flutter.flutter-gradle-plugin")
     // Google Services Plugin
     id("com.google.gms.google-services")

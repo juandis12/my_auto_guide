@@ -329,294 +329,6 @@
       "norm_label": "appdelegate"
     },
     {
-      "label": "buildBudgetSummary()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/budget-summary.mjs",
-      "source_location": "L8",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_budget_summary_buildbudgetsummary",
-      "community": 1,
-      "community_name": "lib/render-report.mjs",
-      "norm_label": "buildbudgetsummary()"
-    },
-    {
-      "label": "buildChatPreview()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/budget-summary.mjs",
-      "source_location": "L72",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_budget_summary_buildchatpreview",
-      "community": 1,
-      "community_name": "lib/render-report.mjs",
-      "norm_label": "buildchatpreview()"
-    },
-    {
-      "label": "buildExactChatMessage()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/budget-summary.mjs",
-      "source_location": "L90",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_budget_summary_buildexactchatmessage",
-      "community": 1,
-      "community_name": "lib/render-report.mjs",
-      "norm_label": "buildexactchatmessage()"
-    },
-    {
-      "label": "buildOptions()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/budget-summary.mjs",
-      "source_location": "L121",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_budget_summary_buildoptions",
-      "community": 1,
-      "community_name": "lib/render-report.mjs",
-      "norm_label": "buildoptions()"
-    },
-    {
-      "label": "buildPrintCheck()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/budget-summary.mjs",
-      "source_location": "L98",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_budget_summary_buildprintcheck",
-      "community": 1,
-      "community_name": "lib/render-report.mjs",
-      "norm_label": "buildprintcheck()"
-    },
-    {
-      "label": "buildQuestionPayload()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/budget-summary.mjs",
-      "source_location": "L149",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_budget_summary_buildquestionpayload",
-      "community": 1,
-      "community_name": "lib/render-report.mjs",
-      "norm_label": "buildquestionpayload()"
-    },
-    {
-      "label": "buildQuestionText()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/budget-summary.mjs",
-      "source_location": "L116",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_budget_summary_buildquestiontext",
-      "community": 1,
-      "community_name": "lib/render-report.mjs",
-      "norm_label": "buildquestiontext()"
-    },
-    {
-      "label": "renderBudgetSummaryMarkdown()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/budget-summary.mjs",
-      "source_location": "L163",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_budget_summary_renderbudgetsummarymarkdown",
-      "community": 1,
-      "community_name": "lib/render-report.mjs",
-      "norm_label": "renderbudgetsummarymarkdown()"
-    },
-    {
-      "label": "classifyService()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/cost-coverage.mjs",
-      "source_location": "L57",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_cost_coverage_classifyservice",
-      "community": 1,
-      "community_name": "lib/render-report.mjs",
-      "norm_label": "classifyservice()"
-    },
-    {
-      "label": "computeCostCoverage()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/cost-coverage.mjs",
-      "source_location": "L68",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_cost_coverage_computecostcoverage",
-      "community": 1,
-      "community_name": "lib/render-report.mjs",
-      "norm_label": "computecostcoverage()"
-    },
-    {
-      "label": "escapeCell()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/cost-coverage.mjs",
-      "source_location": "L141",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_cost_coverage_escapecell",
-      "community": 1,
-      "community_name": "lib/render-report.mjs",
-      "norm_label": "escapecell()"
-    },
-    {
-      "label": "renderCostCoverageMarkdown()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/cost-coverage.mjs",
-      "source_location": "L118",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_cost_coverage_rendercostcoveragemarkdown",
-      "community": 1,
-      "community_name": "lib/render-report.mjs",
-      "norm_label": "rendercostcoveragemarkdown()"
-    },
-    {
-      "label": "formatCandidateLabel()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/display-labels.mjs",
-      "source_location": "L146",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_display_labels_formatcandidatelabel",
-      "community": 1,
-      "community_name": "lib/render-report.mjs",
-      "norm_label": "formatcandidatelabel()"
-    },
-    {
-      "label": "formatCandidateLine()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/display-labels.mjs",
-      "source_location": "L142",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_display_labels_formatcandidateline",
-      "community": 1,
-      "community_name": "lib/render-report.mjs",
-      "norm_label": "formatcandidateline()"
-    },
-    {
-      "label": "formatKind()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/display-labels.mjs",
-      "source_location": "L74",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_display_labels_formatkind",
-      "community": 1,
-      "community_name": "lib/render-report.mjs",
-      "norm_label": "formatkind()"
-    },
-    {
-      "label": "formatNumberLike()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/display-labels.mjs",
-      "source_location": "L181",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_display_labels_formatnumberlike",
-      "community": 1,
-      "community_name": "lib/render-report.mjs",
-      "norm_label": "formatnumberlike()"
-    },
-    {
-      "label": "formatPublicText()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/display-labels.mjs",
-      "source_location": "L103",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_display_labels_formatpublictext",
-      "community": 1,
-      "community_name": "lib/render-report.mjs",
-      "norm_label": "formatpublictext()"
-    },
-    {
-      "label": "formatRoute()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/display-labels.mjs",
-      "source_location": "L84",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_display_labels_formatroute",
-      "community": 1,
-      "community_name": "lib/render-report.mjs",
-      "norm_label": "formatroute()"
-    },
-    {
-      "label": "formatSignal()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/display-labels.mjs",
-      "source_location": "L91",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_display_labels_formatsignal",
-      "community": 1,
-      "community_name": "lib/render-report.mjs",
-      "norm_label": "formatsignal()"
-    },
-    {
-      "label": "formatSignalPart()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/display-labels.mjs",
-      "source_location": "L150",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_display_labels_formatsignalpart",
-      "community": 1,
-      "community_name": "lib/render-report.mjs",
-      "norm_label": "formatsignalpart()"
-    },
-    {
-      "label": "formatSignalValue()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/display-labels.mjs",
-      "source_location": "L174",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_display_labels_formatsignalvalue",
-      "community": 1,
-      "community_name": "lib/render-report.mjs",
-      "norm_label": "formatsignalvalue()"
-    },
-    {
-      "label": "humanizeKey()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/display-labels.mjs",
-      "source_location": "L166",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_display_labels_humanizekey",
-      "community": 1,
-      "community_name": "lib/render-report.mjs",
-      "norm_label": "humanizekey()"
-    },
-    {
-      "label": "normalizeObservedWindowUnits()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/display-labels.mjs",
-      "source_location": "L127",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_display_labels_normalizeobservedwindowunits",
-      "community": 1,
-      "community_name": "lib/render-report.mjs",
-      "norm_label": "normalizeobservedwindowunits()"
-    },
-    {
-      "label": "signalLabel()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/display-labels.mjs",
-      "source_location": "L160",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_display_labels_signallabel",
-      "community": 1,
-      "community_name": "lib/render-report.mjs",
-      "norm_label": "signallabel()"
-    },
-    {
       "label": "deriveProjectFacts()",
       "file_type": "code",
       "source_file": ".agents/skills/vercel-optimize/lib/project-facts.mjs",
@@ -651,18 +363,6 @@
       "community": 1,
       "community_name": "lib/render-report.mjs",
       "norm_label": "assertvalidobservations()"
-    },
-    {
-      "label": "buildFinalReportMessage()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/render-report.mjs",
-      "source_location": "L204",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_render_report_buildfinalreportmessage",
-      "community": 1,
-      "community_name": "lib/render-report.mjs",
-      "norm_label": "buildfinalreportmessage()"
     },
     {
       "label": "candidateForDisplay()",
@@ -771,18 +471,6 @@
       "community": 1,
       "community_name": "lib/render-report.mjs",
       "norm_label": "escape()"
-    },
-    {
-      "label": "extractCoverageLine()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/render-report.mjs",
-      "source_location": "L261",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_render_report_extractcoverageline",
-      "community": 1,
-      "community_name": "lib/render-report.mjs",
-      "norm_label": "extractcoverageline()"
     },
     {
       "label": "formatBytes()",
@@ -1217,18 +905,6 @@
       "norm_label": "splitinvestigationoutcomes()"
     },
     {
-      "label": "stripDetailsLink()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/render-report.mjs",
-      "source_location": "L268",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_render_report_stripdetailslink",
-      "community": 1,
-      "community_name": "lib/render-report.mjs",
-      "norm_label": "stripdetailslink()"
-    },
-    {
       "label": "tierScore()",
       "file_type": "code",
       "source_file": ".agents/skills/vercel-optimize/lib/render-report.mjs",
@@ -1239,42 +915,6 @@
       "community": 1,
       "community_name": "lib/render-report.mjs",
       "norm_label": "tierscore()"
-    },
-    {
-      "label": "apply()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/sanitizers/window-units.mjs",
-      "source_location": "L20",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_sanitizers_window_units_apply",
-      "community": 1,
-      "community_name": "lib/render-report.mjs",
-      "norm_label": "apply()"
-    },
-    {
-      "label": "main()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/scripts/budget-summary.mjs",
-      "source_location": "L9",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_scripts_budget_summary_main",
-      "community": 1,
-      "community_name": "lib/render-report.mjs",
-      "norm_label": "main()"
-    },
-    {
-      "label": "parseArgs()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/scripts/budget-summary.mjs",
-      "source_location": "L40",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_scripts_budget_summary_parseargs",
-      "community": 1,
-      "community_name": "lib/render-report.mjs",
-      "norm_label": "parseargs()"
     },
     {
       "label": "isDailyQuotaExceeded()",
@@ -2275,11 +1915,11 @@
     {
       "label": "main()",
       "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/scripts/check-docs-fresh.mjs",
-      "source_location": "L19",
+      "source_file": ".agents/skills/vercel-optimize/scripts/build-docs.mjs",
+      "source_location": "L20",
       "_callable": true,
       "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_scripts_check_docs_fresh_main",
+      "id": "agents_skills_vercel_optimize_scripts_build_docs_main",
       "community": 126,
       "community_name": "scanners/index.mjs",
       "norm_label": "main()"
@@ -2287,11 +1927,11 @@
     {
       "label": "renderCandidates()",
       "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/scripts/check-docs-fresh.mjs",
-      "source_location": "L67",
+      "source_file": ".agents/skills/vercel-optimize/scripts/build-docs.mjs",
+      "source_location": "L48",
       "_callable": true,
       "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_scripts_check_docs_fresh_rendercandidates",
+      "id": "agents_skills_vercel_optimize_scripts_build_docs_rendercandidates",
       "community": 126,
       "community_name": "scanners/index.mjs",
       "norm_label": "rendercandidates()"
@@ -2299,11 +1939,11 @@
     {
       "label": "renderScanners()",
       "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/scripts/check-docs-fresh.mjs",
-      "source_location": "L45",
+      "source_file": ".agents/skills/vercel-optimize/scripts/build-docs.mjs",
+      "source_location": "L26",
       "_callable": true,
       "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_scripts_check_docs_fresh_renderscanners",
+      "id": "agents_skills_vercel_optimize_scripts_build_docs_renderscanners",
       "community": 126,
       "community_name": "scanners/index.mjs",
       "norm_label": "renderscanners()"
@@ -2311,11 +1951,11 @@
     {
       "label": "trimTrailingBlankLine()",
       "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/scripts/check-docs-fresh.mjs",
-      "source_location": "L86",
+      "source_file": ".agents/skills/vercel-optimize/scripts/build-docs.mjs",
+      "source_location": "L67",
       "_callable": true,
       "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_scripts_check_docs_fresh_trimtrailingblankline",
+      "id": "agents_skills_vercel_optimize_scripts_build_docs_trimtrailingblankline",
       "community": 126,
       "community_name": "scanners/index.mjs",
       "norm_label": "trimtrailingblankline()"
@@ -2995,11 +2635,11 @@
     {
       "label": "main()",
       "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/scripts/build-docs.mjs",
-      "source_location": "L20",
+      "source_file": ".agents/skills/vercel-optimize/scripts/check-docs-fresh.mjs",
+      "source_location": "L19",
       "_callable": true,
       "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_scripts_build_docs_main",
+      "id": "agents_skills_vercel_optimize_scripts_check_docs_fresh_main",
       "community": 17,
       "community_name": "gates/index.mjs",
       "norm_label": "main()"
@@ -3007,11 +2647,11 @@
     {
       "label": "renderCandidates()",
       "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/scripts/build-docs.mjs",
-      "source_location": "L48",
+      "source_file": ".agents/skills/vercel-optimize/scripts/check-docs-fresh.mjs",
+      "source_location": "L67",
       "_callable": true,
       "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_scripts_build_docs_rendercandidates",
+      "id": "agents_skills_vercel_optimize_scripts_check_docs_fresh_rendercandidates",
       "community": 17,
       "community_name": "gates/index.mjs",
       "norm_label": "rendercandidates()"
@@ -3019,11 +2659,11 @@
     {
       "label": "renderScanners()",
       "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/scripts/build-docs.mjs",
-      "source_location": "L26",
+      "source_file": ".agents/skills/vercel-optimize/scripts/check-docs-fresh.mjs",
+      "source_location": "L45",
       "_callable": true,
       "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_scripts_build_docs_renderscanners",
+      "id": "agents_skills_vercel_optimize_scripts_check_docs_fresh_renderscanners",
       "community": 17,
       "community_name": "gates/index.mjs",
       "norm_label": "renderscanners()"
@@ -3031,11 +2671,11 @@
     {
       "label": "trimTrailingBlankLine()",
       "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/scripts/build-docs.mjs",
-      "source_location": "L67",
+      "source_file": ".agents/skills/vercel-optimize/scripts/check-docs-fresh.mjs",
+      "source_location": "L86",
       "_callable": true,
       "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_scripts_build_docs_trimtrailingblankline",
+      "id": "agents_skills_vercel_optimize_scripts_check_docs_fresh_trimtrailingblankline",
       "community": 17,
       "community_name": "gates/index.mjs",
       "norm_label": "trimtrailingblankline()"
@@ -3339,378 +2979,6 @@
       "community": 2,
       "community_name": "dedup-recs.mjs",
       "norm_label": "withdedupmetadata()"
-    },
-    {
-      "label": "candidateTarget()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/observation-safety.mjs",
-      "source_location": "L122",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_observation_safety_candidatetarget",
-      "community": 2,
-      "community_name": "dedup-recs.mjs",
-      "norm_label": "candidatetarget()"
-    },
-    {
-      "label": "contradictsNoChangeReason()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/observation-safety.mjs",
-      "source_location": "L105",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_observation_safety_contradictsnochangereason",
-      "community": 2,
-      "community_name": "dedup-recs.mjs",
-      "norm_label": "contradictsnochangereason()"
-    },
-    {
-      "label": "evidenceText()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/observation-safety.mjs",
-      "source_location": "L61",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_observation_safety_evidencetext",
-      "community": 2,
-      "community_name": "dedup-recs.mjs",
-      "norm_label": "evidencetext()"
-    },
-    {
-      "label": "hasImplementationGradeObservationAction()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/observation-safety.mjs",
-      "source_location": "L93",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_observation_safety_hasimplementationgradeobservationaction",
-      "community": 2,
-      "community_name": "dedup-recs.mjs",
-      "norm_label": "hasimplementationgradeobservationaction()"
-    },
-    {
-      "label": "hasStaleNextCacheApiObservation()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/observation-safety.mjs",
-      "source_location": "L85",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_observation_safety_hasstalenextcacheapiobservation",
-      "community": 2,
-      "community_name": "dedup-recs.mjs",
-      "norm_label": "hasstalenextcacheapiobservation()"
-    },
-    {
-      "label": "hasUnsafeBotProtectionObservation()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/observation-safety.mjs",
-      "source_location": "L75",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_observation_safety_hasunsafebotprotectionobservation",
-      "community": 2,
-      "community_name": "dedup-recs.mjs",
-      "norm_label": "hasunsafebotprotectionobservation()"
-    },
-    {
-      "label": "hasUnsupportedCacheLifeCdnClaim()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/observation-safety.mjs",
-      "source_location": "L157",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_observation_safety_hasunsupportedcachelifecdnclaim",
-      "community": 2,
-      "community_name": "dedup-recs.mjs",
-      "norm_label": "hasunsupportedcachelifecdnclaim()"
-    },
-    {
-      "label": "hasUnsupportedCacheLifeCdnText()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/observation-safety.mjs",
-      "source_location": "L161",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_observation_safety_hasunsupportedcachelifecdntext",
-      "community": 2,
-      "community_name": "dedup-recs.mjs",
-      "norm_label": "hasunsupportedcachelifecdntext()"
-    },
-    {
-      "label": "hasUnsupportedFrameworkCausalClaim()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/observation-safety.mjs",
-      "source_location": "L129",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_observation_safety_hasunsupportedframeworkcausalclaim",
-      "community": 2,
-      "community_name": "dedup-recs.mjs",
-      "norm_label": "hasunsupportedframeworkcausalclaim()"
-    },
-    {
-      "label": "hasUnsupportedRuntimeRootCauseClaim()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/observation-safety.mjs",
-      "source_location": "L169",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_observation_safety_hasunsupportedruntimerootcauseclaim",
-      "community": 2,
-      "community_name": "dedup-recs.mjs",
-      "norm_label": "hasunsupportedruntimerootcauseclaim()"
-    },
-    {
-      "label": "hasUnsupportedSourceAbsenceClaim()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/observation-safety.mjs",
-      "source_location": "L150",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_observation_safety_hasunsupportedsourceabsenceclaim",
-      "community": 2,
-      "community_name": "dedup-recs.mjs",
-      "norm_label": "hasunsupportedsourceabsenceclaim()"
-    },
-    {
-      "label": "hasUnsupportedStaticGenerationClaim()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/observation-safety.mjs",
-      "source_location": "L142",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_observation_safety_hasunsupportedstaticgenerationclaim",
-      "community": 2,
-      "community_name": "dedup-recs.mjs",
-      "norm_label": "hasunsupportedstaticgenerationclaim()"
-    },
-    {
-      "label": "hasUnsupportedWafBotCategoryClaim()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/observation-safety.mjs",
-      "source_location": "L68",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_observation_safety_hasunsupportedwafbotcategoryclaim",
-      "community": 2,
-      "community_name": "dedup-recs.mjs",
-      "norm_label": "hasunsupportedwafbotcategoryclaim()"
-    },
-    {
-      "label": "observationText()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/observation-safety.mjs",
-      "source_location": "L53",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_observation_safety_observationtext",
-      "community": 2,
-      "community_name": "dedup-recs.mjs",
-      "norm_label": "observationtext()"
-    },
-    {
-      "label": "splitCustomerSafeObservations()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/observation-safety.mjs",
-      "source_location": "L1",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_observation_safety_splitcustomersafeobservations",
-      "community": 2,
-      "community_name": "dedup-recs.mjs",
-      "norm_label": "splitcustomersafeobservations()"
-    },
-    {
-      "label": "unsupportedObservationReason()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/observation-safety.mjs",
-      "source_location": "L19",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_observation_safety_unsupportedobservationreason",
-      "community": 2,
-      "community_name": "dedup-recs.mjs",
-      "norm_label": "unsupportedobservationreason()"
-    },
-    {
-      "label": "buildDebugArtifact()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/scripts/render-report.mjs",
-      "source_location": "L350",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_scripts_render_report_builddebugartifact",
-      "community": 2,
-      "community_name": "dedup-recs.mjs",
-      "norm_label": "builddebugartifact()"
-    },
-    {
-      "label": "candidateFamily()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/scripts/render-report.mjs",
-      "source_location": "L311",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_scripts_render_report_candidatefamily",
-      "community": 2,
-      "community_name": "dedup-recs.mjs",
-      "norm_label": "candidatefamily()"
-    },
-    {
-      "label": "candidateMatchesRef()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/scripts/render-report.mjs",
-      "source_location": "L277",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_scripts_render_report_candidatematchesref",
-      "community": 2,
-      "community_name": "dedup-recs.mjs",
-      "norm_label": "candidatematchesref()"
-    },
-    {
-      "label": "candidateTarget()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/scripts/render-report.mjs",
-      "source_location": "L336",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_scripts_render_report_candidatetarget",
-      "community": 2,
-      "community_name": "dedup-recs.mjs",
-      "norm_label": "candidatetarget()"
-    },
-    {
-      "label": "coerceOptionalString()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/scripts/render-report.mjs",
-      "source_location": "L429",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_scripts_render_report_coerceoptionalstring",
-      "community": 2,
-      "community_name": "dedup-recs.mjs",
-      "norm_label": "coerceoptionalstring()"
-    },
-    {
-      "label": "flattenObservations()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/scripts/render-report.mjs",
-      "source_location": "L402",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_scripts_render_report_flattenobservations",
-      "community": 2,
-      "community_name": "dedup-recs.mjs",
-      "norm_label": "flattenobservations()"
-    },
-    {
-      "label": "log()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/scripts/render-report.mjs",
-      "source_location": "L12",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_scripts_render_report_log",
-      "community": 2,
-      "community_name": "dedup-recs.mjs",
-      "norm_label": "log()"
-    },
-    {
-      "label": "main()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/scripts/render-report.mjs",
-      "source_location": "L19",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_scripts_render_report_main",
-      "community": 2,
-      "community_name": "dedup-recs.mjs",
-      "norm_label": "main()"
-    },
-    {
-      "label": "parseArgs()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/scripts/render-report.mjs",
-      "source_location": "L212",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_scripts_render_report_parseargs",
-      "community": 2,
-      "community_name": "dedup-recs.mjs",
-      "norm_label": "parseargs()"
-    },
-    {
-      "label": "parseCandidateRef()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/scripts/render-report.mjs",
-      "source_location": "L270",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_scripts_render_report_parsecandidateref",
-      "community": 2,
-      "community_name": "dedup-recs.mjs",
-      "norm_label": "parsecandidateref()"
-    },
-    {
-      "label": "publicHardRegenReason()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/scripts/render-report.mjs",
-      "source_location": "L251",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_scripts_render_report_publichardregenreason",
-      "community": 2,
-      "community_name": "dedup-recs.mjs",
-      "norm_label": "publichardregenreason()"
-    },
-    {
-      "label": "publicNoChangeReason()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/scripts/render-report.mjs",
-      "source_location": "L343",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_scripts_render_report_publicnochangereason",
-      "community": 2,
-      "community_name": "dedup-recs.mjs",
-      "norm_label": "publicnochangereason()"
-    },
-    {
-      "label": "publicWithheldReason()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/scripts/render-report.mjs",
-      "source_location": "L236",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_scripts_render_report_publicwithheldreason",
-      "community": 2,
-      "community_name": "dedup-recs.mjs",
-      "norm_label": "publicwithheldreason()"
-    },
-    {
-      "label": "recommendationMatchesActiveCandidate()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/scripts/render-report.mjs",
-      "source_location": "L264",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_scripts_render_report_recommendationmatchesactivecandidate",
-      "community": 2,
-      "community_name": "dedup-recs.mjs",
-      "norm_label": "recommendationmatchesactivecandidate()"
-    },
-    {
-      "label": "suppressReadyCoveredObservations()",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/scripts/render-report.mjs",
-      "source_location": "L289",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_scripts_render_report_suppressreadycoveredobservations",
-      "community": 2,
-      "community_name": "dedup-recs.mjs",
-      "norm_label": "suppressreadycoveredobservations()"
     },
     {
       "label": "citationApplies()",
@@ -5189,6 +4457,150 @@
       "norm_label": "writeoutput()"
     },
     {
+      "label": "formatCandidateLabel()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/display-labels.mjs",
+      "source_location": "L146",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_display_labels_formatcandidatelabel",
+      "community": 280,
+      "community_name": "display-labels.mjs",
+      "norm_label": "formatcandidatelabel()"
+    },
+    {
+      "label": "formatKind()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/display-labels.mjs",
+      "source_location": "L74",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_display_labels_formatkind",
+      "community": 280,
+      "community_name": "display-labels.mjs",
+      "norm_label": "formatkind()"
+    },
+    {
+      "label": "formatNumberLike()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/display-labels.mjs",
+      "source_location": "L181",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_display_labels_formatnumberlike",
+      "community": 280,
+      "community_name": "display-labels.mjs",
+      "norm_label": "formatnumberlike()"
+    },
+    {
+      "label": "formatPublicText()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/display-labels.mjs",
+      "source_location": "L103",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_display_labels_formatpublictext",
+      "community": 280,
+      "community_name": "display-labels.mjs",
+      "norm_label": "formatpublictext()"
+    },
+    {
+      "label": "formatRoute()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/display-labels.mjs",
+      "source_location": "L84",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_display_labels_formatroute",
+      "community": 280,
+      "community_name": "display-labels.mjs",
+      "norm_label": "formatroute()"
+    },
+    {
+      "label": "formatSignal()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/display-labels.mjs",
+      "source_location": "L91",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_display_labels_formatsignal",
+      "community": 280,
+      "community_name": "display-labels.mjs",
+      "norm_label": "formatsignal()"
+    },
+    {
+      "label": "formatSignalPart()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/display-labels.mjs",
+      "source_location": "L150",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_display_labels_formatsignalpart",
+      "community": 280,
+      "community_name": "display-labels.mjs",
+      "norm_label": "formatsignalpart()"
+    },
+    {
+      "label": "formatSignalValue()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/display-labels.mjs",
+      "source_location": "L174",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_display_labels_formatsignalvalue",
+      "community": 280,
+      "community_name": "display-labels.mjs",
+      "norm_label": "formatsignalvalue()"
+    },
+    {
+      "label": "humanizeKey()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/display-labels.mjs",
+      "source_location": "L166",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_display_labels_humanizekey",
+      "community": 280,
+      "community_name": "display-labels.mjs",
+      "norm_label": "humanizekey()"
+    },
+    {
+      "label": "normalizeObservedWindowUnits()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/display-labels.mjs",
+      "source_location": "L127",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_display_labels_normalizeobservedwindowunits",
+      "community": 280,
+      "community_name": "display-labels.mjs",
+      "norm_label": "normalizeobservedwindowunits()"
+    },
+    {
+      "label": "signalLabel()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/display-labels.mjs",
+      "source_location": "L160",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_display_labels_signallabel",
+      "community": 280,
+      "community_name": "display-labels.mjs",
+      "norm_label": "signallabel()"
+    },
+    {
+      "label": "apply()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/sanitizers/window-units.mjs",
+      "source_location": "L20",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_sanitizers_window_units_apply",
+      "community": 280,
+      "community_name": "display-labels.mjs",
+      "norm_label": "apply()"
+    },
+    {
       "label": "computeImpactLabel()",
       "file_type": "code",
       "source_file": ".agents/skills/vercel-optimize/lib/impact-label.mjs",
@@ -5907,6 +5319,186 @@
       "community": 33,
       "community_name": "lineOf",
       "norm_label": "lineof()"
+    },
+    {
+      "label": "candidateTarget()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/observation-safety.mjs",
+      "source_location": "L122",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_observation_safety_candidatetarget",
+      "community": 331,
+      "community_name": "observation-safety.mjs",
+      "norm_label": "candidatetarget()"
+    },
+    {
+      "label": "contradictsNoChangeReason()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/observation-safety.mjs",
+      "source_location": "L105",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_observation_safety_contradictsnochangereason",
+      "community": 331,
+      "community_name": "observation-safety.mjs",
+      "norm_label": "contradictsnochangereason()"
+    },
+    {
+      "label": "evidenceText()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/observation-safety.mjs",
+      "source_location": "L61",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_observation_safety_evidencetext",
+      "community": 331,
+      "community_name": "observation-safety.mjs",
+      "norm_label": "evidencetext()"
+    },
+    {
+      "label": "hasImplementationGradeObservationAction()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/observation-safety.mjs",
+      "source_location": "L93",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_observation_safety_hasimplementationgradeobservationaction",
+      "community": 331,
+      "community_name": "observation-safety.mjs",
+      "norm_label": "hasimplementationgradeobservationaction()"
+    },
+    {
+      "label": "hasStaleNextCacheApiObservation()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/observation-safety.mjs",
+      "source_location": "L85",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_observation_safety_hasstalenextcacheapiobservation",
+      "community": 331,
+      "community_name": "observation-safety.mjs",
+      "norm_label": "hasstalenextcacheapiobservation()"
+    },
+    {
+      "label": "hasUnsafeBotProtectionObservation()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/observation-safety.mjs",
+      "source_location": "L75",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_observation_safety_hasunsafebotprotectionobservation",
+      "community": 331,
+      "community_name": "observation-safety.mjs",
+      "norm_label": "hasunsafebotprotectionobservation()"
+    },
+    {
+      "label": "hasUnsupportedCacheLifeCdnClaim()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/observation-safety.mjs",
+      "source_location": "L157",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_observation_safety_hasunsupportedcachelifecdnclaim",
+      "community": 331,
+      "community_name": "observation-safety.mjs",
+      "norm_label": "hasunsupportedcachelifecdnclaim()"
+    },
+    {
+      "label": "hasUnsupportedFrameworkCausalClaim()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/observation-safety.mjs",
+      "source_location": "L129",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_observation_safety_hasunsupportedframeworkcausalclaim",
+      "community": 331,
+      "community_name": "observation-safety.mjs",
+      "norm_label": "hasunsupportedframeworkcausalclaim()"
+    },
+    {
+      "label": "hasUnsupportedRuntimeRootCauseClaim()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/observation-safety.mjs",
+      "source_location": "L169",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_observation_safety_hasunsupportedruntimerootcauseclaim",
+      "community": 331,
+      "community_name": "observation-safety.mjs",
+      "norm_label": "hasunsupportedruntimerootcauseclaim()"
+    },
+    {
+      "label": "hasUnsupportedSourceAbsenceClaim()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/observation-safety.mjs",
+      "source_location": "L150",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_observation_safety_hasunsupportedsourceabsenceclaim",
+      "community": 331,
+      "community_name": "observation-safety.mjs",
+      "norm_label": "hasunsupportedsourceabsenceclaim()"
+    },
+    {
+      "label": "hasUnsupportedStaticGenerationClaim()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/observation-safety.mjs",
+      "source_location": "L142",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_observation_safety_hasunsupportedstaticgenerationclaim",
+      "community": 331,
+      "community_name": "observation-safety.mjs",
+      "norm_label": "hasunsupportedstaticgenerationclaim()"
+    },
+    {
+      "label": "hasUnsupportedWafBotCategoryClaim()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/observation-safety.mjs",
+      "source_location": "L68",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_observation_safety_hasunsupportedwafbotcategoryclaim",
+      "community": 331,
+      "community_name": "observation-safety.mjs",
+      "norm_label": "hasunsupportedwafbotcategoryclaim()"
+    },
+    {
+      "label": "observationText()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/observation-safety.mjs",
+      "source_location": "L53",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_observation_safety_observationtext",
+      "community": 331,
+      "community_name": "observation-safety.mjs",
+      "norm_label": "observationtext()"
+    },
+    {
+      "label": "splitCustomerSafeObservations()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/observation-safety.mjs",
+      "source_location": "L1",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_observation_safety_splitcustomersafeobservations",
+      "community": 331,
+      "community_name": "observation-safety.mjs",
+      "norm_label": "splitcustomersafeobservations()"
+    },
+    {
+      "label": "unsupportedObservationReason()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/observation-safety.mjs",
+      "source_location": "L19",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_observation_safety_unsupportedobservationreason",
+      "community": 331,
+      "community_name": "observation-safety.mjs",
+      "norm_label": "unsupportedobservationreason()"
     },
     {
       "label": "gate()",
@@ -7515,6 +7107,186 @@
       "community": 481,
       "community_name": "select-candidates.mjs",
       "norm_label": "selectlaunchcandidates()"
+    },
+    {
+      "label": "buildBudgetSummary()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/budget-summary.mjs",
+      "source_location": "L8",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_budget_summary_buildbudgetsummary",
+      "community": 482,
+      "community_name": "lib/budget-summary.mjs",
+      "norm_label": "buildbudgetsummary()"
+    },
+    {
+      "label": "buildChatPreview()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/budget-summary.mjs",
+      "source_location": "L72",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_budget_summary_buildchatpreview",
+      "community": 482,
+      "community_name": "lib/budget-summary.mjs",
+      "norm_label": "buildchatpreview()"
+    },
+    {
+      "label": "buildExactChatMessage()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/budget-summary.mjs",
+      "source_location": "L90",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_budget_summary_buildexactchatmessage",
+      "community": 482,
+      "community_name": "lib/budget-summary.mjs",
+      "norm_label": "buildexactchatmessage()"
+    },
+    {
+      "label": "buildOptions()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/budget-summary.mjs",
+      "source_location": "L121",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_budget_summary_buildoptions",
+      "community": 482,
+      "community_name": "lib/budget-summary.mjs",
+      "norm_label": "buildoptions()"
+    },
+    {
+      "label": "buildPrintCheck()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/budget-summary.mjs",
+      "source_location": "L98",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_budget_summary_buildprintcheck",
+      "community": 482,
+      "community_name": "lib/budget-summary.mjs",
+      "norm_label": "buildprintcheck()"
+    },
+    {
+      "label": "buildQuestionPayload()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/budget-summary.mjs",
+      "source_location": "L149",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_budget_summary_buildquestionpayload",
+      "community": 482,
+      "community_name": "lib/budget-summary.mjs",
+      "norm_label": "buildquestionpayload()"
+    },
+    {
+      "label": "buildQuestionText()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/budget-summary.mjs",
+      "source_location": "L116",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_budget_summary_buildquestiontext",
+      "community": 482,
+      "community_name": "lib/budget-summary.mjs",
+      "norm_label": "buildquestiontext()"
+    },
+    {
+      "label": "renderBudgetSummaryMarkdown()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/budget-summary.mjs",
+      "source_location": "L163",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_budget_summary_renderbudgetsummarymarkdown",
+      "community": 482,
+      "community_name": "lib/budget-summary.mjs",
+      "norm_label": "renderbudgetsummarymarkdown()"
+    },
+    {
+      "label": "formatCandidateLine()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/display-labels.mjs",
+      "source_location": "L142",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_display_labels_formatcandidateline",
+      "community": 482,
+      "community_name": "lib/budget-summary.mjs",
+      "norm_label": "formatcandidateline()"
+    },
+    {
+      "label": "main()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/scripts/budget-summary.mjs",
+      "source_location": "L9",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_scripts_budget_summary_main",
+      "community": 482,
+      "community_name": "lib/budget-summary.mjs",
+      "norm_label": "main()"
+    },
+    {
+      "label": "parseArgs()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/scripts/budget-summary.mjs",
+      "source_location": "L40",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_scripts_budget_summary_parseargs",
+      "community": 482,
+      "community_name": "lib/budget-summary.mjs",
+      "norm_label": "parseargs()"
+    },
+    {
+      "label": "classifyService()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/cost-coverage.mjs",
+      "source_location": "L57",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_cost_coverage_classifyservice",
+      "community": 483,
+      "community_name": "cost-coverage.mjs",
+      "norm_label": "classifyservice()"
+    },
+    {
+      "label": "computeCostCoverage()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/cost-coverage.mjs",
+      "source_location": "L68",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_cost_coverage_computecostcoverage",
+      "community": 483,
+      "community_name": "cost-coverage.mjs",
+      "norm_label": "computecostcoverage()"
+    },
+    {
+      "label": "escapeCell()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/cost-coverage.mjs",
+      "source_location": "L141",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_cost_coverage_escapecell",
+      "community": 483,
+      "community_name": "cost-coverage.mjs",
+      "norm_label": "escapecell()"
+    },
+    {
+      "label": "renderCostCoverageMarkdown()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/cost-coverage.mjs",
+      "source_location": "L118",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_cost_coverage_rendercostcoveragemarkdown",
+      "community": 483,
+      "community_name": "cost-coverage.mjs",
+      "norm_label": "rendercostcoveragemarkdown()"
     },
     {
       "label": "isJsxLike()",
@@ -9221,6 +8993,234 @@
       "norm_label": ".application()"
     },
     {
+      "label": "hasUnsupportedCacheLifeCdnText()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/observation-safety.mjs",
+      "source_location": "L161",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_observation_safety_hasunsupportedcachelifecdntext",
+      "community": 94,
+      "community_name": "scripts/render-report.mjs",
+      "norm_label": "hasunsupportedcachelifecdntext()"
+    },
+    {
+      "label": "buildFinalReportMessage()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/render-report.mjs",
+      "source_location": "L204",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_render_report_buildfinalreportmessage",
+      "community": 94,
+      "community_name": "scripts/render-report.mjs",
+      "norm_label": "buildfinalreportmessage()"
+    },
+    {
+      "label": "extractCoverageLine()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/render-report.mjs",
+      "source_location": "L261",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_render_report_extractcoverageline",
+      "community": 94,
+      "community_name": "scripts/render-report.mjs",
+      "norm_label": "extractcoverageline()"
+    },
+    {
+      "label": "stripDetailsLink()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/render-report.mjs",
+      "source_location": "L268",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_render_report_stripdetailslink",
+      "community": 94,
+      "community_name": "scripts/render-report.mjs",
+      "norm_label": "stripdetailslink()"
+    },
+    {
+      "label": "buildDebugArtifact()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/scripts/render-report.mjs",
+      "source_location": "L350",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_scripts_render_report_builddebugartifact",
+      "community": 94,
+      "community_name": "scripts/render-report.mjs",
+      "norm_label": "builddebugartifact()"
+    },
+    {
+      "label": "candidateFamily()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/scripts/render-report.mjs",
+      "source_location": "L311",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_scripts_render_report_candidatefamily",
+      "community": 94,
+      "community_name": "scripts/render-report.mjs",
+      "norm_label": "candidatefamily()"
+    },
+    {
+      "label": "candidateMatchesRef()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/scripts/render-report.mjs",
+      "source_location": "L277",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_scripts_render_report_candidatematchesref",
+      "community": 94,
+      "community_name": "scripts/render-report.mjs",
+      "norm_label": "candidatematchesref()"
+    },
+    {
+      "label": "candidateTarget()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/scripts/render-report.mjs",
+      "source_location": "L336",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_scripts_render_report_candidatetarget",
+      "community": 94,
+      "community_name": "scripts/render-report.mjs",
+      "norm_label": "candidatetarget()"
+    },
+    {
+      "label": "coerceOptionalString()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/scripts/render-report.mjs",
+      "source_location": "L429",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_scripts_render_report_coerceoptionalstring",
+      "community": 94,
+      "community_name": "scripts/render-report.mjs",
+      "norm_label": "coerceoptionalstring()"
+    },
+    {
+      "label": "flattenObservations()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/scripts/render-report.mjs",
+      "source_location": "L402",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_scripts_render_report_flattenobservations",
+      "community": 94,
+      "community_name": "scripts/render-report.mjs",
+      "norm_label": "flattenobservations()"
+    },
+    {
+      "label": "log()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/scripts/render-report.mjs",
+      "source_location": "L12",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_scripts_render_report_log",
+      "community": 94,
+      "community_name": "scripts/render-report.mjs",
+      "norm_label": "log()"
+    },
+    {
+      "label": "main()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/scripts/render-report.mjs",
+      "source_location": "L19",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_scripts_render_report_main",
+      "community": 94,
+      "community_name": "scripts/render-report.mjs",
+      "norm_label": "main()"
+    },
+    {
+      "label": "parseArgs()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/scripts/render-report.mjs",
+      "source_location": "L212",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_scripts_render_report_parseargs",
+      "community": 94,
+      "community_name": "scripts/render-report.mjs",
+      "norm_label": "parseargs()"
+    },
+    {
+      "label": "parseCandidateRef()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/scripts/render-report.mjs",
+      "source_location": "L270",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_scripts_render_report_parsecandidateref",
+      "community": 94,
+      "community_name": "scripts/render-report.mjs",
+      "norm_label": "parsecandidateref()"
+    },
+    {
+      "label": "publicHardRegenReason()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/scripts/render-report.mjs",
+      "source_location": "L251",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_scripts_render_report_publichardregenreason",
+      "community": 94,
+      "community_name": "scripts/render-report.mjs",
+      "norm_label": "publichardregenreason()"
+    },
+    {
+      "label": "publicNoChangeReason()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/scripts/render-report.mjs",
+      "source_location": "L343",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_scripts_render_report_publicnochangereason",
+      "community": 94,
+      "community_name": "scripts/render-report.mjs",
+      "norm_label": "publicnochangereason()"
+    },
+    {
+      "label": "publicWithheldReason()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/scripts/render-report.mjs",
+      "source_location": "L236",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_scripts_render_report_publicwithheldreason",
+      "community": 94,
+      "community_name": "scripts/render-report.mjs",
+      "norm_label": "publicwithheldreason()"
+    },
+    {
+      "label": "recommendationMatchesActiveCandidate()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/scripts/render-report.mjs",
+      "source_location": "L264",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_scripts_render_report_recommendationmatchesactivecandidate",
+      "community": 94,
+      "community_name": "scripts/render-report.mjs",
+      "norm_label": "recommendationmatchesactivecandidate()"
+    },
+    {
+      "label": "suppressReadyCoveredObservations()",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/scripts/render-report.mjs",
+      "source_location": "L289",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_scripts_render_report_suppressreadycoveredobservations",
+      "community": 94,
+      "community_name": "scripts/render-report.mjs",
+      "norm_label": "suppressreadycoveredobservations()"
+    },
+    {
       "label": "formatBytes()",
       "file_type": "code",
       "source_file": ".agents/skills/vercel-optimize/lib/scanners/large-static-asset.mjs",
@@ -10578,94 +10578,6 @@
       "norm_label": "widgets/weekly_insight_card.dart"
     },
     {
-      "label": "lib/budget-summary.mjs",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/budget-summary.mjs",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_budget_summary",
-      "community": 1,
-      "community_name": "lib/render-report.mjs",
-      "norm_label": "lib/budget-summary.mjs"
-    },
-    {
-      "label": "cost-coverage.mjs",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/cost-coverage.mjs",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_cost_coverage",
-      "community": 1,
-      "community_name": "lib/render-report.mjs",
-      "norm_label": "cost-coverage.mjs"
-    },
-    {
-      "label": "SERVICE_DIMENSION",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/cost-coverage.mjs",
-      "source_location": "L4",
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_cost_coverage_service_dimension",
-      "community": 1,
-      "community_name": "lib/render-report.mjs",
-      "norm_label": "service_dimension"
-    },
-    {
-      "label": "display-labels.mjs",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/display-labels.mjs",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_display_labels",
-      "community": 1,
-      "community_name": "lib/render-report.mjs",
-      "norm_label": "display-labels.mjs"
-    },
-    {
-      "label": "KIND_LABELS",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/display-labels.mjs",
-      "source_location": "L3",
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_display_labels_kind_labels",
-      "community": 1,
-      "community_name": "lib/render-report.mjs",
-      "norm_label": "kind_labels"
-    },
-    {
-      "label": "PUBLIC_ASSIGNMENT_LABELS",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/display-labels.mjs",
-      "source_location": "L59",
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_display_labels_public_assignment_labels",
-      "community": 1,
-      "community_name": "lib/render-report.mjs",
-      "norm_label": "public_assignment_labels"
-    },
-    {
-      "label": "REQUEST_COUNT_KINDS",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/display-labels.mjs",
-      "source_location": "L55",
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_display_labels_request_count_kinds",
-      "community": 1,
-      "community_name": "lib/render-report.mjs",
-      "norm_label": "request_count_kinds"
-    },
-    {
-      "label": "SIGNAL_LABELS",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/display-labels.mjs",
-      "source_location": "L27",
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_display_labels_signal_labels",
-      "community": 1,
-      "community_name": "lib/render-report.mjs",
-      "norm_label": "signal_labels"
-    },
-    {
       "label": "project-facts.mjs",
       "file_type": "code",
       "source_file": ".agents/skills/vercel-optimize/lib/project-facts.mjs",
@@ -10686,50 +10598,6 @@
       "community": 1,
       "community_name": "lib/render-report.mjs",
       "norm_label": "lib/render-report.mjs"
-    },
-    {
-      "label": "window-units.mjs",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/sanitizers/window-units.mjs",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_sanitizers_window_units",
-      "community": 1,
-      "community_name": "lib/render-report.mjs",
-      "norm_label": "window-units.mjs"
-    },
-    {
-      "label": "metadata",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/sanitizers/window-units.mjs",
-      "source_location": "L6",
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_sanitizers_window_units_metadata",
-      "community": 1,
-      "community_name": "lib/render-report.mjs",
-      "norm_label": "metadata"
-    },
-    {
-      "label": "STRING_FIELDS",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/sanitizers/window-units.mjs",
-      "source_location": "L11",
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_sanitizers_window_units_string_fields",
-      "community": 1,
-      "community_name": "lib/render-report.mjs",
-      "norm_label": "string_fields"
-    },
-    {
-      "label": "scripts/budget-summary.mjs",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/scripts/budget-summary.mjs",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_scripts_budget_summary",
-      "community": 1,
-      "community_name": "lib/render-report.mjs",
-      "norm_label": "scripts/budget-summary.mjs"
     },
     {
       "label": "vercel.mjs",
@@ -13500,23 +13368,23 @@
       "norm_label": "metadata"
     },
     {
-      "label": "check-docs-fresh.mjs",
+      "label": "build-docs.mjs",
       "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/scripts/check-docs-fresh.mjs",
+      "source_file": ".agents/skills/vercel-optimize/scripts/build-docs.mjs",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_scripts_check_docs_fresh",
+      "id": "agents_skills_vercel_optimize_scripts_build_docs",
       "community": 126,
       "community_name": "scanners/index.mjs",
-      "norm_label": "check-docs-fresh.mjs"
+      "norm_label": "build-docs.mjs"
     },
     {
       "label": "HERE",
       "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/scripts/check-docs-fresh.mjs",
-      "source_location": "L11",
+      "source_file": ".agents/skills/vercel-optimize/scripts/build-docs.mjs",
+      "source_location": "L12",
       "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_scripts_check_docs_fresh_here",
+      "id": "agents_skills_vercel_optimize_scripts_build_docs_here",
       "community": 126,
       "community_name": "scanners/index.mjs",
       "norm_label": "here"
@@ -13524,10 +13392,10 @@
     {
       "label": "REFS",
       "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/scripts/check-docs-fresh.mjs",
-      "source_location": "L12",
+      "source_file": ".agents/skills/vercel-optimize/scripts/build-docs.mjs",
+      "source_location": "L13",
       "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_scripts_check_docs_fresh_refs",
+      "id": "agents_skills_vercel_optimize_scripts_build_docs_refs",
       "community": 126,
       "community_name": "scanners/index.mjs",
       "norm_label": "refs"
@@ -22168,23 +22036,23 @@
       "norm_label": "metadata"
     },
     {
-      "label": "build-docs.mjs",
+      "label": "check-docs-fresh.mjs",
       "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/scripts/build-docs.mjs",
+      "source_file": ".agents/skills/vercel-optimize/scripts/check-docs-fresh.mjs",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_scripts_build_docs",
+      "id": "agents_skills_vercel_optimize_scripts_check_docs_fresh",
       "community": 17,
       "community_name": "gates/index.mjs",
-      "norm_label": "build-docs.mjs"
+      "norm_label": "check-docs-fresh.mjs"
     },
     {
       "label": "HERE",
       "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/scripts/build-docs.mjs",
-      "source_location": "L12",
+      "source_file": ".agents/skills/vercel-optimize/scripts/check-docs-fresh.mjs",
+      "source_location": "L11",
       "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_scripts_build_docs_here",
+      "id": "agents_skills_vercel_optimize_scripts_check_docs_fresh_here",
       "community": 17,
       "community_name": "gates/index.mjs",
       "norm_label": "here"
@@ -22192,10 +22060,10 @@
     {
       "label": "REFS",
       "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/scripts/build-docs.mjs",
-      "source_location": "L13",
+      "source_file": ".agents/skills/vercel-optimize/scripts/check-docs-fresh.mjs",
+      "source_location": "L12",
       "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_scripts_build_docs_refs",
+      "id": "agents_skills_vercel_optimize_scripts_check_docs_fresh_refs",
       "community": 17,
       "community_name": "gates/index.mjs",
       "norm_label": "refs"
@@ -27668,39 +27536,6 @@
       "norm_label": "dedup-recs.mjs"
     },
     {
-      "label": "observation-safety.mjs",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/lib/observation-safety.mjs",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_lib_observation_safety",
-      "community": 2,
-      "community_name": "dedup-recs.mjs",
-      "norm_label": "observation-safety.mjs"
-    },
-    {
-      "label": "scripts/render-report.mjs",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/scripts/render-report.mjs",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_scripts_render_report",
-      "community": 2,
-      "community_name": "dedup-recs.mjs",
-      "norm_label": "scripts/render-report.mjs"
-    },
-    {
-      "label": "HARD_REGEN_TRIGGERS",
-      "file_type": "code",
-      "source_file": ".agents/skills/vercel-optimize/scripts/render-report.mjs",
-      "source_location": "L13",
-      "_origin": "ast",
-      "id": "agents_skills_vercel_optimize_scripts_render_report_hard_regen_triggers",
-      "community": 2,
-      "community_name": "dedup-recs.mjs",
-      "norm_label": "hard_regen_triggers"
-    },
-    {
       "label": "support-topics.mjs",
       "file_type": "code",
       "source_file": ".agents/skills/vercel-optimize/lib/support-topics.mjs",
@@ -30183,7 +30018,7 @@
       "_origin": "ast",
       "id": "dart_typed_data",
       "community": 22,
-      "community_name": "report_service.dart",
+      "community_name": "package:flutter/foundation.dart",
       "norm_label": "dart:typed_data"
     },
     {
@@ -30194,7 +30029,7 @@
       "_origin": "ast",
       "id": "lib_core_logic_pdf_report_logic",
       "community": 22,
-      "community_name": "report_service.dart",
+      "community_name": "package:flutter/foundation.dart",
       "norm_label": "pdf_report_logic.dart"
     },
     {
@@ -30205,7 +30040,7 @@
       "_origin": "ast",
       "id": "lib_core_logic_pdf_report_logic_generateandshareexpensereport",
       "community": 22,
-      "community_name": "report_service.dart",
+      "community_name": "package:flutter/foundation.dart",
       "norm_label": "generateandshareexpensereport"
     },
     {
@@ -30216,7 +30051,7 @@
       "_origin": "ast",
       "id": "lib_core_logic_pdf_report_logic_pdfreportlogic",
       "community": 22,
-      "community_name": "report_service.dart",
+      "community_name": "package:flutter/foundation.dart",
       "norm_label": "pdfreportlogic"
     },
     {
@@ -30227,7 +30062,7 @@
       "_origin": "ast",
       "id": "lib_core_services_report_service",
       "community": 22,
-      "community_name": "report_service.dart",
+      "community_name": "package:flutter/foundation.dart",
       "norm_label": "report_service.dart"
     },
     {
@@ -30238,7 +30073,7 @@
       "_origin": "ast",
       "id": "lib_core_services_report_service_generatevehiclereport",
       "community": 22,
-      "community_name": "report_service.dart",
+      "community_name": "package:flutter/foundation.dart",
       "norm_label": "generatevehiclereport"
     },
     {
@@ -30249,7 +30084,7 @@
       "_origin": "ast",
       "id": "lib_core_services_report_service_getbrandlogopath",
       "community": 22,
-      "community_name": "report_service.dart",
+      "community_name": "package:flutter/foundation.dart",
       "norm_label": "_getbrandlogopath"
     },
     {
@@ -30260,7 +30095,7 @@
       "_origin": "ast",
       "id": "lib_core_services_report_service_loadasset",
       "community": 22,
-      "community_name": "report_service.dart",
+      "community_name": "package:flutter/foundation.dart",
       "norm_label": "_loadasset"
     },
     {
@@ -30271,7 +30106,7 @@
       "_origin": "ast",
       "id": "lib_core_services_report_service_loadassetsafe",
       "community": 22,
-      "community_name": "report_service.dart",
+      "community_name": "package:flutter/foundation.dart",
       "norm_label": "_loadassetsafe"
     },
     {
@@ -30282,7 +30117,7 @@
       "_origin": "ast",
       "id": "lib_core_services_report_service_pdfstat",
       "community": 22,
-      "community_name": "report_service.dart",
+      "community_name": "package:flutter/foundation.dart",
       "norm_label": "_pdfstat"
     },
     {
@@ -30293,7 +30128,7 @@
       "_origin": "ast",
       "id": "lib_core_services_report_service_reportservice",
       "community": 22,
-      "community_name": "report_service.dart",
+      "community_name": "package:flutter/foundation.dart",
       "norm_label": "reportservice"
     },
     {
@@ -30304,7 +30139,7 @@
       "_origin": "ast",
       "id": "lib_core_services_vehicle_pdf_report_service",
       "community": 22,
-      "community_name": "report_service.dart",
+      "community_name": "package:flutter/foundation.dart",
       "norm_label": "vehicle_pdf_report_service.dart"
     },
     {
@@ -30315,7 +30150,7 @@
       "_origin": "ast",
       "id": "lib_core_services_vehicle_pdf_report_service_buildbodycell",
       "community": 22,
-      "community_name": "report_service.dart",
+      "community_name": "package:flutter/foundation.dart",
       "norm_label": "_buildbodycell"
     },
     {
@@ -30326,7 +30161,7 @@
       "_origin": "ast",
       "id": "lib_core_services_vehicle_pdf_report_service_buildheadercell",
       "community": 22,
-      "community_name": "report_service.dart",
+      "community_name": "package:flutter/foundation.dart",
       "norm_label": "_buildheadercell"
     },
     {
@@ -30337,7 +30172,7 @@
       "_origin": "ast",
       "id": "lib_core_services_vehicle_pdf_report_service_buildpdfrow",
       "community": 22,
-      "community_name": "report_service.dart",
+      "community_name": "package:flutter/foundation.dart",
       "norm_label": "_buildpdfrow"
     },
     {
@@ -30348,7 +30183,7 @@
       "_origin": "ast",
       "id": "lib_core_services_vehicle_pdf_report_service_checkdocumentcolor",
       "community": 22,
-      "community_name": "report_service.dart",
+      "community_name": "package:flutter/foundation.dart",
       "norm_label": "_checkdocumentcolor"
     },
     {
@@ -30359,7 +30194,7 @@
       "_origin": "ast",
       "id": "lib_core_services_vehicle_pdf_report_service_checkdocumentstatus",
       "community": 22,
-      "community_name": "report_service.dart",
+      "community_name": "package:flutter/foundation.dart",
       "norm_label": "_checkdocumentstatus"
     },
     {
@@ -30370,7 +30205,7 @@
       "_origin": "ast",
       "id": "lib_core_services_vehicle_pdf_report_service_generatepdfreport",
       "community": 22,
-      "community_name": "report_service.dart",
+      "community_name": "package:flutter/foundation.dart",
       "norm_label": "generatepdfreport"
     },
     {
@@ -30381,7 +30216,7 @@
       "_origin": "ast",
       "id": "lib_core_services_vehicle_pdf_report_service_sharepdfreport",
       "community": 22,
-      "community_name": "report_service.dart",
+      "community_name": "package:flutter/foundation.dart",
       "norm_label": "sharepdfreport"
     },
     {
@@ -30392,7 +30227,7 @@
       "_origin": "ast",
       "id": "lib_core_services_vehicle_pdf_report_service_vehiclepdfreportservice",
       "community": 22,
-      "community_name": "report_service.dart",
+      "community_name": "package:flutter/foundation.dart",
       "norm_label": "vehiclepdfreportservice"
     },
     {
@@ -30403,19 +30238,19 @@
       "_origin": "ast",
       "id": "logic_vehicle_ai_logic_dart",
       "community": 22,
-      "community_name": "report_service.dart",
+      "community_name": "package:flutter/foundation.dart",
       "norm_label": "../logic/vehicle_ai_logic.dart"
     },
     {
-      "label": "package:flutter/services.dart",
+      "label": "package:flutter/foundation.dart",
       "file_type": "code",
       "source_file": null,
       "source_location": null,
       "_origin": "ast",
-      "id": "package_flutter_services_dart",
+      "id": "package_flutter_foundation_dart",
       "community": 22,
-      "community_name": "report_service.dart",
-      "norm_label": "package:flutter/services.dart"
+      "community_name": "package:flutter/foundation.dart",
+      "norm_label": "package:flutter/foundation.dart"
     },
     {
       "label": "package:pdf/pdf.dart",
@@ -30425,7 +30260,7 @@
       "_origin": "ast",
       "id": "package_pdf_pdf_dart",
       "community": 22,
-      "community_name": "report_service.dart",
+      "community_name": "package:flutter/foundation.dart",
       "norm_label": "package:pdf/pdf.dart"
     },
     {
@@ -30436,7 +30271,7 @@
       "_origin": "ast",
       "id": "package_pdf_widgets_dart",
       "community": 22,
-      "community_name": "report_service.dart",
+      "community_name": "package:flutter/foundation.dart",
       "norm_label": "package:pdf/widgets.dart"
     },
     {
@@ -30447,7 +30282,7 @@
       "_origin": "ast",
       "id": "package_printing_printing_dart",
       "community": 22,
-      "community_name": "report_service.dart",
+      "community_name": "package:flutter/foundation.dart",
       "norm_label": "package:printing/printing.dart"
     },
     {
@@ -30458,7 +30293,7 @@
       "_origin": "ast",
       "id": "utils_formatters_dart",
       "community": 22,
-      "community_name": "report_service.dart",
+      "community_name": "package:flutter/foundation.dart",
       "norm_label": "../utils/formatters.dart"
     },
     {
@@ -30469,7 +30304,7 @@
       "_origin": "ast",
       "id": "vehicle_expenses_logic_dart",
       "community": 22,
-      "community_name": "report_service.dart",
+      "community_name": "package:flutter/foundation.dart",
       "norm_label": "vehicle_expenses_logic.dart"
     },
     {
@@ -36657,17 +36492,6 @@
       "norm_label": "9. generics and type constraints"
     },
     {
-      "label": "bool get",
-      "file_type": "code",
-      "source_file": null,
-      "source_location": null,
-      "_origin": "ast",
-      "id": "bool_get",
-      "community": 28,
-      "community_name": "auth_provider.dart",
-      "norm_label": "bool get"
-    },
-    {
       "label": "ChangeNotifier",
       "file_type": "code",
       "source_file": null,
@@ -36930,6 +36754,94 @@
       "community": 28,
       "community_name": "auth_provider.dart",
       "norm_label": "user? get"
+    },
+    {
+      "label": "display-labels.mjs",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/display-labels.mjs",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_display_labels",
+      "community": 280,
+      "community_name": "display-labels.mjs",
+      "norm_label": "display-labels.mjs"
+    },
+    {
+      "label": "KIND_LABELS",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/display-labels.mjs",
+      "source_location": "L3",
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_display_labels_kind_labels",
+      "community": 280,
+      "community_name": "display-labels.mjs",
+      "norm_label": "kind_labels"
+    },
+    {
+      "label": "PUBLIC_ASSIGNMENT_LABELS",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/display-labels.mjs",
+      "source_location": "L59",
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_display_labels_public_assignment_labels",
+      "community": 280,
+      "community_name": "display-labels.mjs",
+      "norm_label": "public_assignment_labels"
+    },
+    {
+      "label": "REQUEST_COUNT_KINDS",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/display-labels.mjs",
+      "source_location": "L55",
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_display_labels_request_count_kinds",
+      "community": 280,
+      "community_name": "display-labels.mjs",
+      "norm_label": "request_count_kinds"
+    },
+    {
+      "label": "SIGNAL_LABELS",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/display-labels.mjs",
+      "source_location": "L27",
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_display_labels_signal_labels",
+      "community": 280,
+      "community_name": "display-labels.mjs",
+      "norm_label": "signal_labels"
+    },
+    {
+      "label": "window-units.mjs",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/sanitizers/window-units.mjs",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_sanitizers_window_units",
+      "community": 280,
+      "community_name": "display-labels.mjs",
+      "norm_label": "window-units.mjs"
+    },
+    {
+      "label": "metadata",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/sanitizers/window-units.mjs",
+      "source_location": "L6",
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_sanitizers_window_units_metadata",
+      "community": 280,
+      "community_name": "display-labels.mjs",
+      "norm_label": "metadata"
+    },
+    {
+      "label": "STRING_FIELDS",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/sanitizers/window-units.mjs",
+      "source_location": "L11",
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_sanitizers_window_units_string_fields",
+      "community": 280,
+      "community_name": "display-labels.mjs",
+      "norm_label": "string_fields"
     },
     {
       "label": "EXAMPLES.md",
@@ -39902,6 +39814,17 @@
       "norm_label": "voice"
     },
     {
+      "label": "bool get",
+      "file_type": "code",
+      "source_file": null,
+      "source_location": null,
+      "_origin": "ast",
+      "id": "bool_get",
+      "community": 32,
+      "community_name": "performance_guard.dart",
+      "norm_label": "bool get"
+    },
+    {
       "label": "../../../core/services/waze_community_alerts_service.dart",
       "file_type": "code",
       "source_file": null,
@@ -39909,7 +39832,7 @@
       "_origin": "ast",
       "id": "core_services_waze_community_alerts_service_dart",
       "community": 32,
-      "community_name": "waze_report_sheet.dart",
+      "community_name": "performance_guard.dart",
       "norm_label": "../../../core/services/waze_community_alerts_service.dart"
     },
     {
@@ -39920,8 +39843,74 @@
       "_origin": "ast",
       "id": "dart_ui",
       "community": 32,
-      "community_name": "waze_report_sheet.dart",
+      "community_name": "performance_guard.dart",
       "norm_label": "dart:ui"
+    },
+    {
+      "label": "performance_guard.dart",
+      "file_type": "code",
+      "source_file": "lib/core/logic/performance_guard.dart",
+      "source_location": null,
+      "_origin": "ast",
+      "id": "lib_core_logic_performance_guard",
+      "community": 32,
+      "community_name": "performance_guard.dart",
+      "norm_label": "performance_guard.dart"
+    },
+    {
+      "label": "adaptiveBlur",
+      "file_type": "code",
+      "source_file": "lib/core/logic/performance_guard.dart",
+      "source_location": null,
+      "_origin": "ast",
+      "id": "lib_core_logic_performance_guard_adaptiveblur",
+      "community": 32,
+      "community_name": "performance_guard.dart",
+      "norm_label": "adaptiveblur"
+    },
+    {
+      "label": "initialize",
+      "file_type": "code",
+      "source_file": "lib/core/logic/performance_guard.dart",
+      "source_location": null,
+      "_origin": "ast",
+      "id": "lib_core_logic_performance_guard_initialize",
+      "community": 32,
+      "community_name": "performance_guard.dart",
+      "norm_label": "initialize"
+    },
+    {
+      "label": "_instance",
+      "file_type": "code",
+      "source_file": "lib/core/logic/performance_guard.dart",
+      "source_location": null,
+      "_origin": "ast",
+      "id": "lib_core_logic_performance_guard_instance",
+      "community": 32,
+      "community_name": "performance_guard.dart",
+      "norm_label": "_instance"
+    },
+    {
+      "label": "_isLowEnd",
+      "file_type": "code",
+      "source_file": "lib/core/logic/performance_guard.dart",
+      "source_location": null,
+      "_origin": "ast",
+      "id": "lib_core_logic_performance_guard_islowend",
+      "community": 32,
+      "community_name": "performance_guard.dart",
+      "norm_label": "_islowend"
+    },
+    {
+      "label": "PerformanceGuard",
+      "file_type": "code",
+      "source_file": "lib/core/logic/performance_guard.dart",
+      "source_location": null,
+      "_origin": "ast",
+      "id": "lib_core_logic_performance_guard_performanceguard",
+      "community": 32,
+      "community_name": "performance_guard.dart",
+      "norm_label": "performanceguard"
     },
     {
       "label": "waze_report_sheet.dart",
@@ -39931,7 +39920,7 @@
       "_origin": "ast",
       "id": "lib_features_navigation_presentation_widgets_waze_report_sheet",
       "community": 32,
-      "community_name": "waze_report_sheet.dart",
+      "community_name": "performance_guard.dart",
       "norm_label": "waze_report_sheet.dart"
     },
     {
@@ -39942,7 +39931,7 @@
       "_origin": "ast",
       "id": "lib_features_navigation_presentation_widgets_waze_report_sheet_build",
       "community": 32,
-      "community_name": "waze_report_sheet.dart",
+      "community_name": "performance_guard.dart",
       "norm_label": "build"
     },
     {
@@ -39953,7 +39942,7 @@
       "_origin": "ast",
       "id": "lib_features_navigation_presentation_widgets_waze_report_sheet_buildreportoption",
       "community": 32,
-      "community_name": "waze_report_sheet.dart",
+      "community_name": "performance_guard.dart",
       "norm_label": "_buildreportoption"
     },
     {
@@ -39964,7 +39953,7 @@
       "_origin": "ast",
       "id": "lib_features_navigation_presentation_widgets_waze_report_sheet_currentlat",
       "community": 32,
-      "community_name": "waze_report_sheet.dart",
+      "community_name": "performance_guard.dart",
       "norm_label": "currentlat"
     },
     {
@@ -39975,7 +39964,7 @@
       "_origin": "ast",
       "id": "lib_features_navigation_presentation_widgets_waze_report_sheet_currentlng",
       "community": 32,
-      "community_name": "waze_report_sheet.dart",
+      "community_name": "performance_guard.dart",
       "norm_label": "currentlng"
     },
     {
@@ -39986,7 +39975,7 @@
       "_origin": "ast",
       "id": "lib_features_navigation_presentation_widgets_waze_report_sheet_sendreport",
       "community": 32,
-      "community_name": "waze_report_sheet.dart",
+      "community_name": "performance_guard.dart",
       "norm_label": "_sendreport"
     },
     {
@@ -39997,7 +39986,7 @@
       "_origin": "ast",
       "id": "lib_features_navigation_presentation_widgets_waze_report_sheet_show",
       "community": 32,
-      "community_name": "waze_report_sheet.dart",
+      "community_name": "performance_guard.dart",
       "norm_label": "show"
     },
     {
@@ -40008,8 +39997,19 @@
       "_origin": "ast",
       "id": "lib_features_navigation_presentation_widgets_waze_report_sheet_wazereportsheet",
       "community": 32,
-      "community_name": "waze_report_sheet.dart",
+      "community_name": "performance_guard.dart",
       "norm_label": "wazereportsheet"
+    },
+    {
+      "label": "package:device_info_plus/device_info_plus.dart",
+      "file_type": "code",
+      "source_file": null,
+      "source_location": null,
+      "_origin": "ast",
+      "id": "package_device_info_plus_device_info_plus_dart",
+      "community": 32,
+      "community_name": "performance_guard.dart",
+      "norm_label": "package:device_info_plus/device_info_plus.dart"
     },
     {
       "label": "../../../shared/widgets/app_snack_bar.dart",
@@ -40019,8 +40019,19 @@
       "_origin": "ast",
       "id": "shared_widgets_app_snack_bar_dart",
       "community": 32,
-      "community_name": "waze_report_sheet.dart",
+      "community_name": "performance_guard.dart",
       "norm_label": "../../../shared/widgets/app_snack_bar.dart"
+    },
+    {
+      "label": "static final PerformanceGuard",
+      "file_type": "code",
+      "source_file": null,
+      "source_location": null,
+      "_origin": "ast",
+      "id": "static_final_performanceguard",
+      "community": 32,
+      "community_name": "performance_guard.dart",
+      "norm_label": "static final performanceguard"
     },
     {
       "label": "8.1 Do Not Put Effect Events in Dependency Arrays",
@@ -40716,6 +40727,17 @@
       "norm_label": "graphify reference: incremental update and cluster-only"
     },
     {
+      "label": "observation-safety.mjs",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/observation-safety.mjs",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_observation_safety",
+      "community": 331,
+      "community_name": "observation-safety.mjs",
+      "norm_label": "observation-safety.mjs"
+    },
+    {
       "label": "observability-events-attribution.mjs",
       "file_type": "code",
       "source_file": ".agents/skills/vercel-optimize/lib/gates/observability-events-attribution.mjs",
@@ -40736,6 +40758,182 @@
       "community": 332,
       "community_name": "observability-events-attribution.mjs",
       "norm_label": "metadata"
+    },
+    {
+      "label": "auth_service.dart",
+      "file_type": "code",
+      "source_file": "lib/core/services/auth_service.dart",
+      "source_location": null,
+      "_origin": "ast",
+      "id": "lib_core_services_auth_service",
+      "community": 333,
+      "community_name": "auth_service.dart",
+      "norm_label": "auth_service.dart"
+    },
+    {
+      "label": "AuthService",
+      "file_type": "code",
+      "source_file": "lib/core/services/auth_service.dart",
+      "source_location": null,
+      "_origin": "ast",
+      "id": "lib_core_services_auth_service_authservice",
+      "community": 333,
+      "community_name": "auth_service.dart",
+      "norm_label": "authservice"
+    },
+    {
+      "label": "currentUser",
+      "file_type": "code",
+      "source_file": "lib/core/services/auth_service.dart",
+      "source_location": null,
+      "_origin": "ast",
+      "id": "lib_core_services_auth_service_currentuser",
+      "community": 333,
+      "community_name": "auth_service.dart",
+      "norm_label": "currentuser"
+    },
+    {
+      "label": "getFirstVehicleId",
+      "file_type": "code",
+      "source_file": "lib/core/services/auth_service.dart",
+      "source_location": null,
+      "_origin": "ast",
+      "id": "lib_core_services_auth_service_getfirstvehicleid",
+      "community": 333,
+      "community_name": "auth_service.dart",
+      "norm_label": "getfirstvehicleid"
+    },
+    {
+      "label": "_instance",
+      "file_type": "code",
+      "source_file": "lib/core/services/auth_service.dart",
+      "source_location": null,
+      "_origin": "ast",
+      "id": "lib_core_services_auth_service_instance",
+      "community": 333,
+      "community_name": "auth_service.dart",
+      "norm_label": "_instance"
+    },
+    {
+      "label": "isNotConfirmed",
+      "file_type": "code",
+      "source_file": "lib/core/services/auth_service.dart",
+      "source_location": null,
+      "_origin": "ast",
+      "id": "lib_core_services_auth_service_isnotconfirmed",
+      "community": 333,
+      "community_name": "auth_service.dart",
+      "norm_label": "isnotconfirmed"
+    },
+    {
+      "label": "message",
+      "file_type": "code",
+      "source_file": "lib/core/services/auth_service.dart",
+      "source_location": null,
+      "_origin": "ast",
+      "id": "lib_core_services_auth_service_message",
+      "community": 333,
+      "community_name": "auth_service.dart",
+      "norm_label": "message"
+    },
+    {
+      "label": "resendConfirmationEmail",
+      "file_type": "code",
+      "source_file": "lib/core/services/auth_service.dart",
+      "source_location": null,
+      "_origin": "ast",
+      "id": "lib_core_services_auth_service_resendconfirmationemail",
+      "community": 333,
+      "community_name": "auth_service.dart",
+      "norm_label": "resendconfirmationemail"
+    },
+    {
+      "label": "sendPasswordReset",
+      "file_type": "code",
+      "source_file": "lib/core/services/auth_service.dart",
+      "source_location": null,
+      "_origin": "ast",
+      "id": "lib_core_services_auth_service_sendpasswordreset",
+      "community": 333,
+      "community_name": "auth_service.dart",
+      "norm_label": "sendpasswordreset"
+    },
+    {
+      "label": "signIn",
+      "file_type": "code",
+      "source_file": "lib/core/services/auth_service.dart",
+      "source_location": null,
+      "_origin": "ast",
+      "id": "lib_core_services_auth_service_signin",
+      "community": 333,
+      "community_name": "auth_service.dart",
+      "norm_label": "signin"
+    },
+    {
+      "label": "signInWithFacebook",
+      "file_type": "code",
+      "source_file": "lib/core/services/auth_service.dart",
+      "source_location": null,
+      "_origin": "ast",
+      "id": "lib_core_services_auth_service_signinwithfacebook",
+      "community": 333,
+      "community_name": "auth_service.dart",
+      "norm_label": "signinwithfacebook"
+    },
+    {
+      "label": "signInWithGoogle",
+      "file_type": "code",
+      "source_file": "lib/core/services/auth_service.dart",
+      "source_location": null,
+      "_origin": "ast",
+      "id": "lib_core_services_auth_service_signinwithgoogle",
+      "community": 333,
+      "community_name": "auth_service.dart",
+      "norm_label": "signinwithgoogle"
+    },
+    {
+      "label": "signOut",
+      "file_type": "code",
+      "source_file": "lib/core/services/auth_service.dart",
+      "source_location": null,
+      "_origin": "ast",
+      "id": "lib_core_services_auth_service_signout",
+      "community": 333,
+      "community_name": "auth_service.dart",
+      "norm_label": "signout"
+    },
+    {
+      "label": "_supabase",
+      "file_type": "code",
+      "source_file": "lib/core/services/auth_service.dart",
+      "source_location": null,
+      "_origin": "ast",
+      "id": "lib_core_services_auth_service_supabase",
+      "community": 333,
+      "community_name": "auth_service.dart",
+      "norm_label": "_supabase"
+    },
+    {
+      "label": "toString",
+      "file_type": "code",
+      "source_file": "lib/core/services/auth_service.dart",
+      "source_location": null,
+      "_origin": "ast",
+      "id": "lib_core_services_auth_service_tostring",
+      "community": 333,
+      "community_name": "auth_service.dart",
+      "norm_label": "tostring"
+    },
+    {
+      "label": "static final AuthService",
+      "file_type": "code",
+      "source_file": null,
+      "source_location": null,
+      "_origin": "ast",
+      "id": "static_final_authservice",
+      "community": 333,
+      "community_name": "auth_service.dart",
+      "norm_label": "static final authservice"
     },
     {
       "label": "maintenance_config_service.dart",
@@ -48159,6 +48357,50 @@
       "norm_label": "diversity_eligibility"
     },
     {
+      "label": "lib/budget-summary.mjs",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/budget-summary.mjs",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_budget_summary",
+      "community": 482,
+      "community_name": "lib/budget-summary.mjs",
+      "norm_label": "lib/budget-summary.mjs"
+    },
+    {
+      "label": "scripts/budget-summary.mjs",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/scripts/budget-summary.mjs",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_scripts_budget_summary",
+      "community": 482,
+      "community_name": "lib/budget-summary.mjs",
+      "norm_label": "scripts/budget-summary.mjs"
+    },
+    {
+      "label": "cost-coverage.mjs",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/cost-coverage.mjs",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_cost_coverage",
+      "community": 483,
+      "community_name": "cost-coverage.mjs",
+      "norm_label": "cost-coverage.mjs"
+    },
+    {
+      "label": "SERVICE_DIMENSION",
+      "file_type": "code",
+      "source_file": ".agents/skills/vercel-optimize/lib/cost-coverage.mjs",
+      "source_location": "L4",
+      "_origin": "ast",
+      "id": "agents_skills_vercel_optimize_lib_cost_coverage_service_dimension",
+      "community": 483,
+      "community_name": "cost-coverage.mjs",
+      "norm_label": "service_dimension"
+    },
+    {
       "label": "unoptimized-image.mjs",
       "file_type": "code",
       "source_file": ".agents/skills/vercel-optimize/lib/scanners/unoptimized-image.mjs",
@@ -48685,17 +48927,6 @@
       "community": 5,
       "community_name": "rutas_screen.dart",
       "norm_label": "_seleccionardestino"
-    },
-    {
-      "label": "_showSuccessOverlay",
-      "file_type": "code",
-      "source_file": "lib/features/navigation/rutas_screen.dart",
-      "source_location": null,
-      "_origin": "ast",
-      "id": "lib_features_navigation_rutas_screen_showsuccessoverlay",
-      "community": 5,
-      "community_name": "rutas_screen.dart",
-      "norm_label": "_showsuccessoverlay"
     },
     {
       "label": "supabase",
@@ -50839,19 +51070,8 @@
       "_origin": "ast",
       "id": "exception",
       "community": 62,
-      "community_name": "auth_service.dart",
+      "community_name": "package:supabase_flutter/supabase_flutter.dart",
       "norm_label": "exception"
-    },
-    {
-      "label": "auth_service.dart",
-      "file_type": "code",
-      "source_file": "lib/core/services/auth_service.dart",
-      "source_location": null,
-      "_origin": "ast",
-      "id": "lib_core_services_auth_service",
-      "community": 62,
-      "community_name": "auth_service.dart",
-      "norm_label": "auth_service.dart"
     },
     {
       "label": "AuthLogicException",
@@ -50861,162 +51081,8 @@
       "_origin": "ast",
       "id": "lib_core_services_auth_service_authlogicexception",
       "community": 62,
-      "community_name": "auth_service.dart",
+      "community_name": "package:supabase_flutter/supabase_flutter.dart",
       "norm_label": "authlogicexception"
-    },
-    {
-      "label": "AuthService",
-      "file_type": "code",
-      "source_file": "lib/core/services/auth_service.dart",
-      "source_location": null,
-      "_origin": "ast",
-      "id": "lib_core_services_auth_service_authservice",
-      "community": 62,
-      "community_name": "auth_service.dart",
-      "norm_label": "authservice"
-    },
-    {
-      "label": "currentUser",
-      "file_type": "code",
-      "source_file": "lib/core/services/auth_service.dart",
-      "source_location": null,
-      "_origin": "ast",
-      "id": "lib_core_services_auth_service_currentuser",
-      "community": 62,
-      "community_name": "auth_service.dart",
-      "norm_label": "currentuser"
-    },
-    {
-      "label": "getFirstVehicleId",
-      "file_type": "code",
-      "source_file": "lib/core/services/auth_service.dart",
-      "source_location": null,
-      "_origin": "ast",
-      "id": "lib_core_services_auth_service_getfirstvehicleid",
-      "community": 62,
-      "community_name": "auth_service.dart",
-      "norm_label": "getfirstvehicleid"
-    },
-    {
-      "label": "_instance",
-      "file_type": "code",
-      "source_file": "lib/core/services/auth_service.dart",
-      "source_location": null,
-      "_origin": "ast",
-      "id": "lib_core_services_auth_service_instance",
-      "community": 62,
-      "community_name": "auth_service.dart",
-      "norm_label": "_instance"
-    },
-    {
-      "label": "isNotConfirmed",
-      "file_type": "code",
-      "source_file": "lib/core/services/auth_service.dart",
-      "source_location": null,
-      "_origin": "ast",
-      "id": "lib_core_services_auth_service_isnotconfirmed",
-      "community": 62,
-      "community_name": "auth_service.dart",
-      "norm_label": "isnotconfirmed"
-    },
-    {
-      "label": "message",
-      "file_type": "code",
-      "source_file": "lib/core/services/auth_service.dart",
-      "source_location": null,
-      "_origin": "ast",
-      "id": "lib_core_services_auth_service_message",
-      "community": 62,
-      "community_name": "auth_service.dart",
-      "norm_label": "message"
-    },
-    {
-      "label": "resendConfirmationEmail",
-      "file_type": "code",
-      "source_file": "lib/core/services/auth_service.dart",
-      "source_location": null,
-      "_origin": "ast",
-      "id": "lib_core_services_auth_service_resendconfirmationemail",
-      "community": 62,
-      "community_name": "auth_service.dart",
-      "norm_label": "resendconfirmationemail"
-    },
-    {
-      "label": "sendPasswordReset",
-      "file_type": "code",
-      "source_file": "lib/core/services/auth_service.dart",
-      "source_location": null,
-      "_origin": "ast",
-      "id": "lib_core_services_auth_service_sendpasswordreset",
-      "community": 62,
-      "community_name": "auth_service.dart",
-      "norm_label": "sendpasswordreset"
-    },
-    {
-      "label": "signIn",
-      "file_type": "code",
-      "source_file": "lib/core/services/auth_service.dart",
-      "source_location": null,
-      "_origin": "ast",
-      "id": "lib_core_services_auth_service_signin",
-      "community": 62,
-      "community_name": "auth_service.dart",
-      "norm_label": "signin"
-    },
-    {
-      "label": "signInWithFacebook",
-      "file_type": "code",
-      "source_file": "lib/core/services/auth_service.dart",
-      "source_location": null,
-      "_origin": "ast",
-      "id": "lib_core_services_auth_service_signinwithfacebook",
-      "community": 62,
-      "community_name": "auth_service.dart",
-      "norm_label": "signinwithfacebook"
-    },
-    {
-      "label": "signInWithGoogle",
-      "file_type": "code",
-      "source_file": "lib/core/services/auth_service.dart",
-      "source_location": null,
-      "_origin": "ast",
-      "id": "lib_core_services_auth_service_signinwithgoogle",
-      "community": 62,
-      "community_name": "auth_service.dart",
-      "norm_label": "signinwithgoogle"
-    },
-    {
-      "label": "signOut",
-      "file_type": "code",
-      "source_file": "lib/core/services/auth_service.dart",
-      "source_location": null,
-      "_origin": "ast",
-      "id": "lib_core_services_auth_service_signout",
-      "community": 62,
-      "community_name": "auth_service.dart",
-      "norm_label": "signout"
-    },
-    {
-      "label": "_supabase",
-      "file_type": "code",
-      "source_file": "lib/core/services/auth_service.dart",
-      "source_location": null,
-      "_origin": "ast",
-      "id": "lib_core_services_auth_service_supabase",
-      "community": 62,
-      "community_name": "auth_service.dart",
-      "norm_label": "_supabase"
-    },
-    {
-      "label": "toString",
-      "file_type": "code",
-      "source_file": "lib/core/services/auth_service.dart",
-      "source_location": null,
-      "_origin": "ast",
-      "id": "lib_core_services_auth_service_tostring",
-      "community": 62,
-      "community_name": "auth_service.dart",
-      "norm_label": "tostring"
     },
     {
       "label": "NavigationLogicException",
@@ -51026,7 +51092,7 @@
       "_origin": "ast",
       "id": "lib_core_services_navigation_service_navigationlogicexception",
       "community": 62,
-      "community_name": "auth_service.dart",
+      "community_name": "package:supabase_flutter/supabase_flutter.dart",
       "norm_label": "navigationlogicexception"
     },
     {
@@ -51037,7 +51103,7 @@
       "_origin": "ast",
       "id": "lib_core_services_vehicle_storage_service",
       "community": 62,
-      "community_name": "auth_service.dart",
+      "community_name": "package:supabase_flutter/supabase_flutter.dart",
       "norm_label": "vehicle_storage_service.dart"
     },
     {
@@ -51048,7 +51114,7 @@
       "_origin": "ast",
       "id": "lib_core_services_vehicle_storage_service_bucketname",
       "community": 62,
-      "community_name": "auth_service.dart",
+      "community_name": "package:supabase_flutter/supabase_flutter.dart",
       "norm_label": "_bucketname"
     },
     {
@@ -51059,7 +51125,7 @@
       "_origin": "ast",
       "id": "lib_core_services_vehicle_storage_service_deletedocument",
       "community": 62,
-      "community_name": "auth_service.dart",
+      "community_name": "package:supabase_flutter/supabase_flutter.dart",
       "norm_label": "deletedocument"
     },
     {
@@ -51070,7 +51136,7 @@
       "_origin": "ast",
       "id": "lib_core_services_vehicle_storage_service_getsignedurl",
       "community": 62,
-      "community_name": "auth_service.dart",
+      "community_name": "package:supabase_flutter/supabase_flutter.dart",
       "norm_label": "getsignedurl"
     },
     {
@@ -51081,7 +51147,7 @@
       "_origin": "ast",
       "id": "lib_core_services_vehicle_storage_service_instance",
       "community": 62,
-      "community_name": "auth_service.dart",
+      "community_name": "package:supabase_flutter/supabase_flutter.dart",
       "norm_label": "_instance"
     },
     {
@@ -51092,7 +51158,7 @@
       "_origin": "ast",
       "id": "lib_core_services_vehicle_storage_service_listfolder",
       "community": 62,
-      "community_name": "auth_service.dart",
+      "community_name": "package:supabase_flutter/supabase_flutter.dart",
       "norm_label": "listfolder"
     },
     {
@@ -51103,7 +51169,7 @@
       "_origin": "ast",
       "id": "lib_core_services_vehicle_storage_service_message",
       "community": 62,
-      "community_name": "auth_service.dart",
+      "community_name": "package:supabase_flutter/supabase_flutter.dart",
       "norm_label": "message"
     },
     {
@@ -51114,7 +51180,7 @@
       "_origin": "ast",
       "id": "lib_core_services_vehicle_storage_service_supabase",
       "community": 62,
-      "community_name": "auth_service.dart",
+      "community_name": "package:supabase_flutter/supabase_flutter.dart",
       "norm_label": "_supabase"
     },
     {
@@ -51125,7 +51191,7 @@
       "_origin": "ast",
       "id": "lib_core_services_vehicle_storage_service_tostring",
       "community": 62,
-      "community_name": "auth_service.dart",
+      "community_name": "package:supabase_flutter/supabase_flutter.dart",
       "norm_label": "tostring"
     },
     {
@@ -51136,7 +51202,7 @@
       "_origin": "ast",
       "id": "lib_core_services_vehicle_storage_service_uploadbinary",
       "community": 62,
-      "community_name": "auth_service.dart",
+      "community_name": "package:supabase_flutter/supabase_flutter.dart",
       "norm_label": "uploadbinary"
     },
     {
@@ -51147,7 +51213,7 @@
       "_origin": "ast",
       "id": "lib_core_services_vehicle_storage_service_vehiclestoragelogicexception",
       "community": 62,
-      "community_name": "auth_service.dart",
+      "community_name": "package:supabase_flutter/supabase_flutter.dart",
       "norm_label": "vehiclestoragelogicexception"
     },
     {
@@ -51158,7 +51224,7 @@
       "_origin": "ast",
       "id": "lib_core_services_vehicle_storage_service_vehiclestorageservice",
       "community": 62,
-      "community_name": "auth_service.dart",
+      "community_name": "package:supabase_flutter/supabase_flutter.dart",
       "norm_label": "vehiclestorageservice"
     },
     {
@@ -51169,7 +51235,7 @@
       "_origin": "ast",
       "id": "package_my_auto_guide_core_providers_auth_provider_dart",
       "community": 62,
-      "community_name": "auth_service.dart",
+      "community_name": "package:supabase_flutter/supabase_flutter.dart",
       "norm_label": "package:my_auto_guide/core/providers/auth_provider.dart"
     },
     {
@@ -51180,19 +51246,8 @@
       "_origin": "ast",
       "id": "package_supabase_flutter_supabase_flutter_dart",
       "community": 62,
-      "community_name": "auth_service.dart",
+      "community_name": "package:supabase_flutter/supabase_flutter.dart",
       "norm_label": "package:supabase_flutter/supabase_flutter.dart"
-    },
-    {
-      "label": "static final AuthService",
-      "file_type": "code",
-      "source_file": null,
-      "source_location": null,
-      "_origin": "ast",
-      "id": "static_final_authservice",
-      "community": 62,
-      "community_name": "auth_service.dart",
-      "norm_label": "static final authservice"
     },
     {
       "label": "static final VehicleStorageService",
@@ -51202,7 +51257,7 @@
       "_origin": "ast",
       "id": "static_final_vehiclestorageservice",
       "community": 62,
-      "community_name": "auth_service.dart",
+      "community_name": "package:supabase_flutter/supabase_flutter.dart",
       "norm_label": "static final vehiclestorageservice"
     },
     {
@@ -51213,7 +51268,7 @@
       "_origin": "ast",
       "id": "supabase_service_dart",
       "community": 62,
-      "community_name": "auth_service.dart",
+      "community_name": "package:supabase_flutter/supabase_flutter.dart",
       "norm_label": "supabase_service.dart"
     },
     {
@@ -51224,7 +51279,7 @@
       "_origin": "ast",
       "id": "supabaseclient",
       "community": 62,
-      "community_name": "auth_service.dart",
+      "community_name": "package:supabase_flutter/supabase_flutter.dart",
       "norm_label": "supabaseclient"
     },
     {
@@ -51235,7 +51290,7 @@
       "_origin": "ast",
       "id": "test_auth_provider_test",
       "community": 62,
-      "community_name": "auth_service.dart",
+      "community_name": "package:supabase_flutter/supabase_flutter.dart",
       "norm_label": "auth_provider_test.dart"
     },
     {
@@ -51246,7 +51301,7 @@
       "_origin": "ast",
       "id": "test_auth_provider_test_main",
       "community": 62,
-      "community_name": "auth_service.dart",
+      "community_name": "package:supabase_flutter/supabase_flutter.dart",
       "norm_label": "main"
     },
     {
@@ -53811,6 +53866,17 @@
       "community": 73,
       "community_name": "biometric_service.dart",
       "norm_label": "localauthentication"
+    },
+    {
+      "label": "package:flutter/services.dart",
+      "file_type": "code",
+      "source_file": null,
+      "source_location": null,
+      "_origin": "ast",
+      "id": "package_flutter_services_dart",
+      "community": 73,
+      "community_name": "biometric_service.dart",
+      "norm_label": "package:flutter/services.dart"
     },
     {
       "label": "package:local_auth_android/local_auth_android.dart",
@@ -56598,103 +56664,26 @@
       "norm_label": "uikit"
     },
     {
-      "label": "performance_guard.dart",
+      "label": "scripts/render-report.mjs",
       "file_type": "code",
-      "source_file": "lib/core/logic/performance_guard.dart",
-      "source_location": null,
+      "source_file": ".agents/skills/vercel-optimize/scripts/render-report.mjs",
+      "source_location": "L1",
       "_origin": "ast",
-      "id": "lib_core_logic_performance_guard",
+      "id": "agents_skills_vercel_optimize_scripts_render_report",
       "community": 94,
-      "community_name": "package:flutter/foundation.dart",
-      "norm_label": "performance_guard.dart"
+      "community_name": "scripts/render-report.mjs",
+      "norm_label": "scripts/render-report.mjs"
     },
     {
-      "label": "adaptiveBlur",
+      "label": "HARD_REGEN_TRIGGERS",
       "file_type": "code",
-      "source_file": "lib/core/logic/performance_guard.dart",
-      "source_location": null,
+      "source_file": ".agents/skills/vercel-optimize/scripts/render-report.mjs",
+      "source_location": "L13",
       "_origin": "ast",
-      "id": "lib_core_logic_performance_guard_adaptiveblur",
+      "id": "agents_skills_vercel_optimize_scripts_render_report_hard_regen_triggers",
       "community": 94,
-      "community_name": "package:flutter/foundation.dart",
-      "norm_label": "adaptiveblur"
-    },
-    {
-      "label": "initialize",
-      "file_type": "code",
-      "source_file": "lib/core/logic/performance_guard.dart",
-      "source_location": null,
-      "_origin": "ast",
-      "id": "lib_core_logic_performance_guard_initialize",
-      "community": 94,
-      "community_name": "package:flutter/foundation.dart",
-      "norm_label": "initialize"
-    },
-    {
-      "label": "_instance",
-      "file_type": "code",
-      "source_file": "lib/core/logic/performance_guard.dart",
-      "source_location": null,
-      "_origin": "ast",
-      "id": "lib_core_logic_performance_guard_instance",
-      "community": 94,
-      "community_name": "package:flutter/foundation.dart",
-      "norm_label": "_instance"
-    },
-    {
-      "label": "_isLowEnd",
-      "file_type": "code",
-      "source_file": "lib/core/logic/performance_guard.dart",
-      "source_location": null,
-      "_origin": "ast",
-      "id": "lib_core_logic_performance_guard_islowend",
-      "community": 94,
-      "community_name": "package:flutter/foundation.dart",
-      "norm_label": "_islowend"
-    },
-    {
-      "label": "PerformanceGuard",
-      "file_type": "code",
-      "source_file": "lib/core/logic/performance_guard.dart",
-      "source_location": null,
-      "_origin": "ast",
-      "id": "lib_core_logic_performance_guard_performanceguard",
-      "community": 94,
-      "community_name": "package:flutter/foundation.dart",
-      "norm_label": "performanceguard"
-    },
-    {
-      "label": "package:device_info_plus/device_info_plus.dart",
-      "file_type": "code",
-      "source_file": null,
-      "source_location": null,
-      "_origin": "ast",
-      "id": "package_device_info_plus_device_info_plus_dart",
-      "community": 94,
-      "community_name": "package:flutter/foundation.dart",
-      "norm_label": "package:device_info_plus/device_info_plus.dart"
-    },
-    {
-      "label": "package:flutter/foundation.dart",
-      "file_type": "code",
-      "source_file": null,
-      "source_location": null,
-      "_origin": "ast",
-      "id": "package_flutter_foundation_dart",
-      "community": 94,
-      "community_name": "package:flutter/foundation.dart",
-      "norm_label": "package:flutter/foundation.dart"
-    },
-    {
-      "label": "static final PerformanceGuard",
-      "file_type": "code",
-      "source_file": null,
-      "source_location": null,
-      "_origin": "ast",
-      "id": "static_final_performanceguard",
-      "community": 94,
-      "community_name": "package:flutter/foundation.dart",
-      "norm_label": "static final performanceguard"
+      "community_name": "scripts/render-report.mjs",
+      "norm_label": "hard_regen_triggers"
     },
     {
       "label": "vercel-cli-with-tokens/SKILL.md",
@@ -118523,17 +118512,6 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "lib_features_navigation_rutas_screen",
-      "target": "lib_features_navigation_rutas_screen_showsuccessoverlay"
-    },
-    {
-      "relation": "defines",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "lib/features/navigation/rutas_screen.dart",
-      "source_location": null,
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "lib_features_navigation_rutas_screen",
       "target": "lib_features_navigation_rutas_screen_supabase"
     },
     {
@@ -130876,5 +130854,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "f55b0fcfb677404f8865b4949a4342d5fffcab84"
+  "built_at_commit": "f1207c5d6752b40d04b2be74cf05825478ec2ce8"
 }

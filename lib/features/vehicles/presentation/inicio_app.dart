@@ -1554,61 +1554,36 @@ class _InicioAppState extends State<InicioApp> {
       });
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Inicio'),
-        actions: [
-          IconButton(
-            tooltip: 'Compartir vehículo',
-            icon: const Icon(Icons.share_rounded),
-            onPressed: () {
-              if (_cachedVehicleData != null) {
-                final double currentHealthIndex =
-                    VehicleHealthLogic.calculateHealthIndex(
-                  pctCadena: _pctCadena,
-                  pctFiltro: _pctFiltro,
-                  pctAceite: _pctAceite,
-                  pctSoat: _pctSoat,
-                  pctTecno: _pctTecno,
-                );
-                _compartirVehiculo(_cachedVehicleData!, currentHealthIndex);
-              }
-            },
-          ),
-          IconButton(
-            tooltip: 'Mi Garaje',
-            icon: const Icon(Icons.directions_car_rounded),
-            onPressed: _abrirGarajeSelector,
-          ),
-          IconButton(
-              tooltip: 'Eliminar vehículo',
-              icon: const Icon(Icons.delete),
-              onPressed: () => _confirmarYEliminar(widget.vehiculoId)),
-          IconButton(
-              tooltip: 'Cerrar sesión',
-              icon: const Icon(Icons.logout),
-              onPressed: _cerrarSesion),
-        ],
-      ),
-      body: FutureBuilder<Map<String, dynamic>>(
-        future: _initAppFuture,
-        builder: (context, s) {
-          if (s.connectionState != ConnectionState.done) {
-            return const CinematicVehicleLoader();
-          }
-          if (s.hasError) return Center(child: Text('Error: ${s.error}'));
-          if (!s.hasData) {
-            return const Center(child: Text('No se encontró el vehículo'));
-          }
+    return FutureBuilder<Map<String, dynamic>>(
+      future: _initAppFuture,
+      builder: (context, s) {
+        if (s.connectionState != ConnectionState.done) {
+          return const Scaffold(
+            backgroundColor: Color(0xFF0A0C10),
+            body: CinematicVehicleLoader(),
+          );
+        }
+        if (s.hasError) {
+          return Scaffold(
+            appBar: AppBar(title: const Text('Inicio')),
+            body: Center(child: Text('Error: ${s.error}')),
+          );
+        }
+        if (!s.hasData) {
+          return Scaffold(
+            appBar: AppBar(title: const Text('Inicio')),
+            body: const Center(child: Text('No se encontró el vehículo')),
+          );
+        }
 
-          final v = s.data!;
-          if (!_checkedKm24h) {
-            _checkedKm24h = true;
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              _verificarKilometraje24h(v);
-            });
-          }
-          final marca = (v['marca'] as String? ?? '').toUpperCase();
+        final v = s.data!;
+        if (!_checkedKm24h) {
+          _checkedKm24h = true;
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _verificarKilometraje24h(v);
+          });
+        }
+        final marca = (v['marca'] as String? ?? '').toUpperCase();
           final modelo = v['modelo'] as String? ?? '';
           final apodo = v['apodo'] as String? ?? 'Mi Vehículo';
           final kms = v['kms']?.toString() ?? '0';
@@ -2110,8 +2085,44 @@ class _InicioAppState extends State<InicioApp> {
             ),
           );
 
-          return Stack(
-            children: [
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('Inicio'),
+              actions: [
+                IconButton(
+                  tooltip: 'Compartir vehículo',
+                  icon: const Icon(Icons.share_rounded),
+                  onPressed: () {
+                    if (_cachedVehicleData != null) {
+                      final double currentHealthIndex =
+                          VehicleHealthLogic.calculateHealthIndex(
+                        pctCadena: _pctCadena,
+                        pctFiltro: _pctFiltro,
+                        pctAceite: _pctAceite,
+                        pctSoat: _pctSoat,
+                        pctTecno: _pctTecno,
+                      );
+                      _compartirVehiculo(_cachedVehicleData!, currentHealthIndex);
+                    }
+                  },
+                ),
+                IconButton(
+                  tooltip: 'Mi Garaje',
+                  icon: const Icon(Icons.directions_car_rounded),
+                  onPressed: _abrirGarajeSelector,
+                ),
+                IconButton(
+                    tooltip: 'Eliminar vehículo',
+                    icon: const Icon(Icons.delete),
+                    onPressed: () => _confirmarYEliminar(widget.vehiculoId)),
+                IconButton(
+                    tooltip: 'Cerrar sesión',
+                    icon: const Icon(Icons.logout),
+                    onPressed: _cerrarSesion),
+              ],
+            ),
+            body: Stack(
+              children: [
               Positioned(
                 top: -80,
                 left: -80,
@@ -2150,17 +2161,17 @@ class _InicioAppState extends State<InicioApp> {
               ),
               mainContent,
             ],
-          );
-        },
-      ),
-      floatingActionButton: LiquidGlassFAB(
-        onTap: () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const AIChatScreen()),
-        ),
-        icon: Icons.auto_awesome,
-        label: 'IA Experto',
-      ),
+          ),
+          floatingActionButton: LiquidGlassFAB(
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const AIChatScreen()),
+            ),
+            icon: Icons.auto_awesome,
+            label: 'IA Experto',
+          ),
+        );
+      },
     );
   }
 }

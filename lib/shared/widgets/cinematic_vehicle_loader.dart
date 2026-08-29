@@ -362,7 +362,7 @@ class _TachometerPainter extends CustomPainter {
       oldDelegate.progress != progress || oldDelegate.pulse != pulse;
 }
 
-/// CustomPainter para la silueta icónica del BMW M4 Coupé con Rayo Láser
+/// CustomPainter para la silueta icónica en perspectiva 3/4 del BMW M4 Coupé
 class _BmwM4SilhouettePainter extends CustomPainter {
   final double scanProgress;
   final double pulse;
@@ -372,89 +372,217 @@ class _BmwM4SilhouettePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final double w = size.width;
-    final double h = size.height * 0.75;
-    final double ox = (size.width - w) / 2;
-    final double oy = (size.height - h) / 2 - 10;
+    final double h = size.height;
+    final double ox = 0;
+    final double oy = 0;
 
-    // 1. Contorno exterior fiel al BMW M4 Coupé
-    final bodyPath = Path();
-
-    // Splitter delantero bajo
-    bodyPath.moveTo(ox + w * 0.03, oy + h * 0.82);
-    // Talonera frontal
-    bodyPath.lineTo(ox + w * 0.08, oy + h * 0.82);
-    // Arco de rueda delantera M-Sport
-    bodyPath.arcToPoint(
-      Offset(ox + w * 0.28, oy + h * 0.82),
-      radius: Radius.circular(w * 0.10),
-      clockwise: false,
-    );
-    // Faldón lateral aerodinámico
-    bodyPath.lineTo(ox + w * 0.68, oy + h * 0.82);
-    // Arco de rueda trasera ensanchada
-    bodyPath.arcToPoint(
-      Offset(ox + w * 0.88, oy + h * 0.82),
-      radius: Radius.circular(w * 0.10),
-      clockwise: false,
-    );
-    // Difusor trasero M y salidas de escape
-    bodyPath.lineTo(ox + w * 0.98, oy + h * 0.80);
-    bodyPath.lineTo(ox + w * 0.99, oy + h * 0.58);
-    // Alerón trasero Ducktail integrado del BMW M4
-    bodyPath.lineTo(ox + w * 0.97, oy + h * 0.44);
-    bodyPath.lineTo(ox + w * 0.93, oy + h * 0.42);
-    // Luneta trasera Fastback
-    bodyPath.lineTo(ox + w * 0.72, oy + h * 0.16);
-    // Techo de fibra de carbono con canal central (Double Bubble)
-    bodyPath.lineTo(ox + w * 0.52, oy + h * 0.13);
-    bodyPath.lineTo(ox + w * 0.38, oy + h * 0.14);
-    // Pilar A y Parabrisas bajo agresivo
-    bodyPath.lineTo(ox + w * 0.22, oy + h * 0.42);
-    // Capó largo con abultamiento Powerdome característico del M4
-    bodyPath.lineTo(ox + w * 0.07, oy + h * 0.52);
-    // Riñones verticales y frontal afilado
-    bodyPath.lineTo(ox + w * 0.02, oy + h * 0.66);
-    bodyPath.close();
-
-    // 2. Ventanas y Hofmeister Kink (Firma de diseño BMW)
-    final windowPath = Path();
-    windowPath.moveTo(ox + w * 0.25, oy + h * 0.44);
-    windowPath.lineTo(ox + w * 0.38, oy + h * 0.20);
-    windowPath.lineTo(ox + w * 0.68, oy + h * 0.20);
-    // Hofmeister Kink
-    windowPath.lineTo(ox + w * 0.73, oy + h * 0.44);
-    windowPath.close();
-
-    // Resplandor y Relleno Neón
-    final bodyGlowPaint = Paint()
-      ..color = const Color(0xFF00E5FF).withValues(alpha: 0.12 * pulse)
+    // Colores y pinturas
+    final glowPaint = Paint()
+      ..color = const Color(0xFF00E5FF).withValues(alpha: 0.14 * pulse)
       ..style = PaintingStyle.fill;
 
-    final bodyStrokePaint = Paint()
-      ..color = const Color(0xFF00E5FF).withValues(alpha: 0.85 * pulse)
+    final primaryStroke = Paint()
+      ..color = const Color(0xFF00E5FF).withValues(alpha: 0.95 * pulse)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.2
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
+
+    final detailStroke = Paint()
+      ..color = const Color(0xFF00E5FF).withValues(alpha: 0.65 * pulse)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.4
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
+
+    final accentStroke = Paint()
+      ..color = const Color(0xFFFF1744).withValues(alpha: 0.85 * pulse)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.8
+      ..strokeCap = StrokeCap.round;
+
+    final wheelFill = Paint()
+      ..color = const Color(0xFF0A1526).withValues(alpha: 0.85)
+      ..style = PaintingStyle.fill;
+
+    final wheelStroke = Paint()
+      ..color = const Color(0xFF2979FF).withValues(alpha: 0.9 * pulse)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.0;
 
-    final innerLinePaint = Paint()
-      ..color = const Color(0xFF00E5FF).withValues(alpha: 0.50 * pulse)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.2;
+    // ─── 1. SILUETA EXTERIOR PRINCIPAL (BMW M4 3/4 VIEW) ───
+    final outline = Path();
+    // Splitter frontal izquierdo
+    outline.moveTo(ox + w * 0.08, oy + h * 0.76);
+    // Labio inferior y splitter
+    outline.lineTo(ox + w * 0.54, oy + h * 0.77);
+    // Arco rueda delantera
+    outline.arcToPoint(
+      Offset(ox + w * 0.68, oy + h * 0.65),
+      radius: Radius.circular(w * 0.12),
+      clockwise: false,
+    );
+    // Talonera lateral aerodinámica M
+    outline.lineTo(ox + w * 0.84, oy + h * 0.68);
+    // Arco rueda trasera
+    outline.arcToPoint(
+      Offset(ox + w * 0.92, oy + h * 0.61),
+      radius: Radius.circular(w * 0.08),
+      clockwise: false,
+    );
+    // Parachoques trasero / difusor
+    outline.lineTo(ox + w * 0.94, oy + h * 0.54);
+    // Maletero y Alerón trasero GT
+    outline.lineTo(ox + w * 0.93, oy + h * 0.44);
+    outline.lineTo(ox + w * 0.86, oy + h * 0.40);
+    // Luneta trasera inclinada Fastback
+    outline.lineTo(ox + w * 0.76, oy + h * 0.32);
+    // Techo Coupé M con canal aerodinámico central
+    outline.lineTo(ox + w * 0.65, oy + h * 0.28);
+    outline.lineTo(ox + w * 0.44, oy + h * 0.31);
+    // Pilar A y Parabrisas delantero
+    outline.lineTo(ox + w * 0.32, oy + h * 0.42);
+    // Capó esculpido Powerdome hacia el frontal
+    outline.lineTo(ox + w * 0.16, oy + h * 0.50);
+    // Punta del morro y caída de riñones
+    outline.lineTo(ox + w * 0.08, oy + h * 0.58);
+    outline.lineTo(ox + w * 0.06, oy + h * 0.68);
+    outline.close();
 
-    // Ruedas M con Rines de Estrella
-    final wheelPaint = Paint()
-      ..color = const Color(0xFF2979FF).withValues(alpha: 0.7 * pulse)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.0;
+    canvas.drawPath(outline, glowPaint);
+    canvas.drawPath(outline, primaryStroke);
 
-    canvas.drawPath(bodyPath, bodyGlowPaint);
-    canvas.drawPath(bodyPath, bodyStrokePaint);
-    canvas.drawPath(windowPath, innerLinePaint);
+    // ─── 2. RIÑONES VERTICALES ICÓNICOS BMW M4 (G82 DUAL KIDNEYS) ───
+    // Riñón izquierdo (más frontal)
+    final leftKidney = Path();
+    leftKidney.moveTo(ox + w * 0.14, oy + h * 0.54);
+    leftKidney.lineTo(ox + w * 0.21, oy + h * 0.54);
+    leftKidney.lineTo(ox + w * 0.22, oy + h * 0.74);
+    leftKidney.lineTo(ox + w * 0.13, oy + h * 0.73);
+    leftKidney.close();
+    canvas.drawPath(leftKidney, primaryStroke);
 
-    // Rines delanteros y traseros
-    canvas.drawCircle(Offset(ox + w * 0.18, oy + h * 0.82), w * 0.07, wheelPaint);
-    canvas.drawCircle(Offset(ox + w * 0.78, oy + h * 0.82), w * 0.07, wheelPaint);
+    // Riñón derecho (perspectiva 3/4)
+    final rightKidney = Path();
+    rightKidney.moveTo(ox + w * 0.23, oy + h * 0.54);
+    rightKidney.lineTo(ox + w * 0.31, oy + h * 0.55);
+    rightKidney.lineTo(ox + w * 0.32, oy + h * 0.73);
+    rightKidney.lineTo(ox + w * 0.24, oy + h * 0.74);
+    rightKidney.close();
+    canvas.drawPath(rightKidney, primaryStroke);
 
-    // Línea de Escaneo Láser Vertical
+    // Barras horizontales internas de los riñones
+    canvas.drawLine(Offset(ox + w * 0.14, oy + h * 0.60), Offset(ox + w * 0.21, oy + h * 0.60), detailStroke);
+    canvas.drawLine(Offset(ox + w * 0.14, oy + h * 0.67), Offset(ox + w * 0.215, oy + h * 0.67), detailStroke);
+    canvas.drawLine(Offset(ox + w * 0.235, oy + h * 0.60), Offset(ox + w * 0.31, oy + h * 0.60), detailStroke);
+    canvas.drawLine(Offset(ox + w * 0.24, oy + h * 0.67), Offset(ox + w * 0.315, oy + h * 0.67), detailStroke);
+
+    // ─── 3. FAROS LÁSER AFILADOS M (ANGULAR HEADLIGHTS) ───
+    // Faro izquierdo
+    final leftHeadlight = Path();
+    leftHeadlight.moveTo(ox + w * 0.08, oy + h * 0.53);
+    leftHeadlight.lineTo(ox + w * 0.13, oy + h * 0.54);
+    leftHeadlight.lineTo(ox + w * 0.10, oy + h * 0.58);
+    leftHeadlight.close();
+    canvas.drawPath(leftHeadlight, accentStroke);
+
+    // Faro derecho (más largo hacia el lateral)
+    final rightHeadlight = Path();
+    rightHeadlight.moveTo(ox + w * 0.33, oy + h * 0.54);
+    rightHeadlight.lineTo(ox + w * 0.48, oy + h * 0.53);
+    rightHeadlight.lineTo(ox + w * 0.45, oy + h * 0.59);
+    rightHeadlight.lineTo(ox + w * 0.35, oy + h * 0.59);
+    rightHeadlight.close();
+    canvas.drawPath(rightHeadlight, primaryStroke);
+
+    // DRLs LED en faro derecho
+    canvas.drawLine(Offset(ox + w * 0.36, oy + h * 0.56), Offset(ox + w * 0.43, oy + h * 0.55), accentStroke);
+
+    // ─── 4. LÍNEAS DEL CAPÓ Y POWERDOME ───
+    canvas.drawLine(Offset(ox + w * 0.18, oy + h * 0.53), Offset(ox + w * 0.32, oy + h * 0.43), detailStroke);
+    canvas.drawLine(Offset(ox + w * 0.26, oy + h * 0.53), Offset(ox + w * 0.39, oy + h * 0.43), detailStroke);
+    canvas.drawLine(Offset(ox + w * 0.44, oy + h * 0.52), Offset(ox + w * 0.50, oy + h * 0.44), detailStroke);
+
+    // ─── 5. CABINA, VENTANAS Y HOFMEISTER KINK ───
+    // Parabrisas
+    final windshield = Path();
+    windshield.moveTo(ox + w * 0.34, oy + h * 0.43);
+    windshield.lineTo(ox + w * 0.45, oy + h * 0.33);
+    windshield.lineTo(ox + w * 0.63, oy + h * 0.31);
+    windshield.lineTo(ox + w * 0.58, oy + h * 0.43);
+    windshield.close();
+    canvas.drawPath(windshield, detailStroke);
+
+    // Ventana lateral con Hofmeister Kink
+    final sideWindow = Path();
+    sideWindow.moveTo(ox + w * 0.60, oy + h * 0.42);
+    sideWindow.lineTo(ox + w * 0.66, oy + h * 0.31);
+    sideWindow.lineTo(ox + w * 0.77, oy + h * 0.36);
+    // Kink
+    sideWindow.lineTo(ox + w * 0.78, oy + h * 0.43);
+    sideWindow.close();
+    canvas.drawPath(sideWindow, detailStroke);
+
+    // Espejo retrovisor M con doble brazo
+    final mirror = Path();
+    mirror.moveTo(ox + w * 0.58, oy + h * 0.41);
+    mirror.lineTo(ox + w * 0.65, oy + h * 0.40);
+    mirror.lineTo(ox + w * 0.64, oy + h * 0.45);
+    mirror.lineTo(ox + w * 0.58, oy + h * 0.45);
+    mirror.close();
+    canvas.drawPath(mirror, primaryStroke);
+
+    // ─── 6. ALERÓN TRASERO GT (REAR SPOILER) ───
+    final spoiler = Path();
+    spoiler.moveTo(ox + w * 0.83, oy + h * 0.36);
+    spoiler.lineTo(ox + w * 0.92, oy + h * 0.35);
+    spoiler.lineTo(ox + w * 0.93, oy + h * 0.39);
+    spoiler.lineTo(ox + w * 0.84, oy + h * 0.40);
+    spoiler.close();
+    canvas.drawPath(spoiler, accentStroke);
+
+    // Soportes de alerón
+    canvas.drawLine(Offset(ox + w * 0.86, oy + h * 0.40), Offset(ox + w * 0.86, oy + h * 0.43), detailStroke);
+    canvas.drawLine(Offset(ox + w * 0.90, oy + h * 0.39), Offset(ox + w * 0.90, oy + h * 0.44), detailStroke);
+
+    // ─── 7. RUEDAS M SPORT EN PERSPECTIVA 3/4 CON RINES MULTIRRADIO ───
+    // Rueda delantera (3/4)
+    final frontWheelCenter = Offset(ox + w * 0.59, oy + h * 0.67);
+    canvas.drawOval(
+      Rect.fromCenter(center: frontWheelCenter, width: w * 0.19, height: h * 0.30),
+      wheelFill,
+    );
+    canvas.drawOval(
+      Rect.fromCenter(center: frontWheelCenter, width: w * 0.19, height: h * 0.30),
+      wheelStroke,
+    );
+    // Radios M rueda delantera
+    for (int i = 0; i < 5; i++) {
+      final angle = (i * math.pi / 2.5);
+      final rx = (w * 0.08) * math.cos(angle);
+      final ry = (h * 0.13) * math.sin(angle);
+      canvas.drawLine(frontWheelCenter, Offset(frontWheelCenter.dx + rx, frontWheelCenter.dy + ry), detailStroke);
+    }
+
+    // Rueda trasera (3/4)
+    final rearWheelCenter = Offset(ox + w * 0.87, oy + h * 0.61);
+    canvas.drawOval(
+      Rect.fromCenter(center: rearWheelCenter, width: w * 0.13, height: h * 0.22),
+      wheelFill,
+    );
+    canvas.drawOval(
+      Rect.fromCenter(center: rearWheelCenter, width: w * 0.13, height: h * 0.22),
+      wheelStroke,
+    );
+    // Radios M rueda trasera
+    for (int i = 0; i < 4; i++) {
+      final angle = (i * math.pi / 2.0);
+      final rx = (w * 0.055) * math.cos(angle);
+      final ry = (h * 0.09) * math.sin(angle);
+      canvas.drawLine(rearWheelCenter, Offset(rearWheelCenter.dx + rx, rearWheelCenter.dy + ry), detailStroke);
+    }
+
+    // ─── 8. LÍNEA DE ESCANEO LÁSER VERTICAL CIBERNÉTICA ───
     final double laserX = ox + (w * scanProgress);
     final laserPaint = Paint()
       ..shader = LinearGradient(
@@ -466,12 +594,12 @@ class _BmwM4SilhouettePainter extends CustomPainter {
           const Color(0xFFFF1744).withValues(alpha: 0.95),
           Colors.transparent,
         ],
-      ).createShader(Rect.fromLTWH(laserX - 2, oy, 4, h + 15))
-      ..strokeWidth = 3.0;
+      ).createShader(Rect.fromLTWH(laserX - 2, oy, 4, h + 10))
+      ..strokeWidth = 2.5;
 
     canvas.drawLine(
-      Offset(laserX, oy - 6),
-      Offset(laserX, oy + h + 12),
+      Offset(laserX, oy + h * 0.15),
+      Offset(laserX, oy + h * 0.88),
       laserPaint,
     );
   }
