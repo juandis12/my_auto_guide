@@ -143,22 +143,18 @@ class _CinematicVehicleLoaderState extends State<CinematicVehicleLoader>
                               const Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Text(
-                                    '///M4',
-                                    style: TextStyle(
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w900,
-                                      letterSpacing: 1.5,
-                                      color: Color(0xFFFF1744),
-                                    ),
+                                  Icon(
+                                    Icons.electric_bolt_rounded,
+                                    size: 13,
+                                    color: Color(0xFF00E5FF),
                                   ),
-                                  SizedBox(width: 6),
+                                  SizedBox(width: 4),
                                   Text(
                                     'KM/H • SYS READY',
                                     style: TextStyle(
-                                      fontSize: 9,
-                                      fontWeight: FontWeight.bold,
-                                      letterSpacing: 1.2,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w800,
+                                      letterSpacing: 1.6,
                                       color: Color(0xFF00E5FF),
                                     ),
                                   ),
@@ -248,7 +244,7 @@ class _CinematicVehicleLoaderState extends State<CinematicVehicleLoader>
 
   String _getStatusText(double progress) {
     if (progress < 0.40) {
-      return 'INICIALIZANDO TELEMETRÍA BMW M4...';
+      return 'INICIALIZANDO TELEMETRÍA...';
     } else if (progress < 0.75) {
       return 'SINCRONIZANDO GARAJE Y SENSORES...';
     } else {

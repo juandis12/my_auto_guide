@@ -50,7 +50,6 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
 
   late NavigationController _controller;
   bool _isLoadingRoute = false;
-  bool _showSuccessOverlay = false;
   String? _vehicleImagePath;
   
   List<NominatimPlace> _searchResults = [];
@@ -242,11 +241,18 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
 
     final durationSec = t.startTime != null ? DateTime.now().difference(t.startTime!).inSeconds : 0;
     
-    debugPrint('Guardando trayecto: Distancia: ${t.distanceKm} km, Duración: $durationSec s');
+    // Calcular velocidad promedio cinemática exacta
+    final double calculatedAvgSpeed = TelemetryCalculator.calculateAverageSpeed(
+      distanceKm: t.distanceKm,
+      durationSeconds: durationSec,
+      fallbackSpeedKmH: t.averageSpeedKmH,
+    );
+
+    debugPrint('Guardando trayecto: Distancia: ${t.distanceKm} km, Duración: $durationSec s, VelProm: $calculatedAvgSpeed km/h');
 
     final impact = TelemetryCalculator.estimateImpact(
       distanceKm: t.distanceKm, 
-      avgSpeedKmH: t.averageSpeedKmH, 
+      avgSpeedKmH: calculatedAvgSpeed, 
       vehicleModel: _controller.vehicleModel, 
       isCar: _controller.isCar
     );
@@ -273,7 +279,7 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
           consumoGalones: impact['gallons']!,
           costoEstimado: impact['cost']!,
           velocidadMax: t.maxSpeedKmH,
-          velocidadProm: t.averageSpeedKmH,
+          velocidadProm: calculatedAvgSpeed,
           viaPuntos: t.travelledPoints.map((p) => {'lat': p.latitude, 'lng': p.longitude}).toList(),
         );
         
@@ -298,9 +304,28 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
     }
 
     _controller.stopNavigation();
-    setState(() => _showSuccessOverlay = true);
-    await Future.delayed(const Duration(milliseconds: 2000));
-    if (mounted) setState(() => _showSuccessOverlay = false);
+
+    // Mostrar modal con el resumen visual del recorrido y limpiar polilínea al cerrar
+    if (mounted) {
+      await showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (ctx) => TripSummarySheet(
+          distanceKm: t.distanceKm,
+          durationSeconds: durationSec,
+          avgSpeedKmH: calculatedAvgSpeed,
+          maxSpeedKmH: t.maxSpeedKmH,
+          fuelGallons: impact['gallons'] ?? 0.0,
+          estimatedCost: impact['cost'] ?? 0.0,
+          destinationName: destName,
+          onDismiss: () => Navigator.pop(ctx),
+        ),
+      );
+    }
+
+    // Limpiar las líneas y reiniciar el controlador a estado Live Idle
+    _controller.clearRouteAndReset();
   }
 
   // ─── BUILD UI ───────────────────────────────────────────
@@ -351,7 +376,6 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
         body: Stack(
           children: [
             _buildMap(t),
-            if (_showSuccessOverlay) const SuccessCheckmark(),
             _buildTopSearch(),
             StreamBuilder<RadarAlertState>(
               stream: CameraRadarService().alertStream,
@@ -465,18 +489,39 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
     );
   }
 
+  String _getMapTileUrl(bool isDark) {
+    final stadiaKey = dotenv.isInitialized ? dotenv.get('STADIA_API_KEY', fallback: '') : '';
+    final cartoKey = dotenv.isInitialized ? dotenv.get('CARTO_API_KEY', fallback: '') : '';
+    
+    // 1. Si el usuario configuró Stadia Maps (100% gratis con plan de desarrollador)
+    if (stadiaKey.trim().isNotEmpty) {
+      return isDark
+          ? 'https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}@2x.png?api_key=${stadiaKey.trim()}'
+          : 'https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}@2x.png?api_key=${stadiaKey.trim()}';
+    }
+
+    // 2. Si tiene Carto con llave
+    if (cartoKey.trim().isNotEmpty) {
+      return isDark
+          ? 'https://basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}@2x.png?api_key=${cartoKey.trim()}'
+          : 'https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png?api_key=${cartoKey.trim()}';
+    }
+
+    // 3. Proveedor por defecto 100% GRATUITO sin API KEY ni registros ni marcas de agua (OpenStreetMap)
+    return 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+  }
+
   Widget _buildMap(NavigationTelemetry t) {
     if (t.currentPos == null) return const Center(child: CircularProgressIndicator());
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     
     return FlutterMap(
       mapController: _mapCtrl,
       options: MapOptions(initialCenter: t.currentPos!, initialZoom: 15),
       children: [
         TileLayer(
-          urlTemplate: Theme.of(context).brightness == Brightness.dark
-              ? 'https://basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}@2x.png'
-              : 'https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png',
-          userAgentPackageName: 'com.example.my_auto_guide',
+          urlTemplate: _getMapTileUrl(isDark),
+          userAgentPackageName: 'com.myautoguide.app',
         ),
         if (_controller.routePoints.isNotEmpty)
           PolylineLayer(polylines: [

@@ -23,10 +23,19 @@ class TelemetryCalculator {
     return distMeters / 1000.0;
   }
 
-  /// Calcula la velocidad promedio basada en la suma de velocidades y puntos detectados.
-  static double calculateAverageSpeed(double speedSum, int pointsCount) {
-    if (pointsCount <= 0) return 0.0;
-    return speedSum / pointsCount;
+  /// Calcula la velocidad promedio basada en distancia total recorrida y tiempo transcurrido (en segundos).
+  static double calculateAverageSpeed({
+    required double distanceKm,
+    required int durationSeconds,
+    double fallbackSpeedKmH = 0.0,
+  }) {
+    if (durationSeconds > 5 && distanceKm > 0.01) {
+      final hours = durationSeconds / 3600.0;
+      final speed = distanceKm / hours;
+      // Limitar a valores físicamente plausibles (0 a 350 km/h)
+      return speed.clamp(0.0, 350.0);
+    }
+    return fallbackSpeedKmH;
   }
 
   /// Estima el consumo y costo basado en la telemetría actual.

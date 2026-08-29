@@ -80,6 +80,7 @@ class NavigationController extends ChangeNotifier {
     List<LatLng> pts = _telemetry.travelledPoints;
     double dist = _telemetry.distanceKm;
     double maxSpeed = _telemetry.maxSpeedKmH;
+    double avgSpeed = _telemetry.averageSpeedKmH;
 
     if (_state == NavigationState.navigating || _state == NavigationState.freeTracking) {
       pts = TelemetryCalculator.optimizeRoutePoints(pts, pos);
@@ -90,9 +91,21 @@ class NavigationController extends ChangeNotifier {
         dist += TelemetryCalculator.calculateIncrementalDistance(oldPos, pos);
       }
 
-      if (speedMs != null) {
+      if (speedMs != null && speedMs >= 0) {
         final speedKmH = speedMs * 3.6;
         if (speedKmH > maxSpeed) maxSpeed = speedKmH;
+      }
+
+      // Calcular velocidad promedio continua
+      if (_telemetry.startTime != null && dist > 0.005) {
+        final durationSec = DateTime.now().difference(_telemetry.startTime!).inSeconds;
+        if (durationSec > 3) {
+          avgSpeed = TelemetryCalculator.calculateAverageSpeed(
+            distanceKm: dist,
+            durationSeconds: durationSec,
+            fallbackSpeedKmH: avgSpeed,
+          );
+        }
       }
     }
 
@@ -101,6 +114,7 @@ class NavigationController extends ChangeNotifier {
       travelledPoints: pts,
       distanceKm: dist,
       maxSpeedKmH: maxSpeed,
+      averageSpeedKmH: avgSpeed,
     );
 
     // Auto-completar si llegamos al destino
@@ -117,6 +131,20 @@ class NavigationController extends ChangeNotifier {
   void stopNavigation() {
     _serviceSubscription?.cancel();
     _state = NavigationState.completed;
+    notifyListeners();
+  }
+
+  /// Limpia la ruta activa y resetea a modo libre de espera, manteniendo la posición actual del GPS
+  void clearRouteAndReset() {
+    _serviceSubscription?.cancel();
+    _state = NavigationState.idle;
+    final currentPos = _telemetry.currentPos;
+    _telemetry = NavigationTelemetry(currentPos: currentPos);
+    _destination = null;
+    _destinationName = '';
+    _routePoints = [];
+    _routeDistanceKm = 0.0;
+    _routeDurationMin = 0.0;
     notifyListeners();
   }
 
