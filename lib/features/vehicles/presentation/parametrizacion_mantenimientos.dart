@@ -228,7 +228,7 @@ class _ParametrizacionMantenimientosScreenState
         'pctAceite': VehicleHealthLogic.calculateHybridPercentage(
           lastDate: _aceite,
           lastKms: kAce,
-          cycleDays: 25,
+          cycleDays: 90,
           cycleKms: 3000,
           currentKms: widget.currentKms,
         ),

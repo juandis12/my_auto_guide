@@ -20,7 +20,7 @@ class AppDatabase {
     final path = join(documentsDirectory.path, 'my_auto_guide.db');
     return await openDatabase(
       path,
-      version: 6, // v6: Añadidas columnas velocidad_max y velocidad_prom en pending_routes
+      version: 7, // v7: Fix schema pending_routes (velocidad_max y velocidad_prom)
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -40,7 +40,9 @@ class AppDatabase {
         costoEstimado REAL,
         fecha TEXT,
         synced INTEGER DEFAULT 0,
-        viaPuntos TEXT
+        viaPuntos TEXT,
+        velocidad_max REAL,
+        velocidad_prom REAL
       )
     ''');
     await db.execute('''
@@ -111,18 +113,29 @@ class AppDatabase {
     if (oldVersion < 4) {
       try {
         await db.execute('ALTER TABLE pending_routes ADD COLUMN viaPuntos TEXT');
-      } catch (e) {}
+      } catch (_) {}
     }
     if (oldVersion < 5) {
       try {
         await db.execute('ALTER TABLE pending_routes ADD COLUMN viaPuntos TEXT');
-      } catch (e) {}
+      } catch (_) {}
     }
     if (oldVersion < 6) {
       try {
         await db.execute('ALTER TABLE pending_routes ADD COLUMN velocidad_max REAL');
+      } catch (_) {}
+      try {
         await db.execute('ALTER TABLE pending_routes ADD COLUMN velocidad_prom REAL');
-      } catch (e) {}
+      } catch (_) {}
+    }
+    if (oldVersion < 7) {
+      // v7: Garantizar columnas de velocidad para instalaciones previas que crearon la tabla con el schema defectuoso de v6
+      try {
+        await db.execute('ALTER TABLE pending_routes ADD COLUMN velocidad_max REAL');
+      } catch (_) {}
+      try {
+        await db.execute('ALTER TABLE pending_routes ADD COLUMN velocidad_prom REAL');
+      } catch (_) {}
     }
   }
 

@@ -115,6 +115,8 @@ flutter:
 
   assets:
     - .env
+    - assets/360_guide/car/
+    - assets/360_guide/moto/
     - assets/car.png
     - assets/APK.png
     - assets/google.png

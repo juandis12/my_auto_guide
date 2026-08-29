@@ -72,6 +72,7 @@ import 'package:share_plus/share_plus.dart';
 import 'Agregar_vehiculo.dart';
 import 'Agregar_carro.dart';
 import '../../../core/services/supabase_service.dart';
+import '../../../core/services/odometer_history_service.dart';
 
 // Modelos Refactorizados
 import '../domain/models/vehicle_analytics.dart';
@@ -82,6 +83,8 @@ import '../domain/models/maintenance_prediction.dart';
 import 'widgets/achievements_card.dart';
 import 'widgets/weekly_insight_card.dart';
 import 'widgets/dashboard_widgets.dart';
+import '../../../shared/widgets/dashboard_shimmer_loader.dart';
+import '../../../shared/widgets/cinematic_vehicle_loader.dart';
 
 enum DocType { soat, tecno, seguro, propiedad }
 
@@ -228,6 +231,7 @@ class _InicioAppState extends State<InicioApp> {
                   final newKms = int.tryParse(kmController.text) ?? currentKms;
                   if (newKms >= currentKms) {
                     await SupabaseService().updateVehicleKms(vehicleId, newKms);
+                    await OdometerHistoryService().recordOdometerReading(vehicleId, newKms);
                     await prefs.setString('last_km_check_$vehicleId', DateTime.now().toIso8601String());
                     setState(() {
                       _cachedVehicleData = null;
@@ -1466,27 +1470,60 @@ class _InicioAppState extends State<InicioApp> {
             _lastTecno != null)) {
       _notificacionesProcesadas = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        void checkAndSchedule(String tipo, DateTime? last, int days) async {
+        Future<void> checkAndSchedule(
+          String tipo,
+          DateTime? last,
+          int cycleDays,
+          int cycleKms,
+          double lastKms,
+          double currentKms,
+          double avgKm,
+        ) async {
           if (last == null) return;
-          final vencimiento = last.add(Duration(days: days));
-          if (vencimiento.isAfter(DateTime.now())) {
-            // Antes de programar, intentamos asegurarnos del permiso de alarmas exactas.
+          final int remainingDays = VehicleHealthLogic.calculateProjectedRemainingDays(
+            lastDate: last,
+            lastKms: lastKms,
+            cycleDays: cycleDays,
+            cycleKms: cycleKms,
+            currentKms: currentKms,
+            avgKmPerDay: avgKm,
+          );
+
+          final vencimiento = remainingDays <= 0
+              ? DateTime.now().add(const Duration(hours: 1))
+              : DateTime.now().add(Duration(days: remainingDays));
+
+          if (vencimiento.isAfter(DateTime.now().subtract(const Duration(minutes: 5)))) {
+            if (!mounted) return;
             await NotificationService().ensureExactAlarmsEnabled(context);
+            if (!mounted) return;
 
             await NotificationService().showMaintenanceNotification(
-                id: tipo.hashCode,
-                title: '¡Mantenimiento requerido!',
-                body: 'Debes realizar el mantenimiento de $tipo.',
-                scheduledDate: vencimiento,
-                context: context);
+              id: tipo.hashCode,
+              title: remainingDays <= 0 ? '¡Mantenimiento Vencido!' : '¡Mantenimiento próximo!',
+              body: remainingDays <= 0
+                  ? 'El $tipo de tu vehículo ha alcanzado su límite de kilometraje/tiempo.'
+                  : 'Debes realizar el mantenimiento de $tipo en aprox. $remainingDays días.',
+              scheduledDate: vencimiento,
+              context: context,
+            );
           }
         }
 
-        checkAndSchedule('lubricación de cadena', _lastCadena, 15);
-        checkAndSchedule('filtro de aire', _lastFiltro, 90);
-        checkAndSchedule('cambio de aceite', _lastAceite, 25);
-        checkAndSchedule('SOAT', _lastSoat, 365);
-        checkAndSchedule('Tecnomecánica', _lastTecno, 365);
+        final double currentKmsVal = _asDouble(_cachedVehicleData?['kms']);
+        final double kmcVal = _asDouble(_cachedVehicleData?['kms_last_cadena']);
+        final double kmfVal = _asDouble(_cachedVehicleData?['kms_last_filtro']);
+        final double kmaVal = _asDouble(_cachedVehicleData?['kms_last_aceite']);
+        final String marcaVal = (_cachedVehicleData?['marca'] as String? ?? '').toUpperCase();
+        final bool isCarVal = marcaVal.contains('CARRO') ||
+            (_cachedVehicleData?['apodo'] as String? ?? '').toUpperCase().contains('CARRO');
+        final double avgKmUsage = isCarVal ? 35.0 : 25.0;
+
+        checkAndSchedule('lubricación de cadena', _lastCadena, 15, 500, kmcVal, currentKmsVal, avgKmUsage);
+        checkAndSchedule('filtro de aire', _lastFiltro, 90, 5000, kmfVal, currentKmsVal, avgKmUsage);
+        checkAndSchedule('cambio de aceite', _lastAceite, 90, isCarVal ? 5000 : 3000, kmaVal, currentKmsVal, avgKmUsage);
+        checkAndSchedule('SOAT', _lastSoat, 365, 999999, 0, 0, avgKmUsage);
+        checkAndSchedule('Tecnomecánica', _lastTecno, 365, 999999, 0, 0, avgKmUsage);
       });
     }
 
@@ -1530,7 +1567,7 @@ class _InicioAppState extends State<InicioApp> {
         future: _cargar(),
         builder: (context, s) {
           if (s.connectionState != ConnectionState.done) {
-            return const Center(child: CircularProgressIndicator());
+            return const CinematicVehicleLoader();
           }
           if (s.hasError) return Center(child: Text('Error: ${s.error}'));
           if (!s.hasData) {
@@ -1735,10 +1772,19 @@ class _InicioAppState extends State<InicioApp> {
                     has360: v['has_360_view'] as bool? ?? false,
                     images360: List<String>.from(v['images_360_urls'] ?? []),
                     onCapture360: () async {
+                      final String marcaLocal = (v['marca'] as String? ?? '').toUpperCase();
+                      final bool isCarLocal = marcaLocal.contains('CARRO') ||
+                          (v['apodo'] as String? ?? '').toUpperCase().contains('CARRO') ||
+                          (v['image_path'] as String? ?? '').toLowerCase().contains('carros/');
                       final res = await Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => Captura360Screen(vehiculoId: widget.vehiculoId),
+                          builder: (_) => Captura360Screen(
+                            vehiculoId: widget.vehiculoId,
+                            isCar: isCarLocal,
+                            marca: v['marca'],
+                            modelo: v['modelo'],
+                          ),
                         ),
                       );
                       if (res == true) {
@@ -1753,6 +1799,7 @@ class _InicioAppState extends State<InicioApp> {
                 StaggeredFadeIn(
                   delay: const Duration(milliseconds: 200),
                   child: AchievementsCard(
+                    vehicleId: widget.vehiculoId,
                     stats: _weeklyStatsModel,
                     pctCadena: _pctCadena,
                     pctFiltro: _pctFiltro,

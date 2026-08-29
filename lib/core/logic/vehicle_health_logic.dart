@@ -1,3 +1,5 @@
+import 'dart:math';
+
 class VehicleHealthLogic {
   /// Calcula el Índice de Salud del Vehículo (ISH) de 0 a 100%.
   /// Se basa en el promedio ponderado de los mantenimientos y documentos.
@@ -12,13 +14,15 @@ class VehicleHealthLogic {
     // Los mantenimientos mecánicos para la "Salud Mecánica"
     double mechanicHealth = (pctCadena + pctFiltro + pctAceite) / 3;
     double legalHealth = (pctSoat + pctTecno) / 2;
-    
-     // El índice global pondera ambos (60% mecánica, 40% legal por ejemplo)
+
+    // El índice global pondera ambos (60% mecánica, 40% legal)
     return (mechanicHealth * 0.6 + legalHealth * 0.4) * 100;
   }
 
   /// Calcula el porcentaje de vida útil restante comparando Tiempo vs Kilometraje.
   /// Retorna el factor más crítico (el menor de ambos).
+  /// Si el kilometraje se agota en 4 días (ej: 3,000 km recorridos rápidamente),
+  /// el porcentaje cae a 0% independientemente del tiempo restante.
   static double calculateHybridPercentage({
     required DateTime? lastDate,
     required double lastKms,
@@ -33,17 +37,48 @@ class VehicleHealthLogic {
     final timeRemainingPct = 1.0 - (elapsedDays / cycleDays);
 
     // 2. Desgaste por Kilometraje
-    // Si lastKms es 0 o null (dato no ingresado aún), ignoramos este factor
     double kmsRemainingPct = 1.0;
     if (lastKms > 0) {
       final elapsedKms = (currentKms - lastKms).clamp(0.0, double.infinity);
       kmsRemainingPct = 1.0 - (elapsedKms / cycleKms);
     }
 
-    // 3. El factor dominante es el menor (el que más se haya desgastado)
+    // 3. El factor dominante es el menor estricto
     return [timeRemainingPct, kmsRemainingPct]
         .reduce((a, b) => a < b ? a : b)
         .clamp(0.0, 1.0);
+  }
+
+  /// Calcula los días restantes para mantenimiento según la regla automotriz del menor:
+  /// Días = min(Días restantes por calendario, Días restantes por kilometraje según promedio diario)
+  static int calculateProjectedRemainingDays({
+    required DateTime? lastDate,
+    required double lastKms,
+    required int cycleDays,
+    required int cycleKms,
+    required double currentKms,
+    required double avgKmPerDay,
+  }) {
+    if (lastDate == null) return 0;
+
+    final elapsedDays = DateTime.now().difference(lastDate).inDays;
+    final int calendarDaysRemaining = cycleDays - elapsedDays;
+
+    if (lastKms <= 0 || avgKmPerDay <= 0) {
+      return calendarDaysRemaining;
+    }
+
+    final double elapsedKms = (currentKms - lastKms).clamp(0.0, double.infinity);
+    final double remainingKms = (cycleKms - elapsedKms);
+
+    if (remainingKms <= 0) {
+      return 0; // Ya vencido por kilometraje
+    }
+
+    final int kmDaysRemaining = (remainingKms / avgKmPerDay).round();
+
+    // Regla del menor: lo que ocurra primero
+    return min(calendarDaysRemaining, kmDaysRemaining);
   }
 
   /// Retorna la categoría profesional del estado del vehículo.
@@ -183,25 +218,24 @@ class VehicleHealthLogic {
     return certs;
   }
 
-  /// Calcula la fecha estimada de próximo mantenimiento basado en el uso real.
-  /// Se calcula un "Factor de Desgaste" comparando el uso real vs uso base.
+  /// Calcula la fecha estimada de próximo mantenimiento basado en el uso real (Km/Día vs Calendario).
   static Map<String, dynamic> predictMaintenance({
     required String item,
     required DateTime? lastDate,
-    int? baseDays, // Antiguo parámetro
-    List<Map<String, dynamic>>? routeHistory, // Antiguo parámetro
-    double? avgKmPerDay, // Nuevo: Promedio pre-calculado
-    int? cycleDays, // Nuevo: Días de ciclo alternativo
+    double lastKms = 0.0,
+    double currentKms = 0.0,
+    int cycleKms = 3000,
+    int cycleDays = 90,
+    double avgKmPerDay = 25.0,
+    int? baseDays,
+    List<Map<String, dynamic>>? routeHistory,
   }) {
     if (lastDate == null) {
       return {'status': 'Sin datos suficientes'};
     }
 
-    double finalAvgKmPerDay = 0;
-    
-    if (avgKmPerDay != null) {
-      finalAvgKmPerDay = avgKmPerDay;
-    } else if (routeHistory != null && routeHistory.isNotEmpty) {
+    double finalAvgKmPerDay = avgKmPerDay;
+    if (routeHistory != null && routeHistory.isNotEmpty) {
       final now = DateTime.now();
       final sevenDaysAgo = now.subtract(const Duration(days: 7));
       double totalKmLast7Days = 0;
@@ -215,35 +249,34 @@ class VehicleHealthLogic {
           totalKmLast7Days += dist;
         }
       }
-      finalAvgKmPerDay = totalKmLast7Days / 7;
+      if (totalKmLast7Days > 0) {
+        finalAvgKmPerDay = totalKmLast7Days / 7;
+      }
     }
 
-    if (finalAvgKmPerDay == 0 && (routeHistory == null || routeHistory.isEmpty)) {
-      return {'status': 'Sin uso reciente', 'item': item};
-    }
-
-    // 2. Definir Uso Base Standard (ej. 25km/día es un uso normal)
-    const double standardDailyUsage = 25.0;
-    
-    // 3. Calcular Factor de Desgaste (Mínimo 0.5x, máximo 4x)
-    double wearFactor = (finalAvgKmPerDay / standardDailyUsage).clamp(0.5, 4.0);
-    
-    // 4. Calcular días restantes teóricos vs reales
-    int elapsedDays = DateTime.now().difference(lastDate).inDays;
-    int effectiveBaseDays = cycleDays ?? baseDays ?? 30; // Fallback a 30 días si no hay nada
-    double adjustedTotalDays = effectiveBaseDays / wearFactor;
-    int remainingDays = (adjustedTotalDays - elapsedDays).round();
+    final int remainingDays = calculateProjectedRemainingDays(
+      lastDate: lastDate,
+      lastKms: lastKms,
+      cycleDays: cycleDays,
+      cycleKms: cycleKms,
+      currentKms: currentKms,
+      avgKmPerDay: finalAvgKmPerDay,
+    );
 
     final estimatedDate = DateTime.now().add(Duration(days: remainingDays > 0 ? remainingDays : 0));
+    final bool isKmDominant = (lastKms > 0 && finalAvgKmPerDay > 0) &&
+        ((cycleKms - (currentKms - lastKms)) / finalAvgKmPerDay).round() < (cycleDays - DateTime.now().difference(lastDate).inDays);
 
     return {
       'status': remainingDays <= 0 ? 'Vencido' : 'Proyectado',
       'days': remainingDays,
       'date': estimatedDate,
-      'wearFactor': wearFactor,
       'kmPerDay': finalAvgKmPerDay,
       'item': item,
-      'reason': remainingDays <= 7 ? 'Uso intensivo detectado' : 'Mantenimiento preventivo',
+      'isKmDominant': isKmDominant,
+      'reason': remainingDays <= 0
+          ? 'Mantenimiento vencido'
+          : (isKmDominant ? 'Proyectado por ritmo de kilometraje' : 'Proyectado por tiempo'),
       'risk': remainingDays <= 0 ? 'Alto' : (remainingDays <= 14 ? 'Medio' : 'Bajo'),
       'isCritical': remainingDays <= 3,
     };
@@ -258,10 +291,15 @@ class VehicleHealthLogic {
     for (var pred in predictions) {
       final days = pred['days'] as int?;
       final item = pred['item'] as String;
-      
+      final bool isKm = pred['isKmDominant'] as bool? ?? false;
+
       if (days != null) {
-        if (days <= 7) {
-          advice.add('⚠️ ALERTA: Tu $item requiere atención en aprox. $days días.');
+        if (days <= 0) {
+          advice.add('🚨 CRÍTICO: El servicio de $item ya está vencido.');
+        } else if (days <= 7) {
+          advice.add(isKm
+              ? '⚠️ ALERTA: Por tu ritmo de kilometraje, tu $item requiere atención en aprox. $days días.'
+              : '⚠️ ALERTA: Tu $item requiere atención en aprox. $days días.');
         } else if (days <= 21) {
           advice.add('📅 AVISO: Programa el servicio de $item para las próximas 2-3 semanas.');
         }
