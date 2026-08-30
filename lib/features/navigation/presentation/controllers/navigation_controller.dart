@@ -4,7 +4,7 @@ import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:latlong2/latlong.dart';
 import '../../domain/models/navigation_telemetry.dart';
 import '../../logic/telemetry_calculator.dart';
-import '../../../core/services/navigation_service.dart';
+import 'package:my_auto_guide/core/services/navigation_service.dart';
 
 enum NavigationState { idle, routeReady, navigating, completed, freeTracking, viewingHistory }
 
@@ -140,7 +140,7 @@ class NavigationController extends ChangeNotifier {
       if (_telemetry.startTime != null && dist > 0.005) {
         final durationSec = DateTime.now().difference(_telemetry.startTime!).inSeconds;
         if (durationSec > 3) {
-          avgSpeed = TelemetryCalculator.calculateAverageSpeed(
+          avgSpeed = TelemetryCalculator.calculateKinematicAverageSpeed(
             distanceKm: dist,
             durationSeconds: durationSec,
             fallbackSpeedKmH: avgSpeed,

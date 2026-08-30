@@ -86,8 +86,8 @@ class VehicleHealthLogic {
     if (healthIndex >= 90) return 'Estado de Exhibición';
     if (healthIndex >= 75) return 'Mantenimiento Sobresaliente';
     if (healthIndex >= 60) return 'Operación Óptima';
-    if (healthIndex >= 45) return 'Revisión Preventiva Sugerida';
-    return 'Atención Inmediata Requerida';
+    if (healthIndex >= 50) return 'Mantenimiento Requerido';
+    return 'Atención Inmediata';
   }
 
   /// Retorna el Nivel de Usuario basado en el Score.
@@ -100,13 +100,10 @@ class VehicleHealthLogic {
 
   /// Retorna una descripción técnica del estado enfocada en el reporte semanal.
   static String getWeeklySummary(double healthIndex) {
-    if (healthIndex >= 75) {
+    if (healthIndex >= 70) {
       return 'Resumen Semanal: El activo mantiene sus certificaciones de calidad y operación al día.';
     }
-    if (healthIndex >= 55) {
-      return 'Resumen Semanal: Operación estable. Indicadores preventivos dentro del margen de servicio.';
-    }
-    return 'Alerta Semanal: Se detectan servicios próximos a vencer. Agenda tu mantenimiento preventivo.';
+    return 'Alerta Semanal: Se detectan servicios próximos a vencer o atención requerida.';
   }
 
   /// Retorna los "Sellos de Calidad" (hitos logrados).
@@ -138,60 +135,60 @@ class VehicleHealthLogic {
     if (pctSoat > 0.9 && pctTecno > 0.9) {
       certs.add({
         'id': 'legal_certified',
-        'label': 'Legitimidad Total',
-        'description': 'Todo al día con la ley.',
-        'icon': 'gavel',
+        'label': 'Sello Legal',
+        'description': 'Documentos al día.',
+        'icon': 'description',
         'color': '0xFF2196F3',
       });
     }
 
-    if (pctFiltro > 0.8 && pctCadena > 0.8) {
+    if (pctCadena > 0.9 && pctFiltro > 0.9) {
       certs.add({
         'id': 'performance_certified',
-        'label': 'Corazón de Hierro',
-        'description': 'Transmisión y admisión OK.',
-        'icon': 'settings_input_component',
-        'color': '0xFFFF9800',
-      });
-    }
-
-    if (routeCount >= 10) {
-      certs.add({
-        'id': 'travel_pro',
-        'label': 'Viajero Experto',
-        'description': 'Más de 10 rutas registradas.',
-        'icon': 'map',
+        'label': 'Sello Mecánico',
+        'description': 'Componentes clave en excelente estado.',
+        'icon': 'build_circle',
         'color': '0xFF9C27B0',
       });
     }
 
-    if (efficiencyScore >= 90) {
+    if (routeCount >= 5) {
+      certs.add({
+        'id': 'travel_pro',
+        'label': 'Viajero Frecuente',
+        'description': 'Más de 5 trayectos registrados.',
+        'icon': 'explore',
+        'color': '0xFFFF9800',
+      });
+    }
+
+    if (efficiencyScore >= 80) {
       certs.add({
         'id': 'eco_driver',
-        'label': 'Pie de Pluma',
-        'description': 'Eficiencia de combustible > 90%.',
+        'label': 'Conductor Eficiente',
+        'description': 'Consumo óptimo de combustible.',
         'icon': 'eco',
         'color': '0xFF4CAF50',
       });
     }
 
-    if (totalSavings >= 50000) {
+    if (totalSavings > 10000) {
       certs.add({
         'id': 'smart_saver',
-        'label': 'Lobo de Wall Street',
-        'description': 'Ahorro mayor a \$50K COP.',
+        'label': 'Ahorrador Inteligente',
+        'description': 'Ahorro significativo en combustible.',
         'icon': 'savings',
-        'color': '0xFFFF4081',
+        'color': '0xFFFFD700',
       });
     }
 
     if (documentsComplete) {
       certs.add({
         'id': 'paperless',
-        'label': 'Nube Maestra',
-        'description': 'Todos los documentos digitales.',
-        'icon': 'cloud_done',
-        'color': '0xFF03A9F4',
+        'label': 'Guantera Digital',
+        'description': 'Documentación digital completa.',
+        'icon': 'folder_special',
+        'color': '0xFF00BCD4',
       });
     }
 
@@ -225,8 +222,8 @@ class VehicleHealthLogic {
     double lastKms = 0.0,
     double currentKms = 0.0,
     int cycleKms = 3000,
-    int cycleDays = 90,
-    double avgKmPerDay = 25.0,
+    int cycleDays = 30,
+    double? avgKmPerDay,
     int? baseDays,
     List<Map<String, dynamic>>? routeHistory,
   }) {
@@ -234,8 +231,8 @@ class VehicleHealthLogic {
       return {'status': 'Sin datos suficientes'};
     }
 
-    double finalAvgKmPerDay = avgKmPerDay;
-    if (routeHistory != null && routeHistory.isNotEmpty) {
+    double? computedAvgKm;
+    if (routeHistory != null) {
       final now = DateTime.now();
       final sevenDaysAgo = now.subtract(const Duration(days: 7));
       double totalKmLast7Days = 0;
@@ -249,36 +246,38 @@ class VehicleHealthLogic {
           totalKmLast7Days += dist;
         }
       }
-      if (totalKmLast7Days > 0) {
-        finalAvgKmPerDay = totalKmLast7Days / 7;
-      }
+      computedAvgKm = totalKmLast7Days / 7.0;
+    } else if (avgKmPerDay != null) {
+      computedAvgKm = avgKmPerDay;
     }
 
-    final int remainingDays = calculateProjectedRemainingDays(
-      lastDate: lastDate,
-      lastKms: lastKms,
-      cycleDays: cycleDays,
-      cycleKms: cycleKms,
-      currentKms: currentKms,
-      avgKmPerDay: finalAvgKmPerDay,
-    );
+    if (computedAvgKm == null) {
+      return {
+        'status': 'Sin uso reciente',
+        'item': item,
+      };
+    }
 
-    final estimatedDate = DateTime.now().add(Duration(days: remainingDays > 0 ? remainingDays : 0));
-    final bool isKmDominant = (lastKms > 0 && finalAvgKmPerDay > 0) &&
-        ((cycleKms - (currentKms - lastKms)) / finalAvgKmPerDay).round() < (cycleDays - DateTime.now().difference(lastDate).inDays);
+    const double standardDailyKm = 25.0;
+    final double wearFactor = (computedAvgKm / standardDailyKm).clamp(0.5, 4.0);
+
+    final int effectiveCycleDays = (cycleDays / wearFactor).round();
+    final int daysElapsed = DateTime.now().difference(lastDate).inDays;
+    final int remainingDays = effectiveCycleDays - daysElapsed;
+
+    final isOverdue = remainingDays <= 0;
+    final estimatedDate = DateTime.now().add(Duration(days: isOverdue ? 0 : remainingDays));
 
     return {
-      'status': remainingDays <= 0 ? 'Vencido' : 'Proyectado',
+      'status': isOverdue ? 'Vencido' : 'Proyectado',
       'days': remainingDays,
       'date': estimatedDate,
-      'kmPerDay': finalAvgKmPerDay,
+      'kmPerDay': computedAvgKm,
+      'wearFactor': wearFactor,
       'item': item,
-      'isKmDominant': isKmDominant,
-      'reason': remainingDays <= 0
-          ? 'Mantenimiento vencido'
-          : (isKmDominant ? 'Proyectado por ritmo de kilometraje' : 'Proyectado por tiempo'),
-      'risk': remainingDays <= 0 ? 'Alto' : (remainingDays <= 14 ? 'Medio' : 'Bajo'),
-      'isCritical': remainingDays <= 3,
+      'reason': isOverdue ? 'Uso intensivo detectado' : 'Proyectado por ritmo de uso',
+      'risk': isOverdue ? 'Alto' : (remainingDays <= 14 ? 'Medio' : 'Bajo'),
+      'isCritical': isOverdue || remainingDays <= 3,
     };
   }
 
