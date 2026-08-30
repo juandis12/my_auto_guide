@@ -94,12 +94,24 @@
                 android:resource="@xml/widget_info" />
         </receiver>
 
-        <receiver android:name="com.example.my_auto_guide.VehicleStatusWidgetProvider" android:exported="true">
+        <receiver android:name="com.example.my_auto_guide.VehicleStatusWidgetProvider"
+            android:label="Estado de Vehículo (Círculos)"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
             <meta-data android:name="android.appwidget.provider"
                 android:resource="@xml/health_widget_info" />
+        </receiver>
+
+        <receiver android:name="com.example.my_auto_guide.VehicleStatusListWidgetProvider"
+            android:label="Estado de Vehículo (Lista)"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider"
+                android:resource="@xml/health_list_widget_info" />
         </receiver>
 
         <!-- Home Widget Background Actions -->

@@ -9,18 +9,18 @@ import android.widget.RemoteViews;
 import es.antonborri.home_widget.HomeWidgetProvider;
 import java.io.File;
 
-public class VehicleStatusWidgetProvider extends HomeWidgetProvider {
+public class VehicleStatusListWidgetProvider extends HomeWidgetProvider {
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds, SharedPreferences widgetData) {
         for (int appWidgetId : appWidgetIds) {
-            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.health_widget_layout);
+            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.health_list_widget_layout);
 
-            // Cargar las imágenes renderizadas por Flutter (Grid 2x2 Samsung One UI)
-            setWidgetImage(views, widgetData, R.id.img_aceite, "widget_aceite");
-            setWidgetImage(views, widgetData, R.id.img_cadena, "widget_cadena");
-            setWidgetImage(views, widgetData, R.id.img_filtro, "widget_filtro");
-            setWidgetImage(views, widgetData, R.id.img_soat, "widget_soat");
+            // Cargar las barras horizontales renderizadas por Flutter
+            setWidgetImage(views, widgetData, R.id.img_list_aceite, "widget_list_aceite");
+            setWidgetImage(views, widgetData, R.id.img_list_cadena, "widget_list_cadena");
+            setWidgetImage(views, widgetData, R.id.img_list_filtro, "widget_list_filtro");
+            setWidgetImage(views, widgetData, R.id.img_list_soat, "widget_list_soat");
 
             appWidgetManager.updateAppWidget(appWidgetId, views);
         }

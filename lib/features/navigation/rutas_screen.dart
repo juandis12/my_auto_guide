@@ -20,6 +20,7 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../../core/services/supabase_service.dart';
 import '../../../core/services/sync_service.dart';
 import '../../../core/services/navigation_service.dart';
+import '../../../core/services/voice_navigation_service.dart';
 import 'domain/models/navigation_telemetry.dart';
 import 'logic/telemetry_calculator.dart';
 import 'presentation/controllers/navigation_controller.dart';
@@ -374,6 +375,7 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
     await prefs.setString('active_nav_vehicle_id', widget.vehiculoId);
     await prefs.setString('supabase_url', dotenv.get('SUPABASE_URL'));
     await prefs.setString('supabase_key', dotenv.get('SUPABASE_ANON_KEY'));
+    await prefs.setBool('is_navigating', true);
     
     if (!(await service.isRunning())) {
       await service.startService();
@@ -391,6 +393,9 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
 
   Future<void> _finalizarRuta({bool skipSummaryModal = false}) async {
     try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('is_navigating', false);
+
       final service = FlutterBackgroundService();
       if (await service.isRunning()) {
         service.invoke('stopService');
@@ -658,6 +663,26 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    FloatingActionButton.small(
+                      heroTag: 'btn_voice_nav',
+                      backgroundColor: const Color(0xFF1C1C1E).withOpacity(0.9),
+                      onPressed: () {
+                        setState(() {
+                          VoiceNavigationService().toggleMute();
+                        });
+                        AppSnackBar.show(
+                          context,
+                          VoiceNavigationService().isMuted ? 'Guía por voz desactivada' : 'Guía por voz activada',
+                          backgroundColor: VoiceNavigationService().isMuted ? Colors.grey[800]! : const Color(0xFF00FF87),
+                        );
+                      },
+                      child: Icon(
+                        VoiceNavigationService().isMuted ? Icons.volume_off_rounded : Icons.volume_up_rounded,
+                        color: VoiceNavigationService().isMuted ? Colors.white54 : const Color(0xFF00FF87),
+                        size: 20,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
                     FloatingActionButton.small(
                       heroTag: 'btn_recenter_map',
                       backgroundColor: const Color(0xFF1C1C1E).withOpacity(0.9),

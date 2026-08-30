@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/health_list_widget_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_background"
+    android:orientation="vertical"
+    android:padding="12dp">
+
+    <!-- Fila 1: Aceite -->
+    <ImageView
+        android:id="@+id/img_list_aceite"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginBottom="4dp"
+        android:scaleType="fitCenter" />
+
+    <!-- Fila 2: Cadena -->
+    <ImageView
+        android:id="@+id/img_list_cadena"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginBottom="4dp"
+        android:scaleType="fitCenter" />
+
+    <!-- Fila 3: Filtro -->
+    <ImageView
+        android:id="@+id/img_list_filtro"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginBottom="4dp"
+        android:scaleType="fitCenter" />
+
+    <!-- Fila 4: SOAT -->
+    <ImageView
+        android:id="@+id/img_list_soat"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:scaleType="fitCenter" />
+
+</LinearLayout>

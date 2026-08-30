@@ -1,12 +1,20 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:flutter/foundation.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import '../../domain/models/navigation_telemetry.dart';
 import '../../logic/telemetry_calculator.dart';
 import 'package:my_auto_guide/core/services/navigation_service.dart';
+import 'package:my_auto_guide/core/services/voice_navigation_service.dart';
 
-enum NavigationState { idle, routeReady, navigating, completed, freeTracking, viewingHistory }
+enum NavigationState {
+  idle,
+  ready,
+  navigating,
+  freeTracking,
+  completed,
+  viewingHistory,
+}
 
 /// Controlador de estado para la navegación GPS.
 /// Orquestador central entre el GPS, el Servicio de Fondo y la UI.
@@ -67,7 +75,7 @@ class NavigationController extends ChangeNotifier {
     _routeDurationMin = durationMin;
     _steps = steps;
     _currentStepIndex = 0;
-    _state = NavigationState.routeReady;
+    _state = NavigationState.ready;
     notifyListeners();
   }
 
@@ -110,6 +118,11 @@ class NavigationController extends ChangeNotifier {
     }
     _currentStepIndex = 0;
     _connectToBackgroundService();
+
+    if (!isFree && _destinationName.isNotEmpty) {
+      VoiceNavigationService().speak('Iniciando navegación hacia $_destinationName');
+    }
+    
     notifyListeners();
   }
 
@@ -156,6 +169,16 @@ class NavigationController extends ChangeNotifier {
           _currentStepIndex++;
         }
       }
+
+      // Emisión de instrucciones por voz TTS
+      if (_state == NavigationState.navigating && _steps.isNotEmpty) {
+        VoiceNavigationService().processTelemetry(
+          currentPos: pos,
+          steps: _steps,
+          currentStepIndex: _currentStepIndex,
+          destinationName: _destinationName,
+        );
+      }
     }
 
     _telemetry = _telemetry.copyWith(
@@ -179,6 +202,7 @@ class NavigationController extends ChangeNotifier {
 
   void stopNavigation() {
     _serviceSubscription?.cancel();
+    VoiceNavigationService().stop();
     _state = NavigationState.completed;
     notifyListeners();
   }

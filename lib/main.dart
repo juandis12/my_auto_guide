@@ -76,6 +76,18 @@ Future<void> main() async {
       await BackgroundNavService.initializeService();
       await AppWidgetLogic.initializeWidgetInteraction();
       
+      // Detener servicio en segundo plano si quedó activo sin navegación en curso para no dejar la notificación fija
+      try {
+        final service = FlutterBackgroundService();
+        if (await service.isRunning()) {
+          final prefs = await SharedPreferences.getInstance();
+          final isNavigating = prefs.getBool('is_navigating') ?? false;
+          if (!isNavigating) {
+            service.invoke('stopService');
+          }
+        }
+      } catch (_) {}
+
       // Detectar si la app se abrió desde un widget
       _checkWidgetLaunch();
     }
