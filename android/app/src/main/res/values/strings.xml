@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">My Auto Guide</string>
     <string name="widget_description">Controla tus recorridos GPS desde la pantalla de inicio.</string>
     <string name="widget_health_description">Estado de mantenimiento y trámites legales de tu vehículo.</string>
+    <string name="widget_health_list_description">Panel de salud y mantenimiento del vehículo estilo One UI.</string>
 </resources>

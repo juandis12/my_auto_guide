@@ -9,4 +9,4 @@
     android:initialLayout="@layout/health_list_widget_layout"
     android:resizeMode="horizontal|vertical"
     android:widgetCategory="home_screen"
-    android:description="@string/app_name" />
+    android:description="@string/widget_health_list_description" />
