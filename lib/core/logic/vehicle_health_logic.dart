@@ -83,11 +83,11 @@ class VehicleHealthLogic {
 
   /// Retorna la categoría profesional del estado del vehículo.
   static String getVehicleStatus(double healthIndex) {
-    if (healthIndex >= 95) return 'Estado de Exhibición';
-    if (healthIndex >= 85) return 'Mantenimiento Sobresaliente';
-    if (healthIndex >= 70) return 'Operación Óptima';
-    if (healthIndex >= 50) return 'Mantenimiento Requerido';
-    return 'Atención Inmediata';
+    if (healthIndex >= 90) return 'Estado de Exhibición';
+    if (healthIndex >= 75) return 'Mantenimiento Sobresaliente';
+    if (healthIndex >= 60) return 'Operación Óptima';
+    if (healthIndex >= 45) return 'Revisión Preventiva Sugerida';
+    return 'Atención Inmediata Requerida';
   }
 
   /// Retorna el Nivel de Usuario basado en el Score.
@@ -100,13 +100,13 @@ class VehicleHealthLogic {
 
   /// Retorna una descripción técnica del estado enfocada en el reporte semanal.
   static String getWeeklySummary(double healthIndex) {
-    if (healthIndex >= 85) {
-      return 'Resumen Semanal: El activo mantiene sus certificaciones de calidad. Valorización estable.';
+    if (healthIndex >= 75) {
+      return 'Resumen Semanal: El activo mantiene sus certificaciones de calidad y operación al día.';
     }
-    if (healthIndex >= 70) {
-      return 'Resumen Semanal: Mantenimientos dentro de rango. Se recomienda revisión de indicadores preventivos.';
+    if (healthIndex >= 55) {
+      return 'Resumen Semanal: Operación estable. Indicadores preventivos dentro del margen de servicio.';
     }
-    return 'Alerta Semanal: Se han detectado desviaciones en el cronograma de mantenimiento que afectan la salud del activo.';
+    return 'Alerta Semanal: Se detectan servicios próximos a vencer. Agenda tu mantenimiento preventivo.';
   }
 
   /// Retorna los "Sellos de Calidad" (hitos logrados).

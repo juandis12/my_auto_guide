@@ -23,8 +23,14 @@ class TelemetryCalculator {
     return distMeters / 1000.0;
   }
 
-  /// Calcula la velocidad promedio basada en distancia total recorrida y tiempo transcurrido (en segundos).
-  static double calculateAverageSpeed({
+  /// Calcula la velocidad promedio basada en muestras puntuales de velocidad acumuladas.
+  static double calculateAverageSpeed(double accumulatedSpeed, int speedSamples) {
+    if (speedSamples <= 0) return 0.0;
+    return accumulatedSpeed / speedSamples;
+  }
+
+  /// Calcula la velocidad promedio cinemática basada en distancia total recorrida y tiempo transcurrido (en segundos).
+  static double calculateKinematicAverageSpeed({
     required double distanceKm,
     required int durationSeconds,
     double fallbackSpeedKmH = 0.0,

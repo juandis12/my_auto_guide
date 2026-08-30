@@ -4,8 +4,9 @@ import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:latlong2/latlong.dart';
 import '../../domain/models/navigation_telemetry.dart';
 import '../../logic/telemetry_calculator.dart';
+import '../../../core/services/navigation_service.dart';
 
-enum NavigationState { idle, routeReady, navigating, completed, freeTracking }
+enum NavigationState { idle, routeReady, navigating, completed, freeTracking, viewingHistory }
 
 /// Controlador de estado para la navegación GPS.
 /// Orquestador central entre el GPS, el Servicio de Fondo y la UI.
@@ -22,6 +23,8 @@ class NavigationController extends ChangeNotifier {
   List<LatLng> _routePoints = [];
   double _routeDistanceKm = 0.0;
   double _routeDurationMin = 0.0;
+  List<NavigationStep> _steps = [];
+  int _currentStepIndex = 0;
 
   StreamSubscription<Map<String, dynamic>?>? _serviceSubscription;
 
@@ -39,6 +42,13 @@ class NavigationController extends ChangeNotifier {
   List<LatLng> get routePoints => _routePoints;
   double get routeDistanceKm => _routeDistanceKm;
   double get routeDurationMin => _routeDurationMin;
+  List<NavigationStep> get steps => _steps;
+  int get currentStepIndex => _currentStepIndex;
+
+  NavigationStep? get currentStep {
+    if (_steps.isEmpty || _currentStepIndex >= _steps.length) return null;
+    return _steps[_currentStepIndex];
+  }
 
   // ─── ACCIONES DE NAVEGACIÓN ──────────────────────────────
 
@@ -48,13 +58,40 @@ class NavigationController extends ChangeNotifier {
     required List<LatLng> points,
     required double distanceKm,
     required double durationMin,
+    List<NavigationStep> steps = const [],
   }) {
     _destination = destination;
     _destinationName = destinationName;
     _routePoints = points;
     _routeDistanceKm = distanceKm;
     _routeDurationMin = durationMin;
+    _steps = steps;
+    _currentStepIndex = 0;
     _state = NavigationState.routeReady;
+    notifyListeners();
+  }
+
+  void loadHistoricalRoute({
+    required String destinationName,
+    required List<LatLng> points,
+    required double distanceKm,
+    double? maxSpeedKmH,
+    double? avgSpeedKmH,
+  }) {
+    _destination = points.isNotEmpty ? points.last : null;
+    _destinationName = destinationName;
+    _routePoints = points;
+    _routeDistanceKm = distanceKm;
+    _routeDurationMin = 0.0;
+    _steps = [];
+    _currentStepIndex = 0;
+    _state = NavigationState.viewingHistory;
+    _telemetry = _telemetry.copyWith(
+      travelledPoints: points,
+      distanceKm: distanceKm,
+      maxSpeedKmH: maxSpeedKmH ?? _telemetry.maxSpeedKmH,
+      averageSpeedKmH: avgSpeedKmH ?? _telemetry.averageSpeedKmH,
+    );
     notifyListeners();
   }
 
@@ -62,13 +99,16 @@ class NavigationController extends ChangeNotifier {
     _state = isFree ? NavigationState.freeTracking : NavigationState.navigating;
     _telemetry = NavigationTelemetry(
       startTime: DateTime.now(),
+      currentPos: _telemetry.currentPos,
       travelledPoints: _telemetry.currentPos != null ? [_telemetry.currentPos!] : [],
     );
     if (isFree) {
       _destination = null;
       _destinationName = 'Recorrido Libre';
       _routePoints = [];
+      _steps = [];
     }
+    _currentStepIndex = 0;
     _connectToBackgroundService();
     notifyListeners();
   }
@@ -107,6 +147,15 @@ class NavigationController extends ChangeNotifier {
           );
         }
       }
+
+      // Actualizar el paso de navegación actual según la proximidad
+      if (_steps.isNotEmpty && _currentStepIndex < _steps.length) {
+        final stepLoc = _steps[_currentStepIndex].location;
+        final distToStep = const Distance().as(LengthUnit.Meter, pos, stepLoc);
+        if (distToStep < 25 && _currentStepIndex < _steps.length - 1) {
+          _currentStepIndex++;
+        }
+      }
     }
 
     _telemetry = _telemetry.copyWith(
@@ -117,10 +166,10 @@ class NavigationController extends ChangeNotifier {
       averageSpeedKmH: avgSpeed,
     );
 
-    // Auto-completar si llegamos al destino
+    // Auto-completar si llegamos al destino (< 40 metros)
     if (_state == NavigationState.navigating && _destination != null) {
-      final distanceToEnd = Distance().as(LengthUnit.Meter, pos, _destination!);
-      if (distanceToEnd < 50) {
+      final distanceToEnd = const Distance().as(LengthUnit.Meter, pos, _destination!);
+      if (distanceToEnd < 40) {
         _state = NavigationState.completed;
       }
     }
@@ -143,6 +192,8 @@ class NavigationController extends ChangeNotifier {
     _destination = null;
     _destinationName = '';
     _routePoints = [];
+    _steps = [];
+    _currentStepIndex = 0;
     _routeDistanceKm = 0.0;
     _routeDurationMin = 0.0;
     notifyListeners();
@@ -155,6 +206,8 @@ class NavigationController extends ChangeNotifier {
     _destination = null;
     _destinationName = '';
     _routePoints = [];
+    _steps = [];
+    _currentStepIndex = 0;
     notifyListeners();
   }
 
@@ -181,3 +234,4 @@ class NavigationController extends ChangeNotifier {
     super.dispose();
   }
 }
+

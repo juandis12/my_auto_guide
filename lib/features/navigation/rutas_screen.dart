@@ -1,7 +1,8 @@
 // =============================================================================
-// rutas_screen.dart — NAVEGACIÓN GPS REFACTORIZADA (MODULAR)
+// rutas_screen.dart — NAVEGACIÓN GPS PROFESIONAL & INTELIGENTE (GOOGLE MAPS STYLE)
 // =============================================================================
 import 'dart:async';
+import 'dart:convert';
 import 'dart:ui' show ImageFilter;
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
@@ -47,10 +48,12 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
   final SupabaseClient supabase = SupabaseService().client;
   final MapController _mapCtrl = MapController();
   final TextEditingController _searchCtrl = TextEditingController();
+  final FocusNode _searchFocusNode = FocusNode();
 
   late NavigationController _controller;
   bool _isLoadingRoute = false;
   String? _vehicleImagePath;
+  String _vehiclePlate = '';
   
   List<NominatimPlace> _searchResults = [];
   bool _isSearching = false;
@@ -73,7 +76,13 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
   }
 
   void _onControllerStateUpdate() {
-    if (mounted) setState(() {});
+    if (mounted) {
+      // Si la navegación finalizó por auto-arribo al destino (< 40m)
+      if (_controller.state == NavigationState.completed) {
+        _finalizarRuta();
+      }
+      setState(() {});
+    }
   }
 
   @override
@@ -82,6 +91,7 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
     _controller.removeListener(_onControllerStateUpdate);
     _idlePositionSubscription?.cancel();
     _searchCtrl.dispose();
+    _searchFocusNode.dispose();
     super.dispose();
   }
 
@@ -89,13 +99,15 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
   
   Future<void> _cargarInfoVehiculo() async {
     try {
-      final data = await supabase.from('vehiculos').select('modelo, marca, image_path').eq('id', widget.vehiculoId).single();
+      final data = await supabase.from('vehiculos').select('modelo, marca, placa, image_path').eq('id', widget.vehiculoId).single();
       final marca = (data['marca'] as String? ?? '').toUpperCase();
       final modelo = data['modelo'] ?? 'Vehículo';
+      final placa = data['placa'] ?? '';
       final isCar = marca == 'TOYOTA' || marca == 'MAZDA' || marca == 'CHEVROLET';
       
       setState(() {
         _vehicleImagePath = data['image_path'] as String?;
+        _vehiclePlate = placa;
       });
       
       _controller = NavigationController(
@@ -111,10 +123,12 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
     final permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) await Geolocator.requestPermission();
     
-    final pos = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    final latLng = LatLng(pos.latitude, pos.longitude);
-    _controller.updateCurrentPosition(latLng);
-    _mapCtrl.move(latLng, 15);
+    try {
+      final pos = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      final latLng = LatLng(pos.latitude, pos.longitude);
+      _controller.updateCurrentPosition(latLng);
+      _mapCtrl.move(latLng, 15);
+    } catch (_) {}
   }
 
   void _iniciarSeguimientoIdle() {
@@ -146,7 +160,7 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
     });
   }
 
-  // ─── ACCIONES DE BÚSQUEDA Y RUTA ────────────────────────
+  // ─── ACCIONES DE BÚSQUEDA Y MAPA TÁCTIL ─────────────────
   
   Future<void> _buscarDestino(String query) async {
     if (query.trim().isEmpty) {
@@ -164,6 +178,8 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
   }
 
   void _seleccionarDestino(NominatimPlace place) {
+    _searchFocusNode.unfocus();
+    FocusScope.of(context).unfocus();
     _controller.setRouteReady(
       destination: LatLng(place.lat, place.lon),
       destinationName: place.displayName,
@@ -172,8 +188,61 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
       durationMin: 0.0,
     );
     _searchCtrl.text = _controller.destinationName;
-    _searchResults = [];
+    setState(() {
+      _searchResults = [];
+    });
     _trazarRuta();
+  }
+
+  /// Manejo táctil del mapa: Toque o Long Press para seleccionar punto de destino
+  void _onMapTappedOrLongPressed(LatLng point) async {
+    _searchFocusNode.unfocus();
+    FocusScope.of(context).unfocus();
+    setState(() {
+      _searchResults = [];
+    });
+
+    // Si está en navegación activa, un toque no cambia el destino directamente
+    if (_controller.state == NavigationState.navigating || _controller.state == NavigationState.freeTracking) {
+      return;
+    }
+
+    final curPos = _controller.telemetry.currentPos;
+    if (curPos == null) {
+      AppSnackBar.show(context, 'Esperando señal GPS...');
+      return;
+    }
+
+    setState(() => _isLoadingRoute = true);
+
+    try {
+      // 1. Geocodificación inversa para nombre amigable
+      final placeName = await NavigationService().reverseGeocode(point);
+      _searchCtrl.text = placeName;
+
+      // 2. Calcular ruta vial con OSRM
+      final route = await NavigationService().calculateRoute(curPos, point);
+
+      _controller.setRouteReady(
+        destination: point,
+        destinationName: placeName,
+        points: route.points,
+        distanceKm: route.distanceKm,
+        durationMin: route.durationMin,
+        steps: route.steps,
+      );
+
+      _mapCtrl.fitCamera(
+        CameraFit.bounds(
+          bounds: LatLngBounds.fromPoints([curPos, point]),
+          padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 90),
+        ),
+      );
+    } catch (e) {
+      if (mounted) AppSnackBar.show(context, e.toString());
+    } finally {
+      if (mounted) setState(() => _isLoadingRoute = false);
+    }
   }
 
   Future<void> _trazarRuta() async {
@@ -190,8 +259,14 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
         points: route.points,
         distanceKm: route.distanceKm,
         durationMin: route.durationMin,
+        steps: route.steps,
       );
-      _mapCtrl.fitCamera(CameraFit.bounds(bounds: LatLngBounds.fromPoints([curPos, dest]), padding: const EdgeInsets.all(60)));
+      _mapCtrl.fitCamera(
+        CameraFit.bounds(
+          bounds: LatLngBounds.fromPoints([curPos, dest]),
+          padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 90),
+        ),
+      );
     } catch (e) {
       if (mounted) AppSnackBar.show(context, e.toString());
     } finally {
@@ -199,9 +274,63 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
     }
   }
 
+  /// Carga y visualiza en el mapa una ruta seleccionada del historial
+  void _cargarRutaDesdeHistorial(Map<String, dynamic> route) async {
+    final destName = route['destino_name'] ?? route['destino'] ?? 'Destino Histórico';
+    final double dist = ((route['distancia_km'] ?? route['distancia'] ?? 0.0) as num).toDouble();
+    final double? vMax = (route['velocidad_max'] as num?)?.toDouble();
+    final double? vProm = (route['velocidad_prom'] as num?)?.toDouble();
+
+    List<LatLng> points = [];
+    final rawPoints = route['via_puntos'] ?? route['viaPuntos'];
+    if (rawPoints != null) {
+      try {
+        dynamic decoded = rawPoints;
+        if (rawPoints is String) decoded = jsonDecode(rawPoints);
+        if (decoded is List) {
+          for (var p in decoded) {
+            if (p is Map) {
+              final lat = (p['lat'] ?? p['latitude'] as num?)?.toDouble() ?? 0.0;
+              final lng = (p['lng'] ?? p['longitude'] as num?)?.toDouble() ?? 0.0;
+              if (lat != 0.0 && lng != 0.0) points.add(LatLng(lat, lng));
+            } else if (p is List && p.length >= 2) {
+              final lng = (p[0] as num).toDouble();
+              final lat = (p[1] as num).toDouble();
+              if (lat != 0.0 && lng != 0.0) points.add(LatLng(lat, lng));
+            }
+          }
+        }
+      } catch (e) {
+        debugPrint('Error parseando puntos históricos: $e');
+      }
+    }
+
+    if (points.isNotEmpty) {
+      _controller.loadHistoricalRoute(
+        destinationName: destName,
+        points: points,
+        distanceKm: dist,
+        maxSpeedKmH: vMax,
+        avgSpeedKmH: vProm,
+      );
+      _mapCtrl.fitCamera(
+        CameraFit.bounds(
+          bounds: LatLngBounds.fromPoints(points),
+          padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 80),
+        ),
+      );
+      AppSnackBar.show(context, 'Ruta histórica cargada en el mapa.', backgroundColor: const Color(0xFF035880));
+    } else {
+      AppSnackBar.show(context, 'Ruta cargada: $destName ($dist km)');
+    }
+  }
+
   // ─── CONTROL DE NAVEGACIÓN ──────────────────────────────
   
   void _iniciarNav({bool isFree = false}) async {
+    _searchFocusNode.unfocus();
+    FocusScope.of(context).unfocus();
+
     if (await Permission.locationAlways.isDenied) await Permission.locationAlways.request();
 
     // Solicitar exención de ahorro de batería para evitar que Android suspenda el tracking
@@ -221,6 +350,12 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
     }
     
     _controller.startNavigation(isFree: isFree);
+
+    // Centrar mapa en la ubicación del usuario
+    final curPos = _controller.telemetry.currentPos;
+    if (curPos != null) {
+      _mapCtrl.move(curPos, 16.5);
+    }
   }
 
   Future<void> _finalizarRuta() async {
@@ -232,8 +367,7 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
     
     if (userId == null) {
       if (mounted) {
-        AppSnackBar.show(context,
-            'Error: No se encontró sesión de usuario activa para guardar el trayecto.');
+        AppSnackBar.show(context, 'Error: No se encontró sesión de usuario activa para guardar el trayecto.');
       }
       _controller.stopNavigation();
       return;
@@ -242,13 +376,11 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
     final durationSec = t.startTime != null ? DateTime.now().difference(t.startTime!).inSeconds : 0;
     
     // Calcular velocidad promedio cinemática exacta
-    final double calculatedAvgSpeed = TelemetryCalculator.calculateAverageSpeed(
+    final double calculatedAvgSpeed = TelemetryCalculator.calculateKinematicAverageSpeed(
       distanceKm: t.distanceKm,
       durationSeconds: durationSec,
       fallbackSpeedKmH: t.averageSpeedKmH,
     );
-
-    debugPrint('Guardando trayecto: Distancia: ${t.distanceKm} km, Duración: $durationSec s, VelProm: $calculatedAvgSpeed km/h');
 
     final impact = TelemetryCalculator.estimateImpact(
       distanceKm: t.distanceKm, 
@@ -257,8 +389,6 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
       isCar: _controller.isCar
     );
 
-    // Calcular kilómetros a sumar al odómetro del vehículo.
-    // Si recorrió >= 0.1 km (100 metros) y < 1.0 km, se suma al menos 1 km al vehículo.
     final int kmsToAdd = (t.distanceKm >= 0.1)
         ? (t.distanceKm < 1.0 ? 1 : t.distanceKm.round())
         : 0;
@@ -289,15 +419,14 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
       } catch (e) {
         debugPrint('Error al guardar trayecto localmente: $e');
         if (mounted) {
-          AppSnackBar.show(
-              context, 'Error al guardar el trayecto localmente: $e');
+          AppSnackBar.show(context, 'Error al guardar el trayecto localmente: $e');
         }
       }
     } else {
       if (mounted) {
         AppSnackBar.show(
           context,
-          'Recorrido demasiado corto o sin cambios de ubicación. No se guardó.',
+          'Recorrido demasiado corto. No se registraron cambios significativos.',
           backgroundColor: Colors.orange,
         );
       }
@@ -324,8 +453,14 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
       );
     }
 
-    // Limpiar las líneas y reiniciar el controlador a estado Live Idle
     _controller.clearRouteAndReset();
+  }
+
+  void _recenterMap() {
+    final curPos = _controller.telemetry.currentPos;
+    if (curPos != null) {
+      _mapCtrl.move(curPos, 16.5);
+    }
   }
 
   // ─── BUILD UI ───────────────────────────────────────────
@@ -339,7 +474,6 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
       canPop: state != NavigationState.navigating && state != NavigationState.freeTracking,
       onPopInvoked: (didPop) async {
         if (didPop) return;
-        // Mostrar diálogo de confirmación para salir y finalizar la ruta
         final ok = await showDialog<bool>(
           context: context,
           builder: (ctx) => AlertDialog(
@@ -356,9 +490,9 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
               ),
               FilledButton(
                 onPressed: () async {
-                  Navigator.pop(ctx, false); // Cierra diálogo
-                  await _finalizarRuta();    // Finaliza y guarda
-                  if (mounted) Navigator.pop(context); // Sale de la pantalla
+                  Navigator.pop(ctx, false);
+                  await _finalizarRuta();
+                  if (mounted) Navigator.pop(context);
                 },
                 child: const Text('Guardar y Salir'),
               ),
@@ -373,117 +507,152 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
         }
       },
       child: Scaffold(
-        body: Stack(
-          children: [
-            _buildMap(t),
-            _buildTopSearch(),
-            StreamBuilder<RadarAlertState>(
-              stream: CameraRadarService().alertStream,
-              builder: (context, snapshot) {
-                final alert = snapshot.data ?? RadarAlertState.clear();
-                final isSpeeding = alert.isSpeeding;
-                final isNear = alert.isNearCamera;
+        resizeToAvoidBottomInset: false,
+        body: GestureDetector(
+          onTap: () {
+            _searchFocusNode.unfocus();
+            FocusScope.of(context).unfocus();
+          },
+          behavior: HitTestBehavior.translucent,
+          child: Stack(
+            children: [
+              _buildMap(t),
+              _buildTopSearch(),
+              
+              // Banner Turn-by-Turn durante Navegación
+              if (state == NavigationState.navigating && _controller.currentStep != null)
+                _buildTurnByTurnBanner(_controller.currentStep!),
 
-                return Stack(
-                  children: [
-                    Positioned(
-                      top: 0, left: 0, right: 0,
-                      height: 5,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: isSpeeding
-                              ? Colors.redAccent
-                              : (isNear ? Colors.orangeAccent : const Color(0xFF00FF87)),
-                          boxShadow: [
-                            BoxShadow(
-                              color: isSpeeding
-                                  ? Colors.red.withOpacity(0.8)
-                                  : (isNear ? Colors.orange.withOpacity(0.8) : const Color(0xFF00FF87).withOpacity(0.5)),
-                              blurRadius: 10,
-                              spreadRadius: 2,
-                            )
-                          ],
+              // Alertas de Fotomulta y Radar
+              StreamBuilder<RadarAlertState>(
+                stream: CameraRadarService().alertStream,
+                builder: (context, snapshot) {
+                  final alert = snapshot.data ?? RadarAlertState.clear();
+                  final isSpeeding = alert.isSpeeding;
+                  final isNear = alert.isNearCamera;
+
+                  return Stack(
+                    children: [
+                      Positioned(
+                        top: 0, left: 0, right: 0,
+                        height: 5,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: isSpeeding
+                                ? Colors.redAccent
+                                : (isNear ? Colors.orangeAccent : const Color(0xFF00FF87)),
+                            boxShadow: [
+                              BoxShadow(
+                                color: isSpeeding
+                                    ? Colors.red.withOpacity(0.8)
+                                    : (isNear ? Colors.orange.withOpacity(0.8) : const Color(0xFF00FF87).withOpacity(0.5)),
+                                blurRadius: 10,
+                                spreadRadius: 2,
+                              )
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    if (isNear && alert.nearestCamera != null)
-                      Positioned(
-                        top: 110, left: 20, right: 20,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(16),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                              decoration: BoxDecoration(
-                                color: isSpeeding
-                                    ? const Color(0xFFFF3B30).withOpacity(0.85)
-                                    : const Color(0xFF1C1C1E).withOpacity(0.8),
-                                borderRadius: BorderRadius.circular(16),
-                                border: Border.all(
-                                  color: isSpeeding ? Colors.redAccent : Colors.orangeAccent.withOpacity(0.5),
-                                  width: 1.5,
+                      if (isNear && alert.nearestCamera != null)
+                        Positioned(
+                          top: 110, left: 20, right: 20,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(16),
+                            child: BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                decoration: BoxDecoration(
+                                  color: isSpeeding
+                                      ? const Color(0xFFFF3B30).withOpacity(0.85)
+                                      : const Color(0xFF1C1C1E).withOpacity(0.8),
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(
+                                    color: isSpeeding ? Colors.redAccent : Colors.orangeAccent.withOpacity(0.5),
+                                    width: 1.5,
+                                  ),
                                 ),
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    Icons.camera_alt_rounded,
-                                    color: isSpeeding ? Colors.white : Colors.orangeAccent,
-                                    size: 20,
-                                  ),
-                                  const SizedBox(width: 10),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text(
-                                          '📷 FOTOMULTA a ${alert.distanceMeters.round()}m (${alert.nearestCamera!.city})',
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        Text(
-                                          'Límite: ${alert.nearestCamera!.speedLimitKmH.round()} km/h | Actual: ${alert.currentSpeedKmH.round()} km/h',
-                                          style: TextStyle(
-                                            color: Colors.white.withOpacity(0.8),
-                                            fontSize: 11,
-                                          ),
-                                        ),
-                                      ],
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.camera_alt_rounded,
+                                      color: isSpeeding ? Colors.white : Colors.orangeAccent,
+                                      size: 20,
                                     ),
-                                  ),
-                                ],
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            '📷 FOTOMULTA a ${alert.distanceMeters.round()}m (${alert.nearestCamera!.city})',
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            'Límite: ${alert.nearestCamera!.speedLimitKmH.round()} km/h | Actual: ${alert.currentSpeedKmH.round()} km/h',
+                                            style: TextStyle(
+                                              color: Colors.white.withOpacity(0.8),
+                                              fontSize: 11,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                  ],
-                );
-              },
-            ),
-            Positioned(
-              right: 16,
-              bottom: 160,
-              child: FloatingActionButton(
-                heroTag: 'btn_waze_report',
-                backgroundColor: const Color(0xFF0A84FF),
-                onPressed: () {
-                  final pos = t.currentPos;
-                  if (pos != null) {
-                    WazeReportSheet.show(context, lat: pos.latitude, lng: pos.longitude);
-                  }
+                    ],
+                  );
                 },
-                child: const Icon(Icons.add_location_alt_rounded, color: Colors.white),
               ),
-            ),
-            _buildBottomPanel(t, state),
-            if (_isLoadingRoute) const Center(child: CircularProgressIndicator()),
-          ],
+
+              // Botones Flotantes Laterales (Reportes Waze y Recentrar)
+              Positioned(
+                right: 16,
+                bottom: (state == NavigationState.navigating || state == NavigationState.routeReady) ? 220 : 160,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    FloatingActionButton.small(
+                      heroTag: 'btn_recenter_map',
+                      backgroundColor: const Color(0xFF1C1C1E).withOpacity(0.9),
+                      onPressed: _recenterMap,
+                      child: const Icon(Icons.my_location_rounded, color: Color(0xFF00FF87), size: 20),
+                    ),
+                    const SizedBox(height: 10),
+                    FloatingActionButton(
+                      heroTag: 'btn_waze_report',
+                      backgroundColor: const Color(0xFF0A84FF),
+                      onPressed: () {
+                        final pos = t.currentPos;
+                        if (pos != null) {
+                          WazeReportSheet.show(context, lat: pos.latitude, lng: pos.longitude);
+                        }
+                      },
+                      child: const Icon(Icons.add_location_alt_rounded, color: Colors.white),
+                    ),
+                  ],
+                ),
+              ),
+
+              _buildBottomPanel(t, state),
+              if (_isLoadingRoute)
+                Container(
+                  color: Colors.black26,
+                  child: const Center(
+                    child: CircularProgressIndicator(color: Color(0xFF00C6FF)),
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );
@@ -493,21 +662,18 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
     final stadiaKey = dotenv.isInitialized ? dotenv.get('STADIA_API_KEY', fallback: '') : '';
     final cartoKey = dotenv.isInitialized ? dotenv.get('CARTO_API_KEY', fallback: '') : '';
     
-    // 1. Si el usuario configuró Stadia Maps (100% gratis con plan de desarrollador)
     if (stadiaKey.trim().isNotEmpty) {
       return isDark
           ? 'https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}@2x.png?api_key=${stadiaKey.trim()}'
           : 'https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}@2x.png?api_key=${stadiaKey.trim()}';
     }
 
-    // 2. Si tiene Carto con llave
     if (cartoKey.trim().isNotEmpty) {
       return isDark
           ? 'https://basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}@2x.png?api_key=${cartoKey.trim()}'
           : 'https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png?api_key=${cartoKey.trim()}';
     }
 
-    // 3. Proveedor por defecto 100% GRATUITO sin API KEY ni registros ni marcas de agua (OpenStreetMap)
     return 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
   }
 
@@ -517,7 +683,12 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
     
     return FlutterMap(
       mapController: _mapCtrl,
-      options: MapOptions(initialCenter: t.currentPos!, initialZoom: 15),
+      options: MapOptions(
+        initialCenter: t.currentPos!,
+        initialZoom: 15,
+        onTap: (tapPosition, point) => _onMapTappedOrLongPressed(point),
+        onLongPress: (tapPosition, point) => _onMapTappedOrLongPressed(point),
+      ),
       children: [
         TileLayer(
           urlTemplate: _getMapTileUrl(isDark),
@@ -525,28 +696,24 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
         ),
         if (_controller.routePoints.isNotEmpty)
           PolylineLayer(polylines: [
-            // Línea externa de neón (sombra de ruta)
             Polyline(
               points: _controller.routePoints,
               strokeWidth: 8,
-              color: Colors.blue.withOpacity(0.3),
+              color: Colors.blue.withOpacity(0.35),
             ),
-            // Línea interna de ruta (núcleo brillante)
             Polyline(
               points: _controller.routePoints,
-              strokeWidth: 4,
+              strokeWidth: 4.5,
               color: const Color(0xFF00C6FF),
             ),
           ]),
         if (t.travelledPoints.isNotEmpty)
           PolylineLayer(polylines: [
-            // Línea externa de neón para puntos recorridos
             Polyline(
               points: t.travelledPoints,
               strokeWidth: 9,
-              color: Colors.green.withOpacity(0.3),
+              color: Colors.green.withOpacity(0.35),
             ),
-            // Línea interna brillante para puntos recorridos
             Polyline(
               points: t.travelledPoints,
               strokeWidth: 5,
@@ -557,17 +724,17 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
           if (_controller.destination != null)
             Marker(
               point: _controller.destination!,
-              width: 45,
-              height: 45,
+              width: 48,
+              height: 48,
               child: const Icon(
                 Icons.location_on,
                 color: Colors.redAccent,
-                size: 40,
+                size: 44,
                 shadows: [
                   Shadow(
-                    color: Colors.black38,
-                    blurRadius: 6,
-                    offset: Offset(0, 3),
+                    color: Colors.black45,
+                    blurRadius: 8,
+                    offset: Offset(0, 4),
                   ),
                 ],
               ),
@@ -613,8 +780,8 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
 
               return Marker(
                 point: LatLng(a.latitude, a.longitude),
-                width: 40,
-                height: 40,
+                width: 38,
+                height: 38,
                 child: GestureDetector(
                   onTap: () {
                     showDialog(
@@ -655,7 +822,7 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
                         ),
                       ],
                     ),
-                    child: Icon(iconData, color: iconColor, size: 22),
+                    child: Icon(iconData, color: iconColor, size: 20),
                   ),
                 ),
               );
@@ -665,6 +832,74 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
           },
         ),
       ],
+    );
+  }
+
+  Widget _buildTurnByTurnBanner(NavigationStep step) {
+    return Positioned(
+      top: 110,
+      left: 16,
+      right: 16,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(18),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: const Color(0xFF035880).withOpacity(0.92),
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: const Color(0xFF00FF87).withOpacity(0.4), width: 1.2),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.3),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                )
+              ],
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF00FF87),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.turn_right_rounded, color: Colors.black, size: 24),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        step.instruction,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      if (step.distanceMeters > 0)
+                        Text(
+                          'En aprox. ${step.distanceMeters.round()} metros',
+                          style: TextStyle(
+                            color: Colors.white.withOpacity(0.85),
+                            fontSize: 12,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -680,10 +915,10 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
               filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
               child: Container(
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF1C1C1E).withOpacity(0.8) : Colors.white.withOpacity(0.85),
+                  color: isDark ? const Color(0xFF1C1C1E).withOpacity(0.88) : Colors.white.withOpacity(0.92),
                   borderRadius: BorderRadius.circular(24),
                   border: Border.all(
-                    color: isDark ? Colors.white.withOpacity(0.12) : Colors.black.withOpacity(0.08),
+                    color: isDark ? Colors.white.withOpacity(0.15) : Colors.black.withOpacity(0.08),
                     width: 1.2,
                   ),
                   boxShadow: [
@@ -696,17 +931,50 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
                 ),
                 child: TextField(
                   controller: _searchCtrl,
+                  focusNode: _searchFocusNode,
+                  textInputAction: TextInputAction.search,
+                  onSubmitted: (value) {
+                    _searchFocusNode.unfocus();
+                    FocusScope.of(context).unfocus();
+                    _buscarDestino(value);
+                  },
+                  onTapOutside: (_) => _searchFocusNode.unfocus(),
                   style: TextStyle(color: isDark ? Colors.white : Colors.black87),
                   decoration: InputDecoration(
-                    hintText: '¿A dónde vas?',
-                    hintStyle: TextStyle(color: isDark ? Colors.white54 : Colors.black45),
+                    hintText: '¿A dónde vas? (Toca o mantén en el mapa)',
+                    hintStyle: TextStyle(color: isDark ? Colors.white54 : Colors.black45, fontSize: 13),
                     prefixIcon: Icon(Icons.search, color: isDark ? Colors.white70 : Colors.black54),
-                    suffixIcon: IconButton(
-                      icon: Icon(Icons.history, color: isDark ? Colors.white70 : Colors.black54), 
-                      onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => HistorialRutasScreen(vehiculoId: widget.vehiculoId))),
+                    suffixIcon: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (_searchCtrl.text.isNotEmpty)
+                          IconButton(
+                            icon: const Icon(Icons.clear_rounded, size: 18),
+                            onPressed: () {
+                              _searchCtrl.clear();
+                              _controller.clearRouteAndReset();
+                              setState(() => _searchResults = []);
+                            },
+                          ),
+                        IconButton(
+                          tooltip: 'Historial de Rutas',
+                          icon: Icon(Icons.history_rounded, color: isDark ? Colors.white70 : Colors.black54), 
+                          onPressed: () async {
+                            _searchFocusNode.unfocus();
+                            FocusScope.of(context).unfocus();
+                            final selected = await Navigator.push<Map<String, dynamic>>(
+                              context, 
+                              MaterialPageRoute(builder: (_) => HistorialRutasScreen(vehiculoId: widget.vehiculoId)),
+                            );
+                            if (selected != null) {
+                              _cargarRutaDesdeHistorial(selected);
+                            }
+                          },
+                        ),
+                      ],
                     ),
                     border: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(vertical: 15),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 14),
                   ),
                   onChanged: _buscarDestino,
                 ),
@@ -722,18 +990,25 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
                   height: 250,
                   margin: const EdgeInsets.only(top: 8),
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF1C1C1E).withOpacity(0.85) : Colors.white.withOpacity(0.9),
+                    color: isDark ? const Color(0xFF1C1C1E).withOpacity(0.92) : Colors.white.withOpacity(0.95),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: isDark ? Colors.white.withOpacity(0.12) : Colors.black.withOpacity(0.08),
+                      color: isDark ? Colors.white.withOpacity(0.15) : Colors.black.withOpacity(0.08),
                     ),
                   ),
-                  child: ListView.builder(
+                  child: ListView.separated(
                     itemCount: _searchResults.length,
+                    separatorBuilder: (_, __) => Divider(height: 1, color: isDark ? Colors.white10 : Colors.black12),
                     itemBuilder: (ctx, i) => ListTile(
+                      leading: const Icon(Icons.location_on_outlined, color: Color(0xFF00C6FF), size: 20),
                       title: Text(
                         _searchResults[i].displayName,
-                        style: TextStyle(color: isDark ? Colors.white : Colors.black87),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: isDark ? Colors.white : Colors.black87,
+                          fontSize: 13,
+                        ),
                       ),
                       onTap: () => _seleccionarDestino(_searchResults[i]),
                     ),
@@ -748,6 +1023,7 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
 
   Widget _buildBottomPanel(NavigationTelemetry t, NavigationState state) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Positioned(
       bottom: 0, left: 0, right: 0,
       child: ClipRRect(
@@ -755,17 +1031,17 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
           child: Container(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
             decoration: BoxDecoration(
-              color: isDark ? Colors.black.withOpacity(0.55) : Colors.white.withOpacity(0.7),
+              color: isDark ? const Color(0xFF14171F).withOpacity(0.92) : Colors.white.withOpacity(0.95),
               borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
               border: Border.all(
-                color: isDark ? Colors.white10 : Colors.white.withOpacity(0.3),
+                color: isDark ? Colors.white12 : Colors.black.withOpacity(0.08),
                 width: 1.5,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withOpacity(0.15),
                   blurRadius: 20,
                 )
               ],
@@ -773,78 +1049,164 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                // ─── 1. MODO NAVEGANDO O RECORRIDO LIBRE ─────────
                 if (state == NavigationState.navigating || state == NavigationState.freeTracking) ...[
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       InfoChip(
-                        icon: Icons.speed,
-                        label: '${t.maxSpeedKmH.toStringAsFixed(0)} km/h',
-                        color: Colors.blueAccent,
+                        icon: Icons.speed_rounded,
+                        label: '${t.maxSpeedKmH.toStringAsFixed(0)} km/h máx',
+                        color: const Color(0xFF00C6FF),
                       ),
                       InfoChip(
-                        icon: Icons.straighten,
-                        label: '${t.distanceKm.toStringAsFixed(1)} km',
-                        color: Colors.greenAccent,
+                        icon: Icons.straighten_rounded,
+                        label: '${t.distanceKm.toStringAsFixed(2)} km',
+                        color: const Color(0xFF00FF87),
+                      ),
+                      InfoChip(
+                        icon: Icons.av_timer_rounded,
+                        label: '${t.averageSpeedKmH.toStringAsFixed(0)} km/h prom',
+                        color: Colors.orangeAccent,
                       ),
                     ],
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 16),
                   FilledButton.icon(
                     onPressed: _finalizarRuta,
-                    icon: const Icon(Icons.stop),
-                    label: const Text('FINALIZAR VIAJE'),
+                    icon: const Icon(Icons.stop_rounded),
+                    label: const Text('FINALIZAR VIAJE', style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 0.8)),
                     style: FilledButton.styleFrom(
-                      backgroundColor: Colors.redAccent.withOpacity(0.85),
-                      minimumSize: const Size(double.infinity, 54),
+                      backgroundColor: Colors.redAccent.withOpacity(0.9),
+                      minimumSize: const Size(double.infinity, 52),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                     ),
                   ),
-                ] else if (state == NavigationState.routeReady) ...[
-                  Text(
-                    _controller.destinationName,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: isDark ? Colors.white : Colors.black87,
-                      fontSize: 16,
-                    ),
+                ] 
+                // ─── 2. MODO CÓMO LLEGAR (RUTA LISTA) ─────────────
+                else if (state == NavigationState.routeReady) ...[
+                  Row(
+                    children: [
+                      const Icon(Icons.place_rounded, color: Colors.redAccent, size: 22),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          _controller.destinationName,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: isDark ? Colors.white : Colors.black87,
+                            fontSize: 15,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close_rounded, size: 20),
+                        onPressed: () => _controller.clearRouteAndReset(),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       InfoChip(
-                        icon: Icons.straighten,
+                        icon: Icons.straighten_rounded,
                         label: '${_controller.routeDistanceKm.toStringAsFixed(1)} km',
-                        color: Colors.blueAccent,
+                        color: const Color(0xFF00C6FF),
                       ),
                       InfoChip(
-                        icon: Icons.timer,
+                        icon: Icons.timer_outlined,
                         label: '${_controller.routeDurationMin.round()} min',
                         color: Colors.orangeAccent,
                       ),
                     ],
                   ),
-                  const SizedBox(height: 20),
-                  FilledButton(
-                    onPressed: () => _iniciarNav(),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: FilledButton.icon(
+                          onPressed: () => _iniciarNav(),
+                          icon: const Icon(Icons.navigation_rounded),
+                          label: const Text('INICIAR NAVEGACIÓN', style: TextStyle(fontWeight: FontWeight.bold)),
+                          style: FilledButton.styleFrom(
+                            backgroundColor: const Color(0xFF035880),
+                            minimumSize: const Size(double.infinity, 52),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ]
+                // ─── 3. MODO VISUALIZACIÓN DE RUTA HISTÓRICA ───────
+                else if (state == NavigationState.viewingHistory) ...[
+                  Row(
+                    children: [
+                      const Icon(Icons.history_rounded, color: Color(0xFF00FF87), size: 22),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          _controller.destinationName,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: isDark ? Colors.white : Colors.black87,
+                            fontSize: 15,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close_rounded, size: 20),
+                        onPressed: () => _controller.clearRouteAndReset(),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      InfoChip(
+                        icon: Icons.straighten_rounded,
+                        label: '${_controller.routeDistanceKm.toStringAsFixed(1)} km',
+                        color: const Color(0xFF00C6FF),
+                      ),
+                      InfoChip(
+                        icon: Icons.speed_rounded,
+                        label: '${_controller.telemetry.maxSpeedKmH.toStringAsFixed(0)} km/h',
+                        color: const Color(0xFFFF3B30),
+                      ),
+                      InfoChip(
+                        icon: Icons.av_timer_rounded,
+                        label: '${_controller.telemetry.averageSpeedKmH.toStringAsFixed(0)} km/h',
+                        color: const Color(0xFF00FF87),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  FilledButton.icon(
+                    onPressed: () => _controller.clearRouteAndReset(),
+                    icon: const Icon(Icons.check_rounded),
+                    label: const Text('CERRAR VISTA DE RUTA', style: TextStyle(fontWeight: FontWeight.bold)),
                     style: FilledButton.styleFrom(
                       backgroundColor: const Color(0xFF035880),
-                      minimumSize: const Size(double.infinity, 54),
+                      minimumSize: const Size(double.infinity, 50),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                     ),
-                    child: const Text('INICIAR NAVEGACIÓN', style: TextStyle(fontWeight: FontWeight.bold)),
                   ),
-                ] else ...[
+                ]
+                // ─── 4. MODO LIVE IDLE DE ESPERA ───────────────────
+                else ...[
                   FilledButton.icon(
                     onPressed: () => _iniciarNav(isFree: true),
                     icon: const Icon(Icons.navigation_rounded),
-                    label: const Text('RECORRIDO LIBRE', style: TextStyle(fontWeight: FontWeight.bold)),
+                    label: const Text('INICIAR RECORRIDO LIBRE', style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 0.5)),
                     style: FilledButton.styleFrom(
                       backgroundColor: const Color(0xFF035880),
-                      minimumSize: const Size(double.infinity, 54),
+                      minimumSize: const Size(double.infinity, 52),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                     ),
                   ),
