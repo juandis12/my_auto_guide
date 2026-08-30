@@ -85,10 +85,12 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
     }
   }
 
+  bool _isFinalizing = false;
+
   void _onControllerStateUpdate() {
     if (mounted) {
-      // Si la navegación finalizó por auto-arribo al destino (< 40m)
-      if (_controller.state == NavigationState.completed) {
+      // Si la navegación finalizó automáticamente por arribo al destino (< 40m)
+      if (_controller.state == NavigationState.completed && !_isFinalizing) {
         _finalizarRuta();
       }
       setState(() {});
@@ -410,6 +412,9 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
   }
 
   Future<void> _finalizarRuta({bool skipSummaryModal = false}) async {
+    if (_isFinalizing) return;
+    _isFinalizing = true;
+
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('is_navigating', false);
@@ -430,6 +435,7 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
         AppSnackBar.show(context, 'Error: No se encontró sesión de usuario activa para guardar el trayecto.');
       }
       _controller.stopNavigation();
+      _isFinalizing = false;
       return;
     }
 
@@ -486,7 +492,7 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
       if (mounted) {
         AppSnackBar.show(
           context,
-          'Recorrido demasiado corto. No se registraron cambios significativos.',
+          'Recorrido finalizado. No se registraron distancias significativas.',
           backgroundColor: Colors.orange,
         );
       }
@@ -495,25 +501,34 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
     _controller.stopNavigation();
 
     // Mostrar modal con el resumen visual del recorrido y limpiar polilínea al cerrar
-    if (mounted && !skipSummaryModal) {
-      await showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        backgroundColor: Colors.transparent,
-        builder: (ctx) => TripSummarySheet(
-          distanceKm: t.distanceKm,
-          durationSeconds: durationSec,
-          avgSpeedKmH: calculatedAvgSpeed,
-          maxSpeedKmH: t.maxSpeedKmH,
-          fuelGallons: impact['gallons'] ?? 0.0,
-          estimatedCost: impact['cost'] ?? 0.0,
-          destinationName: destName,
-          onDismiss: () => Navigator.pop(ctx),
-        ),
-      );
+    if (mounted && !skipSummaryModal && (t.distanceKm >= 0.01 || durationSec >= 10)) {
+      try {
+        await showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          backgroundColor: Colors.transparent,
+          builder: (ctx) => TripSummarySheet(
+            distanceKm: t.distanceKm,
+            durationSeconds: durationSec,
+            avgSpeedKmH: calculatedAvgSpeed,
+            maxSpeedKmH: t.maxSpeedKmH,
+            fuelGallons: impact['gallons'] ?? 0.0,
+            estimatedCost: impact['cost'] ?? 0.0,
+            destinationName: destName,
+            onDismiss: () {
+              if (Navigator.canPop(ctx)) {
+                Navigator.pop(ctx);
+              }
+            },
+          ),
+        );
+      } catch (e) {
+        debugPrint('Aviso modal resumen: $e');
+      }
     }
 
     _controller.clearRouteAndReset();
+    _isFinalizing = false;
   }
 
   void _recenterMap() {
