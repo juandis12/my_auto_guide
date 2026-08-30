@@ -33,11 +33,13 @@ import 'presentation/widgets/waze_report_sheet.dart';
 class RutasScreen extends StatefulWidget {
   final String vehiculoId;
   final int kmsActuales;
+  final Map<String, dynamic>? initialRoute;
 
   const RutasScreen({
     super.key,
     required this.vehiculoId,
     required this.kmsActuales,
+    this.initialRoute,
   });
 
   @override
@@ -57,6 +59,7 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
   
   List<NominatimPlace> _searchResults = [];
   bool _isSearching = false;
+  Timer? _searchDebounce;
   StreamSubscription<Position>? _idlePositionSubscription;
 
   @override
@@ -73,6 +76,12 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
     _cargarInfoVehiculo();
     CameraRadarService().startRadar();
     WazeCommunityAlertsService().initRealtimeAlerts();
+
+    if (widget.initialRoute != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _cargarRutaDesdeHistorial(widget.initialRoute!);
+      });
+    }
   }
 
   void _onControllerStateUpdate() {
@@ -87,6 +96,7 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
 
   @override
   void dispose() {
+    _searchDebounce?.cancel();
     CameraRadarService().stopRadar();
     _controller.removeListener(_onControllerStateUpdate);
     _idlePositionSubscription?.cancel();
@@ -162,6 +172,17 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
 
   // ─── ACCIONES DE BÚSQUEDA Y MAPA TÁCTIL ─────────────────
   
+  void _onSearchChanged(String query) {
+    _searchDebounce?.cancel();
+    if (query.trim().isEmpty) {
+      setState(() => _searchResults = []);
+      return;
+    }
+    _searchDebounce = Timer(const Duration(milliseconds: 500), () {
+      _buscarDestino(query);
+    });
+  }
+
   Future<void> _buscarDestino(String query) async {
     if (query.trim().isEmpty) {
       setState(() => _searchResults = []);
@@ -170,8 +191,8 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
     setState(() => _isSearching = true);
     try {
       _searchResults = await NavigationService().searchDestination(query);
-    } catch (e) {
-      if (mounted) AppSnackBar.show(context, e.toString());
+    } catch (_) {
+      // Ignorar errores silenciosos en autocompletado
     } finally {
       if (mounted) setState(() => _isSearching = false);
     }
@@ -319,9 +340,19 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
           padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 80),
         ),
       );
-      AppSnackBar.show(context, 'Ruta histórica cargada en el mapa.', backgroundColor: const Color(0xFF035880));
+      if (mounted) {
+        AppSnackBar.show(context, 'Ruta histórica trazada en el mapa.', backgroundColor: const Color(0xFF035880));
+      }
     } else {
-      AppSnackBar.show(context, 'Ruta cargada: $destName ($dist km)');
+      final destLat = (route['destino_lat'] as num?)?.toDouble();
+      final destLng = (route['destino_lng'] as num?)?.toDouble();
+      if (destLat != null && destLng != null && destLat != 0.0 && destLng != 0.0) {
+        _searchCtrl.text = destName;
+        _onMapTappedOrLongPressed(LatLng(destLat, destLng));
+      } else {
+        _searchCtrl.text = destName;
+        _buscarDestino(destName);
+      }
     }
   }
 
@@ -358,9 +389,15 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
     }
   }
 
-  Future<void> _finalizarRuta() async {
-    final service = FlutterBackgroundService();
-    service.invoke('stopService');
+  Future<void> _finalizarRuta({bool skipSummaryModal = false}) async {
+    try {
+      final service = FlutterBackgroundService();
+      if (await service.isRunning()) {
+        service.invoke('stopService');
+      }
+    } catch (e) {
+      debugPrint('Error deteniendo background service: $e');
+    }
     
     final t = _controller.telemetry;
     final userId = supabase.auth.currentUser?.id;
@@ -398,30 +435,30 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
         : 'Recorrido Libre';
 
     if (t.distanceKm >= 0.01) {
-      try {
-        await SyncService().saveRouteOfflineFirst(
-          userId: userId,
-          vehicleId: widget.vehiculoId,
-          originName: 'Ubicación Actual',
-          destinationName: destName,
-          distanceKm: t.distanceKm,
-          durationSeconds: durationSec,
-          consumoGalones: impact['gallons']!,
-          costoEstimado: impact['cost']!,
-          velocidadMax: t.maxSpeedKmH,
-          velocidadProm: calculatedAvgSpeed,
-          viaPuntos: t.travelledPoints.map((p) => {'lat': p.latitude, 'lng': p.longitude}).toList(),
-        );
-        
-        if (kmsToAdd > 0) {
-          await SyncService().updateVehicleKmsOfflineFirst(widget.vehiculoId, kmsToAdd);
+      // Guardar de forma asíncrona segura sin congelar el hilo principal
+      unawaited(() async {
+        try {
+          await SyncService().saveRouteOfflineFirst(
+            userId: userId,
+            vehicleId: widget.vehiculoId,
+            originName: 'Ubicación Actual',
+            destinationName: destName,
+            distanceKm: t.distanceKm,
+            durationSeconds: durationSec,
+            consumoGalones: impact['gallons']!,
+            costoEstimado: impact['cost']!,
+            velocidadMax: t.maxSpeedKmH,
+            velocidadProm: calculatedAvgSpeed,
+            viaPuntos: t.travelledPoints.map((p) => {'lat': p.latitude, 'lng': p.longitude}).toList(),
+          );
+          
+          if (kmsToAdd > 0) {
+            await SyncService().updateVehicleKmsOfflineFirst(widget.vehiculoId, kmsToAdd);
+          }
+        } catch (e) {
+          debugPrint('Error al guardar trayecto localmente: $e');
         }
-      } catch (e) {
-        debugPrint('Error al guardar trayecto localmente: $e');
-        if (mounted) {
-          AppSnackBar.show(context, 'Error al guardar el trayecto localmente: $e');
-        }
-      }
+      }());
     } else {
       if (mounted) {
         AppSnackBar.show(
@@ -435,7 +472,7 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
     _controller.stopNavigation();
 
     // Mostrar modal con el resumen visual del recorrido y limpiar polilínea al cerrar
-    if (mounted) {
+    if (mounted && !skipSummaryModal) {
       await showModalBottomSheet(
         context: context,
         isScrollControlled: true,
@@ -660,21 +697,17 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
 
   String _getMapTileUrl(bool isDark) {
     final stadiaKey = dotenv.isInitialized ? dotenv.get('STADIA_API_KEY', fallback: '') : '';
-    final cartoKey = dotenv.isInitialized ? dotenv.get('CARTO_API_KEY', fallback: '') : '';
     
-    if (stadiaKey.trim().isNotEmpty) {
+    if (stadiaKey.trim().isNotEmpty && !stadiaKey.contains('your_')) {
       return isDark
           ? 'https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}@2x.png?api_key=${stadiaKey.trim()}'
           : 'https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}@2x.png?api_key=${stadiaKey.trim()}';
     }
 
-    if (cartoKey.trim().isNotEmpty) {
-      return isDark
-          ? 'https://basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}@2x.png?api_key=${cartoKey.trim()}'
-          : 'https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png?api_key=${cartoKey.trim()}';
-    }
-
-    return 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+    // CartoDB Voyager / Dark Matter (Open standard CDN sin marca de agua)
+    return isDark
+        ? 'https://a.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}.png'
+        : 'https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png';
   }
 
   Widget _buildMap(NavigationTelemetry t) {
@@ -976,7 +1009,15 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
                     border: InputBorder.none,
                     contentPadding: const EdgeInsets.symmetric(vertical: 14),
                   ),
-                  onChanged: _buscarDestino,
+                  textInputAction: TextInputAction.search,
+                  onChanged: _onSearchChanged,
+                  onSubmitted: (val) {
+                    _searchFocusNode.unfocus();
+                    FocusScope.of(context).unfocus();
+                    if (val.trim().isNotEmpty) {
+                      _buscarDestino(val.trim());
+                    }
+                  },
                 ),
               ),
             ),

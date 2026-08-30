@@ -905,13 +905,35 @@ class _InicioAppState extends State<InicioApp> {
     });
   }
 
-  void _abrirHistorialRutas() {
-    Navigator.push(
+  void _abrirHistorialRutas() async {
+    final selectedRoute = await Navigator.push<Map<String, dynamic>>(
       context,
       MaterialPageRoute(
         builder: (_) => HistorialRutasScreen(vehiculoId: widget.vehiculoId),
       ),
     );
+    if (selectedRoute != null && mounted) {
+      final kms = _cachedVehicleData?['kilometraje'] is num
+          ? (_cachedVehicleData!['kilometraje'] as num).toInt()
+          : 0;
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => RutasScreen(
+            vehiculoId: widget.vehiculoId,
+            kmsActuales: kms,
+            initialRoute: selectedRoute,
+          ),
+        ),
+      ).then((recargar) {
+        if (recargar == true) {
+          setState(() {
+            _cachedVehicleData = null;
+          });
+          unawaited(_cargarWeeklyStats());
+        }
+      });
+    }
   }
 
   Widget _buildLegalAlerts() {

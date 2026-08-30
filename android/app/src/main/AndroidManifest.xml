@@ -48,7 +48,7 @@
 
     <application
         android:name="${applicationName}"
-        android:label="my_auto_guide"
+        android:label="My Auto Guide"
         android:icon="@mipmap/ic_launcher">
 
         <activity

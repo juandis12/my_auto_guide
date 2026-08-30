@@ -77,19 +77,47 @@ class NavigationService {
         '&format=json&limit=6&addressdetails=1',
       );
       final res = await http.get(url, headers: {
-        'User-Agent': 'MyAutoGuide/1.0 (Mobile App)',
-      }).timeout(const Duration(seconds: 8));
+        'User-Agent': 'MyAutoGuide-App/2.0 (my.auto.guide.app@gmail.com)',
+      }).timeout(const Duration(seconds: 5));
 
       if (res.statusCode == 200) {
         final data = json.decode(res.body) as List;
-        return data.map((e) => NominatimPlace.fromJson(e as Map<String, dynamic>)).toList();
-      } else {
-        throw NavigationLogicException('Servicio de búsqueda no disponible (Código: ${res.statusCode})');
+        if (data.isNotEmpty) {
+          return data.map((e) => NominatimPlace.fromJson(e as Map<String, dynamic>)).toList();
+        }
       }
-    } catch (e) {
-      if (e is NavigationLogicException) rethrow;
-      throw NavigationLogicException('Error de conexión al buscar destino.');
+      
+      // Fallback a Photon (Komoot OSM Geocoder) si Nominatim da 429 o está vacío
+      return await _searchWithPhotonFallback(query);
+    } catch (_) {
+      return await _searchWithPhotonFallback(query);
     }
+  }
+
+  Future<List<NominatimPlace>> _searchWithPhotonFallback(String query) async {
+    try {
+      final photonUrl = Uri.parse(
+        'https://photon.komoot.io/api/?q=${Uri.encodeComponent(query)}&limit=6',
+      );
+      final res = await http.get(photonUrl).timeout(const Duration(seconds: 5));
+      if (res.statusCode == 200) {
+        final data = json.decode(res.body);
+        final features = (data['features'] as List?) ?? [];
+        return features.map((f) {
+          final props = f['properties'] as Map<String, dynamic>? ?? {};
+          final coords = (f['geometry']?['coordinates'] as List?) ?? [0.0, 0.0];
+          final name = props['name'] ?? props['street'] ?? query;
+          final city = props['city'] ?? props['town'] ?? props['state'] ?? '';
+          final displayName = city.isNotEmpty ? '$name, $city' : name.toString();
+          return NominatimPlace(
+            displayName: displayName,
+            lat: (coords.length > 1 ? coords[1] as num : 0.0).toDouble(),
+            lon: (coords.isNotEmpty ? coords[0] as num : 0.0).toDouble(),
+          );
+        }).where((p) => p.lat != 0.0 && p.lon != 0.0).toList();
+      }
+    } catch (_) {}
+    return [];
   }
 
   /// Geocodificación inversa para obtener el nombre legible de una coordenada tocada en el mapa

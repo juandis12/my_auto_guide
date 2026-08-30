@@ -626,21 +626,17 @@ class _RouteCard extends StatelessWidget {
 
   String _getMapTileUrl(bool isDark) {
     final stadiaKey = dotenv.isInitialized ? dotenv.get('STADIA_API_KEY', fallback: '') : '';
-    final cartoKey = dotenv.isInitialized ? dotenv.get('CARTO_API_KEY', fallback: '') : '';
     
-    if (stadiaKey.trim().isNotEmpty) {
+    if (stadiaKey.trim().isNotEmpty && !stadiaKey.contains('your_')) {
       return isDark
           ? 'https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}@2x.png?api_key=${stadiaKey.trim()}'
           : 'https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}@2x.png?api_key=${stadiaKey.trim()}';
     }
 
-    if (cartoKey.trim().isNotEmpty) {
-      return isDark
-          ? 'https://basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}@2x.png?api_key=${cartoKey.trim()}'
-          : 'https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png?api_key=${cartoKey.trim()}';
-    }
-
-    return 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+    // CartoDB Voyager / Dark Matter (Open standard CDN sin marca de agua)
+    return isDark
+        ? 'https://a.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}.png'
+        : 'https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png';
   }
 
   void _openDetailMap(BuildContext context, List<LatLng> points) {
