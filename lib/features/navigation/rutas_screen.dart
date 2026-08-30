@@ -1028,10 +1028,13 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
                   controller: _searchCtrl,
                   focusNode: _searchFocusNode,
                   textInputAction: TextInputAction.search,
-                  onSubmitted: (value) {
+                  onChanged: _onSearchChanged,
+                  onSubmitted: (val) {
                     _searchFocusNode.unfocus();
                     FocusScope.of(context).unfocus();
-                    _buscarDestino(value);
+                    if (val.trim().isNotEmpty) {
+                      _buscarDestino(val.trim());
+                    }
                   },
                   onTapOutside: (_) => _searchFocusNode.unfocus(),
                   style: TextStyle(color: isDark ? Colors.white : Colors.black87),
@@ -1071,15 +1074,6 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
                     border: InputBorder.none,
                     contentPadding: const EdgeInsets.symmetric(vertical: 14),
                   ),
-                  textInputAction: TextInputAction.search,
-                  onChanged: _onSearchChanged,
-                  onSubmitted: (val) {
-                    _searchFocusNode.unfocus();
-                    FocusScope.of(context).unfocus();
-                    if (val.trim().isNotEmpty) {
-                      _buscarDestino(val.trim());
-                    }
-                  },
                 ),
               ),
             ),

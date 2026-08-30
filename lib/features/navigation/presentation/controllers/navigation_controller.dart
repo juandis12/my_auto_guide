@@ -10,6 +10,7 @@ import 'package:my_auto_guide/core/services/voice_navigation_service.dart';
 enum NavigationState {
   idle,
   ready,
+  routeReady,
   navigating,
   freeTracking,
   completed,

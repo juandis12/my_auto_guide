@@ -203,14 +203,27 @@ class ReportService {
               )
             else
               ...upcomingIssues.map((issue) => pw.Container(
-                    pw.SizedBox(width: 8),
-                    pw.Expanded(
-                      child: pw.Text('${issue['item']}: ${issue['reason']}', style: const pw.TextStyle(fontSize: 9)),
+                    margin: const pw.EdgeInsets.only(bottom: 4),
+                    padding: const pw.EdgeInsets.all(6),
+                    decoration: pw.BoxDecoration(
+                      color: PdfColors.orange50,
+                      borderRadius: pw.BorderRadius.circular(5),
                     ),
-                    pw.Text('Riesgo ${issue['risk']}', style: pw.TextStyle(fontSize: 8, fontWeight: pw.FontWeight.bold, color: PdfColors.orange900)),
-                  ],
-                ),
-              )),
+                    child: pw.Row(
+                      children: [
+                        pw.Container(
+                          width: 4,
+                          height: 4,
+                          decoration: const pw.BoxDecoration(color: PdfColors.orange800, shape: pw.BoxShape.circle),
+                        ),
+                        pw.SizedBox(width: 8),
+                        pw.Expanded(
+                          child: pw.Text('${issue['item'] ?? issue['component']}: ${issue['reason'] ?? ''}', style: const pw.TextStyle(fontSize: 9)),
+                        ),
+                        pw.Text('Riesgo ${issue['risk'] ?? ''}', style: pw.TextStyle(fontSize: 8, fontWeight: pw.FontWeight.bold, color: PdfColors.orange900)),
+                      ],
+                    ),
+                  )),
 
             pw.SizedBox(height: 18),
             pw.Text('DETALLE DE RECORRIDOS REALIZADOS', 
@@ -219,41 +232,43 @@ class ReportService {
             if (routeHistory.isEmpty)
               pw.Text('No hay trayectos guardados en este período.', style: const pw.TextStyle(fontSize: 9, color: PdfColors.grey600))
             else
-              pw.TableHelper.fromTextArray(
-                context: context,
-                cellAlignment: pw.Alignment.centerLeft,
-                headerDecoration: const pw.BoxDecoration(color: PdfColors.grey200),
-                headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8),
-                cellStyle: const pw.TextStyle(fontSize: 7.5),
-                headers: ['Fecha', 'Origen', 'Destino', 'KM', 'V. Máx', 'V. Prom', 'Galones', 'Gasto'],
-                data: routeHistory.map((r) {
-                  final fechaRaw = r['fecha'] ?? r['created_at'];
-                  DateTime? date;
-                  if (fechaRaw is DateTime) {
-                    date = fechaRaw;
-                  } else if (fechaRaw != null) {
-                    date = DateTime.tryParse(fechaRaw.toString())?.toLocal();
-                  }
-                  final displayDate = date != null ? AppFormat.shortDateTime(date) : '-';
-                  final ori = r['origen'] ?? r['origen_name'] ?? 'Ubicación Actual';
-                  final des = r['destino'] ?? r['destino_name'] ?? 'Destino';
-                  final dist = (r['distancia'] ?? r['distancia_km'] ?? 0.0) as num;
-                  final gal = (r['consumo_estimado'] ?? r['consumo_galones'] ?? 0.0) as num;
-                  final cost = (r['costo_estimado'] ?? 0.0) as num;
-                  final vMax = (r['velocidad_max'] ?? 0.0) as num;
-                  final vProm = (r['velocidad_prom'] ?? 0.0) as num;
-                  
-                  return [
-                    displayDate,
-                    ori.toString().length > 14 ? '${ori.toString().substring(0, 14)}...' : ori.toString(),
-                    des.toString().length > 14 ? '${des.toString().substring(0, 14)}...' : des.toString(),
-                    dist.toStringAsFixed(1),
-                    '${vMax.toStringAsFixed(0)} km/h',
-                    '${vProm.toStringAsFixed(0)} km/h',
-                    gal.toStringAsFixed(2),
-                    '\$${AppFormat.thousands(cost.toDouble())}'
-                  ];
-                }).toList(),
+              pw.Table(
+                border: pw.TableBorder.all(color: PdfColors.grey300, width: 0.5),
+                children: [
+                  pw.TableRow(
+                    decoration: const pw.BoxDecoration(color: PdfColors.grey200),
+                    children: [
+                      _tableHeader('Fecha'),
+                      _tableHeader('Origen'),
+                      _tableHeader('Destino'),
+                      _tableHeader('Distancia'),
+                      _tableHeader('Consumo'),
+                      _tableHeader('Costo Est.'),
+                      _tableHeader('Vel. Prom'),
+                    ],
+                  ),
+                  ...routeHistory.take(40).map((r) {
+                    final origen = r['origen_name'] ?? r['origen'] ?? 'Origen';
+                    final destino = r['destino_name'] ?? r['destino'] ?? 'Destino';
+                    final num dist = r['distancia_km'] ?? r['distancia'] ?? 0;
+                    final num fuel = r['consumo_estimado'] ?? r['consumo_galones'] ?? 0;
+                    final num cost = r['costo_estimado'] ?? 0;
+                    final num vProm = r['velocidad_prom'] ?? 0;
+                    final String fecha = AppFormat.dateTime(DateTime.tryParse(r['created_at']?.toString() ?? '') ?? DateTime.now());
+
+                    return pw.TableRow(
+                      children: [
+                        _tableCell(fecha),
+                        _tableCell(origen),
+                        _tableCell(destino),
+                        _tableCell('${dist.toStringAsFixed(1)} km'),
+                        _tableCell('${fuel.toStringAsFixed(2)} gal'),
+                        _tableCell('\$${AppFormat.thousands(cost.toDouble())}'),
+                        _tableCell('${vProm.toStringAsFixed(0)} km/h'),
+                      ],
+                    );
+                  }),
+                ],
               ),
 
             pw.SizedBox(height: 16),
@@ -270,15 +285,29 @@ class ReportService {
                   pw.Text('Página ${context.pageNumber} de ${context.pagesCount}', style: const pw.TextStyle(fontSize: 8, color: PdfColors.grey500)),
                 ],
               ),
-            ]
+            ],
           );
-        }
+        },
       ),
     );
 
     await Printing.layoutPdf(
       onLayout: (PdfPageFormat format) async => pdf.save(),
       name: fileName,
+    );
+  }
+
+  static pw.Widget _tableHeader(String text) {
+    return pw.Padding(
+      padding: const pw.EdgeInsets.all(5),
+      child: pw.Text(text, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8), textAlign: pw.TextAlign.center),
+    );
+  }
+
+  static pw.Widget _tableCell(String text) {
+    return pw.Padding(
+      padding: const pw.EdgeInsets.all(5),
+      child: pw.Text(text, style: const pw.TextStyle(fontSize: 7), textAlign: pw.TextAlign.center),
     );
   }
 
@@ -307,6 +336,10 @@ class ReportService {
         }
         return null;
       }
+      final file = File(path);
+      if (await file.exists()) {
+        return await file.readAsBytes();
+      }
       final data = await rootBundle.load(path);
       return data.buffer.asUint8List();
     } catch (e) {
@@ -315,23 +348,21 @@ class ReportService {
   }
 
   static String _getBrandLogoPath(String brand) {
-    final Map<String, String> brandLogos = {
-      'YAMAHA': 'assets/logos/yamaha_logo.png',
-      'SUZUKI': 'assets/logos/suzuki_logo.png',
-      'BMW': 'assets/logos/bmw_logo.png',
-      'KAWASAKI': 'assets/logos/kawa_logo.png',
-      'HONDA': 'assets/logos/honda_logo.png',
-      'DUCATI': 'assets/logos/ducati_logo.png',
-      'KTM': 'assets/logos/ktm_logo.png',
-      'BAJAJ': 'assets/logos/bajaj_logo.png',
-      'HERO': 'assets/logos/hero_logo.png',
-      'AKT': 'assets/logos/akt_logo.png',
-      'VICTORI': 'assets/logos/victori_logo.png',
-      'TOYOTA': 'assets/logos/toyota_logo.png',
-      'MAZDA': 'assets/logos/mazda_logo.png',
-      'CHEVROLET': 'assets/logos/chevrolet_logo.png',
-    };
-    return brandLogos[brand.toUpperCase()] ?? '';
+    final b = brand.toUpperCase();
+    if (b.contains('YAMAHA')) return 'assets/logos/yamaha_logo.png';
+    if (b.contains('SUZUKI')) return 'assets/logos/suzuki_logo.png';
+    if (b.contains('BMW')) return 'assets/logos/bmw_logo.png';
+    if (b.contains('KAWASAKI') || b.contains('KAWA')) return 'assets/logos/kawa_logo.png';
+    if (b.contains('HONDA')) return 'assets/logos/honda_logo.png';
+    if (b.contains('DUCATI')) return 'assets/logos/ducati_logo.png';
+    if (b.contains('KTM')) return 'assets/logos/ktm_logo.png';
+    if (b.contains('BAJAJ') || b.contains('PULSAR') || b.contains('DOMINAR')) return 'assets/logos/bajaj_logo.png';
+    if (b.contains('HERO')) return 'assets/logos/hero_logo.png';
+    if (b.contains('AKT')) return 'assets/logos/akt_logo.png';
+    if (b.contains('VICTORI') || b.contains('VICTORY')) return 'assets/logos/victori_logo.png';
+    if (b.contains('TOYOTA')) return 'assets/logos/toyota_logo.png';
+    if (b.contains('MAZDA')) return 'assets/logos/mazda_logo.png';
+    if (b.contains('CHEVROLET') || b.contains('CHEVY')) return 'assets/logos/chevrolet_logo.png';
+    return '';
   }
 }
-
