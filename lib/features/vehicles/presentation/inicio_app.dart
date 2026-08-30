@@ -43,6 +43,7 @@ import 'dart:io';
 import 'dart:async';
 
 import '../../../core/services/notification_service.dart';
+import '../../../core/services/email_service.dart'; // [NUEVO] Alertas mecánicas por correo
 import '../../../core/services/vehicle_storage_service.dart';
 import '../../../core/logic/app_widget_logic.dart';
 import '../../../core/logic/vehicle_health_logic.dart';
@@ -1578,6 +1579,9 @@ class _InicioAppState extends State<InicioApp> {
         checkAndSchedule('cambio de aceite', _lastAceite, 90, isCarVal ? 5000 : 3000, kmaVal, currentKmsVal, avgKmUsage);
         checkAndSchedule('SOAT', _lastSoat, 365, 999999, 0, 0, avgKmUsage);
         checkAndSchedule('Tecnomecánica', _lastTecno, 365, 999999, 0, 0, avgKmUsage);
+        
+        // [NUEVO] Alertas por correo de doble nivel (Preventiva 40%-50% / Crítica <10%)
+        unawaited(_verificarYEnviarAlertasMantenimiento());
       });
     }
 
@@ -2200,6 +2204,67 @@ class _InicioAppState extends State<InicioApp> {
         );
       },
     );
+  Future<void> _verificarYEnviarAlertasMantenimiento() async {
+    final client = Supabase.instance.client;
+    final userEmail = client.auth.currentUser?.email;
+    if (userEmail == null || _cachedVehicleData == null) return;
+
+    final String brand = (_cachedVehicleData?['marca'] as String? ?? '').toUpperCase();
+    final String nickname = _cachedVehicleData?['apodo'] as String? ?? 'Mi Vehículo';
+    final double currentKms = _asDouble(_cachedVehicleData?['kms']);
+
+    final prefs = await SharedPreferences.getInstance();
+
+    Future<void> revisarMantenimiento(String key, double pctActual) async {
+      // 1. Alerta Crítica (< 10%)
+      if (pctActual < 0.10) {
+        final lastSentKey = 'last_alert_sent_${widget.vehiculoId}_${key}_critica';
+        final lastSentStr = prefs.getString(lastSentKey);
+        final lastSent = lastSentStr != null ? DateTime.tryParse(lastSentStr) : null;
+
+        if (lastSent == null || DateTime.now().difference(lastSent).inDays >= 7) {
+          final success = await EmailService.sendMaintenanceAlertEmail(
+            toEmail: userEmail,
+            maintenanceType: key,
+            remainingPct: pctActual,
+            currentKms: currentKms,
+            vehicleBrand: brand,
+            vehicleNickname: nickname,
+            isPreventive: false,
+          );
+          if (success) {
+            await prefs.setString(lastSentKey, DateTime.now().toIso8601String());
+            debugPrint('Alerta Crítica de $key enviada por correo a $userEmail');
+          }
+        }
+      }
+      // 2. Alerta Preventiva (40% - 50%)
+      else if (pctActual >= 0.40 && pctActual <= 0.50) {
+        final lastSentKey = 'last_alert_sent_${widget.vehiculoId}_${key}_preventiva';
+        final lastSentStr = prefs.getString(lastSentKey);
+        final lastSent = lastSentStr != null ? DateTime.tryParse(lastSentStr) : null;
+
+        if (lastSent == null || DateTime.now().difference(lastSent).inDays >= 7) {
+          final success = await EmailService.sendMaintenanceAlertEmail(
+            toEmail: userEmail,
+            maintenanceType: key,
+            remainingPct: pctActual,
+            currentKms: currentKms,
+            vehicleBrand: brand,
+            vehicleNickname: nickname,
+            isPreventive: true,
+          );
+          if (success) {
+            await prefs.setString(lastSentKey, DateTime.now().toIso8601String());
+            debugPrint('Alerta Preventiva de $key enviada por correo a $userEmail');
+          }
+        }
+      }
+    }
+
+    await revisarMantenimiento('Lubricación de cadena', _pctCadena);
+    await revisarMantenimiento('Filtro de aire', _pctFiltro);
+    await revisarMantenimiento('Cambio de aceite', _pctAceite);
   }
 }
 

@@ -83,6 +83,7 @@ class _RegistroScreenState extends State<RegistroScreen> {
       await supabase.auth.signUp(
         email: emailController.text.trim(),
         password: password,
+        data: {'name': nombre},
       );
       if (!mounted) return;
 
