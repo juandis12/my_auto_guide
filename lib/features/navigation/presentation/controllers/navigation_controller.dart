@@ -82,7 +82,20 @@ class NavigationController extends ChangeNotifier {
     _routeDurationMin = durationMin;
     _steps = steps;
     _currentStepIndex = 0;
-    _state = NavigationState.ready;
+    // routeReady: hay una ruta calculada esperando que el usuario presione Iniciar
+    _state = NavigationState.routeReady;
+    notifyListeners();
+  }
+
+  /// Guarda solo el destino en memoria sin cambiar el estado ni la polilínea.
+  /// Útil para que _trazarRuta() pueda acceder al destino antes de calcular la ruta.
+  void setDestinationOnly({
+    required LatLng destination,
+    required String destinationName,
+  }) {
+    _destination = destination;
+    _destinationName = destinationName;
+    // No cambiamos _state ni _routePoints — eso lo hará setRouteReady cuando lleguen los puntos
     notifyListeners();
   }
 
@@ -169,10 +182,11 @@ class NavigationController extends ChangeNotifier {
       }
 
       // Actualizar el paso de navegación actual según la proximidad
+      // Umbral de 40 m: cubre curvas amplias y latencia de GPS urbano
       if (_steps.isNotEmpty && _currentStepIndex < _steps.length) {
         final stepLoc = _steps[_currentStepIndex].location;
         final distToStep = const Distance().as(LengthUnit.Meter, pos, stepLoc);
-        if (distToStep < 25 && _currentStepIndex < _steps.length - 1) {
+        if (distToStep < 40 && _currentStepIndex < _steps.length - 1) {
           _currentStepIndex++;
         }
       }

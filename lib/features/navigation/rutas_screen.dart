@@ -228,14 +228,13 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
   void _seleccionarDestino(NominatimPlace place) {
     _searchFocusNode.unfocus();
     FocusScope.of(context).unfocus();
-    _controller.setRouteReady(
+    // Solo guardamos el destino en el controller — _trazarRuta hará el setRouteReady
+    // completo con los puntos reales de OSRM
+    _controller.setDestinationOnly(
       destination: LatLng(place.lat, place.lon),
       destinationName: place.displayName,
-      points: [], 
-      distanceKm: 0.0,
-      durationMin: 0.0,
     );
-    _searchCtrl.text = _controller.destinationName;
+    _searchCtrl.text = place.displayName;
     setState(() {
       _searchResults = [];
     });
