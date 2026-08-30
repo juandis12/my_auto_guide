@@ -57,16 +57,27 @@ class _HistorialRutasScreenState extends State<HistorialRutasScreen> {
       try {
         final vData = await SupabaseService().client
             .from('vehiculos')
-            .select('marca, modelo, placa, kms, image_path')
+            .select('marca, modelo, placa, kms, kilometraje, image_path, foto_url, has_360_view, images_360_urls')
             .eq('id', widget.vehiculoId)
             .single();
         
         _vehicleBrand = (vData['marca'] as String? ?? '').toUpperCase();
         _vehicleModel = vData['modelo'] ?? 'Vehículo';
         _vehiclePlate = vData['placa'] ?? '';
-        _vehicleImage = vData['image_path'] ?? '';
-        _totalKms = (vData['kms'] as num? ?? 0).toInt();
-        _isCar = _vehicleBrand == 'TOYOTA' || _vehicleBrand == 'MAZDA' || _vehicleBrand == 'CHEVROLET';
+        
+        // Priorizar la primera foto del visor 360 si existe; de lo contrario usar foto_url / image_path
+        final images360 = (vData['images_360_urls'] is List) 
+            ? List<String>.from(vData['images_360_urls']) 
+            : <String>[];
+        if (images360.isNotEmpty) {
+          _vehicleImage = images360.first;
+        } else {
+          _vehicleImage = vData['image_path'] ?? vData['foto_url'] ?? '';
+        }
+
+        final kmsVal = vData['kms'] ?? vData['kilometraje'];
+        _totalKms = (kmsVal as num? ?? 0).toInt();
+        _isCar = _vehicleBrand.contains('TOYOTA') || _vehicleBrand.contains('MAZDA') || _vehicleBrand.contains('CHEVROLET');
       } catch (e) {
         debugPrint('Historial: Error metadata vehículo: $e');
         _vehicleBrand = 'Vehículo';

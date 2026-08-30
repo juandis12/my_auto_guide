@@ -1,8 +1,8 @@
-// =============================================================================
-// vehicle_pdf_report_service.dart — GENERADOR DE HOJA DE VIDA EN PDF (ANDROID & IOS)
-// =============================================================================
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:http/http.dart' as http;
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
@@ -34,14 +34,20 @@ class VehiclePdfReportService {
 
     final String fechaReporte = AppFormat.dateTime(DateTime.now());
 
-    // Cargar imagen de vehículo si existe (opcional)
+    // Cargar imagen de vehículo si existe (priorizando foto 360 o principal)
     pw.ImageProvider? vehicleImage;
     if (vehicleImageUrl != null && vehicleImageUrl.isNotEmpty) {
-      try {
-        vehicleImage = await networkImage(vehicleImageUrl);
-      } catch (e) {
-        debugPrint('Aviso: No se pudo descargar la imagen para el PDF: $e');
+      final imgBytes = await _loadAssetSafe(vehicleImageUrl);
+      if (imgBytes != null) {
+        vehicleImage = pw.MemoryImage(imgBytes);
       }
+    }
+
+    // Cargar logo de marca
+    final Uint8List? brandLogoBytes = await _loadAssetSafe(_getBrandLogoPath(marca));
+    pw.ImageProvider? brandLogoImage;
+    if (brandLogoBytes != null) {
+      brandLogoImage = pw.MemoryImage(brandLogoBytes);
     }
 
     pdf.addPage(
@@ -132,10 +138,27 @@ class VehiclePdfReportService {
                             ),
                           ),
                           pw.Divider(),
-                          _buildPdfRow('Marca:', marca.toUpperCase()),
+                          pw.Padding(
+                            padding: const pw.EdgeInsets.symmetric(vertical: 2),
+                            child: pw.Row(
+                              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                              children: [
+                                pw.Text('Marca:', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 9)),
+                                pw.Row(
+                                  children: [
+                                    if (brandLogoImage != null) ...[
+                                      pw.Image(brandLogoImage, width: 16, height: 16),
+                                      pw.SizedBox(width: 4),
+                                    ],
+                                    pw.Text(marca.toUpperCase(), style: const pw.TextStyle(fontSize: 9)),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
                           _buildPdfRow('Modelo:', modelo),
                           _buildPdfRow('Nombre / Apodo:', apodo.isNotEmpty ? apodo : '-'),
-                          _buildPdfRow('Kilometraje Registrado:', '${kms.round()} Km'),
+                          _buildPdfRow('Odómetro Actual:', '${AppFormat.thousands(kms.round())} Km'),
                           _buildPdfRow('Índice de Salud (ISH):', '${healthIndex.round()}%'),
                         ],
                       ),
@@ -355,5 +378,45 @@ class VehiclePdfReportService {
       bytes: pdfBytes,
       filename: filename,
     );
+  }
+
+  static Future<Uint8List?> _loadAssetSafe(String path) async {
+    try {
+      if (path.isEmpty) return null;
+      if (path.startsWith('http://') || path.startsWith('https://')) {
+        final response = await http.get(Uri.parse(path));
+        if (response.statusCode == 200) {
+          return response.bodyBytes;
+        }
+        return null;
+      }
+      final file = File(path);
+      if (await file.exists()) {
+        return await file.readAsBytes();
+      }
+      final data = await rootBundle.load(path);
+      return data.buffer.asUint8List();
+    } catch (e) {
+      return null;
+    }
+  }
+
+  static String _getBrandLogoPath(String brand) {
+    final b = brand.toUpperCase();
+    if (b.contains('YAMAHA')) return 'assets/logos/yamaha_logo.png';
+    if (b.contains('SUZUKI')) return 'assets/logos/suzuki_logo.png';
+    if (b.contains('BMW')) return 'assets/logos/bmw_logo.png';
+    if (b.contains('KAWASAKI') || b.contains('KAWA')) return 'assets/logos/kawa_logo.png';
+    if (b.contains('HONDA')) return 'assets/logos/honda_logo.png';
+    if (b.contains('DUCATI')) return 'assets/logos/ducati_logo.png';
+    if (b.contains('KTM')) return 'assets/logos/ktm_logo.png';
+    if (b.contains('BAJAJ') || b.contains('PULSAR') || b.contains('DOMINAR')) return 'assets/logos/bajaj_logo.png';
+    if (b.contains('HERO')) return 'assets/logos/hero_logo.png';
+    if (b.contains('AKT')) return 'assets/logos/akt_logo.png';
+    if (b.contains('VICTORI') || b.contains('VICTORY')) return 'assets/logos/victori_logo.png';
+    if (b.contains('TOYOTA')) return 'assets/logos/toyota_logo.png';
+    if (b.contains('MAZDA')) return 'assets/logos/mazda_logo.png';
+    if (b.contains('CHEVROLET') || b.contains('CHEVY')) return 'assets/logos/chevrolet_logo.png';
+    return '';
   }
 }

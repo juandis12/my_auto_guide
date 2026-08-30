@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -29,7 +30,7 @@ class ReportService {
     final aiInsights = VehicleAILogic.analyzeJourneyPatterns(
       routeHistory: routeHistory,
       modelName: model,
-      isCar: brand.toUpperCase() == 'TOYOTA' || brand.toUpperCase() == 'MAZDA' || brand.toUpperCase() == 'CHEVROLET',
+      isCar: brand.toUpperCase().contains('TOYOTA') || brand.toUpperCase().contains('MAZDA') || brand.toUpperCase().contains('CHEVROLET'),
     );
 
     // Calcular Gastos y Métricas de la selección
@@ -125,9 +126,9 @@ class ReportService {
                         ],
                       ]),
                       pw.SizedBox(height: 6),
-                      pw.Text('Odómetro General: ${AppFormat.thousands(totalKms)} KM', 
-                        style: const pw.TextStyle(fontSize: 12, color: PdfColors.grey800)),
-                      pw.Text('Distancia en Período: ${totalKm.toStringAsFixed(1)} KM', 
+                      pw.Text('Odómetro Actual: ${AppFormat.thousands(totalKms)} KM', 
+                        style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold, color: PdfColors.grey900)),
+                      pw.Text('Distancia en el Período: ${totalKm.toStringAsFixed(1)} KM', 
                         style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold, color: PdfColors.blue900)),
                       pw.Text('Consumo de Combustible: ${totalFuel.toStringAsFixed(2)} Galones', 
                         style: const pw.TextStyle(fontSize: 12, color: PdfColors.green800)),
@@ -202,19 +203,6 @@ class ReportService {
               )
             else
               ...upcomingIssues.map((issue) => pw.Container(
-                margin: const pw.EdgeInsets.only(bottom: 4),
-                padding: const pw.EdgeInsets.all(6),
-                decoration: pw.BoxDecoration(
-                  color: PdfColors.orange50,
-                  borderRadius: pw.BorderRadius.circular(5),
-                ),
-                child: pw.Row(
-                  children: [
-                    pw.Container(
-                      width: 4,
-                      height: 4,
-                      decoration: const pw.BoxDecoration(color: PdfColors.orange800, shape: pw.BoxShape.circle),
-                    ),
                     pw.SizedBox(width: 8),
                     pw.Expanded(
                       child: pw.Text('${issue['item']}: ${issue['reason']}', style: const pw.TextStyle(fontSize: 9)),

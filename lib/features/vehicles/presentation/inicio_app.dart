@@ -613,7 +613,12 @@ class _InicioAppState extends State<InicioApp> {
     final String? lastTecno = vData?['last_tecno'];
     final String? lastAceite = vData?['last_aceite'];
     final double kmsLastAceite = ((vData?['kms_last_aceite'] ?? 0) as num).toDouble();
-    final String? imagePath = vData?['image_path'];
+    final images360 = (vData?['images_360_urls'] is List) 
+        ? List<String>.from(vData!['images_360_urls']) 
+        : <String>[];
+    final String? imagePath = images360.isNotEmpty 
+        ? images360.first 
+        : (vData?['image_path'] ?? vData?['foto_url']);
 
     AppSnackBar.show(
       context,
