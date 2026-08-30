@@ -88,6 +88,18 @@ class VoiceNavigationService {
 
     final instruction = _humanizeInstruction(currentStep.instruction);
 
+    // Alerta inicial al arrancar el viaje (anuncia el primer giro de inmediato)
+    if (currentStepIndex == 0 && _lastSpokenStepIndex == -1) {
+      _lastSpokenStepIndex = 0;
+      final distRounded = distanceToStep > 50 ? ((distanceToStep / 50).round() * 50).toInt() : distanceToStep.round();
+      if (distRounded > 20) {
+        speak('Iniciando ruta. En $distRounded metros, $instruction', force: true);
+      } else {
+        speak('Iniciando ruta. $instruction', force: true);
+      }
+      return;
+    }
+
     // Alerta a 200 - 150 metros
     if (distanceToStep <= 220 && distanceToStep > 130) {
       final key = 'far_${currentStepIndex}';

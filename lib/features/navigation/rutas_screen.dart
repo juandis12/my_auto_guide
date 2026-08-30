@@ -204,14 +204,20 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
     });
   }
 
-  Future<void> _buscarDestino(String query) async {
+  Future<void> _buscarDestino(String query, {bool autoSelectFirst = false}) async {
     if (query.trim().isEmpty) {
       setState(() => _searchResults = []);
       return;
     }
     setState(() => _isSearching = true);
     try {
-      _searchResults = await NavigationService().searchDestination(query);
+      final results = await NavigationService().searchDestination(query);
+      if (mounted) {
+        setState(() => _searchResults = results);
+        if (autoSelectFirst && results.isNotEmpty) {
+          _seleccionarDestino(results.first);
+        }
+      }
     } catch (_) {
       // Ignorar errores silenciosos en autocompletado
     } finally {
@@ -592,11 +598,11 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
           child: Stack(
             children: [
               _buildMap(t),
-              _buildTopSearch(),
+              if (state != NavigationState.navigating) _buildTopSearch(),
               
               // Banner Turn-by-Turn durante Navegación
               if (state == NavigationState.navigating && _controller.currentStep != null)
-                _buildTurnByTurnBanner(_controller.currentStep!),
+                _buildTurnByTurnBanner(_controller.currentStep!, t),
 
               // Alertas de Fotomulta y Radar
               StreamBuilder<RadarAlertState>(
@@ -946,38 +952,85 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
     );
   }
 
-  Widget _buildTurnByTurnBanner(NavigationStep step) {
+  IconData _getManeuverIcon(String type, String? modifier) {
+    switch (type) {
+      case 'arrive':
+        return Icons.flag_circle_rounded;
+      case 'turn':
+        if (modifier == 'left' || modifier == 'sharp left') return Icons.turn_left_rounded;
+        if (modifier == 'slight left') return Icons.turn_slight_left_rounded;
+        if (modifier == 'right' || modifier == 'sharp right') return Icons.turn_right_rounded;
+        if (modifier == 'slight right') return Icons.turn_slight_right_rounded;
+        if (modifier == 'uturn') return Icons.u_turn_left_rounded;
+        return Icons.turn_right_rounded;
+      case 'roundabout':
+      case 'rotary':
+        return Icons.roundabout_right_rounded;
+      case 'fork':
+        return modifier == 'left' ? Icons.fork_left_rounded : Icons.fork_right_rounded;
+      case 'merge':
+        return Icons.merge_rounded;
+      case 'depart':
+      case 'continue':
+      default:
+        return Icons.straight_rounded;
+    }
+  }
+
+  Widget _buildTurnByTurnBanner(NavigationStep step, NavigationTelemetry t) {
+    final curPos = t.currentPos;
+    final int distanceMeters = (curPos != null)
+        ? const Distance().as(LengthUnit.Meter, curPos, step.location).round()
+        : step.distanceMeters.round();
+
+    final String distanceStr = (distanceMeters <= 25)
+        ? '¡Gira ahora!'
+        : (distanceMeters < 1000 ? 'En $distanceMeters m' : 'En ${(distanceMeters / 1000).toStringAsFixed(1)} km');
+
+    final icon = _getManeuverIcon(step.maneuverType, step.modifier);
+
     return Positioned(
-      top: 110,
+      top: 50,
       left: 16,
       right: 16,
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(22),
         child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+          filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
             decoration: BoxDecoration(
-              color: const Color(0xFF035880).withOpacity(0.92),
-              borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: const Color(0xFF00FF87).withOpacity(0.4), width: 1.2),
+              gradient: const LinearGradient(
+                colors: [Color(0xFF035880), Color(0xFF0A2342)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(22),
+              border: Border.all(color: const Color(0xFF00FF87).withOpacity(0.5), width: 1.5),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
+                  color: Colors.black.withOpacity(0.4),
+                  blurRadius: 16,
+                  offset: const Offset(0, 6),
                 )
               ],
             ),
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: const BoxDecoration(
-                    color: Color(0xFF00FF87),
-                    shape: BoxShape.circle,
+                  width: 52,
+                  height: 52,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF00FF87),
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF00FF87).withOpacity(0.4),
+                        blurRadius: 8,
+                      )
+                    ],
                   ),
-                  child: const Icon(Icons.turn_right_rounded, color: Colors.black, size: 24),
+                  child: Icon(icon, color: Colors.black, size: 32),
                 ),
                 const SizedBox(width: 14),
                 Expanded(
@@ -985,6 +1038,16 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      Text(
+                        distanceStr,
+                        style: const TextStyle(
+                          color: Color(0xFF00FF87),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
                       Text(
                         step.instruction,
                         style: const TextStyle(
@@ -995,14 +1058,6 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      if (step.distanceMeters > 0)
-                        Text(
-                          'En aprox. ${step.distanceMeters.round()} metros',
-                          style: TextStyle(
-                            color: Colors.white.withOpacity(0.85),
-                            fontSize: 12,
-                          ),
-                        ),
                     ],
                   ),
                 ),
@@ -1049,7 +1104,7 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
                     _searchFocusNode.unfocus();
                     FocusScope.of(context).unfocus();
                     if (val.trim().isNotEmpty) {
-                      _buscarDestino(val.trim());
+                      _buscarDestino(val.trim(), autoSelectFirst: true);
                     }
                   },
                   onTapOutside: (_) => _searchFocusNode.unfocus(),
