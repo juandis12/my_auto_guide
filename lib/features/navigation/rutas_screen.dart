@@ -952,29 +952,60 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
     );
   }
 
-  IconData _getManeuverIcon(String type, String? modifier) {
-    switch (type) {
-      case 'arrive':
-        return Icons.flag_circle_rounded;
-      case 'turn':
-        if (modifier == 'left' || modifier == 'sharp left') return Icons.turn_left_rounded;
-        if (modifier == 'slight left') return Icons.turn_slight_left_rounded;
-        if (modifier == 'right' || modifier == 'sharp right') return Icons.turn_right_rounded;
-        if (modifier == 'slight right') return Icons.turn_slight_right_rounded;
-        if (modifier == 'uturn') return Icons.u_turn_left_rounded;
-        return Icons.turn_right_rounded;
-      case 'roundabout':
-      case 'rotary':
-        return Icons.roundabout_right_rounded;
-      case 'fork':
-        return modifier == 'left' ? Icons.fork_left_rounded : Icons.fork_right_rounded;
-      case 'merge':
-        return Icons.merge_rounded;
-      case 'depart':
-      case 'continue':
-      default:
-        return Icons.straight_rounded;
+  IconData _getManeuverIcon(String type, String? modifier, String instruction) {
+    final text = instruction.toLowerCase();
+    final mod = (modifier ?? '').toLowerCase();
+    final t = type.toLowerCase();
+
+    // 1. Llegada a destino
+    if (t == 'arrive' || text.contains('llegado') || text.contains('destino')) {
+      return Icons.flag_circle_rounded;
     }
+
+    // 2. Giros en U (Retorno)
+    if (mod == 'uturn' || text.contains('giro en u') || text.contains('retorno') || text.contains('retorne')) {
+      return Icons.u_turn_left_rounded;
+    }
+
+    // 3. Giros a la izquierda (Curva hacia la izquierda)
+    if (mod.contains('left') || text.contains('izquierda') || text.contains('izq')) {
+      if (mod == 'sharp left' || text.contains('pronunciado')) {
+        return Icons.turn_sharp_left_rounded;
+      }
+      if (mod == 'slight left' || text.contains('levemente')) {
+        return Icons.turn_slight_left_rounded;
+      }
+      return Icons.turn_left_rounded;
+    }
+
+    // 4. Giros a la derecha (Curva hacia la derecha)
+    if (mod.contains('right') || text.contains('derecha') || text.contains('der')) {
+      if (mod == 'sharp right' || text.contains('pronunciado')) {
+        return Icons.turn_sharp_right_rounded;
+      }
+      if (mod == 'slight right' || text.contains('levemente')) {
+        return Icons.turn_slight_right_rounded;
+      }
+      return Icons.turn_right_rounded;
+    }
+
+    // 5. Rotondas / Glorietas
+    if (t == 'roundabout' || t == 'rotary' || text.contains('rotonda') || text.contains('glorieta')) {
+      return Icons.roundabout_right_rounded;
+    }
+
+    // 6. Bifurcaciones
+    if (t == 'fork' || text.contains('bifurcación')) {
+      return mod == 'left' ? Icons.fork_left_rounded : Icons.fork_right_rounded;
+    }
+
+    // 7. Incorporaciones
+    if (t == 'merge' || text.contains('incorpórate')) {
+      return Icons.merge_rounded;
+    }
+
+    // 8. Seguir derecho / Recto
+    return Icons.straight_rounded;
   }
 
   Widget _buildTurnByTurnBanner(NavigationStep step, NavigationTelemetry t) {
@@ -987,7 +1018,7 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
         ? '¡Gira ahora!'
         : (distanceMeters < 1000 ? 'En $distanceMeters m' : 'En ${(distanceMeters / 1000).toStringAsFixed(1)} km');
 
-    final icon = _getManeuverIcon(step.maneuverType, step.modifier);
+    final icon = _getManeuverIcon(step.maneuverType, step.modifier, step.instruction);
 
     return Positioned(
       top: 50,
@@ -1018,8 +1049,8 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
             child: Row(
               children: [
                 Container(
-                  width: 52,
-                  height: 52,
+                  width: 54,
+                  height: 54,
                   decoration: BoxDecoration(
                     color: const Color(0xFF00FF87),
                     borderRadius: BorderRadius.circular(16),
@@ -1030,7 +1061,7 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
                       )
                     ],
                   ),
-                  child: Icon(icon, color: Colors.black, size: 32),
+                  child: Icon(icon, color: Colors.black, size: 34),
                 ),
                 const SizedBox(width: 14),
                 Expanded(
