@@ -755,23 +755,29 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
 
   String _getMapTileUrl(bool isDark) {
     final stadiaKey = dotenv.isInitialized ? dotenv.get('STADIA_API_KEY', fallback: '') : '';
-    
+    final cartoKey = dotenv.isInitialized ? dotenv.get('CARTO_API_KEY', fallback: '') : '';
+
     if (stadiaKey.trim().isNotEmpty && !stadiaKey.contains('your_')) {
       return isDark
           ? 'https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}@2x.png?api_key=${stadiaKey.trim()}'
           : 'https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}@2x.png?api_key=${stadiaKey.trim()}';
     }
 
-    // CartoDB Voyager / Dark Matter con subdominios paralelos para máxima velocidad
-    return isDark
-        ? 'https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}.png'
-        : 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png';
+    if (cartoKey.trim().isNotEmpty && !cartoKey.contains('your_')) {
+      return isDark
+          ? 'https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}.png?api_key=${cartoKey.trim()}'
+          : 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png?api_key=${cartoKey.trim()}';
+    }
+
+    // OpenStreetMap estándar 100% libre de marcas de agua "API KEY REQUIRED"
+    return 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
   }
 
   Widget _buildMap(NavigationTelemetry t) {
     final centerPos = t.currentPos ?? const LatLng(4.6097, -74.0817);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+    final hasDedicatedKey = (dotenv.isInitialized && (dotenv.get('STADIA_API_KEY', fallback: '').isNotEmpty || dotenv.get('CARTO_API_KEY', fallback: '').isNotEmpty));
+
     return FlutterMap(
       mapController: _mapCtrl,
       options: MapOptions(
@@ -783,11 +789,21 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
       children: [
         TileLayer(
           urlTemplate: _getMapTileUrl(isDark),
-          subdomains: const ['a', 'b', 'c', 'd'],
+          userAgentPackageName: 'com.myautoguide.app',
           maxZoom: 19,
           keepBuffer: 5,
           panBuffer: 2,
-          userAgentPackageName: 'com.myautoguide.app',
+          tileBuilder: (isDark && !hasDedicatedKey)
+              ? (context, tileWidget, tile) => ColorFiltered(
+                    colorFilter: const ColorFilter.matrix(<double>[
+                      -0.82, 0.0, 0.0, 0.0, 240.0,
+                      0.0, -0.82, 0.0, 0.0, 240.0,
+                      0.0, 0.0, -0.82, 0.0, 240.0,
+                      0.0, 0.0, 0.0, 1.0, 0.0,
+                    ]),
+                    child: tileWidget,
+                  )
+              : null,
         ),
         if (_controller.routePoints.isNotEmpty)
           PolylineLayer(polylines: [
