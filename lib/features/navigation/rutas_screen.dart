@@ -114,32 +114,50 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
       final marca = (data['marca'] as String? ?? '').toUpperCase();
       final modelo = data['modelo'] ?? 'Vehículo';
       final placa = data['placa'] ?? '';
-      final isCar = marca == 'TOYOTA' || marca == 'MAZDA' || marca == 'CHEVROLET';
+      final isCar = marca.contains('TOYOTA') || marca.contains('MAZDA') || marca.contains('CHEVROLET');
       
-      setState(() {
-        _vehicleImagePath = data['image_path'] as String?;
-        _vehiclePlate = placa;
-      });
+      if (mounted) {
+        setState(() {
+          _vehicleImagePath = data['image_path'] as String?;
+          _vehiclePlate = placa;
+        });
+      }
       
-      _controller = NavigationController(
-        vehicleId: widget.vehiculoId,
-        vehicleModel: modelo,
-        isCar: isCar,
-      );
-      _controller.addListener(_onControllerStateUpdate);
+      _controller.updateVehicleInfo(model: modelo, isCar: isCar);
     } catch (_) {}
   }
 
   Future<void> _obtenerUbicacionInicial() async {
-    final permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) await Geolocator.requestPermission();
-    
+    // 1. Obtener la última posición conocida en caché del dispositivo (instantánea en 0ms)
     try {
-      final pos = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      final lastKnown = await Geolocator.getLastKnownPosition();
+      if (lastKnown != null) {
+        final lastLatLng = LatLng(lastKnown.latitude, lastKnown.longitude);
+        _controller.updateCurrentPosition(lastLatLng);
+        _mapCtrl.move(lastLatLng, 15);
+      }
+    } catch (_) {}
+
+    final permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      final req = await Geolocator.requestPermission();
+      if (req == LocationPermission.denied || req == LocationPermission.deniedForever) {
+        return;
+      }
+    }
+    
+    // 2. Obtener posición precisa satelital con timeout para no bloquear el renderizado
+    try {
+      final pos = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+        timeLimit: const Duration(seconds: 4),
+      );
       final latLng = LatLng(pos.latitude, pos.longitude);
       _controller.updateCurrentPosition(latLng);
-      _mapCtrl.move(latLng, 15);
-    } catch (_) {}
+      _mapCtrl.move(latLng, 16);
+    } catch (e) {
+      debugPrint('Aviso: GPS satelital inicializando en segundo plano: $e');
+    }
   }
 
   void _iniciarSeguimientoIdle() {
@@ -729,20 +747,20 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
           : 'https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}@2x.png?api_key=${stadiaKey.trim()}';
     }
 
-    // CartoDB Voyager / Dark Matter (Open standard CDN sin marca de agua)
+    // CartoDB Voyager / Dark Matter con subdominios paralelos para máxima velocidad
     return isDark
-        ? 'https://a.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}.png'
-        : 'https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png';
+        ? 'https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}.png'
+        : 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png';
   }
 
   Widget _buildMap(NavigationTelemetry t) {
-    if (t.currentPos == null) return const Center(child: CircularProgressIndicator());
+    final centerPos = t.currentPos ?? const LatLng(4.6097, -74.0817);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     
     return FlutterMap(
       mapController: _mapCtrl,
       options: MapOptions(
-        initialCenter: t.currentPos!,
+        initialCenter: centerPos,
         initialZoom: 15,
         onTap: (tapPosition, point) => _onMapTappedOrLongPressed(point),
         onLongPress: (tapPosition, point) => _onMapTappedOrLongPressed(point),
@@ -750,6 +768,10 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
       children: [
         TileLayer(
           urlTemplate: _getMapTileUrl(isDark),
+          subdomains: const ['a', 'b', 'c', 'd'],
+          maxZoom: 19,
+          keepBuffer: 5,
+          panBuffer: 2,
           userAgentPackageName: 'com.myautoguide.app',
         ),
         if (_controller.routePoints.isNotEmpty)

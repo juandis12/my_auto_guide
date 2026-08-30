@@ -20,11 +20,11 @@ enum NavigationState {
 /// Orquestador central entre el GPS, el Servicio de Fondo y la UI.
 class NavigationController extends ChangeNotifier {
   final String vehicleId;
-  final String vehicleModel;
-  final bool isCar;
+  String vehicleModel;
+  bool isCar;
 
-  NavigationState _state = NavigationState.idle;
   NavigationTelemetry _telemetry = NavigationTelemetry.empty();
+  NavigationState _state = NavigationState.idle;
   
   LatLng? _destination;
   String _destinationName = '';
@@ -41,6 +41,12 @@ class NavigationController extends ChangeNotifier {
     required this.vehicleModel,
     required this.isCar,
   });
+
+  void updateVehicleInfo({required String model, required bool isCar}) {
+    vehicleModel = model;
+    this.isCar = isCar;
+    notifyListeners();
+  }
 
   // Getters
   NavigationState get state => _state;

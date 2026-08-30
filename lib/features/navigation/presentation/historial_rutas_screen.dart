@@ -644,10 +644,10 @@ class _RouteCard extends StatelessWidget {
           : 'https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}@2x.png?api_key=${stadiaKey.trim()}';
     }
 
-    // CartoDB Voyager / Dark Matter (Open standard CDN sin marca de agua)
+    // CartoDB Voyager / Dark Matter con subdominios paralelos para máxima velocidad
     return isDark
-        ? 'https://a.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}.png'
-        : 'https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png';
+        ? 'https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}.png'
+        : 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png';
   }
 
   void _openDetailMap(BuildContext context, List<LatLng> points) {
@@ -799,6 +799,10 @@ class _RouteCard extends StatelessWidget {
                           children: [
                             TileLayer(
                               urlTemplate: _getMapTileUrl(isDark),
+                              subdomains: const ['a', 'b', 'c', 'd'],
+                              maxZoom: 19,
+                              keepBuffer: 4,
+                              panBuffer: 2,
                               userAgentPackageName: 'com.myautoguide.app',
                             ),
                             PolylineLayer(polylines: [
@@ -973,6 +977,10 @@ class _RouteDetailMapModal extends StatelessWidget {
               children: [
                 TileLayer(
                   urlTemplate: mapTileUrl,
+                  subdomains: const ['a', 'b', 'c', 'd'],
+                  maxZoom: 19,
+                  keepBuffer: 4,
+                  panBuffer: 2,
                   userAgentPackageName: 'com.myautoguide.app',
                 ),
                 if (points.isNotEmpty)
