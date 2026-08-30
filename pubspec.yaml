@@ -87,6 +87,8 @@ dependencies:
 
   # Seguridad y Configuración
   flutter_dotenv: ^5.1.0
+  flutter_secure_storage: ^9.2.2  # VULN-01: Almacenamiento cifrado (Android Keystore / iOS Keychain)
+  crypto: ^3.0.6                  # VULN-05: Hashing SHA-256 para cédula
 
   # Fondo y Widgets
   flutter_background_service: ^5.0.10

@@ -9,6 +9,7 @@ import 'package:geolocator_apple/geolocator_apple.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart'; // VULN-01
 import '../logic/app_widget_logic.dart';
 
 class BackgroundNavService {
@@ -103,22 +104,30 @@ class BackgroundNavService {
       RealtimeChannel? supabaseChannel;
       
       // =========================================================
-      // 2. INICIALIZAR SUPABASE ASÍNCRONAMENTE (NO BLOQUEANTE)
+      // 2. INICIALIZAR SUPABASE DESDE ALMACENAMIENTO CIFRADO (VULN-01)
       // =========================================================
       Future(() async {
         try {
-          final url = prefs.getString('supabase_url') ?? '';
-          final key = prefs.getString('supabase_key') ?? '';
+          // Leer credenciales desde Android Keystore / iOS Keychain (cifradas)
+          const secureStorage = FlutterSecureStorage(
+            aOptions: AndroidOptions(encryptedSharedPreferences: true),
+            iOptions: IOSOptions(
+              accessibility: KeychainAccessibility.first_unlock,
+              synchronizable: false,
+            ),
+          );
+          final url = await secureStorage.read(key: 'secure_supabase_url') ?? '';
+          final key = await secureStorage.read(key: 'secure_supabase_anon_key') ?? '';
           final vehicleId = prefs.getString('active_nav_vehicle_id') ?? 'unknown';
 
           if (url.isNotEmpty && key.isNotEmpty) {
             await Supabase.initialize(url: url, anonKey: key);
             final client = Supabase.instance.client;
             supabaseChannel = client.channel('tracking:$vehicleId');
-            supabaseChannel?.subscribe(); 
+            supabaseChannel?.subscribe();
           }
         } catch (e) {
-          debugPrint('Error inicializando Supabase en Background (GPS continuará operando): $e');
+          debugPrint('Error inicializando Supabase en Background (GPS continuará): $e');
         }
       });
 

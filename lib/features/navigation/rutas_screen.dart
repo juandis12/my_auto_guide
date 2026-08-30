@@ -11,16 +11,17 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geolocator_android/geolocator_android.dart';
 import 'package:geolocator_apple/geolocator_apple.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/services/supabase_service.dart';
 import '../../../core/services/sync_service.dart';
 import '../../../core/services/navigation_service.dart';
 import '../../../core/services/voice_navigation_service.dart';
+import '../../../core/services/secure_storage_service.dart'; // VULN-01: almacenamiento cifrado
 import 'domain/models/navigation_telemetry.dart';
 import 'logic/telemetry_calculator.dart';
 import 'presentation/controllers/navigation_controller.dart';
@@ -398,9 +399,12 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
     final service = FlutterBackgroundService();
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('active_nav_vehicle_id', widget.vehiculoId);
-    await prefs.setString('supabase_url', dotenv.get('SUPABASE_URL'));
-    await prefs.setString('supabase_key', dotenv.get('SUPABASE_ANON_KEY'));
     await prefs.setBool('is_navigating', true);
+    // VULN-01: Credenciales guardadas en almacenamiento cifrado (no SharedPreferences)
+    await SecureStorageService().saveSupabaseCredentials(
+      url: dotenv.get('SUPABASE_URL'),
+      anonKey: dotenv.get('SUPABASE_ANON_KEY'),
+    );
     
     if (!(await service.isRunning())) {
       await service.startService();

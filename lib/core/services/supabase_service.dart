@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:crypto/crypto.dart'; // VULN-05: Hashing de PII
+import 'dart:convert';
 
 class SupabaseService {
   static final SupabaseService _instance = SupabaseService._internal();
@@ -17,6 +19,15 @@ class SupabaseService {
     await client.auth.signOut();
   }
 
+  // --- Seguridad: Hash unidireccional de PII (VULN-05) ---
+  /// Hashea la cedula con SHA-256 antes de guardarla.
+  /// El hash es irreversible: la cedula real NUNCA se almacena.
+  static String _hashCedula(String cedula) {
+    if (cedula.trim().isEmpty) return '';
+    final bytes = utf8.encode(cedula.trim());
+    return sha256.convert(bytes).toString();
+  }
+
   // --- Push Notifications (Firebase Cloud Messaging) ---
   Future<void> registerFcmToken() async {
     final userId = currentUser?.id;
@@ -31,7 +42,7 @@ class SupabaseService {
           'fcm_token': token,
           'updated_at': DateTime.now().toIso8601String(),
         });
-        debugPrint('FCM Token guardado en Supabase: $token');
+        debugPrint('FCM Token registrado en Supabase'); // No logueamos el token en produccion
       }
 
       // Escuchar cuando el token se actualice
@@ -108,7 +119,7 @@ class SupabaseService {
           'kms': kms,
           'image_path': imagePath,
           'placa': placa,
-          'cedula': cedula,
+          'cedula': _hashCedula(cedula), // VULN-05: Guardamos hash, no la cedula real
         })
         .select()
         .single();

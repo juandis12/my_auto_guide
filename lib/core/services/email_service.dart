@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:mailer/mailer.dart';
-import 'package:mailer/smtp_server.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+// VULN-02: Ya no importamos 'mailer' ni 'http' directamente para enviar correos.
+// El envio se delega a la Edge Function de Supabase para que las credenciales
+// de Gmail NUNCA salgan del servidor al cliente.
 
 class EmailService {
   static String _fmtDate(DateTime dt) {
@@ -18,10 +18,6 @@ class EmailService {
     required List<String> explanations,
     Map<String, dynamic>? vehicleData,
   }) async {
-    final gmailUser = dotenv.get('GMAIL_EMAIL', fallback: '');
-    final gmailPass = dotenv.get('GMAIL_APP_PASSWORD', fallback: '');
-    final apiKey = dotenv.get('RESEND_API_KEY', fallback: '');
-
     final String htmlContent = _buildHtmlReport(
       placa: placa,
       finesCount: finesCount,
@@ -32,80 +28,31 @@ class EmailService {
 
     const String subject = 'Reporte de Estado de Vehículo - SIMIT y Vencimientos';
 
-    // 1. PRIMERA OPCIÓN: Enviar usando directamente tu cuenta de Gmail (SMTP SSL)
-    if (gmailUser.isNotEmpty && gmailPass.isNotEmpty) {
-      try {
-        final cleanUser = gmailUser.trim();
-        final cleanPass = gmailPass.replaceAll(' ', '').trim();
-        
-        final smtpServer = SmtpServer(
-          'smtp.gmail.com',
-          port: 465,
-          ssl: true,
-          username: cleanUser,
-          password: cleanPass,
-        );
-        
-        final targetRecipients = <String>{
-          if (toEmail.trim().isNotEmpty) toEmail.trim(),
-          cleanUser,
-        }.toList();
+    try {
+      // VULN-02: Llamar a la Edge Function de Supabase — las credenciales SMTP
+      // viven SOLO en el servidor, nunca en el APK del cliente.
+      final response = await Supabase.instance.client.functions.invoke(
+        'send-email',
+        body: {
+          'toEmail': toEmail,
+          'subject': subject,
+          'htmlContent': htmlContent,
+          'placa': placa,
+        },
+      );
 
-        final message = Message()
-          ..from = Address(cleanUser, 'My Auto Guide')
-          ..recipients.addAll(targetRecipients)
-          ..subject = '$subject ($placa)'
-          ..html = htmlContent;
-
-        final sendReport = await send(message, smtpServer);
-        debugPrint('EmailService (Gmail SMTP SSL): Correo enviado exitosamente a $targetRecipients ($sendReport)');
+      if (response.status == 200 || response.status == 201) {
+        if (kDebugMode) debugPrint('[EMAIL] Reporte enviado correctamente via Edge Function');
         return true;
-      } catch (e) {
-        debugPrint('EmailService (Gmail SMTP SSL): Error enviando con SSL: $e. Probando puerto 587...');
-        try {
-          final cleanUser = gmailUser.trim();
-          final cleanPass = gmailPass.replaceAll(' ', '').trim();
-          final smtpServer = gmail(cleanUser, cleanPass);
-          final message = Message()
-            ..from = Address(cleanUser, 'My Auto Guide')
-            ..recipients.add(toEmail.trim())
-            ..subject = '$subject ($placa)'
-            ..html = htmlContent;
-          await send(message, smtpServer);
-          return true;
-        } catch (e2) {
-          debugPrint('EmailService (Gmail SMTP): Error secundario: $e2');
-        }
       }
+
+      if (kDebugMode) {
+        debugPrint('[EMAIL] Edge Function respondio con status ${response.status}');
+      }
+    } catch (e) {
+      if (kDebugMode) debugPrint('[EMAIL] Error al invocar Edge Function de email');
     }
 
-    // 2. SEGUNDA OPCIÓN: Respaldo vía Resend API
-    if (apiKey.isNotEmpty) {
-      try {
-        final response = await http.post(
-          Uri.parse('https://api.resend.com/emails'),
-          headers: {
-            'Authorization': 'Bearer $apiKey',
-            'Content-Type': 'application/json',
-          },
-          body: jsonEncode({
-            'from': 'My Auto Guide <onboarding@resend.dev>',
-            'to': [toEmail],
-            'subject': '$subject ($placa)',
-            'html': htmlContent,
-          }),
-        );
-
-        if (response.statusCode == 200 || response.statusCode == 201) {
-          debugPrint('EmailService (Resend): Reporte enviado a $toEmail');
-          return true;
-        }
-      } catch (e) {
-        debugPrint('EmailService (Resend): Error de conexión: $e');
-      }
-    }
-
-    debugPrint('EmailService: No se configuró GMAIL_APP_PASSWORD ni RESEND_API_KEY en el archivo .env');
     return false;
   }
 

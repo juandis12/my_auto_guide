@@ -1,87 +1,64 @@
+// =============================================================================
+// ai_bot_service.dart — ASISTENTE IA SEGURO (VULN-08 Fix)
+// =============================================================================
+// La GEMINI_API_KEY ya NO se incluye en el bundle del APK.
+// Todas las peticiones pasan por la Edge Function 'gemini-chat' de Supabase,
+// que actua como proxy seguro con rate limiting (20 req/min por usuario).
+// =============================================================================
 import 'package:flutter/foundation.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AIBotService {
   static final AIBotService _instance = AIBotService._internal();
   factory AIBotService() => _instance;
   AIBotService._internal();
 
-  GenerativeModel? _model;
-  ChatSession? _chat;
-  String _currentModelName = 'gemini-1.5-flash';
-
-  final List<String> _modelFallbacks = [
-    'gemini-2.5-flash',
-    'gemini-2.0-flash',
-    'gemini-1.5-flash-8b', // Último remanente de la serie 1.5
-  ];
+  bool _initialized = false;
 
   void initialize({String? specificModel}) {
-    final apiKey = dotenv.get('GEMINI_API_KEY', fallback: '');
-    if (apiKey.isEmpty) return;
-
-    _currentModelName = specificModel ?? _modelFallbacks.first;
-
-    _model = GenerativeModel(
-      model: _currentModelName,
-      apiKey: apiKey,
-      systemInstruction: Content.system('''
-Actúa como un ingeniero de software senior, arquitecto de sistemas y experto mecánico automotriz especializado en el proyecto "MY AUTO GUIDE".
-
-Tu misión es asistir al usuario en dudas técnicas sobre sus vehículos y el uso de la aplicación.
-
-REGLAS ABSOLUTAS:
-1. Especialidad Exclusiva: Solo respondes sobre mecánica, mantenimiento, técnica automotriz, seguridad vial y el funcionamiento de My Auto Guide.
-2. Veracidad: Nunca inventes datos. Si no conoces la respuesta técnica oficial, di: "NO PUEDO CONFIRMAR ESTO".
-3. Razonamiento Técnico: Explica el "porqué" de las averías o mantenimientos paso a paso.
-4. Identidad: Eres "Master Mechanic", el asistente inteligente de My Auto Guide.
-5. Filtro de Temas: Si te preguntan sobre cocina, política, o cualquier tema ajeno a los vehículos, responde amablemente que tu experticia se limita al mundo automotriz.
-6. Datos de My Auto Guide: Sabes que la app maneja RUNT, GPS tracking, gastos y mantenimientos preventivos.
-
-Ejemplos de respuesta:
-- Si preguntan por presión de llantas: Da el dato técnico habitual para ese modelo (si lo conoces) o explica cómo leerlo en el manual/basculante.
-- Si describen un ruido: Explica posibles causas mecánicas (ej: pastillas desgastadas, rodamientos, etc).
-'''),
-    );
-
-    _chat = _model!.startChat();
+    // La inicializacion ahora es trivial: no se carga ninguna API key en el cliente.
+    // El modelo se selecciona en el servidor (Edge Function gemini-chat).
+    _initialized = true;
   }
 
   Future<String> sendMessage(String text) async {
-    int retryCount = 0;
-    
-    while (retryCount < _modelFallbacks.length) {
-      if (_chat == null) {
-        initialize(specificModel: _modelFallbacks[retryCount]);
-      }
-      if (_chat == null) return "Error: IA no configurada. Verifica tu API Key.";
+    if (!_initialized) initialize();
 
-      try {
-        final response = await _chat!.sendMessage(Content.text(text));
-        return response.text ?? "Sin respuesta de la IA.";
-      } catch (e) {
-        final errorStr = e.toString();
-        debugPrint('AI Error con $_currentModelName: $errorStr');
+    if (text.trim().isEmpty) return 'Por favor, escribe tu pregunta.';
+    if (text.length > 2000) return 'El mensaje es demasiado largo. Por favor, acortalo.';
 
-        // Si el error es de modelo no encontrado o versión de API, probamos el siguiente
-        if (errorStr.contains('not found') || errorStr.contains('404') || errorStr.contains('supported')) {
-          retryCount++;
-          _chat = null; // Forzar re-inicialización con el siguiente modelo
-          if (retryCount >= _modelFallbacks.length) {
-            return "No se encontró un modelo de IA compatible. Por favor, intenta más tarde o verifica tu API Key.";
-          }
-          continue; 
-        }
-        
-        return "Hubo un problema de conexión con la IA: $e";
+    try {
+      // VULN-08: La API Key de Gemini vive SOLO en el servidor Supabase.
+      // Esta llamada esta autenticada con el JWT del usuario actual.
+      final response = await Supabase.instance.client.functions.invoke(
+        'gemini-chat',
+        body: {'message': text},
+      );
+
+      if (response.status == 200) {
+        final data = response.data as Map<String, dynamic>?;
+        return data?['text'] as String? ?? 'Sin respuesta de la IA.';
       }
+
+      if (response.status == 429) {
+        return 'Has alcanzado el limite de consultas por minuto. Espera un momento e intenta de nuevo.';
+      }
+
+      if (response.status == 401) {
+        return 'Sesion no valida. Por favor, cierra sesion y vuelve a entrar.';
+      }
+
+      if (kDebugMode) {
+        debugPrint('[AI] Edge Function respondio con status ${response.status}');
+      }
+      return 'Hubo un problema con el servicio de IA. Intenta de nuevo.';
+    } catch (e) {
+      if (kDebugMode) debugPrint('[AI] Error al invocar Edge Function gemini-chat');
+      return 'No se pudo conectar con el asistente IA. Verifica tu conexion.';
     }
-    return "Error inesperado en el servicio de IA.";
   }
 
   void resetChat() {
-    _chat = null;
     initialize();
   }
 }
