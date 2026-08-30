@@ -99,7 +99,18 @@ Future<void> main() async {
       await SentryFlutter.init(
         (options) {
           options.dsn = sentryDsn;
-          options.tracesSampleRate = 1.0;
+          options.tracesSampleRate = 0.1; // Solo 10% de transacciones (SEGURIDAD)
+          options.sampleRate = 0.5;       // Solo 50% de errores
+          // Filtrar datos PII antes de enviar a servidores externos
+          options.beforeSend = (event, hint) {
+            return event.copyWith(
+              extra: Map.fromEntries(
+                (event.extra ?? {}).entries.where(
+                  (e) => !['lat', 'lng', 'latitude', 'longitude', 'cedula', 'supabase_key'].contains(e.key),
+                ),
+              ),
+            );
+          };
         },
         appRunner: () => runApp(const MyApp()),
       );
