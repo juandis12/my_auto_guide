@@ -226,4 +226,5 @@ class EmailService {
     </body>
     </html>
     ''';
+  }
 }
