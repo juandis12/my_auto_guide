@@ -1,9 +1,9 @@
 ﻿// supabase/functions/send-email/index.ts
-// VULN-02 Fix: Envia emails desde el servidor (no desde el cliente)
-// Las credenciales SMTP nunca salen del servidor de Supabase.
-// Deploy: supabase functions deploy send-email
+// VULN-02 Fix: Envia correos usando nodemailer desde NPM (compatible con Deno nativo)
+// Deploy: supabase.cmd functions deploy send-email --project-ref xstzerpnupubyfbhrrzu
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import nodemailer from "npm:nodemailer";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -24,7 +24,6 @@ serve(async (req: Request) => {
   }
 
   try {
-    // Validar que el usuario esta autenticado
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
       return new Response(JSON.stringify({ error: "No autorizado" }), {
@@ -46,49 +45,58 @@ serve(async (req: Request) => {
     const gmailPass = Deno.env.get("GMAIL_APP_PASSWORD") ?? "";
     const resendKey = Deno.env.get("RESEND_API_KEY") ?? "";
 
-    // Opcion 1: Resend API (recomendado para produccion)
+    // 1. Resend API
     if (resendKey) {
-      const res = await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: {
-          "Authorization": "Bearer " + resendKey,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          from: "My Auto Guide <onboarding@resend.dev>",
-          to: [toEmail],
-          subject: placa ? subject + " - " + placa : subject,
-          html: htmlContent,
-        }),
-      });
-
-      if (res.ok) {
-        return new Response(JSON.stringify({ ok: true, provider: "resend" }), {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+      try {
+        const res = await fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: {
+            "Authorization": "Bearer " + resendKey,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            from: "My Auto Guide <onboarding@resend.dev>",
+            to: [toEmail],
+            subject: placa ? subject + " - " + placa : subject,
+            html: htmlContent,
+          }),
         });
+
+        if (res.ok) {
+          return new Response(JSON.stringify({ ok: true, provider: "resend" }), {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+      } catch (e) {
+        console.error("Error con Resend: ", e);
       }
     }
 
-    // Opcion 2: SMTP Gmail (fallback)
+    // 2. SMTP Gmail usando nodemailer
     if (gmailUser && gmailPass) {
-      const smtpRes = await fetch("https://smtp-api.deno.dev/send", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          from: gmailUser,
-          to: toEmail,
-          subject: placa ? subject + " - " + placa : subject,
-          html: htmlContent,
-          user: gmailUser,
-          pass: gmailPass,
-        }),
+      const cleanUser = gmailUser.trim();
+      const cleanPass = gmailPass.replace(/\s+/g, "").trim();
+
+      const transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 465,
+        secure: true, // true para 465 (SSL)
+        auth: {
+          user: cleanUser,
+          pass: cleanPass,
+        },
       });
 
-      if (smtpRes.ok) {
-        return new Response(JSON.stringify({ ok: true, provider: "gmail" }), {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
+      await transporter.sendMail({
+        from: `"My Auto Guide" <${cleanUser}>`,
+        to: toEmail.trim(),
+        subject: placa ? `${subject} - ${placa}` : subject,
+        html: htmlContent,
+      });
+
+      return new Response(JSON.stringify({ ok: true, provider: "nodemailer-gmail" }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     return new Response(JSON.stringify({ error: "No hay proveedor de email configurado" }), {
@@ -96,7 +104,8 @@ serve(async (req: Request) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (err) {
-    return new Response(JSON.stringify({ error: "Error interno del servidor" }), {
+    console.error("Error en send-email: ", err);
+    return new Response(JSON.stringify({ error: err.message ?? "Error interno" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
