@@ -2204,6 +2204,8 @@ class _InicioAppState extends State<InicioApp> {
         );
       },
     );
+  }
+
   Future<void> _verificarYEnviarAlertasMantenimiento() async {
     final client = Supabase.instance.client;
     final userEmail = client.auth.currentUser?.email;
