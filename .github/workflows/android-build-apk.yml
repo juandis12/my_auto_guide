@@ -1,133 +1,206 @@
-name: Android Build APK
+name: Android Build
 
 on:
-  push:
-    branches:
-      - main
-      - 'release/**'
-    tags:
-      - 'v*'
-  pull_request:
-    branches:
-      - main
   workflow_dispatch:
     inputs:
-      build_mode:
-        description: 'Modo de compilación (release o debug)'
+      build_id:
+        description: 'Unique build identifier'
         required: true
-        default: 'release'
-        type: choice
-        options:
-          - release
-          - debug
-      split_per_abi:
-        description: 'Dividir APK por arquitectura (armeabi-v7a, arm64-v8a, x86_64)'
-        required: false
-        default: false
-        type: boolean
-      flutter_version:
-        description: 'Versión de Flutter (dejar vacío para latest stable)'
-        required: false
-        default: ''
         type: string
-
-permissions:
-  contents: read
+        default: 'app-release'
+      android_path:
+        description: 'Path to Android project (e.g., "android")'
+        required: false
+        type: string
+        default: 'android'
+      configuration:
+        description: 'Build configuration (Debug is faster, Release for production)'
+        required: false
+        type: string
+        default: 'Release'
+      split_per_abi:
+        description: 'Split APK per ABI (armeabi-v7a, arm64-v8a, x86_64)'
+        required: false
+        type: boolean
+        default: false
+      flutter_version:
+        description: 'Flutter version to use (e.g., 3.24.0). Empty means latest stable.'
+        required: false
+        type: string
+        default: ''
 
 jobs:
-  build-apk:
-    name: Compilar APK Android
+  build:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 30
 
     steps:
-      # 1. Clonar repositorio
-      - name: Checkout del código
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Configurar Java 17 (Requerido para Gradle y Kotlin en Android)
-      - name: Configurar Java 17 (Temurin)
+      - name: Setup Java 17
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
           cache: 'gradle'
 
-      # 3. Configurar Flutter
-      - name: Configurar Flutter
+      - name: Detect project type
+        id: detect
+        run: |
+          if [ -f "pubspec.yaml" ]; then
+            echo "type=flutter" >> $GITHUB_OUTPUT
+          elif [ -f "package.json" ] && grep -q '"expo"' package.json; then
+            echo "type=expo" >> $GITHUB_OUTPUT
+          elif [ -f "package.json" ] && grep -q '"react-native"' package.json; then
+            echo "type=reactnative" >> $GITHUB_OUTPUT
+          else
+            echo "type=native" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Setup Flutter
+        if: steps.detect.outputs.type == 'flutter'
         uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'
           flutter-version: ${{ inputs.flutter_version || '' }}
+          channel: ${{ inputs.flutter_version && 'stable' || 'stable' }}
           cache: true
 
-      # 4. Inyectar / Restaurar archivo .env (Seguridad y compilación de assets)
-      - name: Preparar archivo .env
-        env:
-          ENV_FILE_SECRET: ${{ secrets.ENV_FILE }}
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: |
-          if [ -n "$ENV_FILE_SECRET" ]; then
-            echo "$ENV_FILE_SECRET" > .env
-            echo "✅ Archivo .env cargado desde secret ENV_FILE."
-          elif [ -n "$SUPABASE_URL" ]; then
-            echo "SUPABASE_URL=$SUPABASE_URL" > .env
-            echo "SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY" >> .env
-            echo "SENTRY_DSN=$SENTRY_DSN" >> .env
-            echo "GEMINI_API_KEY=$GEMINI_API_KEY" >> .env
-            echo "✅ Archivo .env generado a partir de variables secretas individuales."
-          else
-            echo "⚠️ No se encontraron secretos para .env. Creando .env placeholder para compilación..."
-            printf "%s\n" \
-              "SUPABASE_URL=https://placeholder.supabase.co" \
-              "SUPABASE_ANON_KEY=placeholder_anon_key" \
-              "SENTRY_DSN=" \
-              "GEMINI_API_KEY=" > .env
-          fi
-
-      # 5. Inyectar / Restaurar google-services.json (Requerido por Firebase / GMS)
-      - name: Preparar google-services.json
-        env:
-          GOOGLE_SERVICES_JSON_SECRET: ${{ secrets.GOOGLE_SERVICES_JSON }}
-        run: |
-          mkdir -p android/app
-          if [ -n "$GOOGLE_SERVICES_JSON_SECRET" ]; then
-            echo "$GOOGLE_SERVICES_JSON_SECRET" > android/app/google-services.json
-            echo "✅ google-services.json restaurado desde secret."
-          elif [ ! -f android/app/google-services.json ]; then
-            echo "⚠️ No se encontró google-services.json ni secret. Generando mock para compilación..."
-            echo '{"project_info":{"project_number":"1234567890","project_id":"my-auto-guide-mock","storage_bucket":"my-auto-guide-mock.appspot.com"},"client":[{"client_info":{"mobilesdk_app_id":"1:1234567890:android:mockappidentifier","android_client_info":{"package_name":"com.example.my_auto_guide"}},"oauth_client":[],"api_key":[{"current_key":"mock_api_key_for_ci_build"}],"services":{"analytics_service":{"status":1}}}],"configuration_version":"1"}' > android/app/google-services.json
-          fi
-
-      # 6. Descargar dependencias de Flutter
-      - name: Instalar dependencias (flutter pub get)
+      - name: Flutter pub get
+        if: steps.detect.outputs.type == 'flutter'
         run: flutter pub get
 
-      # 7. Verificar integridad estática del código
-      - name: Análisis estático (flutter analyze)
-        run: flutter analyze || true
+      - name: Setup Node.js
+        if: steps.detect.outputs.type == 'reactnative' || steps.detect.outputs.type == 'expo'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
-      # 8. Compilar APK
-      - name: Compilar APK Android
+      - name: Restore node_modules cache
+        if: steps.detect.outputs.type == 'reactnative' || steps.detect.outputs.type == 'expo'
+        uses: actions/cache@v4
+        id: node-modules-cache
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json', 'yarn.lock') }}
+          restore-keys: |
+            node-modules-${{ runner.os }}-
+
+      - name: Install npm dependencies
+        if: (steps.detect.outputs.type == 'reactnative' || steps.detect.outputs.type == 'expo') && steps.node-modules-cache.outputs.cache-hit != 'true'
+        run: npm install
+
+      - name: Build APK
+        env:
+          BUILD_ID: ${{ inputs.build_id }}
+          ANDROID_PATH: ${{ inputs.android_path }}
+          PROJECT_TYPE: ${{ steps.detect.outputs.type }}
+          CONFIGURATION: ${{ inputs.configuration }}
+          SPLIT_PER_ABI: ${{ inputs.split_per_abi }}
         run: |
-          MODE="${{ inputs.build_mode || 'release' }}"
-          SPLIT="${{ inputs.split_per_abi || 'false' }}"
+          set -e
 
-          BUILD_ARGS="--$MODE"
-          if [ "$SPLIT" = "true" ]; then
-            BUILD_ARGS="$BUILD_ARGS --split-per-abi"
+          # Create .env file from secrets or fallback to .env.example
+          echo "Creando archivo .env..."
+          if [ -n "${{ secrets.SUPABASE_URL }}" ]; then
+            echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" > "${GITHUB_WORKSPACE}/.env"
+            echo "SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}" >> "${GITHUB_WORKSPACE}/.env"
+            if [ -n "${{ secrets.GEMINI_API_KEY }}" ]; then
+              echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" >> "${GITHUB_WORKSPACE}/.env"
+            fi
+            if [ -n "${{ secrets.SENTRY_DSN }}" ]; then
+              echo "SENTRY_DSN=${{ secrets.SENTRY_DSN }}" >> "${GITHUB_WORKSPACE}/.env"
+            fi
+            echo "Secretos inyectados correctamente."
+          else
+            echo "Secrets no configurados, usando .env.example como fallback..."
+            if [ -f "${GITHUB_WORKSPACE}/.env.example" ]; then
+              cp "${GITHUB_WORKSPACE}/.env.example" "${GITHUB_WORKSPACE}/.env"
+            else
+              touch "${GITHUB_WORKSPACE}/.env"
+            fi
           fi
 
-          echo "🚀 Ejecutando: flutter build apk $BUILD_ARGS"
-          flutter build apk $BUILD_ARGS
+          # Prepare google-services.json
+          mkdir -p android/app
+          if [ -n "${{ secrets.GOOGLE_SERVICES_JSON }}" ]; then
+            echo "${{ secrets.GOOGLE_SERVICES_JSON }}" > "${GITHUB_WORKSPACE}/android/app/google-services.json"
+            echo "✅ google-services.json inyectado desde secret."
+          elif [ ! -f "${GITHUB_WORKSPACE}/android/app/google-services.json" ]; then
+            echo "⚠️ Generando mock de google-services.json para build..."
+            echo '{"project_info":{"project_number":"1234567890","project_id":"my-auto-guide-mock","storage_bucket":"my-auto-guide-mock.appspot.com"},"client":[{"client_info":{"mobilesdk_app_id":"1:1234567890:android:mockappidentifier","android_client_info":{"package_name":"com.example.my_auto_guide"}},"oauth_client":[],"api_key":[{"current_key":"mock_api_key_for_ci_build"}],"services":{"analytics_service":{"status":1}}}],"configuration_version":"1"}' > "${GITHUB_WORKSPACE}/android/app/google-services.json"
+          fi
 
-      # 9. Subir APK como artefacto descargable de GitHub Actions
-      - name: Subir artefacto APK
+          mkdir -p build
+
+          if [ "$PROJECT_TYPE" = "flutter" ]; then
+            cd "${GITHUB_WORKSPACE}"
+            BUILD_ARGS=""
+            if [ "$CONFIGURATION" = "Debug" ]; then
+              BUILD_ARGS="--debug"
+            else
+              BUILD_ARGS="--release"
+            fi
+
+            if [ "$SPLIT_PER_ABI" = "true" ]; then
+              BUILD_ARGS="$BUILD_ARGS --split-per-abi"
+            fi
+
+            echo "Building Flutter APK with args: $BUILD_ARGS..."
+            flutter build apk $BUILD_ARGS
+
+            # Find generated APK and move to build directory
+            APK_SRC=$(find build/app/outputs/flutter-apk -name "*.apk" -type f | head -1)
+            if [ -n "$APK_SRC" ]; then
+              cp "$APK_SRC" "build/${BUILD_ID}.apk"
+              echo "Created APK at: build/${BUILD_ID}.apk"
+            fi
+
+            # Also copy all APKs if split per abi
+            if [ "$SPLIT_PER_ABI" = "true" ]; then
+              cp build/app/outputs/flutter-apk/*.apk build/ || true
+            fi
+          elif [ "$PROJECT_TYPE" = "reactnative" ] || [ "$PROJECT_TYPE" = "expo" ] || [ "$PROJECT_TYPE" = "native" ]; then
+            cd "${GITHUB_WORKSPACE}/${ANDROID_PATH}"
+            chmod +x gradlew
+            if [ "$CONFIGURATION" = "Debug" ]; then
+              ./gradlew assembleDebug
+              APK_SRC=$(find app/build/outputs/apk/debug -name "*.apk" -type f | head -1)
+            else
+              ./gradlew assembleRelease
+              APK_SRC=$(find app/build/outputs/apk/release -name "*.apk" -type f | head -1)
+            fi
+
+            cd "${GITHUB_WORKSPACE}"
+            if [ -n "$APK_SRC" ]; then
+              cp "${ANDROID_PATH}/$APK_SRC" "build/${BUILD_ID}.apk"
+              echo "Created APK at: build/${BUILD_ID}.apk"
+            fi
+          fi
+
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: my-auto-guide-apk-${{ inputs.build_mode || 'release' }}-${{ github.run_number }}
-          path: build/app/outputs/flutter-apk/*.apk
-          retention-days: 14
+          name: apk
+          path: build/*.apk
+          retention-days: 7
+          if-no-files-found: error
+
+      - name: Build summary
+        if: always()
+        env:
+          CONFIGURATION: ${{ inputs.configuration }}
+        run: |
+          echo "## Android Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Build ID:** ${{ inputs.build_id }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status:** ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Configuration:** $CONFIGURATION" >> $GITHUB_STEP_SUMMARY
+          echo "- **Split per ABI:** ${{ inputs.split_per_abi }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Flutter Cache:** ${{ steps.detect.outputs.type == 'flutter' && 'Enabled' || 'N/A' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Node Modules Cache:** ${{ steps.node-modules-cache.outputs.cache-hit == 'true' && 'Hit' || 'N/A' }}" >> $GITHUB_STEP_SUMMARY
+          if [ -f build/*.apk ]; then
+            APK_PATH=$(find build -name "*.apk" -type f | head -1)
+            echo "- **APK File:** $(basename "$APK_PATH")" >> $GITHUB_STEP_SUMMARY
+            echo "- **APK Size:** $(ls -lh "$APK_PATH" | awk '{print $5}')" >> $GITHUB_STEP_SUMMARY
+          fi
