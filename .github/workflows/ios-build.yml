@@ -7,6 +7,7 @@ on:
         description: 'Unique build identifier'
         required: true
         type: string
+        default: 'ios_ipa'
       ios_path:
         description: 'Path to iOS project (e.g., "ios" for React Native)'
         required: false
