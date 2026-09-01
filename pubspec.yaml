@@ -255,6 +255,10 @@ flutter:
     - assets/motos/victori/
     - assets/motos/triumph/
     - assets/motos/royal_enfield/
+    - assets/motos/harley_davidson/
+    - assets/motos/sym/
+    - assets/motos/kymco/
+    - assets/motos/vespa/
 
 flutter_launcher_icons:
   android: true

@@ -250,27 +250,60 @@ class VehicleCatalogService {
     ],
     'HONDA': [
       {'modelo': 'Africa Twin CRF1100L', 'img': 'assets/motos/honda/africa_twin_crf1100l.png'},
-      {'modelo': 'XRE 300 Rally', 'img': 'assets/motos/honda/xre_300.png'},
+      {'modelo': 'CB 125F', 'img': 'assets/motos/honda/cb_125f.png'},
+      {'modelo': 'CB 300F Twister', 'img': 'assets/motos/honda/cb_300f_twister.png'},
+      {'modelo': 'XR 150L', 'img': 'assets/motos/honda/xr_150l.png'},
+      {'modelo': 'XRE 300 Rally', 'img': 'assets/motos/honda/xre_300_rally.png'},
+      {'modelo': 'Transalp XL750', 'img': 'assets/motos/honda/transalp_xl750.png'},
+      {'modelo': 'Navi 110', 'img': 'assets/motos/honda/navi_110.png'},
+      {'modelo': 'PCX 160', 'img': 'assets/motos/honda/pcx_160.png'},
+      {'modelo': 'CB 650R', 'img': 'assets/motos/honda/cb_650r.png'},
+      {'modelo': 'CBR 650R', 'img': 'assets/motos/honda/cbr_650r.png'},
     ],
     'DUCATI': [
       {'modelo': 'Monster 937', 'img': 'assets/motos/ducati/monster_937.png'},
       {'modelo': 'Panigale V4', 'img': 'assets/motos/ducati/panigale_v4.png'},
+      {'modelo': 'Panigale V2', 'img': 'assets/motos/ducati/panigale_v2.png'},
       {'modelo': 'Multistrada V4', 'img': 'assets/motos/ducati/multistrada_v4.png'},
       {'modelo': 'Scrambler Icon', 'img': 'assets/motos/ducati/scrambler_icon.png'},
       {'modelo': 'DesertX', 'img': 'assets/motos/ducati/desertx.png'},
+      {'modelo': 'Diavel V4', 'img': 'assets/motos/ducati/diavel_v4.png'},
+      {'modelo': 'Streetfighter V4', 'img': 'assets/motos/ducati/streetfighter_v4.png'},
     ],
     'TRIUMPH': [
       {'modelo': 'Speed 400', 'img': 'assets/motos/triumph/speed_400.png'},
       {'modelo': 'Trident 660', 'img': 'assets/motos/triumph/trident_660.png'},
+      {'modelo': 'Street Triple 765', 'img': 'assets/motos/triumph/street_triple_765.png'},
       {'modelo': 'Tiger 900 Rally', 'img': 'assets/motos/triumph/tiger_900_rally.png'},
+      {'modelo': 'Tiger 1200', 'img': 'assets/motos/triumph/tiger_1200.png'},
       {'modelo': 'Bonneville T120', 'img': 'assets/motos/triumph/bonneville_t120.png'},
+      {'modelo': 'Rocket 3', 'img': 'assets/motos/triumph/rocket_3.png'},
     ],
     'ROYAL ENFIELD': [
       {'modelo': 'Himalayan 450', 'img': 'assets/motos/royal_enfield/himalayan_450.png'},
       {'modelo': 'Classic 350', 'img': 'assets/motos/royal_enfield/classic_350.png'},
       {'modelo': 'Meteor 350', 'img': 'assets/motos/royal_enfield/meteor_350.png'},
       {'modelo': 'Interceptor 650', 'img': 'assets/motos/royal_enfield/interceptor_650.png'},
+      {'modelo': 'Continental GT 650', 'img': 'assets/motos/royal_enfield/continental_gt_650.png'},
+      {'modelo': 'Super Meteor 650', 'img': 'assets/motos/royal_enfield/super_meteor_650.png'},
       {'modelo': 'Hunter 350', 'img': 'assets/motos/royal_enfield/hunter_350.png'},
+    ],
+    'HARLEY-DAVIDSON': [
+      {'modelo': 'Fat Boy', 'img': 'assets/motos/harley_davidson/fat_boy.png'},
+      {'modelo': 'Road Glide Special', 'img': 'assets/motos/harley_davidson/road_glide_special.png'},
+      {'modelo': 'Breakout 117', 'img': 'assets/motos/harley_davidson/breakout_117.png'},
+    ],
+    'SYM': [
+      {'modelo': 'Crox 125', 'img': 'assets/motos/sym/crox_125.png'},
+      {'modelo': 'NH Trazer 200', 'img': 'assets/motos/sym/nh_trazer_200.png'},
+      {'modelo': 'Citycom 300i', 'img': 'assets/motos/sym/citycom_300i.png'},
+    ],
+    'KYMCO': [
+      {'modelo': 'Agility 125', 'img': 'assets/motos/kymco/agility_125.png'},
+      {'modelo': 'AK 550 Maxi Scooter', 'img': 'assets/motos/kymco/ak_550_maxi_scooter.png'},
+    ],
+    'VESPA': [
+      {'modelo': 'Sprint 150', 'img': 'assets/motos/vespa/sprint_150.png'},
     ],
     'VICTORI': [
       {'modelo': 'Venom 150', 'img': 'assets/motos/victori/victori_venom_150.png'},
@@ -291,6 +324,10 @@ class VehicleCatalogService {
     'VICTORI': 'assets/logos/victori_logo.png',
     'TRIUMPH': 'assets/logos/triumph_logo.png',
     'ROYAL ENFIELD': 'assets/logos/royal-enfield.png',
+    'HARLEY-DAVIDSON': 'assets/logos/harley_davidson_logo.png',
+    'SYM': 'assets/logos/sym.png',
+    'KYMCO': 'assets/logos/kymco.png',
+    'VESPA': 'assets/logos/vespa.png',
   };
 
   // --- BRAND COLORS (Shared) ---
