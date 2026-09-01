@@ -259,10 +259,10 @@ class _VehicleRegistrationViewState extends State<VehicleRegistrationView> {
                           itemCount: modelosDeMarca.length,
                           onPageChanged: (i) => setState(() => indexModelo = i),
                           itemBuilder: (context, i) {
-                            final img = modelosDeMarca[i]['img']!;
+                            final img = modelosDeMarca[i]['img'] ?? '';
                             return Hero(
-                              tag: 'vehicle_main_image',
-                              child: Image.asset(img, fit: BoxFit.contain),
+                              tag: 'vehicle_main_image_$i',
+                              child: _buildVehicleImage(img),
                             );
                           },
                         ),
@@ -272,6 +272,7 @@ class _VehicleRegistrationViewState extends State<VehicleRegistrationView> {
                 ),
                 const SizedBox(height: 10),
                 Text(modeloActual,
+                    textAlign: TextAlign.center,
                     style: const TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 18)),
                 const SizedBox(height: 12),
@@ -285,6 +286,7 @@ class _VehicleRegistrationViewState extends State<VehicleRegistrationView> {
                       final marca = logos.keys.elementAt(index);
                       final selected = marcaSeleccionada == marca;
                       final brandColor = brandColors[marca] ?? Colors.blue;
+                      final logoPath = logos[marca] ?? '';
                       return GestureDetector(
                         onTap: () => _cambiarMarca(marca),
                         child: Column(
@@ -304,12 +306,13 @@ class _VehicleRegistrationViewState extends State<VehicleRegistrationView> {
                                     width: 2),
                               ),
                               padding: const EdgeInsets.all(6),
-                              child: Image.asset(logos[marca]!,
-                                  fit: BoxFit.contain),
+                              child: _buildBrandLogo(logoPath, marca),
                             ),
+                            const SizedBox(height: 4),
                             Text(marca,
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
+                                    fontSize: 12,
                                     color: selected
                                         ? brandColor
                                         : Colors.black54)),
@@ -372,6 +375,79 @@ class _VehicleRegistrationViewState extends State<VehicleRegistrationView> {
           border: InputBorder.none,
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildVehicleImage(String path) {
+    if (path.isEmpty) {
+      return Icon(
+        widget.kind == VehicleKind.moto
+            ? Icons.two_wheeler
+            : Icons.directions_car,
+        size: 100,
+        color: const Color(0xFF035880).withOpacity(0.5),
+      );
+    }
+
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+      return Image.network(
+        path,
+        fit: BoxFit.contain,
+        errorBuilder: (_, __, ___) => Icon(
+          widget.kind == VehicleKind.moto
+              ? Icons.two_wheeler
+              : Icons.directions_car,
+          size: 100,
+          color: const Color(0xFF035880).withOpacity(0.5),
+        ),
+      );
+    }
+
+    return Image.asset(
+      path,
+      fit: BoxFit.contain,
+      errorBuilder: (_, __, ___) => Icon(
+        widget.kind == VehicleKind.moto
+            ? Icons.two_wheeler
+            : Icons.directions_car,
+        size: 100,
+        color: const Color(0xFF035880).withOpacity(0.5),
+      ),
+    );
+  }
+
+  Widget _buildBrandLogo(String logoPath, String marca) {
+    if (logoPath.isEmpty) {
+      return Center(
+        child: Text(
+          marca.isNotEmpty ? marca[0] : '?',
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        ),
+      );
+    }
+
+    if (logoPath.startsWith('http://') || logoPath.startsWith('https://')) {
+      return Image.network(
+        logoPath,
+        fit: BoxFit.contain,
+        errorBuilder: (_, __, ___) => Center(
+          child: Text(
+            marca.isNotEmpty ? marca[0] : '?',
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          ),
+        ),
+      );
+    }
+
+    return Image.asset(
+      logoPath,
+      fit: BoxFit.contain,
+      errorBuilder: (_, __, ___) => Center(
+        child: Text(
+          marca.isNotEmpty ? marca[0] : '?',
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
       ),
     );

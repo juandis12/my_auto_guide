@@ -127,6 +127,7 @@ flutter:
     - assets/facebook.png
     - assets/apple.png
     - assets/bg_pattern.png
+    - assets/logos/
     - assets/logos/yamaha_logo.png
     - assets/logos/suzuki_logo.png
     - assets/logos/bmw_logo.png
@@ -141,6 +142,20 @@ flutter:
     - assets/logos/toyota_logo.png
     - assets/logos/mazda_logo.png
     - assets/logos/chevrolet_logo.png
+    - assets/logos/renault_logo.png
+    - assets/logos/nissan_logo.png
+    - assets/logos/hyundai_logo.png
+    - assets/logos/kia_logo.png
+    - assets/logos/volkswagen_logo.png
+    - assets/logos/ford_logo.png
+    - assets/logos/audi_logo.png
+    - assets/logos/mercedes_logo.png
+    - assets/logos/jeep_logo.png
+    - assets/logos/mitsubishi_logo.png
+    - assets/logos/peugeot_logo.png
+    - assets/logos/fiat_logo.png
+    - assets/logos/byd_logo.png
+    - assets/logos/triumph_logo.png
     - assets/bus.png
     - assets/furgon.png
     - assets/lineasfondo.png
