@@ -459,13 +459,14 @@ class VehicleCatalogService {
     if (_motoLogos.containsKey(upper)) return _motoLogos[upper]!;
     if (_carLogos.containsKey(upper)) return _carLogos[upper]!;
 
-    // Fallback a CDN de alta calidad si no está en local
     final slug = brand
         .trim()
         .toLowerCase()
         .replaceAll(' ', '-')
         .replaceAll('_', '-');
-    return 'https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/$slug.png';
+
+    // Primero intenta resolver en el paquete de logos local descargado
+    return 'assets/logos/$slug.png';
   }
 
   /// Retorna el color insignia de la marca
