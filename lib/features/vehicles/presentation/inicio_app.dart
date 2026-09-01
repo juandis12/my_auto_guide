@@ -1049,6 +1049,7 @@ class _InicioAppState extends State<InicioApp> {
         _cachedVehicleData = null; // Forzar recarga total para asegurar consistencia
       });
       unawaited(_syncHealthWidget());
+      unawaited(_verificarYEnviarAlertasMantenimiento());
       final bool vencido = (res['vencCadena'] == true) ||
           (res['vencFiltro'] == true) ||
           (res['vencAceite'] == true) ||
@@ -1727,9 +1728,12 @@ class _InicioAppState extends State<InicioApp> {
             });
           }
 
-          // Sincronizar TODOS los porcentajes al widget
+          // Sincronizar TODOS los porcentajes al widget y verificar alertas por correo
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (mounted) unawaited(_syncHealthWidget());
+            if (mounted) {
+              unawaited(_syncHealthWidget());
+              unawaited(_verificarYEnviarAlertasMantenimiento());
+            }
           });
 
           // Verificar si la app se abrió desde el widget para auto-iniciar tracking
@@ -2230,8 +2234,8 @@ class _InicioAppState extends State<InicioApp> {
     final prefs = await SharedPreferences.getInstance();
 
     Future<void> revisarMantenimiento(String key, double pctActual) async {
-      // 1. Alerta Crítica (< 10%)
-      if (pctActual < 0.10) {
+      // 1. Alerta Crítica / Rojo (< 20% de vida útil o vencido)
+      if (pctActual < 0.20) {
         final lastSentKey = 'last_alert_sent_${widget.vehiculoId}_${key}_critica';
         final lastSentStr = prefs.getString(lastSentKey);
         final lastSent = lastSentStr != null ? DateTime.tryParse(lastSentStr) : null;
@@ -2248,12 +2252,12 @@ class _InicioAppState extends State<InicioApp> {
           );
           if (success) {
             await prefs.setString(lastSentKey, DateTime.now().toIso8601String());
-            debugPrint('Alerta Crítica de $key enviada por correo a $userEmail');
+            debugPrint('[EMAIL] Alerta Crítica (Rojo) de $key enviada por correo a $userEmail');
           }
         }
       }
-      // 2. Alerta Preventiva (40% - 50%)
-      else if (pctActual >= 0.40 && pctActual <= 0.50) {
+      // 2. Alerta Preventiva / Naranja (20% <= pctActual < 50% - Próximo a vencer)
+      else if (pctActual >= 0.20 && pctActual < 0.50) {
         final lastSentKey = 'last_alert_sent_${widget.vehiculoId}_${key}_preventiva';
         final lastSentStr = prefs.getString(lastSentKey);
         final lastSent = lastSentStr != null ? DateTime.tryParse(lastSentStr) : null;
@@ -2270,7 +2274,7 @@ class _InicioAppState extends State<InicioApp> {
           );
           if (success) {
             await prefs.setString(lastSentKey, DateTime.now().toIso8601String());
-            debugPrint('Alerta Preventiva de $key enviada por correo a $userEmail');
+            debugPrint('[EMAIL] Alerta Preventiva (Naranja) de $key enviada por correo a $userEmail');
           }
         }
       }
@@ -2279,6 +2283,8 @@ class _InicioAppState extends State<InicioApp> {
     await revisarMantenimiento('Lubricación de cadena', _pctCadena);
     await revisarMantenimiento('Filtro de aire', _pctFiltro);
     await revisarMantenimiento('Cambio de aceite', _pctAceite);
+    await revisarMantenimiento('Seguro Obligatorio (SOAT)', _pctSoat);
+    await revisarMantenimiento('Revisión Técnico-Mecánica', _pctTecno);
   }
 }
 
