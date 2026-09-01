@@ -58,6 +58,7 @@ import 'parametrizacion_mantenimientos.dart';
 import '../../expenses/presentation/gastos_screen.dart';
 import '../../navigation/presentation/historial_rutas_screen.dart';
 import '../../marketplace/presentation/marketplace_talleres_screen.dart';
+import '../../manuals/manuales.dart';
 import '../../../core/services/vehicle_pdf_report_service.dart';
 import '../../../core/services/calendar_sync_service.dart';
 import '../../expenses/presentation/bitacora_tanqueo_screen.dart';
@@ -2057,6 +2058,17 @@ class _InicioAppState extends State<InicioApp> {
                                       marcaModelo: '$marca $modelo',
                                       brandLogoPath: brandLogos[marca],
                                       vehicleImagePath: imagePath))),
+                          brandTheme: bTheme),
+                      const SizedBox(height: 12),
+                      GradientButton(
+                          icon: Icons.menu_book_rounded,
+                          text: 'Manuales & Fichas Técnicas',
+                          onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => ManualesScreen(
+                                      initialMake: marca,
+                                      initialModel: modelo))),
                           brandTheme: bTheme),
                       const SizedBox(height: 12),
                       GradientButton(
