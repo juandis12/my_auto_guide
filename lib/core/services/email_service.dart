@@ -1,11 +1,36 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 // VULN-02: Las credenciales SMTP nunca salen del servidor de Supabase.
 // Delegamos todo el envio de emails a las Edge Functions de Supabase.
 
 class EmailService {
+  static const int maxDailyEmailsPerUser = 2;
+
+  static String _getDailyEmailKey(String userEmail) {
+    final todayStr = DateTime.now().toIso8601String().split('T').first;
+    final cleanEmail = userEmail.trim().toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '_');
+    return 'daily_email_count_${cleanEmail}_$todayStr';
+  }
+
+  /// Verifica si el usuario aún puede recibir correos hoy (máximo 2 correos por día).
+  static Future<bool> canSendDailyEmail(String userEmail) async {
+    final prefs = await SharedPreferences.getInstance();
+    final String todayKey = _getDailyEmailKey(userEmail);
+    final int count = prefs.getInt(todayKey) ?? 0;
+    return count < maxDailyEmailsPerUser;
+  }
+
+  /// Incrementa el contador diario de envíos para el usuario tras una entrega exitosa.
+  static Future<void> _incrementDailyEmailCount(String userEmail) async {
+    final prefs = await SharedPreferences.getInstance();
+    final String todayKey = _getDailyEmailKey(userEmail);
+    final int count = prefs.getInt(todayKey) ?? 0;
+    await prefs.setInt(todayKey, count + 1);
+  }
+
   static String _fmtDate(DateTime dt) {
     return '${dt.day.toString().padLeft(2, '0')}/${dt.month.toString().padLeft(2, '0')}/${dt.year}';
   }
@@ -19,6 +44,13 @@ class EmailService {
     required List<String> explanations,
     Map<String, dynamic>? vehicleData,
   }) async {
+    if (!await canSendDailyEmail(toEmail)) {
+      if (kDebugMode) {
+        debugPrint('[EMAIL] Límite diario alcanzado para $toEmail (máximo $maxDailyEmailsPerUser correos al día). Reporte omitido.');
+      }
+      return false;
+    }
+
     final client = Supabase.instance.client;
     final userName = client.auth.currentUser?.userMetadata?['name'] ?? 
                      client.auth.currentUser?.email?.split('@').first ?? 
@@ -57,6 +89,7 @@ class EmailService {
           } catch (_) {}
         }
         if (data?['ok'] == true) {
+          await _incrementDailyEmailCount(toEmail);
           if (kDebugMode) debugPrint('[EMAIL] Reporte SIMIT enviado correctamente por Resend');
           return true;
         }
@@ -79,6 +112,13 @@ class EmailService {
     required String vehicleNickname,
     required bool isPreventive,
   }) async {
+    if (!await canSendDailyEmail(toEmail)) {
+      if (kDebugMode) {
+        debugPrint('[EMAIL] Límite diario alcanzado para $toEmail (máximo $maxDailyEmailsPerUser correos al día). Alerta de $maintenanceType omitida.');
+      }
+      return false;
+    }
+
     final client = Supabase.instance.client;
     final userName = client.auth.currentUser?.userMetadata?['name'] ?? 
                      client.auth.currentUser?.email?.split('@').first ?? 
@@ -116,6 +156,7 @@ class EmailService {
           } catch (_) {}
         }
         if (data?['ok'] == true) {
+          await _incrementDailyEmailCount(toEmail);
           if (kDebugMode) debugPrint('[EMAIL] Alerta mecánica enviada correctamente por correo a $toEmail');
           return true;
         }
