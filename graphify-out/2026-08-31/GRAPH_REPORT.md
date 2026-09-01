@@ -1,16 +1,16 @@
 # Graph Report - my_auto_guide  (2026-08-31)
 
 ## Corpus Check
-- 538 files · ~338,710 words
+- 540 files · ~338,964 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 5467 nodes · 6981 edges · 518 communities (380 shown, 138 thin omitted)
-- Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 30 edges (avg confidence: 0.69)
+- 5481 nodes · 7000 edges · 510 communities (373 shown, 137 thin omitted)
+- Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 32 edges (avg confidence: 0.68)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `2eb36358`
+- Built from commit: `c542388c`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -22,7 +22,7 @@
 - workspace-resolver.mjs
 - rutas_screen.dart
 - verify-claim.mjs
-- notification_service.dart
+- StatelessWidget
 - ai_chat_screen.dart
 - vehicle_registration_view.dart
 - vercel.mjs
@@ -49,10 +49,10 @@
 - motorcycle_manual_model.dart
 - waze_report_sheet.dart
 - lineOf
-- package:latlong2/latlong.dart
+- background_nav_service.dart
 - database.dart
 - collect-signals.mjs
-- StatelessWidget
+- dashboard_widgets.dart
 - citations.mjs
 - GeneratedPluginRegistrant.swift
 - navigation_telemetry.dart
@@ -75,7 +75,7 @@
 - ios_video_card.dart
 - throttle.mjs
 - android.content.SharedPreferences
-- fuel_tracker_service.dart
+- contract.mjs
 - vehicle_expenses_logic.dart
 - vehicle_storage_service.dart
 - _
@@ -83,7 +83,7 @@
 - Adaptive Screens Guidelines
 - Performance & Stability Guidelines
 - Visual Design Guidelines
-- Color
+- package:flutter/material.dart
 - Privacy & Security Guidelines
 - manuales_screen.dart
 - fuel_log_model.dart
@@ -121,7 +121,7 @@
 - cache-components-suspense-dedupe.mjs
 - edge-heavy-import.mjs
 - turbo-force-bypass.mjs
-- use-cache-date-stamp.mjs
+- cwv-poor.mjs
 - vehicle_performance_logic.dart
 - deploy.sh
 - deploy-codex.sh
@@ -141,12 +141,12 @@
 - build-minutes-fanout.mjs
 - isr-overrevalidation.mjs
 - middleware-heavy.mjs
-- middleware-broad-matcher.mjs
+- scanners/index.mjs
 - iOS Human Interface Guidelines Patterns
 - ios_maintenance_card.dart
 - RegisterPlugins
 - What You Must Do When Invoked
-- app_widget_logic.dart
+- download_and_organize_vehicle_images.py
 - 8. Access Control
 - double?
 - String?
@@ -217,7 +217,7 @@
 - Usage
 - React Composition Patterns
 - vercel-optimize/SKILL.md
-- count-correct.mjs
+- util.mjs
 - scoring.md
 - Pipeline
 - React Best Practices
@@ -268,7 +268,7 @@
 - Quick Reference
 - 2. Naming Conventions
 - 6. Error Handling
-- missing-cache-headers.mjs
+- scripts/reconcile-candidates.mjs
 - Sections
 - API service
 - Content site
@@ -289,7 +289,7 @@
 - Spring Animations
 - merge-signals.mjs
 - 9. Generics and Type Constraints
-- secure_storage_service.dart
+- notification_service.dart
 - remember worked examples
 - astro-edge-middleware-scope.md
 - astro-output-mode-and-isr.md
@@ -357,7 +357,7 @@
 - graphify reference: add a URL and watch a folder
 - graphify reference: commit hook and native CLAUDE.md integration
 - graphify reference: incremental update and cluster-only
-- uncached-route.mjs
+- extract_vehicle_images.py
 - deep-agents-memory/SKILL.md
 - graphify reference: GitHub clone and cross-repo merge
 - graphify reference: transcribe video and audio
@@ -486,31 +486,24 @@
 - .claude/CLAUDE.md
 - .claude/skills/graphify/references/extraction-spec.md
 - LaunchImage.imageset/README.md
-- select-candidates.mjs
 - guide_protocol_model.dart
 - verifyNextCacheComponentsRouteChainFile
 - unoptimized-image.mjs
 - guide_storage_repository.dart
 - lib/budget-summary.mjs
 - renderCostBreakdown
-- package:flutter/material.dart
 - guide_video_model.dart
 - vehicle_pdf_report_service.dart
 - grade-recommendation.mjs
-- package:supabase_flutter/supabase_flutter.dart
-- dart:io
-- vehicle_health_logic.dart
+- package:flutter/foundation.dart
 - impact-label.mjs
 - extract_and_seed_manuals.py
-- util.mjs
 - verifyNextCacheLifetimeFreshnessSupported
 - readClaimFile
-- package:flutter/foundation.dart
 - Exception
 - gemini-chat/index.ts
 - send-email/index.ts
 - rate-limit.mjs
-- package:shared_preferences/shared_preferences.dart
 - 1. Local Unit Tests (JUnit + Robolectric)
 - cost-coverage.mjs
 - undeclared-dep.mjs
@@ -519,7 +512,6 @@
 - External Input Devices
 - 8. Testing
 - cold-start.mjs
-- cache-tag-invalidation-certainty.mjs
 - region-pin-in-config.mjs
 
 ## God Nodes (most connected - your core abstractions)
@@ -549,7 +541,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (518 total, 138 thin omitted)
+## Communities (510 total, 137 thin omitted)
 
 ### Community 0 - "inicio_app.dart"
 Cohesion: 0.02
@@ -564,8 +556,8 @@ Cohesion: 0.08
 Nodes (57): affectedFiles(), appliesAlsoEntry(), cacheLifeIntent(), dedupEditTarget(), dedupeRecommendations(), dedupIntent(), firstAffectedFile(), fixShape() (+49 more)
 
 ### Community 3 - "sanitizers/index.mjs"
-Cohesion: 0.14
-Nodes (12): applyDollarStrip(), stripDollarLiterals(), metadata, STRING_FIELDS, metadata, STRING_FIELDS, applySanitizers(), applySanitizersBatch() (+4 more)
+Cohesion: 0.11
+Nodes (14): applyDollarStrip(), stripDollarLiterals(), metadata, STRING_FIELDS, metadata, STRING_FIELDS, metadata, STRING_FIELDS (+6 more)
 
 ### Community 4 - "workspace-resolver.mjs"
 Cohesion: 0.08
@@ -579,9 +571,9 @@ Nodes (52): ../../../core/services/camera_radar_service.dart, ../../../core/serv
 Cohesion: 0.11
 Nodes (31): buildScriptHasMigrationSideEffect(), cacheInvalidationFileCache, cleanHeaderValue(), configContainsTag(), escapeRegExp(), extractHeaderValues(), formatPct(), functionStatusForRoute() (+23 more)
 
-### Community 7 - "notification_service.dart"
-Cohesion: 0.13
-Nodes (14): FlutterLocalNotificationsPlugin, cancelAll, ensureExactAlarmsEnabled, init, _instance, NotificationService, _notificationsPlugin, _platformChannel (+6 more)
+### Community 7 - "StatelessWidget"
+Cohesion: 0.07
+Nodes (30): ../../domain/models/vehicle_analytics.dart, _SocialButton, _BuildFinancialDashboard, build, _buildSpecialOffer, imageUrl, isDark, MarketplaceTalleresScreen (+22 more)
 
 ### Community 8 - "ai_chat_screen.dart"
 Cohesion: 0.11
@@ -593,7 +585,7 @@ Nodes (42): ../../../../core/services/vehicle_catalog_service.dart, ../inicio_ap
 
 ### Community 10 - "vercel.mjs"
 Cohesion: 0.12
-Nodes (35): isDailyQuotaExceeded(), baselineStack(), categorizeError(), checkAuth(), checkCliVersion(), checkObservabilityPlusConfiguration(), classifyObservabilityPlusConfiguration(), detectNextCacheComponents() (+27 more)
+Nodes (34): isDailyQuotaExceeded(), baselineStack(), categorizeError(), checkAuth(), checkCliVersion(), checkObservabilityPlusConfiguration(), classifyObservabilityPlusConfiguration(), detectNextCacheComponents() (+26 more)
 
 ### Community 11 - "parametrizacion_mantenimientos.dart"
 Cohesion: 0.05
@@ -620,8 +612,8 @@ Cohesion: 0.04
 Nodes (53): ai_insights_panel.dart, ../../../../core/logic/fuel_efficiency_logic.dart, ../../../../core/logic/vehicle_health_logic.dart, ../../../../core/services/achievements_service.dart, ../../../../core/theme/brand_theme.dart, ../../domain/models/maintenance_prediction.dart, ../../domain/models/weekly_stats.dart, aiAnalytics (+45 more)
 
 ### Community 17 - "gates/index.mjs"
-Cohesion: 0.13
-Nodes (18): GATE_VERSION, gates, MAX_CODE_CANDIDATES, metadata, scanners, metadata, HERE, main() (+10 more)
+Cohesion: 0.16
+Nodes (17): GATE_VERSION, gates, MAX_CODE_CANDIDATES, metadata, scanners, HERE, main(), REFS (+9 more)
 
 ### Community 18 - "historial_rutas_screen.dart"
 Cohesion: 0.05
@@ -637,7 +629,7 @@ Nodes (26): citationApplies(), HERE, KNOWN_CANDIDATE_KINDS, loadSupportTopics(),
 
 ### Community 21 - "gastos_screen.dart"
 Cohesion: 0.07
-Nodes (27): ../../../core/logic/pdf_report_logic.dart, ../../../core/logic/vehicle_expenses_logic.dart, ../../../../core/services/supabase_service.dart, apodo, brandLogoPath, build, _BuildFinancialDashboard, createState (+19 more)
+Nodes (27): ../../../core/logic/pdf_report_logic.dart, ../../../core/logic/vehicle_expenses_logic.dart, ../../../../core/services/supabase_service.dart, apodo, brandLogoPath, build, _BuildEmptyState, createState (+19 more)
 
 ### Community 22 - "report_service.dart"
 Cohesion: 0.12
@@ -652,12 +644,12 @@ Cohesion: 0.09
 Nodes (22): FlPluginRegistry, FlView, GApplication, gboolean, gchar, GObject, GtkApplication, fl_register_plugins() (+14 more)
 
 ### Community 25 - "lib/reconcile-candidates.mjs"
-Cohesion: 0.26
-Nodes (24): arrayAt(), deploymentRegressionDecision(), dropWithObservation(), formatInteger(), formatMs(), formatPct(), isrOverrevalidationDecision(), numberAt() (+16 more)
+Cohesion: 0.35
+Nodes (20): arrayAt(), deploymentRegressionDecision(), dropWithObservation(), formatInteger(), formatMs(), formatPct(), isrOverrevalidationDecision(), numberAt() (+12 more)
 
 ### Community 26 - "navigation_widgets.dart"
 Cohesion: 0.07
-Nodes (26): avgSpeedKmH, build, _check, color, _controller, createState, destinationName, dispose (+18 more)
+Nodes (28): avgSpeedKmH, build, _check, color, _controller, createState, destinationName, dispose (+20 more)
 
 ### Community 27 - "Autonomous Loops Skill"
 Cohesion: 0.04
@@ -684,12 +676,12 @@ Cohesion: 0.20
 Nodes (9): ../../../core/services/waze_community_alerts_service.dart, build, _buildReportOption, currentLat, currentLng, _sendReport, show, WazeReportSheet (+1 more)
 
 ### Community 33 - "lineOf"
-Cohesion: 0.16
-Nodes (13): isApplicable(), metadata, scan(), isApplicable(), metadata, scan(), metadata, scan() (+5 more)
+Cohesion: 0.14
+Nodes (16): isApplicable(), metadata, scan(), metadata, scan(), metadata, scan(), metadata (+8 more)
 
-### Community 34 - "package:latlong2/latlong.dart"
-Cohesion: 0.15
-Nodes (11): ../../../core/logic/vehicle_performance_logic.dart, calculateAverageSpeed, calculateIncrementalDistance, calculateKinematicAverageSpeed, estimateImpact, optimizeRoutePoints, TelemetryCalculator, package:geolocator/geolocator.dart (+3 more)
+### Community 34 - "background_nav_service.dart"
+Cohesion: 0.08
+Nodes (23): @pragma, ../../../core/logic/vehicle_performance_logic.dart, dart:async, backgroundCallback, BackgroundNavService, channelId, initializeService, notificationTitle (+15 more)
 
 ### Community 35 - "database.dart"
 Cohesion: 0.09
@@ -699,9 +691,9 @@ Nodes (22): AppDatabase, _database, deletePendingExpense, deletePendingKmsUpdate
 Cohesion: 0.16
 Nodes (21): defaultNormalize(), normalizeColdStart(), normalizerFor(), QUERIES, TIME_WINDOW, aggregateServicesByName(), filterUsageByProject(), normalizeSummary() (+13 more)
 
-### Community 37 - "StatelessWidget"
-Cohesion: 0.04
-Nodes (47): _SocialButton, _BuildEmptyState, build, _buildSpecialOffer, imageUrl, isDark, MarketplaceTalleresScreen, rating (+39 more)
+### Community 37 - "dashboard_widgets.dart"
+Cohesion: 0.08
+Nodes (24): brandTheme, build, child, color, createState, delay, finesCount, icon (+16 more)
 
 ### Community 38 - "citations.mjs"
 Cohesion: 0.18
@@ -725,11 +717,11 @@ Nodes (20): build, _buildRegistrarTextField, canSwitchEmail, confirmPasswordCont
 
 ### Community 43 - "scripts/deep-dive.mjs"
 Cohesion: 0.18
-Nodes (17): escapeODataString(), mergeIntoEvidence(), odataEq(), SCANNER_KINDS, simplify(), SPEC_GENERATORS, specsForCandidate(), queryMetric() (+9 more)
+Nodes (17): escapeODataString(), mergeIntoEvidence(), odataEq(), SCANNER_KINDS, simplify(), SPEC_GENERATORS, specsForCandidate(), readProjectJson() (+9 more)
 
 ### Community 44 - "simit_webview.dart"
-Cohesion: 0.10
-Nodes (20): app_snack_bar.dart, ../../core/services/email_service.dart, build, cedula, _controller, createState, _escanearPagina, _finesCount (+12 more)
+Cohesion: 0.11
+Nodes (18): app_snack_bar.dart, ../../core/services/email_service.dart, build, cedula, _controller, createState, _escanearPagina, _finesCount (+10 more)
 
 ### Community 45 - "bitacora_tanqueo_screen.dart"
 Cohesion: 0.10
@@ -744,8 +736,8 @@ Cohesion: 0.22
 Nodes (19): candidateKey(), canonicalizeBranchPrefix(), canonicalizeRoute(), decodeSegmentToken(), dedupeCandidates(), firstRouteSegment(), isBase64FlagState(), isDynamicPlaceholder() (+11 more)
 
 ### Community 48 - "vehicle_analytics.dart"
-Cohesion: 0.11
-Nodes (17): ../../domain/models/vehicle_analytics.dart, advice, _asDouble, avgDailyKm, careScore, consistency, empty, fromMap (+9 more)
+Cohesion: 0.18
+Nodes (10): advice, _asDouble, avgDailyKm, careScore, consistency, empty, fromMap, healthImpact (+2 more)
 
 ### Community 49 - "app_localizations.dart"
 Cohesion: 0.11
@@ -764,12 +756,12 @@ Cohesion: 0.24
 Nodes (16): collectInputFiles(), escapeRegExp(), extractFenceBlocks(), extractJsonValue(), findBalancedJsonSpans(), inferCandidateRefFromFile(), isRecordObject(), log() (+8 more)
 
 ### Community 53 - "vehicle_ai_logic.dart"
-Cohesion: 0.08
-Nodes (22): calculateEfficiencyScore, calculateSavings, FuelEfficiencyLogic, getEfficiencyLabel, analyzeJourneyPatterns, avgSpeedKmH, calculateSmartSavings, formatWeekLabel (+14 more)
+Cohesion: 0.06
+Nodes (33): dart:math, calculateEfficiencyScore, calculateSavings, FuelEfficiencyLogic, getEfficiencyLabel, analyzeJourneyPatterns, avgSpeedKmH, calculateSmartSavings (+25 more)
 
 ### Community 54 - "main.dart"
-Cohesion: 0.12
-Nodes (16): core/logic/app_widget_logic.dart, core/providers/auth_provider.dart, core/providers/vehicle_provider.dart, core/services/background_nav_service.dart, ../../core/services/notification_service.dart, core/services/sync_service.dart, features/auth/login_screen.dart, build (+8 more)
+Cohesion: 0.06
+Nodes (32): core/logic/app_widget_logic.dart, core/providers/auth_provider.dart, core/providers/vehicle_provider.dart, core/services/background_nav_service.dart, ../../core/services/notification_service.dart, core/services/sync_service.dart, features/auth/login_screen.dart, activeColor (+24 more)
 
 ### Community 55 - "Accessibility Guidelines"
 Cohesion: 0.05
@@ -784,16 +776,16 @@ Cohesion: 0.22
 Nodes (9): ../../data/models/guide_video_model.dart, build, _buildFallbackThumbnail, createState, IosVideoCard, _IosVideoCardState, _openVideo, _scale (+1 more)
 
 ### Community 58 - "throttle.mjs"
-Cohesion: 0.17
-Nodes (10): getMetricSemaphore, getMetricThrottle(), isRateLimited(), parsePositiveIntEnv(), resolveConcurrency(), resolveRateLimit(), retryOnRateLimit(), SemaphoreAbortError (+2 more)
+Cohesion: 0.16
+Nodes (11): getMetricSemaphore, getMetricThrottle(), isRateLimited(), parsePositiveIntEnv(), resolveConcurrency(), resolveRateLimit(), retryOnRateLimit(), SemaphoreAbortError (+3 more)
 
 ### Community 59 - "android.content.SharedPreferences"
 Cohesion: 0.20
 Nodes (14): AppWidgetProvider, Override, Override, RemoteViews, VehicleStatusListWidgetProvider, Override, RemoteViews, VehicleStatusWidgetProvider (+6 more)
 
-### Community 60 - "fuel_tracker_service.dart"
-Cohesion: 0.18
-Nodes (10): ../../features/expenses/domain/models/fuel_log_model.dart, addLog, _cacheLocal, calculateMetrics, FuelTrackerService, getLogs, _instance, _localKey (+2 more)
+### Community 60 - "contract.mjs"
+Cohesion: 0.39
+Nodes (6): CandidateContractError, candidateLabel(), nonEmptyString(), VALID_SCOPES, validateCandidate(), validateCandidates()
 
 ### Community 61 - "vehicle_expenses_logic.dart"
 Cohesion: 0.13
@@ -823,9 +815,9 @@ Nodes (33): Android Vitals Thresholds, ANR Prevention, ANR Triggers, Background 
 Cohesion: 0.06
 Nodes (31): 8dp Grid System, Adaptive Icons (App Icon), Color Contrast Requirements, Color Roles (Tokens), Color System, Component Dimensions, Corner Radius, Dark & Elegant (Premium Apps) (+23 more)
 
-### Community 68 - "Color"
-Cohesion: 0.07
-Nodes (25): Color, accentColor, build, IosEvidenceGallery, onDeletePhoto, onTakePhoto, _openFullScreenViewer, photos (+17 more)
+### Community 68 - "package:flutter/material.dart"
+Cohesion: 0.04
+Nodes (44): Color, accentColor, BrandTheme, defaultTheme, getTheme, gradient, primaryColor, _themes (+36 more)
 
 ### Community 69 - "Privacy & Security Guidelines"
 Cohesion: 0.05
@@ -840,8 +832,8 @@ Cohesion: 0.15
 Nodes (12): esTanqueLleno, fecha, fromJson, FuelLogModel, galones, id, kmsActuales, montoCop (+4 more)
 
 ### Community 72 - "vehicle_catalog_service.dart"
-Cohesion: 0.12
-Nodes (15): _brandColors, _carCatalog, _carLogos, getBrandColors, getCarCatalog, getCarLogos, getColorForBrand, getLogoForBrand (+7 more)
+Cohesion: 0.10
+Nodes (19): _brandColors, _cachedImages, _carCatalog, _carLogos, getBrandColors, getCarCatalog, getCarLogos, getColorForBrand (+11 more)
 
 ### Community 73 - "biometric_service.dart"
 Cohesion: 0.20
@@ -873,15 +865,15 @@ Nodes (14): app_localizations.dart, addEventToCalendar, CalendarSyncService, app
 
 ### Community 80 - "investigation-brief.mjs"
 Cohesion: 0.19
-Nodes (21): absoluteBriefPath(), briefRoots(), buildBrief(), cachePolicyGuidance(), capBriefFiles(), closestAncestorLayoutFiles(), isCatchAllPlaceholder(), isDynamicPlaceholder() (+13 more)
+Nodes (23): absoluteBriefPath(), briefRoots(), buildBrief(), cachePolicyGuidance(), capBriefFiles(), closestAncestorLayoutFiles(), isCatchAllPlaceholder(), isDynamicPlaceholder() (+15 more)
 
 ### Community 81 - "wWinMain"
 Cohesion: 0.24
 Nodes (9): _In_, _In_opt_, vector, wWinMain(), string, wchar_t, CreateAndAttachConsole(), GetCommandLineArguments() (+1 more)
 
 ### Community 82 - "gate-investigations.mjs"
-Cohesion: 0.17
-Nodes (17): applyAuthDisqualifier(), AUTH_ROUTE_REGEX, isAuthRoute(), CandidateContractError, candidateLabel(), nonEmptyString(), VALID_SCOPES, validateCandidate() (+9 more)
+Cohesion: 0.19
+Nodes (17): applyAuthDisqualifier(), AUTH_ROUTE_REGEX, isAuthRoute(), DEFAULT_MAX_CODE_CANDIDATES, candidateIdentity(), DEFAULT_KIND_CAPS, DIVERSITY_ELIGIBILITY, durationMsFromSignal() (+9 more)
 
 ### Community 83 - "verifyClaim"
 Cohesion: 0.18
@@ -925,7 +917,7 @@ Nodes (6): Any, Flutter, AppDelegate, Bool, UIApplication, UIKit
 
 ### Community 94 - "State"
 Cohesion: 0.06
-Nodes (47): IosProtocolCard, _IosProtocolCardState, SuccessCheckmark, _SuccessCheckmarkState, PulsingLocationMarker, _PulsingLocationMarkerState, RutasScreen, _RutasScreenState (+39 more)
+Nodes (45): IosProtocolCard, _IosProtocolCardState, PulsingLocationMarker, _PulsingLocationMarkerState, RutasScreen, _RutasScreenState, _ScaleButton, _ScaleButtonState (+37 more)
 
 ### Community 95 - "Vercel CLI with Tokens"
 Cohesion: 0.07
@@ -971,9 +963,9 @@ Nodes (6): extractSpecifiers(), HEAVY_PATTERNS, isEdgeRuntimeFile(), isMiddlewar
 Cohesion: 0.48
 Nodes (6): detectBuildCacheDisabled(), lineOfMatch(), metadata, safeScripts(), scan(), truncate()
 
-### Community 106 - "use-cache-date-stamp.mjs"
+### Community 106 - "cwv-poor.mjs"
 Cohesion: 0.48
-Nodes (6): classifySubtype(), collectRanges(), findMatchingParen(), isInsideAnyRange(), metadata, scan()
+Nodes (6): byRoute(), gate(), metadata, ratioOverThreshold(), round2(), sumRows()
 
 ### Community 107 - "vehicle_performance_logic.dart"
 Cohesion: 0.29
@@ -1043,9 +1035,9 @@ Nodes (3): extractRows(), gate(), metadata
 Cohesion: 0.67
 Nodes (3): gate(), metadata, sumRows()
 
-### Community 126 - "middleware-broad-matcher.mjs"
-Cohesion: 0.67
-Nodes (3): isApplicable(), metadata, scan()
+### Community 126 - "scanners/index.mjs"
+Cohesion: 0.15
+Nodes (10): isApplicable(), metadata, scan(), isApplicable(), metadata, scan(), isApplicable(), metadata (+2 more)
 
 ### Community 127 - "iOS Human Interface Guidelines Patterns"
 Cohesion: 0.07
@@ -1059,17 +1051,17 @@ Nodes (18): ios_cupertino_date_sheet.dart, ios_health_gauge.dart, _applyKmOffset
 Cohesion: 0.07
 Nodes (26): For /graphify add and --watch, For /graphify query, For the commit hook and native CLAUDE.md integration, For --update and --cluster-only, /graphify, Honesty Rules, Interpreter guard for subcommands, Part A - Structural extraction for code files (+18 more)
 
-### Community 131 - "app_widget_logic.dart"
-Cohesion: 0.07
-Nodes (28): @pragma, dart:async, activeColor, androidWidgetName, AppWidgetLogic, backgroundCallback, healthListWidgetName, healthWidgetName (+20 more)
+### Community 131 - "download_and_organize_vehicle_images.py"
+Cohesion: 0.60
+Nodes (5): clean_filename(), download_image(), get_wikimedia_image_url(), main(), process_vehicle()
 
 ### Community 132 - "8. Access Control"
 Cohesion: 0.50
 Nodes (4): 8.1 Access Levels, 8.2 Best Practices, 8.3 Private Setters, 8. Access Control
 
 ### Community 142 - "ocr_invoice_service.dart"
-Cohesion: 0.12
-Nodes (16): date, dispose, empty, ExtractedInvoiceData, gallons, items, OcrInvoiceService, _parseMlKitText (+8 more)
+Cohesion: 0.08
+Nodes (24): dart:io, date, dispose, empty, ExtractedInvoiceData, gallons, items, OcrInvoiceService (+16 more)
 
 ### Community 143 - "prepare-investigation-brief.mjs"
 Cohesion: 0.24
@@ -1331,9 +1323,9 @@ Nodes (9): Component Architecture (CRITICAL), Core Principles, Creating a New Ru
 Cohesion: 0.27
 Nodes (4): Install, Procedure, Requirements, vercel-optimize
 
-### Community 208 - "count-correct.mjs"
-Cohesion: 0.29
-Nodes (8): apply(), COUNT_CLAIM_TYPES, metadata, rewriteCount(), apply(), metadata, STRIP_DIRECTIVES, escapeRegex()
+### Community 208 - "util.mjs"
+Cohesion: 0.16
+Nodes (14): apply(), COUNT_CLAIM_TYPES, metadata, rewriteCount(), apply(), metadata, apply(), metadata (+6 more)
 
 ### Community 209 - "scoring.md"
 Cohesion: 0.20
@@ -1535,9 +1527,9 @@ Nodes (6): 2.1 Types: PascalCase, 2.2 Variables and Functions: camelCase, 2.3 Bo
 Cohesion: 0.33
 Nodes (6): 6.1 Define Typed Errors, 6.2 Throwing Functions, 6.3 Do-Catch Handling, 6.4 try? and try!, 6.5 Rethrows, 6. Error Handling
 
-### Community 259 - "missing-cache-headers.mjs"
-Cohesion: 0.67
-Nodes (3): isApplicable(), metadata, scan()
+### Community 259 - "scripts/reconcile-candidates.mjs"
+Cohesion: 0.70
+Nodes (4): reconcileInvestigation(), log(), main(), parseArgs()
 
 ### Community 260 - "Sections"
 Cohesion: 0.33
@@ -1593,11 +1585,11 @@ Nodes (5): For /graphify explain, For /graphify path, graphify reference: query,
 
 ### Community 273 - "cinematic_vehicle_loader.dart"
 Cohesion: 0.06
-Nodes (32): Animation, AnimationController, CustomPainter, _SamsungHorseshoePainter, _DonutPainter, _CheckPainter, _BmwM4SilhouettePainter, build (+24 more)
+Nodes (34): Animation, AnimationController, CustomPainter, _SamsungHorseshoePainter, _DonutPainter, _CheckPainter, _BmwM4SilhouettePainter, build (+26 more)
 
 ### Community 274 - "withRouteShapeWarnings"
-Cohesion: 0.18
-Nodes (15): byRoute(), gate(), metadata, ratioOverThreshold(), round2(), sumRows(), extractErrors(), extractFromStatusRows() (+7 more)
+Cohesion: 0.14
+Nodes (17): extractErrors(), extractFromStatusRows(), gate(), metadata, extractErrorRatesByRoute(), extractFunctionRoutes(), gate(), metadata (+9 more)
 
 ### Community 275 - "CSS Transform Mastery"
 Cohesion: 0.40
@@ -1619,9 +1611,9 @@ Nodes (16): annotateCodebaseScan(), annotateFinding(), assertObject(), bestRoute
 Cohesion: 0.40
 Nodes (5): 9.1 Generic Functions, 9.2 Type Constraints, 9.3 Where Clauses, 9.4 Opaque Types (some), 9. Generics and Type Constraints
 
-### Community 280 - "secure_storage_service.dart"
-Cohesion: 0.08
-Nodes (22): AppLogger, error, gps, info, network, _sensitiveFields, sync, delete (+14 more)
+### Community 280 - "notification_service.dart"
+Cohesion: 0.05
+Nodes (36): FlutterLocalNotificationsPlugin, AppLogger, error, gps, info, network, _sensitiveFields, sync (+28 more)
 
 ### Community 281 - "remember worked examples"
 Cohesion: 0.40
@@ -1879,9 +1871,9 @@ Nodes (3): For git commit hook, For native CLAUDE.md integration, graphify refer
 Cohesion: 0.50
 Nodes (3): For --cluster-only, For --update (incremental re-extraction), graphify reference: incremental update and cluster-only
 
-### Community 349 - "uncached-route.mjs"
-Cohesion: 0.24
-Nodes (8): Candidate, CandidateScope, GateMetadata, Signals, extractCacheHitRates(), extractMethodShares(), gate(), metadata
+### Community 349 - "extract_vehicle_images.py"
+Cohesion: 0.83
+Nodes (3): fetch_single(), get_wikimedia_image(), process_vehicle_images()
 
 ### Community 353 - "11. Monorepo"
 Cohesion: 0.67
@@ -1894,10 +1886,6 @@ Nodes (3): 1.1 Never Use && with Potentially Falsy Values, 1.2 Wrap Strings in T
 ### Community 355 - "8. React Compiler"
 Cohesion: 0.67
 Nodes (3): 8.1 Destructure Functions Early in Render (React Compiler), 8.2 Use .get() and .set() for Reanimated Shared Values (not .value), 8. React Compiler
-
-### Community 481 - "select-candidates.mjs"
-Cohesion: 0.42
-Nodes (8): candidateIdentity(), DEFAULT_KIND_CAPS, DIVERSITY_ELIGIBILITY, durationMsFromSignal(), isDiversityEligible(), numberFromEvidence(), numberFromSignal(), selectLaunchCandidates()
 
 ### Community 482 - "guide_protocol_model.dart"
 Cohesion: 0.17
@@ -1923,10 +1911,6 @@ Nodes (11): buildBudgetSummary(), buildChatPreview(), buildExactChatMessage(), b
 Cohesion: 0.18
 Nodes (13): costRoundsToCents(), escape(), formatBytes(), formatGatedTargets(), formatNum(), formatUsage(), groupGbHoursByCanonicalRoute(), renderCostBreakdown() (+5 more)
 
-### Community 488 - "package:flutter/material.dart"
-Cohesion: 0.10
-Nodes (19): accentColor, BrandTheme, defaultTheme, getTheme, gradient, primaryColor, _themes, AgregarCarroScreen (+11 more)
-
 ### Community 489 - "guide_video_model.dart"
 Cohesion: 0.18
 Nodes (10): customThumbnailUrl, defaultVideos, duration, GuideVideo, id, subtitle, tag, title (+2 more)
@@ -1939,17 +1923,9 @@ Nodes (12): _buildBodyCell, _buildHeaderCell, _buildPdfRow, _checkDocumentColor,
 Cohesion: 0.39
 Nodes (11): grade(), gradeRecommendation(), isAccountScope(), roundTo(), scoreActionability(), scoreEvidence(), scoreEvidenceAccount(), scoreGrounding() (+3 more)
 
-### Community 492 - "package:supabase_flutter/supabase_flutter.dart"
-Cohesion: 0.10
-Nodes (19): dart:convert, _buildHtmlReport, _calculateExpirationDate, EmailService, _fmtDate, sendMaintenanceAlertEmail, sendSimitReport, getManualForVehicle (+11 more)
-
-### Community 493 - "dart:io"
-Cohesion: 0.22
-Nodes (8): dart:io, dispose, extractExpirationDate, OCRService, _parseFlexibleDate, _textRecognizer, package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart, TextRecognizer
-
-### Community 494 - "vehicle_health_logic.dart"
-Cohesion: 0.17
-Nodes (11): dart:math, calculateHealthIndex, calculateHybridPercentage, calculateProjectedRemainingDays, getProactiveAdvice, getQualityCertifications, getUserLevel, getVehicleStatus (+3 more)
+### Community 492 - "package:flutter/foundation.dart"
+Cohesion: 0.05
+Nodes (44): dart:convert, ../../features/expenses/domain/models/fuel_log_model.dart, AIBotService, initialize, _initialized, _instance, resetChat, sendMessage (+36 more)
 
 ### Community 495 - "impact-label.mjs"
 Cohesion: 0.38
@@ -1959,10 +1935,6 @@ Nodes (10): computeImpactLabel(), cwvIssue(), formatCwvIssue(), formatInteger(),
 Cohesion: 0.43
 Nodes (6): fetch_motorcycles(), main(), push_to_supabase_batch(), Mapea y limpia los campos de la API para la tabla motorcycle_manuals., Inserta registros a Supabase usando REST con Upsert (ON CONFLICT ignore/merge)., sanitize_item()
 
-### Community 497 - "util.mjs"
-Cohesion: 0.33
-Nodes (6): apply(), metadata, apply(), metadata, MODE_PATTERNS, extractRoute()
-
 ### Community 498 - "verifyNextCacheLifetimeFreshnessSupported"
 Cohesion: 0.28
 Nodes (9): cacheLifeNeedsContentFreshnessProof(), dedupeCacheTags(), execFileP, extractCacheTags(), extractCacheTagsFromFiles(), readCacheInvalidationFiles(), rgRelevantFiles(), verifyNextCacheLifetimeFreshnessSupported() (+1 more)
@@ -1971,10 +1943,6 @@ Nodes (9): cacheLifeNeedsContentFreshnessProof(), dedupeCacheTags(), execFileP, 
 Cohesion: 0.31
 Nodes (9): compilePattern(), readClaimFile(), snippetFoundElsewhere(), verifyCodeSnippet(), verifyPatternAbsent(), verifyPatternCount(), verifyPatternExists(), verifyRepoCount() (+1 more)
 
-### Community 500 - "package:flutter/foundation.dart"
-Cohesion: 0.22
-Nodes (8): AIBotService, initialize, _initialized, _instance, resetChat, sendMessage, package:flutter/foundation.dart, static final AIBotService
-
 ### Community 501 - "Exception"
 Cohesion: 0.50
 Nodes (4): Exception, AuthLogicException, NavigationLogicException, VehicleStorageLogicException
@@ -1982,10 +1950,6 @@ Nodes (4): Exception, AuthLogicException, NavigationLogicException, VehicleStora
 ### Community 504 - "rate-limit.mjs"
 Cohesion: 0.36
 Nodes (7): apply(), collectText(), matchConcurrency(), matchProviders(), metadata, PROVIDER_LIMITS, PROVIDER_RE
-
-### Community 505 - "package:shared_preferences/shared_preferences.dart"
-Cohesion: 0.25
-Nodes (7): getAverageKmPerDay, getHistory, _instance, OdometerHistoryService, recordOdometerReading, package:shared_preferences/shared_preferences.dart, static final OdometerHistoryService
 
 ### Community 506 - "1. Local Unit Tests (JUnit + Robolectric)"
 Cohesion: 0.29
@@ -2024,24 +1988,24 @@ Cohesion: 0.67
 Nodes (3): metadata, parseRegionList(), scan()
 
 ## Knowledge Gaps
-- **3185 isolated node(s):** `evaluate-session.sh script`, `deploy-codex.sh script`, `deploy.sh script`, `HERE`, `LIBRARY_PATH` (+3180 more)
+- **3189 isolated node(s):** `evaluate-session.sh script`, `deploy-codex.sh script`, `deploy.sh script`, `HERE`, `LIBRARY_PATH` (+3184 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **138 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **137 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `gates` connect `gates/index.mjs` to `lib/render-report.mjs`, `gate-investigations.mjs`, `support-topics.mjs`?**
   _High betweenness centrality (0.005) - this node is a cross-community bridge._
-- **Why does `scanners` connect `gates/index.mjs` to `workspace-resolver.mjs`?**
+- **Why does `scanners` connect `gates/index.mjs` to `workspace-resolver.mjs`, `scanners/index.mjs`?**
   _High betweenness centrality (0.005) - this node is a cross-community bridge._
-- **Why does `Adaptive Screens Guidelines` connect `Adaptive Screens Guidelines` to `Configuration Changes`, `Content Considerations`, `External Input Devices`?**
-  _High betweenness centrality (0.003) - this node is a cross-community bridge._
 - **What connects `evaluate-session.sh script`, `deploy-codex.sh script`, `deploy.sh script` to the rest of the system?**
-  _3185 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _3189 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `inicio_app.dart` be split into smaller, more focused modules?**
   _Cohesion score 0.01788375558867362 - nodes in this community are weakly interconnected._
 - **Should `lib/render-report.mjs` be split into smaller, more focused modules?**
   _Cohesion score 0.13063063063063063 - nodes in this community are weakly interconnected._
 - **Should `dedup-recs.mjs` be split into smaller, more focused modules?**
   _Cohesion score 0.07853107344632769 - nodes in this community are weakly interconnected._
+- **Should `sanitizers/index.mjs` be split into smaller, more focused modules?**
+  _Cohesion score 0.11067193675889328 - nodes in this community are weakly interconnected._

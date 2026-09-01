@@ -259,6 +259,8 @@ flutter:
     - assets/motos/sym/
     - assets/motos/kymco/
     - assets/motos/vespa/
+    - assets/motos/aprilia/
+    - assets/motos/benelli/
 
 flutter_launcher_icons:
   android: true
