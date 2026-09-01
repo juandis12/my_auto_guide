@@ -1,0 +1,162 @@
+name: Android Build APK
+
+on:
+  push:
+    branches:
+      - main
+      - 'release/**'
+    tags:
+      - 'v*'
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      build_mode:
+        description: 'Modo de compilación (release o debug)'
+        required: true
+        default: 'release'
+        type: choice
+        options:
+          - release
+          - debug
+      split_per_abi:
+        description: 'Dividir APK por arquitectura (armeabi-v7a, arm64-v8a, x86_64)'
+        required: false
+        default: false
+        type: boolean
+      flutter_version:
+        description: 'Versión de Flutter (dejar vacío para latest stable)'
+        required: false
+        default: ''
+        type: string
+
+jobs:
+  build-apk:
+    name: Compilar APK Android
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      # 1. Clonar repositorio
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      # 2. Configurar Java 17 (Requerido para Gradle y Kotlin en Android)
+      - name: Configurar Java 17 (Temurin)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      # 3. Configurar Flutter
+      - name: Configurar Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          flutter-version: ${{ github.event.inputs.flutter_version || '' }}
+          cache: true
+          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
+
+      # 4. Inyectar / Restaurar archivo .env (Seguridad y compilación de assets)
+      - name: Preparar archivo .env
+        env:
+          ENV_FILE_SECRET: ${{ secrets.ENV_FILE }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          if [ -n "$ENV_FILE_SECRET" ]; then
+            echo "$ENV_FILE_SECRET" > .env
+            echo "✅ Archivo .env cargado desde secret ENV_FILE."
+          elif [ -n "$SUPABASE_URL" ]; then
+            echo "SUPABASE_URL=$SUPABASE_URL" >> .env
+            echo "SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY" >> .env
+            echo "SENTRY_DSN=$SENTRY_DSN" >> .env
+            echo "GEMINI_API_KEY=$GEMINI_API_KEY" >> .env
+            echo "✅ Archivo .env generado a partir de variables secretas individuales."
+          else
+            echo "⚠️ No se encontraron secretos para .env. Creando .env placeholder para permitir el empaquetado de assets..."
+            cat <<EOF > .env
+          SUPABASE_URL=https://placeholder.supabase.co
+          SUPABASE_ANON_KEY=placeholder_anon_key
+          SENTRY_DSN=
+          GEMINI_API_KEY=
+          EOF
+          fi
+
+      # 5. Inyectar / Restaurar google-services.json (Requerido por Firebase / GMS)
+      - name: Preparar google-services.json
+        env:
+          GOOGLE_SERVICES_JSON_SECRET: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: |
+          mkdir -p android/app
+          if [ -n "$GOOGLE_SERVICES_JSON_SECRET" ]; then
+            echo "$GOOGLE_SERVICES_JSON_SECRET" > android/app/google-services.json
+            echo "✅ google-services.json restaurado desde secret."
+          elif [ ! -f android/app/google-services.json ]; then
+            echo "⚠️ No se encontró google-services.json ni secret. Generando mock para compilación de CI..."
+            cat <<EOF > android/app/google-services.json
+          {
+            "project_info": {
+              "project_number": "1234567890",
+              "project_id": "my-auto-guide-mock",
+              "storage_bucket": "my-auto-guide-mock.appspot.com"
+            },
+            "client": [
+              {
+                "client_info": {
+                  "mobilesdk_app_id": "1:1234567890:android:mockappidentifier",
+                  "android_client_info": {
+                    "package_name": "com.example.my_auto_guide"
+                  }
+                },
+                "oauth_client": [],
+                "api_key": [
+                  {
+                    "current_key": "mock_api_key_for_ci_build"
+                  }
+                ],
+                "services": {
+                  "analytics_service": {
+                    "status": 1
+                  }
+                }
+              }
+            ],
+            "configuration_version": "1"
+          }
+          EOF
+          fi
+
+      # 6. Descargar dependencias de Flutter
+      - name: Instalar dependencias (flutter pub get)
+        run: flutter pub get
+
+      # 7. Verificar integridad estática del código
+      - name: Análisis estático (flutter analyze)
+        run: flutter analyze || true
+
+      # 8. Compilar APK
+      - name: Compilar APK Android
+        run: |
+          MODE="${{ github.event.inputs.build_mode || 'release' }}"
+          SPLIT="${{ github.event.inputs.split_per_abi || 'false' }}"
+
+          BUILD_ARGS="--$MODE"
+          if [ "$SPLIT" = "true" ]; then
+            BUILD_ARGS="$BUILD_ARGS --split-per-abi"
+          fi
+
+          echo "🚀 Ejecutando: flutter build apk $BUILD_ARGS"
+          flutter build apk $BUILD_ARGS
+
+      # 9. Subir APK como artefacto descargable de GitHub Actions
+      - name: Subir artefacto APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: my-auto-guide-apk-${{ github.event.inputs.build_mode || 'release' }}-${{ github.run_number }}
+          path: build/app/outputs/flutter-apk/*.apk
+          retention-days: 14
