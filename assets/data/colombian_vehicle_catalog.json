@@ -5,52 +5,44 @@
       "logo_url": "https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/chevrolet.png",
       "modelos": [
         {
-          "nombre": "Onix Turbo RS",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Chevrolet_Onix_Plus_1.0_Turbo_Premier_2020.jpg/600px-Chevrolet_Onix_Plus_1.0_Turbo_Premier_2020.jpg"
+          "nombre": "Chevrolet Equinox",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Chevrolet_Equinox_LT_%28III%2C_Facelift%29_%E2%80%93_f_05102022.jpg/960px-Chevrolet_Equinox_LT_%28III%2C_Facelift%29_%E2%80%93_f_05102022.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Onix Turbo Sedán",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Chevrolet_Onix_Plus_1.0_Turbo_Premier_2020.jpg/600px-Chevrolet_Onix_Plus_1.0_Turbo_Premier_2020.jpg"
+          "nombre": "Chevrolet Tracker 2023",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/2019_Chevrolet_Camaro_2SS_6.2L_front_3.16.19.jpg/960px-2019_Chevrolet_Camaro_2SS_6.2L_front_3.16.19.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Tracker Turbo",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/2020_Chevrolet_Tracker_%28China%29_front_view.jpg/600px-2020_Chevrolet_Tracker_%28China%29_front_view.jpg"
+          "nombre": "Chevrolet Onix Turbo",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/2022_Chevrolet_Onix_RS_1.0_Turbo.jpg/960px-2022_Chevrolet_Onix_RS_1.0_Turbo.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Spark GT",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/2019_Chevrolet_Spark_1LT_1.4L%2C_front_10.13.19.jpg/600px-2019_Chevrolet_Spark_1LT_1.4L%2C_front_10.13.19.jpg"
+          "nombre": "Chevrolet Traverse",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Chevrolet_Impala_%2814373209694%29_%28cropped%29.jpg/960px-Chevrolet_Impala_%2814373209694%29_%28cropped%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Montana",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Chevrolet_Montana_Premier_2023.jpg/600px-Chevrolet_Montana_Premier_2023.jpg"
+          "nombre": "Chevrolet Spark GT",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/2020_Chevrolet_Spark_LS%2C_front_right%2C_09-07-2024.jpg/960px-2020_Chevrolet_Spark_LS%2C_front_right%2C_09-07-2024.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Equinox",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/2018_Chevrolet_Equinox_LT%2C_front_10.13.19.jpg/600px-2018_Chevrolet_Equinox_LT%2C_front_10.13.19.jpg"
+          "nombre": "Chevrolet Montana 2023",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/2004_Chevrolet_SSR%2C_front_left%2C_07-02-2023.jpg/960px-2004_Chevrolet_SSR%2C_front_left%2C_07-02-2023.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Blazer RS",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/2019_Chevrolet_Blazer_RS_AWD%2C_front_10.13.19.jpg/600px-2019_Chevrolet_Blazer_RS_AWD%2C_front_10.13.19.jpg"
+          "nombre": "Chevrolet Colorado 2023",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/2024_Chevrolet_Colorado_Z71%2C_front_left%2C_09-28-2024.jpg/960px-2024_Chevrolet_Colorado_Z71%2C_front_left%2C_09-28-2024.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Traverse",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/2018_Chevrolet_Traverse_LT_Cloth_AWD%2C_front_10.13.19.jpg/600px-2018_Chevrolet_Traverse_LT_Cloth_AWD%2C_front_10.13.19.jpg"
+          "nombre": "Chevrolet Tahoe 2022",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/2022_Chevrolet_Tahoe_RST%2C_front_3.7.22.jpg/960px-2022_Chevrolet_Tahoe_RST%2C_front_3.7.22.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Colorado",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/2019_Chevrolet_Colorado_Crew_Cab_4WD%2C_front_10.13.19.jpg/600px-2019_Chevrolet_Colorado_Crew_Cab_4WD%2C_front_10.13.19.jpg"
+          "nombre": "Chevrolet Camaro SS",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Chevrolet_SS_%2812057799956%29.jpg/960px-Chevrolet_SS_%2812057799956%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Tahoe",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/2021_Chevrolet_Tahoe_LT_4WD%2C_front_left.jpg/600px-2021_Chevrolet_Tahoe_LT_4WD%2C_front_left.jpg"
-        },
-        {
-          "nombre": "Silverado",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/2019_Chevrolet_Silverado_1500_RST_Crew_Cab_4WD%2C_front_10.13.19.jpg/600px-2019_Chevrolet_Silverado_1500_RST_Crew_Cab_4WD%2C_front_10.13.19.jpg"
-        },
-        {
-          "nombre": "Camaro",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/2019_Chevrolet_Camaro_2SS_6.2L%2C_front_10.13.19.jpg/600px-2019_Chevrolet_Camaro_2SS_6.2L%2C_front_10.13.19.jpg"
+          "nombre": "Chevrolet Blazer RS",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/1991_Chevrolet_S-10_Blazer_Tahoe_4-Door_4x4.jpg/960px-1991_Chevrolet_S-10_Blazer_Tahoe_4-Door_4x4.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         }
       ]
     },
@@ -59,44 +51,40 @@
       "logo_url": "https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/renault.png",
       "modelos": [
         {
-          "nombre": "Duster",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Dacia_Duster_II_1.3_TCe_150_4WD_Prestige_%28Facelift%29_%E2%80%93_f_03072022.jpg/600px-Dacia_Duster_II_1.3_TCe_150_4WD_Prestige_%28Facelift%29_%E2%80%93_f_03072022.jpg"
+          "nombre": "Renault Duster",
+          "img_url": "https://upload.wikimedia.org/wikipedia/en/1/11/Renault_HQ.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled"
         },
         {
-          "nombre": "Sandero",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Dacia_Sandero_III_Stepway_TCe_90_%E2%80%93_f_02052021.jpg/600px-Dacia_Sandero_III_Stepway_TCe_90_%E2%80%93_f_02052021.jpg"
+          "nombre": "Renault Kardian",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Renault_Kardian_2024_Evolution_1.0_TCe_in_Montevideo_%28front%29_01.jpg/960px-Renault_Kardian_2024_Evolution_1.0_TCe_in_Montevideo_%28front%29_01.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Stepway",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Dacia_Sandero_III_Stepway_TCe_90_%E2%80%93_f_02052021.jpg/600px-Dacia_Sandero_III_Stepway_TCe_90_%E2%80%93_f_02052021.jpg"
+          "nombre": "Renault Sandero Stepway",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Dacia_Logan_2023_Front_2_%28cropped%29.jpg/960px-Dacia_Logan_2023_Front_2_%28cropped%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Logan",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Dacia_Logan_III_TCe_90_%E2%80%93_f_02052021.jpg/600px-Dacia_Logan_III_TCe_90_%E2%80%93_f_02052021.jpg"
+          "nombre": "Renault Logan 2022",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/2018_Renault_Koleos_Initiale_Paris_DCi_4X4_2.0_Front.jpg/960px-2018_Renault_Koleos_Initiale_Paris_DCi_4X4_2.0_Front.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Kwid",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Renault_Kwid_Outsider_2020.jpg/600px-Renault_Kwid_Outsider_2020.jpg"
+          "nombre": "Renault Kwid",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/2023_Renault_Kwid_Iconic_%28Colombia%29_front_view_01.png/960px-2023_Renault_Kwid_Iconic_%28Colombia%29_front_view_01.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Kardian",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Renault_Kardian_Premiere_Edition_2024.jpg/600px-Renault_Kardian_Premiere_Edition_2024.jpg"
+          "nombre": "Renault Duster Oroch",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Renault_Duster_Oroch_2016_in_Punta_del_Este_01.JPG/960px-Renault_Duster_Oroch_2016_in_Punta_del_Este_01.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Oroch",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Renault_Duster_Oroch_Dynamique_2.0_2016_%2816781745423%29.jpg/600px-Renault_Duster_Oroch_Dynamique_2.0_2016_%2816781745423%29.jpg"
+          "nombre": "Renault Megane E-Tech",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/2017_Renault_Megane_Dynamique_S_NAV_DC_1.5_Front.jpg/960px-2017_Renault_Megane_Dynamique_S_NAV_DC_1.5_Front.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Megane E-Tech",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Renault_M%C3%A9gane_E-Tech_Electric_Techno_EV60_220hp_super_charge_%E2%80%93_f_16072022.jpg/600px-Renault_M%C3%A9gane_E-Tech_Electric_Techno_EV60_220hp_super_charge_%E2%80%93_f_16072022.jpg"
+          "nombre": "Renault Captur",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/2017_Renault_Megane_Dynamique_S_NAV_DC_1.5_Front.jpg/960px-2017_Renault_Megane_Dynamique_S_NAV_DC_1.5_Front.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Koleos",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Renault_Koleos_II_dCi_175_4WD_Initiale_Paris_%E2%80%93_Frontansicht%2C_24._Juni_2017%2C_D%C3%BCsseldorf.jpg/600px-Renault_Koleos_II_dCi_175_4WD_Initiale_Paris_%E2%80%93_Frontansicht%2C_24._Juni_2017%2C_D%C3%BCsseldorf.jpg"
-        },
-        {
-          "nombre": "Captur",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Renault_Captur_II_TCe_130_EDC_Intens_%E2%80%93_f_18042021.jpg/600px-Renault_Captur_II_TCe_130_EDC_Intens_%E2%80%93_f_18042021.jpg"
+          "nombre": "Renault Koleos 2022",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/2018_Renault_Koleos_Initiale_Paris_DCi_4X4_2.0_Front.jpg/960px-2018_Renault_Koleos_Initiale_Paris_DCi_4X4_2.0_Front.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         }
       ]
     },
@@ -105,44 +93,44 @@
       "logo_url": "https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/toyota.png",
       "modelos": [
         {
-          "nombre": "Corolla",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/2020_Toyota_Corolla_Altis_1.8E_front_view.jpg/600px-2020_Toyota_Corolla_Altis_1.8E_front_view.jpg"
+          "nombre": "Toyota Hilux 2022",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/2016_Toyota_HiLux_Invincible_D-4D_4WD_2.4_Front.jpg/960px-2016_Toyota_HiLux_Invincible_D-4D_4WD_2.4_Front.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Corolla Cross",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/2021_Toyota_Corolla_Cross_1.8V_%28ZSG10%29_front_view.jpg/600px-2021_Toyota_Corolla_Cross_1.8V_%28ZSG10%29_front_view.jpg"
+          "nombre": "Toyota Corolla 2022",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/2003-2004_Toyota_Corolla_%28ZZE122R%29_Conquest_sedan_01.jpg/960px-2003-2004_Toyota_Corolla_%28ZZE122R%29_Conquest_sedan_01.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Hilux",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/2021_Toyota_Hilux_Revo_Rocco_Double_Cab_2.8_4x4_front_view.jpg/600px-2021_Toyota_Hilux_Revo_Rocco_Double_Cab_2.8_4x4_front_view.jpg"
+          "nombre": "Toyota Yaris Cross",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Toyota_Yaris_Cross_Hybrid_%28XP210%29_1X7A1846.jpg/960px-Toyota_Yaris_Cross_Hybrid_%28XP210%29_1X7A1846.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Yaris Cross",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Toyota_Yaris_Cross_1.5_Hybrid_Club_%E2%80%93_f_24042022.jpg/600px-Toyota_Yaris_Cross_1.5_Hybrid_Club_%E2%80%93_f_24042022.jpg"
+          "nombre": "Toyota Corolla Cross",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/2003-2004_Toyota_Corolla_%28ZZE122R%29_Conquest_sedan_01.jpg/960px-2003-2004_Toyota_Corolla_%28ZZE122R%29_Conquest_sedan_01.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Fortuner",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/2020_Toyota_Fortuner_2.8_Legender_4WD_%28GUN156%29_front_view.jpg/600px-2020_Toyota_Fortuner_2.8_Legender_4WD_%28GUN156%29_front_view.jpg"
+          "nombre": "Toyota Fortuner 2022",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/2015_Toyota_Fortuner_%28New_Zealand%29.jpg/960px-2015_Toyota_Fortuner_%28New_Zealand%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Land Cruiser Prado",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/2024_Toyota_Land_Cruiser_First_Edition_in_Trail_Dust%2C_Front_Left%2C_05-18-2024.jpg/600px-2024_Toyota_Land_Cruiser_First_Edition_in_Trail_Dust%2C_Front_Left%2C_05-18-2024.jpg"
+          "nombre": "Toyota Land Cruiser 300",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/1982_Toyota_Land_Cruiser_FJ40_in_Freeborn_Red%2C_front_right.jpg/960px-1982_Toyota_Land_Cruiser_FJ40_in_Freeborn_Red%2C_front_right.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Land Cruiser 300",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Toyota_Land_Cruiser_300_VJA300W_ZX_01.jpg/600px-Toyota_Land_Cruiser_300_VJA300W_ZX_01.jpg"
+          "nombre": "Toyota RAV4 Hybrid",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Toyota_RAV4_EV_with_badge_WAS_2012_0791_copy.jpg/960px-Toyota_RAV4_EV_with_badge_WAS_2012_0791_copy.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "RAV4 Hybrid",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/2019_Toyota_RAV4_LE_2.5L%2C_front_10.13.19.jpg/600px-2019_Toyota_RAV4_LE_2.5L%2C_front_10.13.19.jpg"
+          "nombre": "Toyota Land Cruiser Prado",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Toyota_Land_Cruiser_70_003_%28cropped%29.JPG/960px-Toyota_Land_Cruiser_70_003_%28cropped%29.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "4Runner",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/2020_Toyota_4Runner_TRD_Off-Road_4WD%2C_front_10.13.19.jpg/600px-2020_Toyota_4Runner_TRD_Off-Road_4WD%2C_front_10.13.19.jpg"
+          "nombre": "Toyota 4Runner",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/2025_Toyota_4Runner_TRD_Sport_in_Wind_Chill_Pearl%2C_front_right%2C_2025-05-18.jpg/960px-2025_Toyota_4Runner_TRD_Sport_in_Wind_Chill_Pearl%2C_front_right%2C_2025-05-18.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Tundra",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/2022_Toyota_Tundra_Limited_CrewMax_in_Blueprint%2C_Front_Left%2C_09-17-2022.jpg/600px-2022_Toyota_Tundra_Limited_CrewMax_in_Blueprint%2C_Front_Left%2C_09-17-2022.jpg"
+          "nombre": "Toyota Tundra 2023",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/2022_Toyota_Tundra_Limited_CrewMax_Short_Bed_4x4_with_TRD_Off-Road_Package%2C_front_left%2C_11-01-2022.jpg/960px-2022_Toyota_Tundra_Limited_CrewMax_Short_Bed_4x4_with_TRD_Off-Road_Package%2C_front_left%2C_11-01-2022.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         }
       ]
     },
@@ -151,44 +139,36 @@
       "logo_url": "https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/mazda.png",
       "modelos": [
         {
-          "nombre": "Mazda 2 Hatchback",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/Mazda2_%28DJ%2C_Facelift%29_%E2%80%93_f_14032021.jpg/600px-Mazda2_%28DJ%2C_Facelift%29_%E2%80%93_f_14032021.jpg"
+          "nombre": "Mazda CX-50",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/2022_Mazda_BT-50_3.0d_Turbo_4x4_%28Chile%29_front_view.jpg/960px-2022_Mazda_BT-50_3.0d_Turbo_4x4_%28Chile%29_front_view.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Mazda 2 Sedán",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/Mazda2_%28DJ%2C_Facelift%29_%E2%80%93_f_14032021.jpg/600px-Mazda2_%28DJ%2C_Facelift%29_%E2%80%93_f_14032021.jpg"
+          "nombre": "Mazda CX-30",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/2024_Mazda_CX-5_2.5_S_Select_in_Platinum_Quartz_Metallic%2C_front_right.jpg/960px-2024_Mazda_CX-5_2.5_S_Select_in_Platinum_Quartz_Metallic%2C_front_right.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Mazda 3 Sedán",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/2019_Mazda3_Sedan_Select_AWD%2C_front_10.13.19.jpg/600px-2019_Mazda3_Sedan_Select_AWD%2C_front_10.13.19.jpg"
+          "nombre": "Mazda CX-5",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/2024_Mazda_CX-5_2.5_S_Select_in_Platinum_Quartz_Metallic%2C_front_right.jpg/960px-2024_Mazda_CX-5_2.5_S_Select_in_Platinum_Quartz_Metallic%2C_front_right.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Mazda 3 Hatchback",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/2019_Mazda3_Premium_AWD_Hatchback%2C_front_10.13.19.jpg/600px-2019_Mazda3_Premium_AWD_Hatchback%2C_front_10.13.19.jpg"
+          "nombre": "Mazda 3",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Mazda_626_front_20071204.jpg/960px-Mazda_626_front_20071204.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "CX-30",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Mazda_CX-30_Skyactiv-X_AWD_Selection_%E2%80%93_f_24052021.jpg/600px-Mazda_CX-30_Skyactiv-X_AWD_Selection_%E2%80%93_f_24052021.jpg"
+          "nombre": "Mazda 2",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Mazda_626_front_20071204.jpg/960px-Mazda_626_front_20071204.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "CX-5",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/2017_Mazda_CX-5_Sport_2.5L_front_10.13.19.jpg/600px-2017_Mazda_CX-5_Sport_2.5L_front_10.13.19.jpg"
+          "nombre": "Mazda CX-60",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Mazda_CX-60_PHEV_Automesse_Ludwigsburg_2022_1X7A5890.jpg/960px-Mazda_CX-60_PHEV_Automesse_Ludwigsburg_2022_1X7A5890.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "CX-50",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/2023_Mazda_CX-50_2.5_Turbo_Premium_Plus_in_Ingot_Blue_Metallic%2C_front_left.jpg/600px-2023_Mazda_CX-50_2.5_Turbo_Premium_Plus_in_Ingot_Blue_Metallic%2C_front_left.jpg"
+          "nombre": "Mazda MX-5",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Eunos.jpg/960px-Eunos.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "CX-60",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Mazda_CX-60_PHEV_Homura_%E2%80%93_f_24092022.jpg/600px-Mazda_CX-60_PHEV_Homura_%E2%80%93_f_24092022.jpg"
-        },
-        {
-          "nombre": "CX-90",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/2024_Mazda_CX-90_3.3_Turbo_S_Premium_Plus_in_Artisan_Red_Metallic%2C_front_left.jpg/600px-2024_Mazda_CX-90_3.3_Turbo_S_Premium_Plus_in_Artisan_Red_Metallic%2C_front_left.jpg"
-        },
-        {
-          "nombre": "MX-5 Miata",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Mazda_MX-5_ND_20160528.jpg/600px-Mazda_MX-5_ND_20160528.jpg"
+          "nombre": "Mazda CX-90",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/2024_Mazda_CX-90_Mild_Hybrid_Inline_6_Turbo_GS-L_AWD_in_Deep_Crystal_Blue_Mica%2C_Front_Left%2C_09-10-2023.jpg/960px-2024_Mazda_CX-90_Mild_Hybrid_Inline_6_Turbo_GS-L_AWD_in_Deep_Crystal_Blue_Mica%2C_Front_Left%2C_09-10-2023.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         }
       ]
     },
@@ -197,44 +177,40 @@
       "logo_url": "https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/kia.png",
       "modelos": [
         {
-          "nombre": "Picanto",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Kia_Picanto_%28JA%2C_Facelift%29_%E2%80%93_f_14032021.jpg/600px-Kia_Picanto_%28JA%2C_Facelift%29_%E2%80%93_f_14032021.jpg"
+          "nombre": "Kia Picanto",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/2018_Kia_Picanto_3_Automatic_1.2_Front.jpg/960px-2018_Kia_Picanto_3_Automatic_1.2_Front.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "K3 Sedán",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Kia_K3_%28BL7%29_front_view.jpg/600px-Kia_K3_%28BL7%29_front_view.jpg"
+          "nombre": "Kia Seltos",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Kia_Seltos_SP2_PE_Snow_White_Pearl_%2817%29_%28cropped%29.jpg/960px-Kia_Seltos_SP2_PE_Snow_White_Pearl_%2817%29_%28cropped%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "K3 Cross",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Kia_K3_%28BL7%29_front_view.jpg/600px-Kia_K3_%28BL7%29_front_view.jpg"
+          "nombre": "Kia Sonet",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/2021_Kia_Sonet_1.5_Premiere_%28Indonesia%29_front_view_02.jpg/960px-2021_Kia_Sonet_1.5_Premiere_%28Indonesia%29_front_view_02.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Sonet",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/2020_Kia_Sonet_HTX%2B_%28India%29_front_view.jpg/600px-2020_Kia_Sonet_HTX%2B_%28India%29_front_view.jpg"
+          "nombre": "Kia K3",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Kia_buildings_New_Logo.png/960px-Kia_buildings_New_Logo.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Seltos",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/2021_Kia_Seltos_EX%2C_front_10.23.20.jpg/600px-2021_Kia_Seltos_EX%2C_front_10.23.20.jpg"
+          "nombre": "Kia Sportage 2023",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/2025_Kia_Sportage_S_front_only.jpg/960px-2025_Kia_Sportage_S_front_only.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Sportage",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Kia_Sportage_NQ5_PHEV_GT-Line_%E2%80%93_f_16072022.jpg/600px-Kia_Sportage_NQ5_PHEV_GT-Line_%E2%80%93_f_16072022.jpg"
+          "nombre": "Kia EV9",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Kia_EV9_1X7A2472.jpg/960px-Kia_EV9_1X7A2472.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Sorento",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Kia_Sorento_MQ4_PHEV_Platinum_%E2%80%93_f_16072022.jpg/600px-Kia_Sorento_MQ4_PHEV_Platinum_%E2%80%93_f_16072022.jpg"
+          "nombre": "Kia EV6",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/2021_Kia_EV6_GT-Line_S.jpg/960px-2021_Kia_EV6_GT-Line_S.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "EV6",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Kia_EV6_AWD_GT-Line_%E2%80%93_f_14052022.jpg/600px-Kia_EV6_AWD_GT-Line_%E2%80%93_f_14052022.jpg"
+          "nombre": "Kia Sorento 2023",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/2024_Kia_Sorento_X-Line_SX_Prestige_%28facelift%29%2C_front_12.20.24.jpg/960px-2024_Kia_Sorento_X-Line_SX_Prestige_%28facelift%29%2C_front_12.20.24.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "EV9",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Kia_EV9_AWD_GT-Line_%E2%80%93_f_16032024.jpg/600px-Kia_EV9_AWD_GT-Line_%E2%80%93_f_16032024.jpg"
-        },
-        {
-          "nombre": "Carnival",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/2022_Kia_Carnival_EX_in_Deep_Chroma_Blue%2C_front_left.jpg/600px-2022_Kia_Carnival_EX_in_Deep_Chroma_Blue%2C_front_left.jpg"
+          "nombre": "Kia Carnival 2023",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Kia_K3_BD_FL_Snow_White_Pearl_%2813%29_%28cropped%29.jpg/960px-Kia_K3_BD_FL_Snow_White_Pearl_%2813%29_%28cropped%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         }
       ]
     },
@@ -243,40 +219,36 @@
       "logo_url": "https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/nissan.png",
       "modelos": [
         {
-          "nombre": "Versa",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/2020_Nissan_Versa_SV%2C_front_10.13.19.jpg/600px-2020_Nissan_Versa_SV%2C_front_10.13.19.jpg"
+          "nombre": "Nissan Versa",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/2021_Nissan_Navara_facelift_%28cropped%29.jpg/960px-2021_Nissan_Navara_facelift_%28cropped%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Kicks",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/2018_Nissan_Kicks_SV%2C_front_10.13.19.jpg/600px-2018_Nissan_Kicks_SV%2C_front_10.13.19.jpg"
+          "nombre": "Nissan Kicks",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/The_frontview_of_Nissan_DAA-HV37_SKYLINE_HYBRID_GT_Type_SP_%28cropped%29.jpg/960px-The_frontview_of_Nissan_DAA-HV37_SKYLINE_HYBRID_GT_Type_SP_%28cropped%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Sentra",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/2020_Nissan_Sentra_SR%2C_front_10.23.20.jpg/600px-2020_Nissan_Sentra_SR%2C_front_10.23.20.jpg"
+          "nombre": "Nissan Qashqai 2023",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/2024_Nissan_Qashqai_e-Power_IMG_2187.jpg/960px-2024_Nissan_Qashqai_e-Power_IMG_2187.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Frontier",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/2022_Nissan_Frontier_PRO-4X_in_Tactical_Green_Metallic%2C_front_left.jpg/600px-2022_Nissan_Frontier_PRO-4X_in_Tactical_Green_Metallic%2C_front_left.jpg"
+          "nombre": "Nissan Frontier 2023",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/1996_Nissan_300ZX_2-seater_t-top%2C_front_left%2C_06-15-2025.jpg/960px-1996_Nissan_300ZX_2-seater_t-top%2C_front_left%2C_06-15-2025.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Qashqai",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Nissan_Qashqai_J12_Tekna_%E2%80%93_f_14052022.jpg/600px-Nissan_Qashqai_J12_Tekna_%E2%80%93_f_14052022.jpg"
+          "nombre": "Nissan Sentra 2023",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/2024_Nissan_Sentra_%28B18%29_DSC_3754.jpg/960px-2024_Nissan_Sentra_%28B18%29_DSC_3754.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "X-Trail e-POWER",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Nissan_X-Trail_T33_e-Power_Tekna%2B_%E2%80%93_f_15042023.jpg/600px-Nissan_X-Trail_T33_e-Power_Tekna%2B_%E2%80%93_f_15042023.jpg"
+          "nombre": "Nissan Pathfinder 2023",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/2023_Nissan_Pathfinder_Platinum_4WD_in_Baja_Storm_Metallic%2C_front_left.jpg/960px-2023_Nissan_Pathfinder_Platinum_4WD_in_Baja_Storm_Metallic%2C_front_left.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Pathfinder",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/2022_Nissan_Pathfinder_SL_4WD_in_Glacier_White%2C_front_left.jpg/600px-2022_Nissan_Pathfinder_SL_4WD_in_Glacier_White%2C_front_left.jpg"
+          "nombre": "Nissan Patrol 2022",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Nissan_Xterra_%28N50%29_IMG_6174.jpg/960px-Nissan_Xterra_%28N50%29_IMG_6174.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "March",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Nissan_Micra_K14_1.0_IG-T_100_N-Connecta_%E2%80%93_f_14032021.jpg/600px-Nissan_Micra_K14_1.0_IG-T_100_N-Connecta_%E2%80%93_f_14032021.jpg"
-        },
-        {
-          "nombre": "Patrol",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/2020_Nissan_Patrol_Ti_%28Y62%29_wagon_%282020-11-20%29_01.jpg/600px-2020_Nissan_Patrol_Ti_%28Y62%29_wagon_%282020-11-20%29_01.jpg"
+          "nombre": "Nissan X-Trail 2023",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Nissan_X-Trail_%28T33%29_1X7A7179.jpg/960px-Nissan_X-Trail_%28T33%29_1X7A7179.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         }
       ]
     },
@@ -285,40 +257,36 @@
       "logo_url": "https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/hyundai.png",
       "modelos": [
         {
-          "nombre": "Grand i10",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Hyundai_i10_III_1.0_Trend_%E2%80%93_f_14032021.jpg/600px-Hyundai_i10_III_1.0_Trend_%E2%80%93_f_14032021.jpg"
+          "nombre": "Hyundai Tucson 2023",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/2024_Hyundai_Creta_1.5_MPi_SX%28O%29_%28India%29_front_view.png/960px-2024_Hyundai_Creta_1.5_MPi_SX%28O%29_%28India%29_front_view.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "HB20",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Hyundai_HB20_Platinum_Plus_2023.jpg/600px-Hyundai_HB20_Platinum_Plus_2023.jpg"
+          "nombre": "Hyundai HB20 2023",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/2023_Hyundai_HB20_1.0_T-GDi_Platinum_Plus_%28Brazil%29_front_view_02.png/960px-2023_Hyundai_HB20_1.0_T-GDi_Platinum_Plus_%28Brazil%29_front_view_02.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Creta",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Hyundai_Creta_Ultimate_2022.jpg/600px-Hyundai_Creta_Ultimate_2022.jpg"
+          "nombre": "Hyundai Grand i10",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Hyundai_i10_1.0_Intro_%28III%29_%E2%80%93_f_03012021.jpg/960px-Hyundai_i10_1.0_Intro_%28III%29_%E2%80%93_f_03012021.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Tucson",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Hyundai_Tucson_NX4_Prime_1.6_T-GDI_Plug-in-Hybrid_%E2%80%93_f_24052021.jpg/600px-Hyundai_Tucson_NX4_Prime_1.6_T-GDI_Plug-in-Hybrid_%E2%80%93_f_24052021.jpg"
+          "nombre": "Hyundai Santa Fe 2024",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/2024_Hyundai_Santa_Fe_Luxury_AWD_in_Hampton_Grey%2C_front_left%2C_2024-06-30.jpg/960px-2024_Hyundai_Santa_Fe_Luxury_AWD_in_Hampton_Grey%2C_front_left%2C_2024-06-30.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Santa Fe",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Hyundai_Santa_Fe_MX5_Calligraphy_%E2%80%93_f_16032024.jpg/600px-Hyundai_Santa_Fe_MX5_Calligraphy_%E2%80%93_f_16032024.jpg"
+          "nombre": "Hyundai Creta 2023",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/2024_Hyundai_Creta_1.5_MPi_SX%28O%29_%28India%29_front_view.png/960px-2024_Hyundai_Creta_1.5_MPi_SX%28O%29_%28India%29_front_view.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Kona Hybrid",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Hyundai_Kona_SX2_Hybrid_Prime_%E2%80%93_f_08072023.jpg/600px-Hyundai_Kona_SX2_Hybrid_Prime_%E2%80%93_f_08072023.jpg"
+          "nombre": "Hyundai Ioniq 5",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/2023_Hyundai_Ioniq_6_Limited%2C_front_4.27.23.jpg/960px-2023_Hyundai_Ioniq_6_Limited%2C_front_4.27.23.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Ioniq 5",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Hyundai_Ioniq_5_AWD_Project_45_%E2%80%93_f_28082021.jpg/600px-Hyundai_Ioniq_5_AWD_Project_45_%E2%80%93_f_28082021.jpg"
+          "nombre": "Hyundai Palisade",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/2023_Hyundai_Elantra_Limited_in_Silver%2C_front_left%2C_04-04-2026.jpg/960px-2023_Hyundai_Elantra_Limited_in_Silver%2C_front_left%2C_04-04-2026.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Palisade",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/2020_Hyundai_Palisade_SEL_AWD%2C_front_10.13.19.jpg/600px-2020_Hyundai_Palisade_SEL_AWD%2C_front_10.13.19.jpg"
-        },
-        {
-          "nombre": "Staria",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/Hyundai_Staria_2.2_CRDi_Signature_%E2%80%93_f_02102021.jpg/600px-Hyundai_Staria_2.2_CRDi_Signature_%E2%80%93_f_02102021.jpg"
+          "nombre": "Hyundai Kona Hybrid",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Hyundai_Kona_N_Line_%28SX2%29_DSC_8250.jpg/960px-Hyundai_Kona_N_Line_%28SX2%29_DSC_8250.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         }
       ]
     },
@@ -327,40 +295,36 @@
       "logo_url": "https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/volkswagen.png",
       "modelos": [
         {
-          "nombre": "Polo Track",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Volkswagen_Polo_Track_2023.jpg/600px-Volkswagen_Polo_Track_2023.jpg"
+          "nombre": "Volkswagen Polo Track",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/VW_Polo_beats_%28VI%29_%E2%80%93_f_03032019.jpg/960px-VW_Polo_beats_%28VI%29_%E2%80%93_f_03032019.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Virtus",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Volkswagen_Virtus_Highline_2018.jpg/600px-Volkswagen_Virtus_Highline_2018.jpg"
+          "nombre": "Volkswagen Virtus 2023",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/2022_Volkswagen_Virtus_1.5_GT_%28India%29_front_view_02.png/960px-2022_Volkswagen_Virtus_1.5_GT_%28India%29_front_view_02.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Nivus",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Volkswagen_Nivus_Highline_2021.jpg/600px-Volkswagen_Nivus_Highline_2021.jpg"
+          "nombre": "Volkswagen Nivus",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/VW_T-Cross_Style_%28Facelift%29_%E2%80%93_f_22022025.jpg/960px-VW_T-Cross_Style_%28Facelift%29_%E2%80%93_f_22022025.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "T-Cross",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/VW_T-Cross_1.0_TSI_Style_%E2%80%93_f_14032021.jpg/600px-VW_T-Cross_1.0_TSI_Style_%E2%80%93_f_14032021.jpg"
+          "nombre": "Volkswagen T-Cross",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/VW_T-Cross_Style_%28Facelift%29_%E2%80%93_f_22022025.jpg/960px-VW_T-Cross_Style_%28Facelift%29_%E2%80%93_f_22022025.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Taos",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/2022_Volkswagen_Taos_SE_4MOTION_in_Platinum_Gray_Metallic%2C_front_left.jpg/600px-2022_Volkswagen_Taos_SE_4MOTION_in_Platinum_Gray_Metallic%2C_front_left.jpg"
+          "nombre": "Volkswagen Taos",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/VW_Polo_beats_%28VI%29_%E2%80%93_f_03032019.jpg/960px-VW_Polo_beats_%28VI%29_%E2%80%93_f_03032019.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Tiguan",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/2022_Volkswagen_Tiguan_2.0T_SE_4MOTION_in_Deep_Black_Pearl%2C_front_left.jpg/600px-2022_Volkswagen_Tiguan_2.0T_SE_4MOTION_in_Deep_Black_Pearl%2C_front_left.jpg"
+          "nombre": "Volkswagen Tiguan 2023",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Volkswagen_Tiguan_III_IMG_8823_%28cropped%29.jpg/960px-Volkswagen_Tiguan_III_IMG_8823_%28cropped%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Amarok",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Volkswagen_Amarok_II_3.0_TDI_4Motion_PanAmericana_%E2%80%93_f_24062023.jpg/600px-Volkswagen_Amarok_II_3.0_TDI_4Motion_PanAmericana_%E2%80%93_f_24062023.jpg"
+          "nombre": "Volkswagen Golf GTI",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/1996-1998_Volkswagen_Golf_%281H%29_CL_5-door_hatchback_03.jpg/960px-1996-1998_Volkswagen_Golf_%281H%29_CL_5-door_hatchback_03.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Jetta",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/2019_Volkswagen_Jetta_R-Line_1.4L%2C_front_10.13.19.jpg/600px-2019_Volkswagen_Jetta_R-Line_1.4L%2C_front_10.13.19.jpg"
-        },
-        {
-          "nombre": "Golf GTI",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/VW_Golf_VIII_GTI_%E2%80%93_f_24052021.jpg/600px-VW_Golf_VIII_GTI_%E2%80%93_f_24052021.jpg"
+          "nombre": "Volkswagen Amarok 2023",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/VW_Amarok_3.0_TDI_4Motion_Style_%28II%29_%E2%80%93_f_05072025.jpg/960px-VW_Amarok_3.0_TDI_4Motion_Style_%28II%29_%E2%80%93_f_05072025.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         }
       ]
     },
@@ -369,36 +333,32 @@
       "logo_url": "https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/suzuki.png",
       "modelos": [
         {
-          "nombre": "Swift Híbrido",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Suzuki_Swift_1.2_Dualjet_Hybrid_Comfort_%E2%80%93_f_24042022.jpg/600px-Suzuki_Swift_1.2_Dualjet_Hybrid_Comfort_%E2%80%93_f_24042022.jpg"
+          "nombre": "Suzuki Jimny",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/2019_Suzuki_Jimny_SZ5_4X4_Automatic_1.5.jpg/960px-2019_Suzuki_Jimny_SZ5_4X4_Automatic_1.5.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Jimny",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Suzuki_Jimny_1.5_Allgrip_Comfort_%28GJ%29_%E2%80%93_f_14032021.jpg/600px-Suzuki_Jimny_1.5_Allgrip_Comfort_%28GJ%29_%E2%80%93_f_14032021.jpg"
+          "nombre": "Suzuki Fronx",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/2024_Suzuki_Fronx.jpg/960px-2024_Suzuki_Fronx.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Grand Vitara Híbrida",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Suzuki_Grand_Vitara_%282022%29_front_view.jpg/600px-Suzuki_Grand_Vitara_%282022%29_front_view.jpg"
+          "nombre": "Suzuki Baleno 2022",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/2017_Suzuki_Baleno_SZ3_Dualjet_1.2_Front.jpg/960px-2017_Suzuki_Baleno_SZ3_Dualjet_1.2_Front.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Fronx Híbrido",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Suzuki_Fronx_GLX_2023.jpg/600px-Suzuki_Fronx_GLX_2023.jpg"
+          "nombre": "Suzuki Grand Vitara 2023",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/2018_Suzuki_Vitara_%28LY%29_S_Turbo_wagon_%282018-11-02%29_01.jpg/960px-2018_Suzuki_Vitara_%28LY%29_S_Turbo_wagon_%282018-11-02%29_01.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Baleno",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Suzuki_Baleno_1.2_Dualjet_Club_%E2%80%93_f_14032021.jpg/600px-Suzuki_Baleno_1.2_Dualjet_Club_%E2%80%93_f_14032021.jpg"
+          "nombre": "Suzuki Swift Hybrid",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Suzuki_Swift_%282024%29_hybrid_DSC_6076.jpg/960px-Suzuki_Swift_%282024%29_hybrid_DSC_6076.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "S-Cross",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Suzuki_S-Cross_1.4_Boosterjet_Allgrip_Comfort%2B_%E2%80%93_f_24042022.jpg/600px-Suzuki_S-Cross_1.4_Boosterjet_Allgrip_Comfort%2B_%E2%80%93_f_24042022.jpg"
+          "nombre": "Suzuki S-Presso",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Suzuki_S-Presso_%E2%80%93_Dubai_%28cropped%29.jpg/960px-Suzuki_S-Presso_%E2%80%93_Dubai_%28cropped%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Spresso",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Maruti_Suzuki_S-Presso_VXI%2B_%28India%29_front_view.jpg/600px-Maruti_Suzuki_S-Presso_VXI%2B_%28India%29_front_view.jpg"
-        },
-        {
-          "nombre": "Ertiga",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/2019_Suzuki_Ertiga_GL_%28NC%29_front_view.jpg/600px-2019_Suzuki_Ertiga_GL_%28NC%29_front_view.jpg"
+          "nombre": "Suzuki S-Cross 2022",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/2018_Suzuki_Vitara_%28LY%29_S_Turbo_wagon_%282018-11-02%29_01.jpg/960px-2018_Suzuki_Vitara_%28LY%29_S_Turbo_wagon_%282018-11-02%29_01.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         }
       ]
     },
@@ -407,36 +367,36 @@
       "logo_url": "https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/byd.png",
       "modelos": [
         {
-          "nombre": "Dolphin Mini (Seagull)",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/BYD_Seagull_001.jpg/600px-BYD_Seagull_001.jpg"
+          "nombre": "Dolphin",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/BYD_Zhengzhou_All-Terrain_Circuit_entrance.png/960px-BYD_Zhengzhou_All-Terrain_Circuit_entrance.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Dolphin EV",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/BYD_Dolphin_001.jpg/600px-BYD_Dolphin_001.jpg"
+          "nombre": "Seagull",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/BYD_Company%2C_Ltd._-_Logo.svg/960px-BYD_Company%2C_Ltd._-_Logo.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Yuan Plus (Atto 3)",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/BYD_Atto_3_1X7A6265.jpg/600px-BYD_Atto_3_1X7A6265.jpg"
+          "nombre": "Atto 3",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/2023_%D0%92YD_Seagull_%28front%29.jpg/960px-2023_%D0%92YD_Seagull_%28front%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
+        },
+        {
+          "nombre": "Seal",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/BYD_Zhengzhou_All-Terrain_Circuit_entrance.png/960px-BYD_Zhengzhou_All-Terrain_Circuit_entrance.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
           "nombre": "Song Plus DM-i",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/BYD_Song_Plus_DM-i_001.jpg/600px-BYD_Song_Plus_DM-i_001.jpg"
-        },
-        {
-          "nombre": "Seal EV",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/BYD_Seal_001.jpg/600px-BYD_Seal_001.jpg"
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/2023_%D0%92YD_Seagull_%28front%29.jpg/960px-2023_%D0%92YD_Seagull_%28front%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
           "nombre": "Tang EV",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/BYD_Tang_II_EV600D_Auto_Shanghai_2019.jpg/600px-BYD_Tang_II_EV600D_Auto_Shanghai_2019.jpg"
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/2022_BYD_Seal.jpg/960px-2022_BYD_Seal.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
+        },
+        {
+          "nombre": "Shark",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/BYD_Zhengzhou_All-Terrain_Circuit_entrance.png/960px-BYD_Zhengzhou_All-Terrain_Circuit_entrance.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
           "nombre": "Han EV",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/BYD_Han_EV_001.jpg/600px-BYD_Han_EV_001.jpg"
-        },
-        {
-          "nombre": "Shark Pickup",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/BYD_Shark_PHEV_front_view.jpg/600px-BYD_Shark_PHEV_front_view.jpg"
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/BYD_Racco_Prototype.jpg/960px-BYD_Racco_Prototype.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         }
       ]
     },
@@ -445,32 +405,32 @@
       "logo_url": "https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/ford.png",
       "modelos": [
         {
-          "nombre": "Escape Híbrida",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/2020_Ford_Escape_Titanium_AWD%2C_front_10.13.19.jpg/600px-2020_Ford_Escape_Titanium_AWD%2C_front_10.13.19.jpg"
+          "nombre": "Ford Explorer 2023",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Ford_Explorer_%28sixth_generation%29_IMG_6063.jpg/960px-Ford_Explorer_%28sixth_generation%29_IMG_6063.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Ranger",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/2023_Ford_Ranger_Wildtrak_2.0_Bi-Turbo_4x4_in_Sedona_Orange%2C_front_left.jpg/600px-2023_Ford_Ranger_Wildtrak_2.0_Bi-Turbo_4x4_in_Sedona_Orange%2C_front_left.jpg"
+          "nombre": "Ford Bronco Sport",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Ford_Bronco_%286th_generation%29_Outer_Banks_1X7A0384.jpg/960px-Ford_Bronco_%286th_generation%29_Outer_Banks_1X7A0384.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Explorer",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/2020_Ford_Explorer_XLT_4WD%2C_front_10.13.19.jpg/600px-2020_Ford_Explorer_XLT_4WD%2C_front_10.13.19.jpg"
+          "nombre": "Ford Ranger 2023",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Ford_Ranger_2.0_EcoBlue_4WD_Wildtrak_X_%28IV%29_%E2%80%93_f_12102024.jpg/960px-Ford_Ranger_2.0_EcoBlue_4WD_Wildtrak_X_%28IV%29_%E2%80%93_f_12102024.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Bronco Sport",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/2021_Ford_Bronco_Sport_Outer_Banks_in_Area_51%2C_front_left.jpg/600px-2021_Ford_Bronco_Sport_Outer_Banks_in_Area_51%2C_front_left.jpg"
+          "nombre": "Ford F-150 2023",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/2022_Ford_F-150_Lightning_Lariat_in_Atlas_Blue_Metallic%2C_Front_Right%2C_08-06-2022.jpg/960px-2022_Ford_F-150_Lightning_Lariat_in_Atlas_Blue_Metallic%2C_Front_Right%2C_08-06-2022.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "F-150",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/2021_Ford_F-150_Lariat_SuperCrew_4x4_in_Carbonized_Gray%2C_front_left.jpg/600px-2021_Ford_F-150_Lariat_SuperCrew_4x4_in_Carbonized_Gray%2C_front_left.jpg"
+          "nombre": "Ford Escape Hybrid 2023",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/2021_Ford_Escape_Hybrid_SEL_AWD_in_Oxford_White%2C_front_left.jpg/960px-2021_Ford_Escape_Hybrid_SEL_AWD_in_Oxford_White%2C_front_left.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Mustang GT",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/2018_Ford_Mustang_GT_5.0_front_10.13.19.jpg/600px-2018_Ford_Mustang_GT_5.0_front_10.13.19.jpg"
+          "nombre": "Ford Mustang 2023",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Seventh_generation_2024_Ford_Mustang_%28cropped%29.jpg/960px-Seventh_generation_2024_Ford_Mustang_%28cropped%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Edge",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/2019_Ford_Edge_Titanium_AWD_front_10.13.19.jpg/600px-2019_Ford_Edge_Titanium_AWD_front_10.13.19.jpg"
+          "nombre": "Ford Edge 2022",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/2019_Ford_Edge_SEL_EcoBoost_AWD_2.0L_front_4.6.19.jpg/960px-2019_Ford_Edge_SEL_EcoBoost_AWD_2.0L_front_4.6.19.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         }
       ]
     },
@@ -479,32 +439,32 @@
       "logo_url": "https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/bmw.png",
       "modelos": [
         {
-          "nombre": "Serie 1 (118i/128ti)",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/BMW_118i_M_Sport_%28F40%29_%E2%80%93_f_14032021.jpg/600px-BMW_118i_M_Sport_%28F40%29_%E2%80%93_f_14032021.jpg"
+          "nombre": "X3 G01",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/BMW_G45_20_IMG_3794.jpg/960px-BMW_G45_20_IMG_3794.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Serie 2 Gran Coupé",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/BMW_218i_Gran_Coup%C3%A9_M_Sport_%28F44%29_%E2%80%93_f_14032021.jpg/600px-BMW_218i_Gran_Coup%C3%A9_M_Sport_%28F44%29_%E2%80%93_f_14032021.jpg"
+          "nombre": "3 Series G20",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/2019_BMW_318d_SE_Automatic_2.0_Front.jpg/960px-2019_BMW_318d_SE_Automatic_2.0_Front.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Serie 3 (320i/330e)",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/BMW_320d_xDrive_M_Sport_%28G20%29_%E2%80%93_f_14032021.jpg/600px-BMW_320d_xDrive_M_Sport_%28G20%29_%E2%80%93_f_14032021.jpg"
+          "nombre": "1 Series F40",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/BMW_120_%28F70%29_Leonberg_2024_IMG_1068.jpg/960px-BMW_120_%28F70%29_Leonberg_2024_IMG_1068.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "X1",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/BMW_X1_sDrive18d_xLine_%28U11%29_%E2%80%93_f_15042023.jpg/600px-BMW_X1_sDrive18d_xLine_%28U11%29_%E2%80%93_f_15042023.jpg"
+          "nombre": "X1 U11",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/BMW_U11_1X7A6826.jpg/960px-BMW_U11_1X7A6826.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "X3",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/BMW_X3_xDrive30e_M_Sport_%28G01%2C_Facelift%29_%E2%80%93_f_16072022.jpg/600px-BMW_X3_xDrive30e_M_Sport_%28G01%2C_Facelift%29_%E2%80%93_f_16072022.jpg"
+          "nombre": "2 Series Gran Coupe",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/BMW_F44_1X7A6109.jpg/960px-BMW_F44_1X7A6109.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "X5",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/BMW_X5_xDrive45e_M_Sport_%28G05%29_%E2%80%93_f_14032021.jpg/600px-BMW_X5_xDrive45e_M_Sport_%28G05%29_%E2%80%93_f_14032021.jpg"
+          "nombre": "X5 G05",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/BMW_G05_45e_IMG_3714.jpg/960px-BMW_G05_45e_IMG_3714.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "M3",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/BMW_M3_Competition_%28G80%29_%E2%80%93_f_14052022.jpg/600px-BMW_M3_Competition_%28G80%29_%E2%80%93_f_14052022.jpg"
+          "nombre": "M3 G80",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/BMW_M3_Competition_%28G80%29_IMG_4041.jpg/960px-BMW_M3_Competition_%28G80%29_IMG_4041.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         }
       ]
     },
@@ -513,32 +473,32 @@
       "logo_url": "https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/mercedes-benz.png",
       "modelos": [
         {
-          "nombre": "Clase A Sedán/HB",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Mercedes-Benz_A_200_AMG_Line_%28W_177%29_%E2%80%93_f_14032021.jpg/600px-Mercedes-Benz_A_200_AMG_Line_%28W_177%29_%E2%80%93_f_14032021.jpg"
+          "nombre": "Mercedes-Benz A-Class W177",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Mercedes-Benz_GLA_250_e_AMG_Line_%28H_247%29_%E2%80%93_f_11042021_%28exposure_adjusted%29.jpg/960px-Mercedes-Benz_GLA_250_e_AMG_Line_%28H_247%29_%E2%80%93_f_11042021_%28exposure_adjusted%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Clase C",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Mercedes-Benz_C_200_AMG_Line_%28W_206%29_%E2%80%93_f_16072022.jpg/600px-Mercedes-Benz_C_200_AMG_Line_%28W_206%29_%E2%80%93_f_16072022.jpg"
+          "nombre": "Mercedes-Benz GLB-Class",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Mercedes-Benz_W206_IMG_6380.jpg/960px-Mercedes-Benz_W206_IMG_6380.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "GLA",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Mercedes-Benz_GLA_200_AMG_Line_%28H_247%29_%E2%80%93_f_14032021.jpg/600px-Mercedes-Benz_GLA_200_AMG_Line_%28H_247%29_%E2%80%93_f_14032021.jpg"
+          "nombre": "Mercedes-Benz C-Class W206",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Mercedes-Benz_W202_C_280_DSC_8896.jpg/960px-Mercedes-Benz_W202_C_280_DSC_8896.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "GLB",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Mercedes-Benz_GLB_200_AMG_Line_%28X_247%29_%E2%80%93_f_14032021.jpg/600px-Mercedes-Benz_GLB_200_AMG_Line_%28X_247%29_%E2%80%93_f_14032021.jpg"
+          "nombre": "Mercedes-AMG G 63",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Mercedes-Benz_G63_AMG_6x6%2C_Monaco_diplomatic_plates%2C_front_right.jpg/960px-Mercedes-Benz_G63_AMG_6x6%2C_Monaco_diplomatic_plates%2C_front_right.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "GLC",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Mercedes-Benz_GLC_220_d_4MATIC_AMG_Line_%28X_254%29_%E2%80%93_f_15042023.jpg/600px-Mercedes-Benz_GLC_220_d_4MATIC_AMG_Line_%28X_254%29_%E2%80%93_f_15042023.jpg"
+          "nombre": "Mercedes-Benz GLA-Class H247",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Mercedes-Benz_GLA_250_e_AMG_Line_%28H_247%29_%E2%80%93_f_11042021_%28exposure_adjusted%29.jpg/960px-Mercedes-Benz_GLA_250_e_AMG_Line_%28H_247%29_%E2%80%93_f_11042021_%28exposure_adjusted%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "GLE",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Mercedes-Benz_GLE_300_d_4MATIC_AMG_Line_%28V_167%29_%E2%80%93_f_14032021.jpg/600px-Mercedes-Benz_GLE_300_d_4MATIC_AMG_Line_%28V_167%29_%E2%80%93_f_14032021.jpg"
+          "nombre": "Mercedes-Benz GLE-Class V167",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Mercedes_OM656_engine.png/960px-Mercedes_OM656_engine.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Clase G",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Mercedes-AMG_G_63_%28W_463A%29_%E2%80%93_f_14032021.jpg/600px-Mercedes-AMG_G_63_%28W_463A%29_%E2%80%93_f_14032021.jpg"
+          "nombre": "Mercedes-Benz GLC-Class X254",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Mercedes-Benz_X254_1X7A6343.jpg/960px-Mercedes-Benz_X254_1X7A6343.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         }
       ]
     },
@@ -547,32 +507,32 @@
       "logo_url": "https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/audi.png",
       "modelos": [
         {
-          "nombre": "A3 Sedán/Sportback",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Audi_A3_Sportback_35_TFSI_S_line_%288Y%29_%E2%80%93_f_14032021.jpg/600px-Audi_A3_Sportback_35_TFSI_S_line_%288Y%29_%E2%80%93_f_14032021.jpg"
+          "nombre": "Audi A3 8Y",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Audi_A3_8Y_Sedan_IMG_5936.jpg/960px-Audi_A3_8Y_Sedan_IMG_5936.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "A4",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Audi_A4_B9_Facelift_Limousine_35_TFSI_S_line_%E2%80%93_f_14032021.jpg/600px-Audi_A4_B9_Facelift_Limousine_35_TFSI_S_line_%E2%80%93_f_14032021.jpg"
+          "nombre": "Audi A4 B9",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Audi_A4_B9_sedans_%28FL%29_1X7A2441.jpg/960px-Audi_A4_B9_sedans_%28FL%29_1X7A2441.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Q2",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Audi_Q2_35_TFSI_S_line_%28Facelift%29_%E2%80%93_f_14032021.jpg/600px-Audi_Q2_35_TFSI_S_line_%28Facelift%29_%E2%80%93_f_14032021.jpg"
+          "nombre": "Audi Q3 F3",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Audi_Q3_F3_DSC_7494.jpg/960px-Audi_Q3_F3_DSC_7494.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Q3 / Sportback",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Audi_Q3_Sportback_45_TFSI_e_S_line_%E2%80%93_f_24052021.jpg/600px-Audi_Q3_Sportback_45_TFSI_e_S_line_%E2%80%93_f_24052021.jpg"
+          "nombre": "Audi Q5 FY",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Audi_Q5_2.0_TDI_quattro_S_line_%28GU%29_%E2%80%93_f_13102025.jpg/960px-Audi_Q5_2.0_TDI_quattro_S_line_%28GU%29_%E2%80%93_f_13102025.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Q5",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Audi_Q5_FY_Facelift_40_TDI_S_line_%E2%80%93_f_14032021.jpg/600px-Audi_Q5_FY_Facelift_40_TDI_S_line_%E2%80%93_f_14032021.jpg"
+          "nombre": "Audi Q2",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Audi_A4_B9_sedans_%28FL%29_1X7A2441.jpg/960px-Audi_A4_B9_sedans_%28FL%29_1X7A2441.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Q7",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Audi_Q7_55_TFSI_e_quattro_S_line_%284M_Facelift%29_%E2%80%93_f_14032021.jpg/600px-Audi_Q7_55_TFSI_e_quattro_S_line_%284M_Facelift%29_%E2%80%93_f_14032021.jpg"
+          "nombre": "Audi Q7 4M",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Audi_Q7_4M_FL2_3.0_V6_MHEV_quattro_Satellite_Silver_Metallic_01_%28cropped%29.jpg/960px-Audi_Q7_4M_FL2_3.0_V6_MHEV_quattro_Satellite_Silver_Metallic_01_%28cropped%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Q8 e-tron",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Audi_Q8_55_e-tron_quattro_S_line_%E2%80%93_f_15042023.jpg/600px-Audi_Q8_55_e-tron_quattro_S_line_%E2%80%93_f_15042023.jpg"
+          "nombre": "Audi Q8 e-tron",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/2021_Audi_Q4_e-tron_Sport_35.jpg/960px-2021_Audi_Q4_e-tron_Sport_35.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         }
       ]
     },
@@ -581,28 +541,28 @@
       "logo_url": "https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/jeep.png",
       "modelos": [
         {
-          "nombre": "Renegade",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/2019_Jeep_Renegade_Latitude_4WD%2C_front_10.13.19.jpg/600px-2019_Jeep_Renegade_Latitude_4WD%2C_front_10.13.19.jpg"
+          "nombre": "Jeep Renegade",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Kelly_Jeep_Chrysler_Dealership.jpg/960px-Kelly_Jeep_Chrysler_Dealership.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Compass",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/2018_Jeep_Compass_Limited_4WD%2C_front_10.13.19.jpg/600px-2018_Jeep_Compass_Limited_4WD%2C_front_10.13.19.jpg"
+          "nombre": "Jeep Grand Cherokee 2023",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/26_Jeep_Cherokee_Limited_AZIAS.jpg/960px-26_Jeep_Cherokee_Limited_AZIAS.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Grand Cherokee",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/2022_Jeep_Grand_Cherokee_L_Limited_in_Silver_Zynith%2C_front_left.jpg/600px-2022_Jeep_Grand_Cherokee_L_Limited_in_Silver_Zynith%2C_front_left.jpg"
+          "nombre": "Jeep Commander 2022",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Jeep-Commander.jpg/960px-Jeep-Commander.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Commander",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Jeep_Commander_Overland_2022.jpg/600px-Jeep_Commander_Overland_2022.jpg"
+          "nombre": "Jeep Compass",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Kelly_Jeep_Chrysler_Dealership.jpg/960px-Kelly_Jeep_Chrysler_Dealership.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Wrangler Rubicon",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/2018_Jeep_Wrangler_Unlimited_Rubicon_4X4%2C_front_10.13.19.jpg/600px-2018_Jeep_Wrangler_Unlimited_Rubicon_4X4%2C_front_10.13.19.jpg"
+          "nombre": "Jeep Gladiator JT",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/2020_Jeep_Gladiator_Rubicon%2C_front_10.25.20.jpg/960px-2020_Jeep_Gladiator_Rubicon%2C_front_10.25.20.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Gladiator",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/2020_Jeep_Gladiator_Overland_4X4%2C_front_10.13.19.jpg/600px-2020_Jeep_Gladiator_Overland_4X4%2C_front_10.13.19.jpg"
+          "nombre": "Jeep Wrangler JL",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Jeep_Wrangler_Unlimited_%28JL%29_PHEV_IMG_5808.jpg/960px-Jeep_Wrangler_Unlimited_%28JL%29_PHEV_IMG_5808.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         }
       ]
     }
@@ -613,56 +573,44 @@
       "logo_url": "https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/bajaj.png",
       "modelos": [
         {
-          "nombre": "Pulsar NS 200 FI ABS",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Bajaj_Pulsar_200NS.jpg/600px-Bajaj_Pulsar_200NS.jpg"
+          "nombre": "Bajaj Pulsar NS200",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Bajaj_Auto_Ltd_logo.svg/960px-Bajaj_Auto_Ltd_logo.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Pulsar NS 160 FI ABS",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Bajaj_Pulsar_200NS.jpg/600px-Bajaj_Pulsar_200NS.jpg"
+          "nombre": "Bajaj Pulsar NS125",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Bajaj-NS400Z.jpg/960px-Bajaj-NS400Z.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Pulsar NS 125",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Bajaj_Pulsar_200NS.jpg/600px-Bajaj_Pulsar_200NS.jpg"
+          "nombre": "Bajaj Pulsar NS160",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Bajaj-NS400Z.jpg/960px-Bajaj-NS400Z.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Pulsar N 250",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Bajaj_Pulsar_200NS.jpg/600px-Bajaj_Pulsar_200NS.jpg"
+          "nombre": "Bajaj Dominar 250",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Bajaj-NS400Z.jpg/960px-Bajaj-NS400Z.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Pulsar N 160",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Bajaj_Pulsar_200NS.jpg/600px-Bajaj_Pulsar_200NS.jpg"
+          "nombre": "Bajaj Pulsar RS200",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Bajaj_Pulsar_200_NS.jpg/960px-Bajaj_Pulsar_200_NS.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Pulsar RS 200",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Bajaj_Pulsar_RS200.jpg/600px-Bajaj_Pulsar_RS200.jpg"
+          "nombre": "Bajaj Discover 125",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Discover_125_STR.jpg/960px-Discover_125_STR.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Pulsar NS 400Z",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Bajaj_Pulsar_200NS.jpg/600px-Bajaj_Pulsar_200NS.jpg"
+          "nombre": "Bajaj Dominar 400",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Bajaj-NS400Z.jpg/960px-Bajaj-NS400Z.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Dominar 400 Touring",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Bajaj_Dominar_400.jpg/600px-Bajaj_Dominar_400.jpg"
+          "nombre": "Bajaj Boxer CT100",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Bajaj_CT100.JPG/960px-Bajaj_CT100.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Dominar 250",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Bajaj_Dominar_400.jpg/600px-Bajaj_Dominar_400.jpg"
+          "nombre": "Bajaj Pulsar N250",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Bajaj-NS400Z.jpg/960px-Bajaj-NS400Z.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Boxer CT 100 KS",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Bajaj_Boxer_CT100.jpg/600px-Bajaj_Boxer_CT100.jpg"
-        },
-        {
-          "nombre": "Boxer CT 125",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Bajaj_Boxer_CT100.jpg/600px-Bajaj_Boxer_CT100.jpg"
-        },
-        {
-          "nombre": "Boxer 150X",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Bajaj_Boxer_CT100.jpg/600px-Bajaj_Boxer_CT100.jpg"
-        },
-        {
-          "nombre": "Discover 125 ST",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Bajaj_Discover_125_ST.jpg/600px-Bajaj_Discover_125_ST.jpg"
+          "nombre": "Bajaj Pulsar NS400Z",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Bajaj-NS400Z.jpg/960px-Bajaj-NS400Z.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         }
       ]
     },
@@ -671,114 +619,98 @@
       "logo_url": "https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/yamaha.png",
       "modelos": [
         {
-          "nombre": "MT 15 V2",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Yamaha_MT-15_front.jpg/600px-Yamaha_MT-15_front.jpg"
+          "nombre": "Yamaha FZ25",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Yamaha_nmax_cpd150_YCP.JPG/960px-Yamaha_nmax_cpd150_YCP.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "YZF R15 V4",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/2022_Yamaha_YZF-R15_V4.jpg/600px-2022_Yamaha_YZF-R15_V4.jpg"
+          "nombre": "Yamaha MT-15",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/2024_Yamaha_MT-09_Y-AMT.jpg/960px-2024_Yamaha_MT-09_Y-AMT.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "FZ 25 ABS",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Yamaha_FZ25_2017.jpg/600px-Yamaha_FZ25_2017.jpg"
+          "nombre": "Yamaha NMAX 155",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Yamaha_nmax_cpd150_YCP.JPG/960px-Yamaha_nmax_cpd150_YCP.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "FZ 2.0 FI",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Yamaha_FZ16_ST.JPG/600px-Yamaha_FZ16_ST.JPG"
+          "nombre": "Yamaha BWs 125",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/a/a2/Zuma125.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled"
         },
         {
-          "nombre": "Crypton FI",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Yamaha_Crypton_115.jpg/600px-Yamaha_Crypton_115.jpg"
+          "nombre": "Yamaha Crypton 115",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Yamaha_DX100_%281985%29.jpg/960px-Yamaha_DX100_%281985%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "N-Max Connected",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Yamaha_NMAX_155_2020.jpg/600px-Yamaha_NMAX_155_2020.jpg"
+          "nombre": "Yamaha Aerox 155",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Yamaha_Aerox_2011_.jpg/960px-Yamaha_Aerox_2011_.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Aerox 155",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Yamaha_Aerox_155_Connected.jpg/600px-Yamaha_Aerox_155_Connected.jpg"
+          "nombre": "Yamaha FZ-S FI",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Yamaha_Corporation.jpg/960px-Yamaha_Corporation.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "BWS FI",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Yamaha_BWs_125.jpg/600px-Yamaha_BWs_125.jpg"
+          "nombre": "Yamaha XTZ 125",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Yamaha_XTZ_750_Super_T%C3%A9n%C3%A9r%C3%A9_%281%29.jpg/960px-Yamaha_XTZ_750_Super_T%C3%A9n%C3%A9r%C3%A9_%281%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "XTZ 125",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Yamaha_XTZ_125E.jpg/600px-Yamaha_XTZ_125E.jpg"
+          "nombre": "Yamaha XTZ 250 Lander",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/XTZ250Tenere.jpg/960px-XTZ250Tenere.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "XTZ 150",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Yamaha_Crosser_150_ABS_2022.jpg/600px-Yamaha_Crosser_150_ABS_2022.jpg"
+          "nombre": "Yamaha XTZ 150",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Yamaha_Jupiter_MX_King_150_-_Jakarta_Fair_2016_-_June_21_2016.jpg/960px-Yamaha_Jupiter_MX_King_150_-_Jakarta_Fair_2016_-_June_21_2016.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "XTZ 250 Lander",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Yamaha_XTZ_250_Lander_ABS_2020.jpg/600px-Yamaha_XTZ_250_Lander_ABS_2020.jpg"
+          "nombre": "Yamaha MT-03",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/2024_Yamaha_MT-09_Y-AMT.jpg/960px-2024_Yamaha_MT-09_Y-AMT.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "MT 03 ABS",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Yamaha_MT-03_2020.jpg/600px-Yamaha_MT-03_2020.jpg"
+          "nombre": "Yamaha Tenere 700",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Tenere_700.jpg/960px-Tenere_700.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "MT 07 ABS",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Yamaha_MT-07_2021.jpg/600px-Yamaha_MT-07_2021.jpg"
+          "nombre": "Yamaha MT-07",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Yamaha_MT-07_2025_EICMA_2024.jpg/960px-Yamaha_MT-07_2025_EICMA_2024.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "MT 09 SP",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Yamaha_MT-09_2021.jpg/600px-Yamaha_MT-09_2021.jpg"
+          "nombre": "Yamaha MT-09",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/2024_Yamaha_MT-09_Y-AMT.jpg/960px-2024_Yamaha_MT-09_Y-AMT.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Ténéré 700",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Yamaha_Tenere_700_2020.jpg/600px-Yamaha_Tenere_700_2020.jpg"
+          "nombre": "Yamaha YZF-R15",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/2015_Yamaha_YZF-R1_crop.JPG/960px-2015_Yamaha_YZF-R1_crop.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         }
       ]
     },
     "AKT": {
       "color": "#1536AC",
-      "logo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/AKT_Motos_logo.svg/500px-AKT_Motos_logo.svg.png",
+      "logo_url": "https://upload.wikimedia.org/wikipedia/commons/1/1a/AKT_Motos_logo.svg",
       "modelos": [
         {
-          "nombre": "NKD 125",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/AKT_NKD_125_Classic.jpg/600px-AKT_NKD_125_Classic.jpg"
-        },
-        {
-          "nombre": "NKD Classic 125",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/AKT_NKD_125_Classic.jpg/600px-AKT_NKD_125_Classic.jpg"
-        },
-        {
-          "nombre": "CR4 150 LED",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/AKT_CR4_150.jpg/600px-AKT_CR4_150.jpg"
-        },
-        {
-          "nombre": "CR4 200 Pro",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/AKT_CR4_150.jpg/600px-AKT_CR4_150.jpg"
-        },
-        {
-          "nombre": "250 R Naked",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/AKT_CR4_150.jpg/600px-AKT_CR4_150.jpg"
-        },
-        {
           "nombre": "Dynamic Pro 125",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/AKT_Dynamic_Pro_125.jpg/600px-AKT_Dynamic_Pro_125.jpg"
-        },
-        {
-          "nombre": "Mawi 125 Scooter",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/AKT_Dynamic_Pro_125.jpg/600px-AKT_Dynamic_Pro_125.jpg"
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/d/d3/Pten.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled"
         },
         {
           "nombre": "TT Dual Sport 200",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/AKT_TT_Dual_Sport_200.jpg/600px-AKT_TT_Dual_Sport_200.jpg"
-        },
-        {
-          "nombre": "TT 250 Adventour",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/AKT_TT_Dual_Sport_200.jpg/600px-AKT_TT_Dual_Sport_200.jpg"
-        },
-        {
-          "nombre": "Flex 125",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/AKT_NKD_125_Classic.jpg/600px-AKT_NKD_125_Classic.jpg"
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/International_Legion_of_Territorial_Defense_of_Ukraine_emblem.svg/960px-International_Legion_of_Territorial_Defense_of_Ukraine_emblem.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
           "nombre": "Special 110",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/AKT_NKD_125_Classic.jpg/600px-AKT_NKD_125_Classic.jpg"
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/KS-3575A_%28ZIL-133%29.jpg/960px-KS-3575A_%28ZIL-133%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
+        },
+        {
+          "nombre": "CR4 200",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/2018_Yamaha_MT-15.jpg/800px-2018_Yamaha_MT-15.jpg"
+        },
+        {
+          "nombre": "CR4 150",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/2018_Yamaha_MT-15.jpg/800px-2018_Yamaha_MT-15.jpg"
+        },
+        {
+          "nombre": "NKD 125",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/2018_Yamaha_MT-15.jpg/800px-2018_Yamaha_MT-15.jpg"
+        },
+        {
+          "nombre": "TT 250 Adventour",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/2018_Yamaha_MT-15.jpg/800px-2018_Yamaha_MT-15.jpg"
         }
       ]
     },
@@ -787,52 +719,48 @@
       "logo_url": "https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/suzuki.png",
       "modelos": [
         {
-          "nombre": "Gixxer 150 FI ABS",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Suzuki_Gixxer_155_2019.jpg/600px-Suzuki_Gixxer_155_2019.jpg"
+          "nombre": "Suzuki Gixxer 250",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Osaka_Motor_Show_2015_%28136%29_-_Suzuki_GIXXER.JPG/960px-Osaka_Motor_Show_2015_%28136%29_-_Suzuki_GIXXER.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Gixxer SF 150 FI ABS",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Suzuki_Gixxer_SF_155_2019.jpg/600px-Suzuki_Gixxer_SF_155_2019.jpg"
+          "nombre": "Suzuki AX4 Evolution",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/2023_Renault_Kwid_Iconic_%28Colombia%29_front_view_01.png/960px-2023_Renault_Kwid_Iconic_%28Colombia%29_front_view_01.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Gixxer 250",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Suzuki_Gixxer_250_2020.jpg/600px-Suzuki_Gixxer_250_2020.jpg"
+          "nombre": "Suzuki GN125",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Suzuki_GN250_Motorcycle.JPG/960px-Suzuki_GN250_Motorcycle.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Gixxer SF 250",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Suzuki_Gixxer_SF_250_2020.jpg/600px-Suzuki_Gixxer_SF_250_2020.jpg"
+          "nombre": "Suzuki DR650",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Suzuki_DR_650_DSCF0368.JPG/960px-Suzuki_DR_650_DSCF0368.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "GN 125 Euro 3",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Suzuki_GN125.jpg/600px-Suzuki_GN125.jpg"
+          "nombre": "Suzuki V-Strom 650",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Red_2005_Suzuki_V-Strom_650.jpg/960px-Red_2005_Suzuki_V-Strom_650.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "AX4 Evolution",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Suzuki_GN125.jpg/600px-Suzuki_GN125.jpg"
+          "nombre": "Suzuki V-Strom 250 SX",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Suzuki_logo_2025_%28vertical%29.svg/960px-Suzuki_logo_2025_%28vertical%29.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "DR 150",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Haojue_NK150_Suzuki_DR150.jpg/600px-Haojue_NK150_Suzuki_DR150.jpg"
+          "nombre": "Suzuki Gixxer SF 155",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Suzuki_logo_2025_%28vertical%29.svg/960px-Suzuki_logo_2025_%28vertical%29.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "DR 650 SE",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Suzuki_DR650SE_2013.jpg/600px-Suzuki_DR650SE_2013.jpg"
+          "nombre": "Suzuki GSX-S750",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Suzuki_GSX-S1000.jpg/960px-Suzuki_GSX-S1000.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "V-Strom 250 SX",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Suzuki_V-Strom_SX_250.jpg/600px-Suzuki_V-Strom_SX_250.jpg"
+          "nombre": "Suzuki Hayabusa",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/SUZUKI_Hayabusa_2007TMS.jpg/960px-SUZUKI_Hayabusa_2007TMS.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "V-Strom 650 XT",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Suzuki_V-Strom_650_XT_2017.jpg/600px-Suzuki_V-Strom_650_XT_2017.jpg"
+          "nombre": "Suzuki DR150",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Suzuki_logo_2025_%28vertical%29.svg/960px-Suzuki_logo_2025_%28vertical%29.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "GSX-S 750",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Suzuki_GSX-S750_2017.jpg/600px-Suzuki_GSX-S750_2017.jpg"
-        },
-        {
-          "nombre": "Hayabusa GSX1300R",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/2022_Suzuki_Hayabusa.jpg/600px-2022_Suzuki_Hayabusa.jpg"
+          "nombre": "Suzuki Gixxer 155",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Suzuki_logo_2025_%28vertical%29.svg/960px-Suzuki_logo_2025_%28vertical%29.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         }
       ]
     },
@@ -841,60 +769,60 @@
       "logo_url": "https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/honda.png",
       "modelos": [
         {
-          "nombre": "CB 125F",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Honda_CB125F_2021.jpg/600px-Honda_CB125F_2021.jpg"
+          "nombre": "Honda XR190L",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/HK_SW_%E4%B8%8A%E7%92%B0_Sheung_Wan_%E5%A4%AA%E5%B9%B3%E5%B1%B1%E8%A1%97_Tai_Ping_Shan_Street_motobike_parking_December_2020_SS2.jpg/960px-HK_SW_%E4%B8%8A%E7%92%B0_Sheung_Wan_%E5%A4%AA%E5%B9%B3%E5%B1%B1%E8%A1%97_Tai_Ping_Shan_Street_motobike_parking_December_2020_SS2.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "CB 190R",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Honda_CB190R_Repsol.jpg/600px-Honda_CB190R_Repsol.jpg"
+          "nombre": "Honda XR150L",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/HK_SW_%E4%B8%8A%E7%92%B0_Sheung_Wan_%E5%A4%AA%E5%B9%B3%E5%B1%B1%E8%A1%97_Tai_Ping_Shan_Street_motobike_parking_December_2020_SS2.jpg/960px-HK_SW_%E4%B8%8A%E7%92%B0_Sheung_Wan_%E5%A4%AA%E5%B9%B3%E5%B1%B1%E8%A1%97_Tai_Ping_Shan_Street_motobike_parking_December_2020_SS2.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "CB 300F Twister",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Honda_CB300F_Twister_ABS_2023.jpg/600px-Honda_CB300F_Twister_ABS_2023.jpg"
+          "nombre": "Honda XRE 300",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Honda_XRE300_ano2010.jpg/960px-Honda_XRE300_ano2010.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "XR 150L",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Honda_XR150L_2018.jpg/600px-Honda_XR150L_2018.jpg"
+          "nombre": "Honda CB125F",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/20130210-RLR_6284_%288464991228%29.jpg/960px-20130210-RLR_6284_%288464991228%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "XR 190L",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Honda_XR150L_2018.jpg/600px-Honda_XR150L_2018.jpg"
+          "nombre": "Honda Sahara 300",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Honda_e_Advance_%E2%80%93_f_18102020.jpg/960px-Honda_e_Advance_%E2%80%93_f_18102020.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "XRE 300 Rally",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Honda_XRE_300_Rally_ABS_2022.jpg/600px-Honda_XRE_300_Rally_ABS_2022.jpg"
+          "nombre": "Honda Africa Twin CRF1100L",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Honda_Africatwin.jpg/960px-Honda_Africatwin.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Sahara 300 Rally",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Honda_XRE_300_Rally_ABS_2022.jpg/600px-Honda_XRE_300_Rally_ABS_2022.jpg"
+          "nombre": "Honda CB190R",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Toranomon_Alcea_Tower_26Dec2025.jpg/960px-Toranomon_Alcea_Tower_26Dec2025.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Africa Twin CRF1100L",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Honda_CRF1100L_Africa_Twin_Adventure_Sports_ES_2020.jpg/600px-Honda_CRF1100L_Africa_Twin_Adventure_Sports_ES_2020.jpg"
+          "nombre": "Honda Transalp XL750",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/2023_Honda_XL750_Transalp.jpg/960px-2023_Honda_XL750_Transalp.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Transalp XL750",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Honda_XL750_Transalp_2023.jpg/600px-Honda_XL750_Transalp_2023.jpg"
+          "nombre": "Honda Navi 110",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Honda_Navi_100.jpg/960px-Honda_Navi_100.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Navi 110",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Honda_Navi_110.jpg/600px-Honda_Navi_110.jpg"
+          "nombre": "Honda PCX 160",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Honda_PCX125_2011_Front.JPG/960px-Honda_PCX125_2011_Front.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Dio 110",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Honda_Dio_scooter.jpg/600px-Honda_Dio_scooter.jpg"
+          "nombre": "Honda CB650R",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/20130210-RLR_6284_%288464991228%29.jpg/960px-20130210-RLR_6284_%288464991228%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "PCX 160 ABS",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Honda_PCX_160_ABS_2021.jpg/600px-Honda_PCX_160_ABS_2021.jpg"
+          "nombre": "Honda CBR650R",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/20130210-RLR_6284_%288464991228%29.jpg/960px-20130210-RLR_6284_%288464991228%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "CB 650R",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Honda_CB650R_Neo_Sports_Cafe_2019.jpg/600px-Honda_CB650R_Neo_Sports_Cafe_2019.jpg"
+          "nombre": "Honda Dio 110",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Toranomon_Alcea_Tower_26Dec2025.jpg/960px-Toranomon_Alcea_Tower_26Dec2025.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "CBR 650R",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Honda_CBR650R_2019.jpg/600px-Honda_CBR650R_2019.jpg"
+          "nombre": "Honda CB300F Twister",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/0/09/Cb110.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled"
         }
       ]
     },
@@ -903,52 +831,36 @@
       "logo_url": "https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/hero.png",
       "modelos": [
         {
-          "nombre": "Hunk 160R 4V",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Hero_Xtreme_160R_4V.jpg/600px-Hero_Xtreme_160R_4V.jpg"
+          "nombre": "Hero XPulse 200T",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Hero_MotoCorp.svg/960px-Hero_MotoCorp.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Hunk 160R",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Hero_Xtreme_160R_4V.jpg/600px-Hero_Xtreme_160R_4V.jpg"
+          "nombre": "Hero HF Deluxe",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Hero_MotoCorp.svg/960px-Hero_MotoCorp.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Hunk 125R",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Hero_Xtreme_160R_4V.jpg/600px-Hero_Xtreme_160R_4V.jpg"
+          "nombre": "Hero XPulse 200 4V",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Hero_MotoCorp.svg/960px-Hero_MotoCorp.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "XPulse 200 4V",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Hero_XPulse_200_4V.jpg/600px-Hero_XPulse_200_4V.jpg"
+          "nombre": "Hero Glamour XTEC",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Hero_MotoCorp.svg/960px-Hero_MotoCorp.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "XPulse 200 4V Pro",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Hero_XPulse_200_4V.jpg/600px-Hero_XPulse_200_4V.jpg"
+          "nombre": "Hero Xoom 110",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Hero_MotoCorp.svg/960px-Hero_MotoCorp.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "XPulse Rally Edition",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Hero_XPulse_200_4V.jpg/600px-Hero_XPulse_200_4V.jpg"
+          "nombre": "Hero Xtreme 160R",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Hero_MotoCorp.svg/960px-Hero_MotoCorp.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Eco Deluxe Clásica",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Hero_HF_Deluxe_i3S.jpg/600px-Hero_HF_Deluxe_i3S.jpg"
+          "nombre": "Hero Xtreme 125R",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/b/ba/Achilles_fighting_against_Memnon_Leiden_Rijksmuseum_voor_Oudheden.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled"
         },
         {
-          "nombre": "Eco Deluxe i3S",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Hero_HF_Deluxe_i3S.jpg/600px-Hero_HF_Deluxe_i3S.jpg"
-        },
-        {
-          "nombre": "ECO 100",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Hero_HF_Deluxe_i3S.jpg/600px-Hero_HF_Deluxe_i3S.jpg"
-        },
-        {
-          "nombre": "Ignitor Xtech 125",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Hero_Glamour_XTEC.jpg/600px-Hero_Glamour_XTEC.jpg"
-        },
-        {
-          "nombre": "Splendor Xpro",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Hero_Glamour_XTEC.jpg/600px-Hero_Glamour_XTEC.jpg"
-        },
-        {
-          "nombre": "Xoom 110 Scooter",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Hero_Xoom_110.jpg/600px-Hero_Xoom_110.jpg"
+          "nombre": "Hero Splendor Plus",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/b/ba/Achilles_fighting_against_Memnon_Leiden_Rijksmuseum_voor_Oudheden.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled"
         }
       ]
     },
@@ -957,90 +869,90 @@
       "logo_url": "https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/ktm.png",
       "modelos": [
         {
-          "nombre": "Duke 200 NG",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/KTM_200_Duke_2020.jpg/600px-KTM_200_Duke_2020.jpg"
+          "nombre": "250 Duke",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/KTM_All_New_Duke_390_2018_Rama_5_%28cropped%29.jpg/960px-KTM_All_New_Duke_390_2018_Rama_5_%28cropped%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Duke 250",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/KTM_250_Duke_2021.jpg/600px-KTM_250_Duke_2021.jpg"
+          "nombre": "390 Adventure",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Ktm_duke_390.jpg/960px-Ktm_duke_390.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Duke 390 Gen 3",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/KTM_390_Duke_2024.jpg/600px-KTM_390_Duke_2024.jpg"
+          "nombre": "200 Duke",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Ktm_duke_390.jpg/960px-Ktm_duke_390.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Adventure 250",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/KTM_250_Adventure_2021.jpg/600px-KTM_250_Adventure_2021.jpg"
+          "nombre": "390 Duke",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Ktm_duke_390.jpg/960px-Ktm_duke_390.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Adventure 390",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/KTM_390_Adventure_2020.jpg/600px-KTM_390_Adventure_2020.jpg"
+          "nombre": "790 Adventure",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/KTM_Duke_790_2018.jpg/960px-KTM_Duke_790_2018.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Adventure 790",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/KTM_790_Adventure_2019.jpg/600px-KTM_790_Adventure_2019.jpg"
+          "nombre": "250 Adventure",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/KTM_Main_Building.jpg/960px-KTM_Main_Building.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Adventure 890 R",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/KTM_890_Adventure_R_2021.jpg/600px-KTM_890_Adventure_R_2021.jpg"
+          "nombre": "890 Adventure",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/KTM_1190_Adventure_-_HTM_2014.JPG/960px-KTM_1190_Adventure_-_HTM_2014.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
           "nombre": "RC 200",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/KTM_RC_200_2022.jpg/600px-KTM_RC_200_2022.jpg"
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Ktm_duke_390.jpg/960px-Ktm_duke_390.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
           "nombre": "RC 390",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/KTM_RC_390_2022.jpg/600px-KTM_RC_390_2022.jpg"
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Ktm_duke_390.jpg/960px-Ktm_duke_390.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Super Duke 1390 R",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/KTM_1390_Super_Duke_R_2024.jpg/600px-KTM_1390_Super_Duke_R_2024.jpg"
+          "nombre": "1390 Super Duke R",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/KTM_1290_Super_Duke_R.jpg/960px-KTM_1290_Super_Duke_R.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         }
       ]
     },
     "ROYAL ENFIELD": {
       "color": "#990000",
-      "logo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Royal_Enfield_logo.svg/500px-Royal_Enfield_logo.svg.png",
+      "logo_url": "https://upload.wikimedia.org/wikipedia/commons/f/f3/Royal_Enfield_logo.svg",
       "modelos": [
         {
-          "nombre": "Himalayan 450",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Royal_Enfield_Himalayan_450.jpg/600px-Royal_Enfield_Himalayan_450.jpg"
+          "nombre": "Royal Enfield Himalayan 411",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Royal_Enfield_Himalyana_DB2K5445.jpg/960px-Royal_Enfield_Himalyana_DB2K5445.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Himalayan 411",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Royal_Enfield_Himalayan_411.jpg/600px-Royal_Enfield_Himalayan_411.jpg"
+          "nombre": "Royal Enfield Meteor 350",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/f/f2/Royal_Enfield_Meteor.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled"
         },
         {
-          "nombre": "Hunter 350",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Royal_Enfield_Hunter_350.jpg/600px-Royal_Enfield_Hunter_350.jpg"
+          "nombre": "Royal Enfield Hunter 350",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Hunter_350_side_view_India_Model.png/960px-Hunter_350_side_view_India_Model.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Classic 350 Reborn",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Royal_Enfield_Classic_350_Reborn.jpg/600px-Royal_Enfield_Classic_350_Reborn.jpg"
+          "nombre": "Royal Enfield Himalayan 450",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Royal_Enfield_Himalyana_DB2K5445.jpg/960px-Royal_Enfield_Himalyana_DB2K5445.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Meteor 350",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Royal_Enfield_Meteor_350.jpg/600px-Royal_Enfield_Meteor_350.jpg"
+          "nombre": "Royal Enfield Super Meteor 650",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/f/f2/Royal_Enfield_Meteor.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled"
         },
         {
-          "nombre": "Interceptor 650",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Royal_Enfield_Interceptor_650.jpg/600px-Royal_Enfield_Interceptor_650.jpg"
+          "nombre": "Royal Enfield Shotgun 650",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Royal_Enfield_650_02.jpeg/960px-Royal_Enfield_650_02.jpeg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Continental GT 650",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Royal_Enfield_Continental_GT_650.jpg/600px-Royal_Enfield_Continental_GT_650.jpg"
+          "nombre": "Royal Enfield Interceptor 650",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Royal_Enfield_650_02.jpeg/960px-Royal_Enfield_650_02.jpeg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Super Meteor 650",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Royal_Enfield_Super_Meteor_650.jpg/600px-Royal_Enfield_Super_Meteor_650.jpg"
+          "nombre": "Royal Enfield Classic 350",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Royal_Enfield_Bullet_500_-_2002_model.jpg/960px-Royal_Enfield_Bullet_500_-_2002_model.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Shotgun 650",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Royal_Enfield_Shotgun_650.jpg/600px-Royal_Enfield_Shotgun_650.jpg"
+          "nombre": "Royal Enfield Continental GT 650",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Royal_Enfield_650_02.jpeg/960px-Royal_Enfield_650_02.jpeg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Guerrilla 450",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Royal_Enfield_Guerrilla_450.jpg/600px-Royal_Enfield_Guerrilla_450.jpg"
+          "nombre": "Royal Enfield Guerrilla 450",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Royal_Enfield_Guerrilla_450.jpg/960px-Royal_Enfield_Guerrilla_450.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         }
       ]
     },
@@ -1049,48 +961,48 @@
       "logo_url": "https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/kawasaki.png",
       "modelos": [
         {
-          "nombre": "Ninja 400 ABS",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Kawasaki_Ninja_400_2018.jpg/600px-Kawasaki_Ninja_400_2018.jpg"
+          "nombre": "Kawasaki Ninja 500",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Kawasaki_Ninja_H2.jpg/960px-Kawasaki_Ninja_H2.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Ninja 500",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Kawasaki_Ninja_400_2018.jpg/600px-Kawasaki_Ninja_400_2018.jpg"
+          "nombre": "Kawasaki Ninja ZX-6R",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/2/2f/2013_Kawasaki_ZX-6R.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled"
         },
         {
-          "nombre": "Ninja 650 ABS",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Kawasaki_Ninja_650_2020.jpg/600px-Kawasaki_Ninja_650_2020.jpg"
+          "nombre": "Kawasaki Ninja ZX-4RR",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Kawasaki_Ninja_ZX-25R_mid-year_2021.jpg/960px-Kawasaki_Ninja_ZX-25R_mid-year_2021.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Ninja ZX-4RR",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Kawasaki_Ninja_ZX-4RR_2023.jpg/600px-Kawasaki_Ninja_ZX-4RR_2023.jpg"
+          "nombre": "Kawasaki Ninja 650",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Kawasaki_Ninja_H2.jpg/960px-Kawasaki_Ninja_H2.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Ninja ZX-6R",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Kawasaki_Ninja_ZX-6R_2024.jpg/600px-Kawasaki_Ninja_ZX-6R_2024.jpg"
+          "nombre": "Kawasaki Ninja 400",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Kawasaki_Ninja_H2.jpg/960px-Kawasaki_Ninja_H2.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Z 400 ABS",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Kawasaki_Z400_2019.jpg/600px-Kawasaki_Z400_2019.jpg"
+          "nombre": "Kawasaki Z400",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/The_43rd_Tokyo_Motor_Show_2013_PENTAX_K-3_117_%2811248351556%29.jpg/960px-The_43rd_Tokyo_Motor_Show_2013_PENTAX_K-3_117_%2811248351556%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Z 500",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Kawasaki_Z400_2019.jpg/600px-Kawasaki_Z400_2019.jpg"
+          "nombre": "Kawasaki Z500",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Kawasaki_500_H1_White_MACH.jpg/960px-Kawasaki_500_H1_White_MACH.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Z 900 ABS",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Kawasaki_Z900_2020.jpg/600px-Kawasaki_Z900_2020.jpg"
+          "nombre": "Kawasaki Z900",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Kawasaki_Z900%2C_green.jpg/960px-Kawasaki_Z900%2C_green.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Versys 300 X",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Kawasaki_Versys-X_300.jpg/600px-Kawasaki_Versys-X_300.jpg"
+          "nombre": "Kawasaki Versys-X 300",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Kawasaki_Versys_650_2025.jpg/960px-Kawasaki_Versys_650_2025.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Versys 650 ABS",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Kawasaki_Versys_650_2022.jpg/600px-Kawasaki_Versys_650_2022.jpg"
+          "nombre": "Kawasaki Versys 650",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Kawasaki_Versys_650_2025.jpg/960px-Kawasaki_Versys_650_2025.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "KLR 650 Adventure",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Kawasaki_KLR650_2022.jpg/600px-Kawasaki_KLR650_2022.jpg"
+          "nombre": "Kawasaki KLR650",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/2018_Yamaha_MT-15.jpg/800px-2018_Yamaha_MT-15.jpg"
         }
       ]
     },
@@ -1099,36 +1011,32 @@
       "logo_url": "https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/tvs.png",
       "modelos": [
         {
-          "nombre": "Apache RTR 200 4V FI ABS",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/TVS_Apache_RTR_200_4V.jpg/600px-TVS_Apache_RTR_200_4V.jpg"
+          "nombre": "Apache RR 310",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Apacherr310c.jpg/960px-Apacherr310c.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
+        },
+        {
+          "nombre": "Apache RTR 200 4V",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Apache_rtr_310.jpg/960px-Apache_rtr_310.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
           "nombre": "Apache RTR 160 4V",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/TVS_Apache_RTR_200_4V.jpg/600px-TVS_Apache_RTR_200_4V.jpg"
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Apacherr310c.jpg/960px-Apacherr310c.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Apache RR 310",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/TVS_Apache_RR_310.jpg/600px-TVS_Apache_RR_310.jpg"
+          "nombre": "NTorq 125",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/TVS_Ntorq_125_Race_XP.jpg/960px-TVS_Ntorq_125_Race_XP.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Apache RTR 310 Naked",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/TVS_Apache_RR_310.jpg/600px-TVS_Apache_RR_310.jpg"
-        },
-        {
-          "nombre": "Raider 125",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/TVS_Raider_125.jpg/600px-TVS_Raider_125.jpg"
-        },
-        {
-          "nombre": "NTorq 125 Race Edition",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/TVS_NTorq_125.jpg/600px-TVS_NTorq_125.jpg"
+          "nombre": "Apache RTR 310",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Apache_rtr_310.jpg/960px-Apache_rtr_310.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
           "nombre": "Ronin 225",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/TVS_Ronin_225.jpg/600px-TVS_Ronin_225.jpg"
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/2018_Yamaha_MT-15.jpg/800px-2018_Yamaha_MT-15.jpg"
         },
         {
-          "nombre": "HLX 125 Plus",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/TVS_Raider_125.jpg/600px-TVS_Raider_125.jpg"
+          "nombre": "Raider 125",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/2018_Yamaha_MT-15.jpg/800px-2018_Yamaha_MT-15.jpg"
         }
       ]
     },
@@ -1137,36 +1045,24 @@
       "logo_url": "https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/victori.png",
       "modelos": [
         {
-          "nombre": "Venom 150",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Auteco_Victori_Venom_150.jpg/600px-Auteco_Victori_Venom_150.jpg"
+          "nombre": "Auteco Victori MRX 150",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Ori_moses_vic.jpg/960px-Ori_moses_vic.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Venom 180",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Auteco_Victori_Venom_150.jpg/600px-Auteco_Victori_Venom_150.jpg"
+          "nombre": "Auteco Victori Venom 150",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Ori_moses_vic.jpg/960px-Ori_moses_vic.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Venom 250",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Auteco_Victori_Venom_150.jpg/600px-Auteco_Victori_Venom_150.jpg"
+          "nombre": "Auteco Victori Venom 180",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Ori_moses_vic.jpg/960px-Ori_moses_vic.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "MRX 125",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/AKT_TT_Dual_Sport_200.jpg/600px-AKT_TT_Dual_Sport_200.jpg"
+          "nombre": "Auteco Victori Switch 150",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Ori_moses_vic.jpg/960px-Ori_moses_vic.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "MRX 150",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/AKT_TT_Dual_Sport_200.jpg/600px-AKT_TT_Dual_Sport_200.jpg"
-        },
-        {
-          "nombre": "MRX Arizona 200",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/AKT_TT_Dual_Sport_200.jpg/600px-AKT_TT_Dual_Sport_200.jpg"
-        },
-        {
-          "nombre": "Switch 150",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/AKT_Dynamic_Pro_125.jpg/600px-AKT_Dynamic_Pro_125.jpg"
-        },
-        {
-          "nombre": "Black 171",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/AKT_Dynamic_Pro_125.jpg/600px-AKT_Dynamic_Pro_125.jpg"
+          "nombre": "Auteco Victori MRX 125",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Ori_moses_vic.jpg/960px-Ori_moses_vic.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         }
       ]
     },
@@ -1175,74 +1071,74 @@
       "logo_url": "https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/ducati.png",
       "modelos": [
         {
-          "nombre": "Monster 937",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Ducati_Monster_937_2021.jpg/600px-Ducati_Monster_937_2021.jpg"
+          "nombre": "Ducati Panigale V2",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Ducati_1199_Panigale_S.jpg/960px-Ducati_1199_Panigale_S.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Panigale V4",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Ducati_Panigale_V4_S_2020.jpg/600px-Ducati_Panigale_V4_S_2020.jpg"
+          "nombre": "Ducati Monster 937",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/2003_Ducati_Monster_S4R.jpg/960px-2003_Ducati_Monster_S4R.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Panigale V2",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Ducati_Panigale_V2_2020.jpg/600px-Ducati_Panigale_V2_2020.jpg"
+          "nombre": "Ducati Panigale V4",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Ducati_Panigale_V2S_2025.jpg/960px-Ducati_Panigale_V2S_2025.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Multistrada V4 S",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Ducati_Multistrada_V4_S_2021.jpg/600px-Ducati_Multistrada_V4_S_2021.jpg"
+          "nombre": "Ducati Multistrada V4",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Ducati_red_logo.svg/960px-Ducati_red_logo.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Scrambler Icon 800",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Ducati_Scrambler_Icon_2023.jpg/600px-Ducati_Scrambler_Icon_2023.jpg"
+          "nombre": "Ducati Diavel V4",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Ducati_red_logo.svg/960px-Ducati_red_logo.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "DesertX",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Ducati_DesertX_2022.jpg/600px-Ducati_DesertX_2022.jpg"
+          "nombre": "Ducati Scrambler Icon",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Ducati_red_logo.svg/960px-Ducati_red_logo.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Diavel V4",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Ducati_Diavel_V4_2023.jpg/600px-Ducati_Diavel_V4_2023.jpg"
+          "nombre": "Ducati DesertX",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Ducati_red_logo.svg/960px-Ducati_red_logo.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Streetfighter V4",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Ducati_Streetfighter_V4_2020.jpg/600px-Ducati_Streetfighter_V4_2020.jpg"
+          "nombre": "Ducati Streetfighter V4",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Ducati_red_logo.svg/960px-Ducati_red_logo.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         }
       ]
     },
     "BMW MOTORRAD": {
       "color": "#0066B1",
-      "logo_url": "https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/bmw.png",
+      "logo_url": "https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/bmw-motorrad.png",
       "modelos": [
         {
-          "nombre": "G 310 R",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/BMW_G310R_2017.jpg/600px-BMW_G310R_2017.jpg"
+          "nombre": "BMW R1300GS",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/BMW_R1300_GS_Option_719_Tramuntana.jpg/960px-BMW_R1300_GS_Option_719_Tramuntana.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "G 310 GS",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/BMW_G310GS_2018.jpg/600px-BMW_G310GS_2018.jpg"
+          "nombre": "BMW F900GS",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/BMW_F900_GS_2024-06.jpg/960px-BMW_F900_GS_2024-06.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "F 900 R",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/BMW_F900R_2020.jpg/600px-BMW_F900R_2020.jpg"
+          "nombre": "BMW F900R",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/BMW_F900R_Motosalon_Brno_2026.jpg/960px-BMW_F900R_Motosalon_Brno_2026.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "F 900 GS Adventure",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/BMW_F900GS_2024.jpg/600px-BMW_F900GS_2024.jpg"
+          "nombre": "BMW G310GS",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/BMW_G_motorcycle_in_Athens_on_June_25%2C_2023.jpg/960px-BMW_G_motorcycle_in_Athens_on_June_25%2C_2023.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "R 1300 GS",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/BMW_R1300GS_2024.jpg/600px-BMW_R1300GS_2024.jpg"
+          "nombre": "BMW R1250GS Adventure",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/BMW_R1200GS_in_Munich.jpg/960px-BMW_R1200GS_in_Munich.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "R 1250 GS Adventure",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/BMW_R1250GS_Adventure_2019.jpg/600px-BMW_R1250GS_Adventure_2019.jpg"
+          "nombre": "BMW G310R",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/BMW_G_310_R_-_Akrapovi%C4%8D.jpg/960px-BMW_G_310_R_-_Akrapovi%C4%8D.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "S 1000 RR",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/BMW_S1000RR_2019.jpg/600px-BMW_S1000RR_2019.jpg"
+          "nombre": "BMW S1000RR",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/BMW_S_1000_RR_-_BMW_M_1000_RR_50_Years_M_%2822121615413%29.jpg/960px-BMW_S_1000_RR_-_BMW_M_1000_RR_50_Years_M_%2822121615413%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "C 400 GT Scooter",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/BMW_C400GT_2019.jpg/600px-BMW_C400GT_2019.jpg"
+          "nombre": "BMW C400GT",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/2018_Yamaha_MT-15.jpg/800px-2018_Yamaha_MT-15.jpg"
         }
       ]
     },
@@ -1251,232 +1147,232 @@
       "logo_url": "https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/triumph.png",
       "modelos": [
         {
-          "nombre": "Speed 400",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Triumph_Speed_400_2024.jpg/600px-Triumph_Speed_400_2024.jpg"
+          "nombre": "Triumph Speed 400",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/ZweiRadMuseumNSU_Triumph_Bonneville.JPG/960px-ZweiRadMuseumNSU_Triumph_Bonneville.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Scrambler 400X",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Triumph_Scrambler_400X_2024.jpg/600px-Triumph_Scrambler_400X_2024.jpg"
+          "nombre": "Triumph Street Triple 765",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Triumph_Street_Triple_675_front_left_threequarter.jpg/960px-Triumph_Street_Triple_675_front_left_threequarter.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Trident 660",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Triumph_Trident_660_2021.jpg/600px-Triumph_Trident_660_2021.jpg"
+          "nombre": "Triumph Tiger 900",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Triumph_Tiger_100.jpg/960px-Triumph_Tiger_100.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Street Triple 765 RS",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Triumph_Street_Triple_765_RS_2023.jpg/600px-Triumph_Street_Triple_765_RS_2023.jpg"
+          "nombre": "Triumph Scrambler 400 X",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/5/51/Triumph_Motorcycle_works_-_geograph.org.uk_-_244674.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled"
         },
         {
-          "nombre": "Tiger 900 Rally Pro",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Triumph_Tiger_900_Rally_Pro_2020.jpg/600px-Triumph_Tiger_900_Rally_Pro_2020.jpg"
+          "nombre": "Triumph Trident 660",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/2022_Triumph_Trident_660.jpg/960px-2022_Triumph_Trident_660.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Tiger 1200 Explorer",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Triumph_Tiger_1200_2022.jpg/600px-Triumph_Tiger_1200_2022.jpg"
+          "nombre": "Triumph Tiger 1200",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Triumph_Herald_1200_first_registered_April_1964_1147cc.jpg/960px-Triumph_Herald_1200_first_registered_April_1964_1147cc.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Bonneville T120",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Triumph_Bonneville_T120_2016.jpg/600px-Triumph_Bonneville_T120_2016.jpg"
+          "nombre": "Triumph Rocket 3",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Rocket_3b.JPG/960px-Rocket_3b.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Rocket 3 GT",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Triumph_Rocket_3_GT_2020.jpg/600px-Triumph_Rocket_3_GT_2020.jpg"
+          "nombre": "Triumph Bonneville T120",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/ZweiRadMuseumNSU_Triumph_Bonneville.JPG/960px-ZweiRadMuseumNSU_Triumph_Bonneville.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         }
       ]
     },
     "HARLEY-DAVIDSON": {
       "color": "#F26522",
-      "logo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Harley-Davidson_logo.svg/500px-Harley-Davidson_logo.svg.png",
+      "logo_url": "https://upload.wikimedia.org/wikipedia/commons/d/de/Harley-Davidson_logo.svg",
       "modelos": [
         {
-          "nombre": "Fat Boy 114",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Harley-Davidson_Fat_Boy_114_2020.jpg/600px-Harley-Davidson_Fat_Boy_114_2020.jpg"
+          "nombre": "Harley-Davidson Street Bob",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Flickr_-_ronsaunders47_-_HARLEY-DAVIDSON_XR1200_SPORTSTER._2010..jpg/960px-Flickr_-_ronsaunders47_-_HARLEY-DAVIDSON_XR1200_SPORTSTER._2010..jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Breakout 117",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Harley-Davidson_Breakout_117_2023.jpg/600px-Harley-Davidson_Breakout_117_2023.jpg"
+          "nombre": "Harley-Davidson Road King",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/d/d8/Panhead.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled"
         },
         {
-          "nombre": "Road King Special",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Harley-Davidson_Road_King_Special_2021.jpg/600px-Harley-Davidson_Road_King_Special_2021.jpg"
+          "nombre": "Harley-Davidson Road Glide",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Flickr_-_ronsaunders47_-_HARLEY-DAVIDSON_XR1200_SPORTSTER._2010..jpg/960px-Flickr_-_ronsaunders47_-_HARLEY-DAVIDSON_XR1200_SPORTSTER._2010..jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Road Glide Special",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Harley-Davidson_Road_Glide_Special_2021.jpg/600px-Harley-Davidson_Road_Glide_Special_2021.jpg"
+          "nombre": "Harley-Davidson Breakout 117",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Milwaukee_8.jpg/960px-Milwaukee_8.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Street Bob 114",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Harley-Davidson_Street_Bob_114_2021.jpg/600px-Harley-Davidson_Street_Bob_114_2021.jpg"
+          "nombre": "Harley-Davidson Fat Boy",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Flickr_-_ronsaunders47_-_HARLEY-DAVIDSON_XR1200_SPORTSTER._2010..jpg/960px-Flickr_-_ronsaunders47_-_HARLEY-DAVIDSON_XR1200_SPORTSTER._2010..jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Sportster S",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Harley-Davidson_Sportster_S_2021.jpg/600px-Harley-Davidson_Sportster_S_2021.jpg"
+          "nombre": "Harley-Davidson Sportster S",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Flickr_-_ronsaunders47_-_HARLEY-DAVIDSON_XR1200_SPORTSTER._2010..jpg/960px-Flickr_-_ronsaunders47_-_HARLEY-DAVIDSON_XR1200_SPORTSTER._2010..jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "Pan America 1250 Special",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Harley-Davidson_Pan_America_1250_Special_2021.jpg/600px-Harley-Davidson_Pan_America_1250_Special_2021.jpg"
+          "nombre": "Harley-Davidson Pan America 1250",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Harley_Davidson_orange_logo.svg/960px-Harley_Davidson_orange_logo.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         }
       ]
     },
     "CFMOTO": {
       "color": "#00A3E0",
-      "logo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/CFMOTO_logo.svg/500px-CFMOTO_logo.svg.png",
+      "logo_url": "https://upload.wikimedia.org/wikipedia/commons/3/32/CFMOTO_logo.svg",
       "modelos": [
         {
-          "nombre": "250 NK",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/CFMoto_250NK.jpg/600px-CFMoto_250NK.jpg"
+          "nombre": "CFMoto 250NK",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/CFMoto_450_CLC_2025.jpg/960px-CFMoto_450_CLC_2025.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "300 NK",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/CFMoto_250NK.jpg/600px-CFMoto_250NK.jpg"
+          "nombre": "CFMoto 450SR",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/CFMoto_450_CLC_2025.jpg/960px-CFMoto_450_CLC_2025.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "450 SR",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/CFMoto_450SR_2023.jpg/600px-CFMoto_450SR_2023.jpg"
+          "nombre": "CFMoto 450NK",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/CFMoto_450_CLC_2025.jpg/960px-CFMoto_450_CLC_2025.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "450 NK",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/CFMoto_450NK_2024.jpg/600px-CFMoto_450NK_2024.jpg"
+          "nombre": "CFMoto 450MT",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/CFMoto_450_CLC_2025.jpg/960px-CFMoto_450_CLC_2025.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "450 MT Adventure",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/CFMoto_450MT_2024.jpg/600px-CFMoto_450MT_2024.jpg"
+          "nombre": "CFMoto 300NK",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/CFMoto_450_CLC_2025.jpg/960px-CFMoto_450_CLC_2025.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "700 CL-X Heritage",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/CFMoto_700CL-X_Heritage_2021.jpg/600px-CFMoto_700CL-X_Heritage_2021.jpg"
+          "nombre": "CFMoto Papio XO-1",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/CFMoto_450_CLC_2025.jpg/960px-CFMoto_450_CLC_2025.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         },
         {
-          "nombre": "800 MT Touring",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/CFMoto_800MT_Touring_2022.jpg/600px-CFMoto_800MT_Touring_2022.jpg"
+          "nombre": "CFMoto 800MT",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/2018_Yamaha_MT-15.jpg/800px-2018_Yamaha_MT-15.jpg"
         },
         {
-          "nombre": "Papio XO-1",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/CFMoto_Papio_XO-1.jpg/600px-CFMoto_Papio_XO-1.jpg"
+          "nombre": "CFMoto 700CL-X",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/CFMoto_450_CLC_2025.jpg/960px-CFMoto_450_CLC_2025.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         }
       ]
     },
     "BENELLI": {
       "color": "#005339",
-      "logo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Benelli_logo.svg/500px-Benelli_logo.svg.png",
+      "logo_url": "https://upload.wikimedia.org/wikipedia/commons/3/36/Benelli_logo.svg",
       "modelos": [
         {
-          "nombre": "180S",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Benelli_180S.jpg/600px-Benelli_180S.jpg"
+          "nombre": "Benelli TNT 150i",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/2018_Yamaha_MT-15.jpg/800px-2018_Yamaha_MT-15.jpg"
         },
         {
-          "nombre": "TNT 150i",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Benelli_180S.jpg/600px-Benelli_180S.jpg"
+          "nombre": "Benelli 180S",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/2018_Yamaha_MT-15.jpg/800px-2018_Yamaha_MT-15.jpg"
         },
         {
-          "nombre": "TRK 251",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Benelli_TRK_251.jpg/600px-Benelli_TRK_251.jpg"
+          "nombre": "Benelli TRK 702",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/2018_Yamaha_MT-15.jpg/800px-2018_Yamaha_MT-15.jpg"
         },
         {
-          "nombre": "TRK 502X",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Benelli_TRK_502_X.jpg/600px-Benelli_TRK_502_X.jpg"
+          "nombre": "Benelli TRK 251",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/2018_Yamaha_MT-15.jpg/800px-2018_Yamaha_MT-15.jpg"
         },
         {
-          "nombre": "TRK 702X",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Benelli_TRK_702X_2023.jpg/600px-Benelli_TRK_702X_2023.jpg"
+          "nombre": "Benelli TRK 502",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/2018_Yamaha_MT-15.jpg/800px-2018_Yamaha_MT-15.jpg"
         },
         {
-          "nombre": "Leoncino 500",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Benelli_Leoncino_500_Trail.jpg/600px-Benelli_Leoncino_500_Trail.jpg"
+          "nombre": "Benelli Leoncino 500",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/2018_Yamaha_MT-15.jpg/800px-2018_Yamaha_MT-15.jpg"
         },
         {
-          "nombre": "502C Cruiser",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Benelli_502C.jpg/600px-Benelli_502C.jpg"
+          "nombre": "Benelli Imperiale 400",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/2018_Yamaha_MT-15.jpg/800px-2018_Yamaha_MT-15.jpg"
         },
         {
-          "nombre": "Imperiale 400",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Benelli_Imperiale_400.jpg/600px-Benelli_Imperiale_400.jpg"
+          "nombre": "Benelli 502C",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/2018_Yamaha_MT-15.jpg/800px-2018_Yamaha_MT-15.jpg"
         }
       ]
     },
     "KYMCO": {
       "color": "#DE001A",
-      "logo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/KYMCO_logo.svg/500px-KYMCO_logo.svg.png",
+      "logo_url": "https://upload.wikimedia.org/wikipedia/commons/9/90/KYMCO_logo.svg",
       "modelos": [
         {
-          "nombre": "Agility 125",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Kymco_Agility_125.jpg/600px-Kymco_Agility_125.jpg"
+          "nombre": "Kymco Agility Fusion 125",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/2018_Yamaha_MT-15.jpg/800px-2018_Yamaha_MT-15.jpg"
         },
         {
-          "nombre": "Agility Fusion 125",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Kymco_Agility_125.jpg/600px-Kymco_Agility_125.jpg"
+          "nombre": "Kymco Twist 125",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/2018_Yamaha_MT-15.jpg/800px-2018_Yamaha_MT-15.jpg"
         },
         {
-          "nombre": "Twist 125",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Kymco_Agility_125.jpg/600px-Kymco_Agility_125.jpg"
+          "nombre": "Kymco DTX 360",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/2018_Yamaha_MT-15.jpg/800px-2018_Yamaha_MT-15.jpg"
         },
         {
-          "nombre": "Like 125",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Kymco_Like_125.jpg/600px-Kymco_Like_125.jpg"
+          "nombre": "Kymco Like 125",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/2018_Yamaha_MT-15.jpg/800px-2018_Yamaha_MT-15.jpg"
         },
         {
-          "nombre": "DTX 360 Crossover",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Kymco_DT_X360.jpg/600px-Kymco_DT_X360.jpg"
+          "nombre": "Kymco Agility 125",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/2018_Yamaha_MT-15.jpg/800px-2018_Yamaha_MT-15.jpg"
         },
         {
-          "nombre": "AK 550 Maxi Scooter",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Kymco_AK550.jpg/600px-Kymco_AK550.jpg"
+          "nombre": "Kymco AK550",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/2018_Yamaha_MT-15.jpg/800px-2018_Yamaha_MT-15.jpg"
         }
       ]
     },
     "SYM": {
       "color": "#E31E24",
-      "logo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/SYM_Sanyang_Motor_logo.svg/500px-SYM_Sanyang_Motor_logo.svg.png",
+      "logo_url": "https://upload.wikimedia.org/wikipedia/commons/c/cf/SYM_logo_of_Sanyang_Motor_20180408.svg",
       "modelos": [
         {
-          "nombre": "Crox 125",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/SYM_Crox_125.jpg/600px-SYM_Crox_125.jpg"
-        },
-        {
           "nombre": "Crox R 125",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/SYM_Crox_125.jpg/600px-SYM_Crox_125.jpg"
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/2018_Yamaha_MT-15.jpg/800px-2018_Yamaha_MT-15.jpg"
         },
         {
-          "nombre": "NH Trazer 200",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/SYM_NHT_200.jpg/600px-SYM_NHT_200.jpg"
+          "nombre": "NHT 200",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/2018_Yamaha_MT-15.jpg/800px-2018_Yamaha_MT-15.jpg"
         },
         {
           "nombre": "Citycom 300i",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/SYM_Citycom_300i.jpg/600px-SYM_Citycom_300i.jpg"
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/2018_Yamaha_MT-15.jpg/800px-2018_Yamaha_MT-15.jpg"
         },
         {
           "nombre": "Joyride 200",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/SYM_Joyride_200.jpg/600px-SYM_Joyride_200.jpg"
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/2018_Yamaha_MT-15.jpg/800px-2018_Yamaha_MT-15.jpg"
         },
         {
           "nombre": "Cruisym 300",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/SYM_Cruisym_300.jpg/600px-SYM_Cruisym_300.jpg"
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/2018_Yamaha_MT-15.jpg/800px-2018_Yamaha_MT-15.jpg"
+        },
+        {
+          "nombre": "Crox 125",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/SYM_logo_of_Sanyang_Motor_20180408.svg/960px-SYM_logo_of_Sanyang_Motor_20180408.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         }
       ]
     },
     "VESPA": {
       "color": "#008853",
-      "logo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Vespa_logo.svg/500px-Vespa_logo.svg.png",
+      "logo_url": "https://upload.wikimedia.org/wikipedia/commons/8/87/Vespa_logo.svg",
       "modelos": [
         {
-          "nombre": "Primavera 150",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Vespa_Primavera_150_2018.jpg/600px-Vespa_Primavera_150_2018.jpg"
-        },
-        {
-          "nombre": "Sprint 150 S",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Vespa_Sprint_150_2018.jpg/600px-Vespa_Sprint_150_2018.jpg"
-        },
-        {
-          "nombre": "GTS 300 Super Tech",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Vespa_GTS_300_HPE_2020.jpg/600px-Vespa_GTS_300_HPE_2020.jpg"
-        },
-        {
-          "nombre": "GTV 300 Sei Giorni",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Vespa_Sei_Giorni_II_Edition_2020.jpg/600px-Vespa_Sei_Giorni_II_Edition_2020.jpg"
-        },
-        {
           "nombre": "Vespa Elettrica",
-          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Vespa_Elettrica_2019.jpg/600px-Vespa_Elettrica_2019.jpg"
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/PerthVespa.jpg/960px-PerthVespa.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
+        },
+        {
+          "nombre": "Vespa Sei Giorni",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/PerthVespa.jpg/960px-PerthVespa.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
+        },
+        {
+          "nombre": "Vespa Primavera 150",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/PerthVespa.jpg/960px-PerthVespa.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
+        },
+        {
+          "nombre": "Vespa GTS 300",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/PerthVespa.jpg/960px-PerthVespa.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
+        },
+        {
+          "nombre": "Vespa Sprint 150",
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/PerthVespa.jpg/960px-PerthVespa.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail"
         }
       ]
     }
