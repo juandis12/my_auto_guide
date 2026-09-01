@@ -31,6 +31,9 @@ on:
         default: ''
         type: string
 
+permissions:
+  contents: read
+
 jobs:
   build-apk:
     name: Compilar APK Android
@@ -55,9 +58,8 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-          flutter-version: ${{ github.event.inputs.flutter_version || '' }}
+          flutter-version: ${{ inputs.flutter_version || '' }}
           cache: true
-          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
 
       # 4. Inyectar / Restaurar archivo .env (Seguridad y compilación de assets)
       - name: Preparar archivo .env
@@ -72,19 +74,18 @@ jobs:
             echo "$ENV_FILE_SECRET" > .env
             echo "✅ Archivo .env cargado desde secret ENV_FILE."
           elif [ -n "$SUPABASE_URL" ]; then
-            echo "SUPABASE_URL=$SUPABASE_URL" >> .env
+            echo "SUPABASE_URL=$SUPABASE_URL" > .env
             echo "SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY" >> .env
             echo "SENTRY_DSN=$SENTRY_DSN" >> .env
             echo "GEMINI_API_KEY=$GEMINI_API_KEY" >> .env
             echo "✅ Archivo .env generado a partir de variables secretas individuales."
           else
-            echo "⚠️ No se encontraron secretos para .env. Creando .env placeholder para permitir el empaquetado de assets..."
-            cat <<EOF > .env
-          SUPABASE_URL=https://placeholder.supabase.co
-          SUPABASE_ANON_KEY=placeholder_anon_key
-          SENTRY_DSN=
-          GEMINI_API_KEY=
-          EOF
+            echo "⚠️ No se encontraron secretos para .env. Creando .env placeholder para compilación..."
+            printf "%s\n" \
+              "SUPABASE_URL=https://placeholder.supabase.co" \
+              "SUPABASE_ANON_KEY=placeholder_anon_key" \
+              "SENTRY_DSN=" \
+              "GEMINI_API_KEY=" > .env
           fi
 
       # 5. Inyectar / Restaurar google-services.json (Requerido por Firebase / GMS)
@@ -97,38 +98,8 @@ jobs:
             echo "$GOOGLE_SERVICES_JSON_SECRET" > android/app/google-services.json
             echo "✅ google-services.json restaurado desde secret."
           elif [ ! -f android/app/google-services.json ]; then
-            echo "⚠️ No se encontró google-services.json ni secret. Generando mock para compilación de CI..."
-            cat <<EOF > android/app/google-services.json
-          {
-            "project_info": {
-              "project_number": "1234567890",
-              "project_id": "my-auto-guide-mock",
-              "storage_bucket": "my-auto-guide-mock.appspot.com"
-            },
-            "client": [
-              {
-                "client_info": {
-                  "mobilesdk_app_id": "1:1234567890:android:mockappidentifier",
-                  "android_client_info": {
-                    "package_name": "com.example.my_auto_guide"
-                  }
-                },
-                "oauth_client": [],
-                "api_key": [
-                  {
-                    "current_key": "mock_api_key_for_ci_build"
-                  }
-                ],
-                "services": {
-                  "analytics_service": {
-                    "status": 1
-                  }
-                }
-              }
-            ],
-            "configuration_version": "1"
-          }
-          EOF
+            echo "⚠️ No se encontró google-services.json ni secret. Generando mock para compilación..."
+            echo '{"project_info":{"project_number":"1234567890","project_id":"my-auto-guide-mock","storage_bucket":"my-auto-guide-mock.appspot.com"},"client":[{"client_info":{"mobilesdk_app_id":"1:1234567890:android:mockappidentifier","android_client_info":{"package_name":"com.example.my_auto_guide"}},"oauth_client":[],"api_key":[{"current_key":"mock_api_key_for_ci_build"}],"services":{"analytics_service":{"status":1}}}],"configuration_version":"1"}' > android/app/google-services.json
           fi
 
       # 6. Descargar dependencias de Flutter
@@ -142,8 +113,8 @@ jobs:
       # 8. Compilar APK
       - name: Compilar APK Android
         run: |
-          MODE="${{ github.event.inputs.build_mode || 'release' }}"
-          SPLIT="${{ github.event.inputs.split_per_abi || 'false' }}"
+          MODE="${{ inputs.build_mode || 'release' }}"
+          SPLIT="${{ inputs.split_per_abi || 'false' }}"
 
           BUILD_ARGS="--$MODE"
           if [ "$SPLIT" = "true" ]; then
@@ -157,6 +128,6 @@ jobs:
       - name: Subir artefacto APK
         uses: actions/upload-artifact@v4
         with:
-          name: my-auto-guide-apk-${{ github.event.inputs.build_mode || 'release' }}-${{ github.run_number }}
+          name: my-auto-guide-apk-${{ inputs.build_mode || 'release' }}-${{ github.run_number }}
           path: build/app/outputs/flutter-apk/*.apk
           retention-days: 14
