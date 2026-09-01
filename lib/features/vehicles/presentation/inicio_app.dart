@@ -1049,6 +1049,7 @@ class _InicioAppState extends State<InicioApp> {
         _cachedVehicleData = null; // Forzar recarga total para asegurar consistencia
       });
       unawaited(_syncHealthWidget());
+      unawaited(_verificarYEnviarAlertasMantenimiento());
       final bool vencido = (res['vencCadena'] == true) ||
           (res['vencFiltro'] == true) ||
           (res['vencAceite'] == true) ||
@@ -1727,9 +1728,12 @@ class _InicioAppState extends State<InicioApp> {
             });
           }
 
-          // Sincronizar TODOS los porcentajes al widget
+          // Sincronizar TODOS los porcentajes al widget y verificar alertas por correo
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (mounted) unawaited(_syncHealthWidget());
+            if (mounted) {
+              unawaited(_syncHealthWidget());
+              unawaited(_verificarYEnviarAlertasMantenimiento());
+            }
           });
 
           // Verificar si la app se abrió desde el widget para auto-iniciar tracking
@@ -2220,8 +2224,28 @@ class _InicioAppState extends State<InicioApp> {
 
   Future<void> _verificarYEnviarAlertasMantenimiento() async {
     final client = Supabase.instance.client;
-    final userEmail = client.auth.currentUser?.email;
-    if (userEmail == null || _cachedVehicleData == null) return;
+    if (_cachedVehicleData == null) return;
+
+    // Obtención robusta de email con múltiples fallbacks (Auth -> UserMetadata -> Cached Vehicle -> Profiles Table)
+    String? userEmail = client.auth.currentUser?.email ??
+        client.auth.currentUser?.userMetadata?['email'] as String? ??
+        _cachedVehicleData?['user_email'] as String? ??
+        _cachedVehicleData?['email'] as String?;
+
+    if ((userEmail == null || userEmail.trim().isEmpty) && client.auth.currentUser != null) {
+      try {
+        final profile = await client
+            .from('profiles')
+            .select('email')
+            .eq('id', client.auth.currentUser!.id)
+            .maybeSingle();
+        if (profile != null && profile['email'] != null) {
+          userEmail = profile['email'] as String?;
+        }
+      } catch (e) {
+        debugPrint('[EMAIL] No se pudo obtener email de perfil: $e');
+      }
+    }
 
     final String brand = (_cachedVehicleData?['marca'] as String? ?? '').toUpperCase();
     final String nickname = _cachedVehicleData?['apodo'] as String? ?? 'Mi Vehículo';
@@ -2230,48 +2254,78 @@ class _InicioAppState extends State<InicioApp> {
     final prefs = await SharedPreferences.getInstance();
 
     Future<void> revisarMantenimiento(String key, double pctActual) async {
-      // 1. Alerta Crítica (< 10%)
-      if (pctActual < 0.10) {
+      // 1. Alerta Crítica / Rojo (< 20% de vida útil o vencido)
+      if (pctActual < 0.20) {
         final lastSentKey = 'last_alert_sent_${widget.vehiculoId}_${key}_critica';
         final lastSentStr = prefs.getString(lastSentKey);
         final lastSent = lastSentStr != null ? DateTime.tryParse(lastSentStr) : null;
 
         if (lastSent == null || DateTime.now().difference(lastSent).inDays >= 7) {
-          final success = await EmailService.sendMaintenanceAlertEmail(
-            toEmail: userEmail,
-            maintenanceType: key,
-            remainingPct: pctActual,
-            currentKms: currentKms,
-            vehicleBrand: brand,
-            vehicleNickname: nickname,
-            isPreventive: false,
-          );
-          if (success) {
-            await prefs.setString(lastSentKey, DateTime.now().toIso8601String());
-            debugPrint('Alerta Crítica de $key enviada por correo a $userEmail');
+          // A) Enviar correo electrónico de una vez si hay email disponible
+          if (userEmail != null && userEmail.trim().isNotEmpty) {
+            final success = await EmailService.sendMaintenanceAlertEmail(
+              toEmail: userEmail.trim(),
+              maintenanceType: key,
+              remainingPct: pctActual,
+              currentKms: currentKms,
+              vehicleBrand: brand,
+              vehicleNickname: nickname,
+              isPreventive: false,
+            );
+            if (success) {
+              await prefs.setString(lastSentKey, DateTime.now().toIso8601String());
+              debugPrint('[EMAIL] Alerta Crítica (Rojo) de $key enviada por correo a $userEmail');
+            } else {
+              debugPrint('[EMAIL] ADVERTENCIA: Falló el despacho por correo para $key (email: $userEmail)');
+            }
+          } else {
+            debugPrint('[EMAIL] OMITIDO: No se encontró email de usuario para enviar alerta de $key');
           }
+
+          // B) Disparar notificación push/local inmediata DIRECTAMENTE AL TELÉFONO
+          await NotificationService().showMaintenanceNotification(
+            id: (widget.vehiculoId + key + '_critica').hashCode,
+            title: '🚨 ALERTA CRÍTICA: $key',
+            body: 'El servicio de $key en $nickname ha vencido o requiere atención inmediata.',
+            scheduledDate: null, // Disparo inmediato en pantalla de dispositivo móvil
+          );
         }
       }
-      // 2. Alerta Preventiva (40% - 50%)
-      else if (pctActual >= 0.40 && pctActual <= 0.50) {
+      // 2. Alerta Preventiva / Naranja (20% <= pctActual < 50% - Próximo a vencer)
+      else if (pctActual >= 0.20 && pctActual < 0.50) {
         final lastSentKey = 'last_alert_sent_${widget.vehiculoId}_${key}_preventiva';
         final lastSentStr = prefs.getString(lastSentKey);
         final lastSent = lastSentStr != null ? DateTime.tryParse(lastSentStr) : null;
 
         if (lastSent == null || DateTime.now().difference(lastSent).inDays >= 7) {
-          final success = await EmailService.sendMaintenanceAlertEmail(
-            toEmail: userEmail,
-            maintenanceType: key,
-            remainingPct: pctActual,
-            currentKms: currentKms,
-            vehicleBrand: brand,
-            vehicleNickname: nickname,
-            isPreventive: true,
-          );
-          if (success) {
-            await prefs.setString(lastSentKey, DateTime.now().toIso8601String());
-            debugPrint('Alerta Preventiva de $key enviada por correo a $userEmail');
+          // A) Enviar correo electrónico de una vez si hay email disponible
+          if (userEmail != null && userEmail.trim().isNotEmpty) {
+            final success = await EmailService.sendMaintenanceAlertEmail(
+              toEmail: userEmail.trim(),
+              maintenanceType: key,
+              remainingPct: pctActual,
+              currentKms: currentKms,
+              vehicleBrand: brand,
+              vehicleNickname: nickname,
+              isPreventive: true,
+            );
+            if (success) {
+              await prefs.setString(lastSentKey, DateTime.now().toIso8601String());
+              debugPrint('[EMAIL] Alerta Preventiva (Naranja) de $key enviada por correo a $userEmail');
+            } else {
+              debugPrint('[EMAIL] ADVERTENCIA: Falló el despacho por correo para $key (email: $userEmail)');
+            }
+          } else {
+            debugPrint('[EMAIL] OMITIDO: No se encontró email de usuario para enviar alerta de $key');
           }
+
+          // B) Disparar notificación push/local inmediata DIRECTAMENTE AL TELÉFONO
+          await NotificationService().showMaintenanceNotification(
+            id: (widget.vehiculoId + key + '_preventiva').hashCode,
+            title: '⚠️ Mantenimiento Próximo: $key',
+            body: 'El servicio de $key en $nickname está próximo a vencerse.',
+            scheduledDate: null, // Disparo inmediato en pantalla de dispositivo móvil
+          );
         }
       }
     }
@@ -2279,6 +2333,8 @@ class _InicioAppState extends State<InicioApp> {
     await revisarMantenimiento('Lubricación de cadena', _pctCadena);
     await revisarMantenimiento('Filtro de aire', _pctFiltro);
     await revisarMantenimiento('Cambio de aceite', _pctAceite);
+    await revisarMantenimiento('Seguro Obligatorio (SOAT)', _pctSoat);
+    await revisarMantenimiento('Revisión Técnico-Mecánica', _pctTecno);
   }
 }
 

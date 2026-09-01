@@ -153,6 +153,15 @@ flutter:
     - assets/motos/yamaha/XTZ150.png
     - assets/motos/suzuki/gixxer150.png
     - assets/motos/suzuki/gixxersf150.png
+    - assets/motos/suzuki/DR.png
+    - assets/motos/suzuki/FLEX.png
+    - assets/motos/suzuki/gsxr150.png
+    - assets/motos/suzuki/vivarstyle115.png
+    - assets/motos/suzuki/GSX-S150.png
+    - assets/motos/suzuki/GSXS1000.png
+    - assets/motos/suzuki/VSTROM-160.png
+    - assets/motos/suzuki/VSTROM-250-SX.png
+    - assets/motos/suzuki/GN125.png
     - assets/motos/bmw/g310r.png
     - assets/motos/bmw/g310gs.png
     - assets/motos/bmw/f900r.png
@@ -160,6 +169,8 @@ flutter:
     - assets/motos/kawasaki/ninja400.png
     - assets/motos/kawasaki/ninja650.png
     - assets/motos/kawasaki/versys650.png
+    - assets/motos/kawasaki/z500.png
+    - assets/motos/kawasaki/z900.png
     - assets/motos/bajaj/boxer-ct100-ks.png
     - assets/motos/bajaj/boxer-ct100.png
     - assets/motos/bajaj/boxer-ct-125-sport.png
@@ -191,7 +202,9 @@ flutter:
     - assets/motos/hero/Eco100.png
     - assets/motos/hero/EcoDeluxeClasica.png
     - assets/motos/hero/IgnitorXtech.png
+    - assets/motos/hero/Ignitor.png
     - assets/motos/hero/Splendor-Xpro.png
+    - assets/motos/hero/Dash125.png
     - assets/motos/hero/Xoom110.png
     - assets/motos/hero/XpulsePro2004v.png
     - assets/motos/hero/XpulseRally.png
@@ -202,6 +215,7 @@ flutter:
     - assets/motos/akt/dinamicpro.png
     - assets/motos/akt/NKD.png
     - assets/motos/akt/mawi.png
+    - assets/motos/akt/AKT19O.png
     - assets/motos/ktm/DUKE-200.png
     - assets/motos/ktm/KTM-250-DUKE.png
     - assets/motos/ktm/KTM-390-DUKE.png
