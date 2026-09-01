@@ -169,25 +169,30 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
     if (defaultTargetPlatform == TargetPlatform.iOS) {
       settings = AppleSettings(
         accuracy: LocationAccuracy.medium,
-        distanceFilter: 8,
+        distanceFilter: 5,
         pauseLocationUpdatesAutomatically: true,
         showBackgroundLocationIndicator: false,
       );
     } else if (defaultTargetPlatform == TargetPlatform.android) {
       settings = AndroidSettings(
         accuracy: LocationAccuracy.medium,
-        distanceFilter: 8,
-        intervalDuration: const Duration(seconds: 4),
+        distanceFilter: 5,
+        intervalDuration: const Duration(seconds: 3),
       );
     } else {
-      settings = const LocationSettings(accuracy: LocationAccuracy.medium, distanceFilter: 8);
+      settings = const LocationSettings(accuracy: LocationAccuracy.medium, distanceFilter: 5);
     }
 
     _idlePositionSubscription = Geolocator.getPositionStream(
       locationSettings: settings,
     ).listen((Position position) {
       final latLng = LatLng(position.latitude, position.longitude);
-      _controller.updateCurrentPosition(latLng, speedMs: position.speed);
+      _controller.updateCurrentPosition(
+        latLng, 
+        speedMs: position.speed,
+        accuracy: position.accuracy,
+        bearing: position.heading,
+      );
     });
   }
 
@@ -395,6 +400,10 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
       await Permission.ignoreBatteryOptimizations.request();
     }
 
+    // Desactivar estrictamente el stream de reposo (idle) para unificar en un único stream de fondo
+    _idlePositionSubscription?.cancel();
+    _idlePositionSubscription = null;
+
     final service = FlutterBackgroundService();
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('active_nav_vehicle_id', widget.vehiculoId);
@@ -443,6 +452,7 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
         AppSnackBar.show(context, 'Error: No se encontró sesión de usuario activa para guardar el trayecto.');
       }
       _controller.stopNavigation();
+      _iniciarSeguimientoIdle();
       _isFinalizing = false;
       return;
     }
@@ -536,6 +546,7 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
     }
 
     _controller.clearRouteAndReset();
+    _iniciarSeguimientoIdle();
     _isFinalizing = false;
   }
 
@@ -858,12 +869,13 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
                 ],
               ),
             ),
-          Marker(
-            point: t.currentPos!,
-            width: 45,
-            height: 45,
-            child: PulsingLocationMarker(imagePath: _vehicleImagePath),
-          ),
+          if (t.currentPos != null)
+            Marker(
+              point: t.currentPos!,
+              width: 45,
+              height: 45,
+              child: PulsingLocationMarker(imagePath: _vehicleImagePath),
+            ),
         ]),
         StreamBuilder<List<WazeIncidentReport>>(
           stream: WazeCommunityAlertsService().incidentsStream,

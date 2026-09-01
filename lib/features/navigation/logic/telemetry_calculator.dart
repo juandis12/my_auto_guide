@@ -6,9 +6,19 @@ import '../../../core/logic/vehicle_performance_logic.dart';
 /// Desacoplada de Flutter UI para facilitar el testeo y la precisión.
 class TelemetryCalculator {
   
-  /// Calcula la distancia recorrida entre dos puntos con filtro de ruido.
+  /// Calcula la distancia recorrida entre dos puntos con filtro de ruido y estado de detención.
   /// Retorna la distancia en kilómetros.
-  static double calculateIncrementalDistance(LatLng oldPos, LatLng newPos) {
+  static double calculateIncrementalDistance(
+    LatLng oldPos, 
+    LatLng newPos, {
+    bool isStationary = false,
+    double? speedMs,
+  }) {
+    // Si el vehículo está detenido (< 0.8 m/s o marcado como estacionario), no acumular distancia
+    if (isStationary || (speedMs != null && speedMs < 0.8)) {
+      return 0.0;
+    }
+
     final distMeters = Geolocator.distanceBetween(
       oldPos.latitude, 
       oldPos.longitude, 
@@ -16,9 +26,9 @@ class TelemetryCalculator {
       newPos.longitude
     );
 
-    // Filtro de ruido (jitter): Ignorar saltos menores a 3m (vehículo detenido)
+    // Filtro de ruido (jitter): Ignorar saltos menores a 3m (vehículo detenido o temblor)
     // o saltos mayores a 5000m en un solo tick (glitch extremo de GPS/red).
-    if (distMeters < 3 || distMeters > 5000) return 0.0;
+    if (distMeters < 3.5 || distMeters > 5000) return 0.0;
     
     return distMeters / 1000.0;
   }
@@ -67,10 +77,20 @@ class TelemetryCalculator {
 
   /// Limita y filtra los puntos de la ruta para generar una línea suave (Polyline)
   /// e impedir zigzags o distorsiones por temblor de GPS cuando el vehículo se detiene.
-  static List<LatLng> optimizeRoutePoints(List<LatLng> currentPoints, LatLng newPoint) {
+  static List<LatLng> optimizeRoutePoints(
+    List<LatLng> currentPoints, 
+    LatLng newPoint, {
+    bool isStationary = false,
+    double minDistanceThresholdMeters = 4.0,
+  }) {
     final updated = List<LatLng>.from(currentPoints);
     if (updated.isEmpty) {
       updated.add(newPoint);
+      return updated;
+    }
+
+    // Si está estacionario y ya tenemos al menos un punto, no agregar puntos de oscilación
+    if (isStationary) {
       return updated;
     }
 
@@ -82,8 +102,8 @@ class TelemetryCalculator {
       newPoint.longitude,
     );
 
-    // Solo agregar el nuevo punto a la polilínea si el desplazamiento es >= 4.0 metros
-    if (distMeters >= 4.0) {
+    // Solo agregar el nuevo punto a la polilínea si el desplazamiento es >= umbral configurado
+    if (distMeters >= minDistanceThresholdMeters) {
       updated.add(newPoint);
       if (updated.length > 5000) {
         updated.removeAt(0);
@@ -92,3 +112,4 @@ class TelemetryCalculator {
     return updated;
   }
 }
+
