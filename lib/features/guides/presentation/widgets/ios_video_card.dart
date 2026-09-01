@@ -31,75 +31,77 @@ class _IosVideoCardState extends State<IosVideoCard> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return AnimatedScale(
-      scale: _scale,
-      duration: const Duration(milliseconds: 140),
-      curve: Curves.easeOutCubic,
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 18),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(22),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.08),
-              blurRadius: 16,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(22),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(
-              sigmaX: AppAppleTheme.glassBlurSigma,
-              sigmaY: AppAppleTheme.glassBlurSigma,
-            ),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: _openVideo,
-                onTapDown: (_) => setState(() => _scale = 0.97),
-                onTapUp: (_) => setState(() => _scale = 1.0),
-                onTapCancel: () => setState(() => _scale = 1.0),
-                borderRadius: BorderRadius.circular(22),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: isDark
-                        ? const Color(0xFF0F172A).withValues(alpha: 0.85)
-                        : Colors.white.withValues(alpha: 0.9),
-                    borderRadius: BorderRadius.circular(22),
-                    border: Border.all(
+    return RepaintBoundary(
+      child: AnimatedScale(
+        scale: _scale,
+        duration: const Duration(milliseconds: 140),
+        curve: Curves.easeOutCubic,
+        child: Container(
+          margin: const EdgeInsets.only(bottom: 18),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(22),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.08),
+                blurRadius: 16,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(22),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(
+                sigmaX: AppAppleTheme.glassBlurSigma,
+                sigmaY: AppAppleTheme.glassBlurSigma,
+              ),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: _openVideo,
+                  onTapDown: (_) => setState(() => _scale = 0.97),
+                  onTapUp: (_) => setState(() => _scale = 1.0),
+                  onTapCancel: () => setState(() => _scale = 1.0),
+                  borderRadius: BorderRadius.circular(22),
+                  child: Container(
+                    decoration: BoxDecoration(
                       color: isDark
-                          ? Colors.white.withValues(alpha: 0.1)
-                          : Colors.black.withValues(alpha: 0.06),
-                      width: 1.2,
+                          ? const Color(0xFF0F172A).withValues(alpha: 0.85)
+                          : Colors.white.withValues(alpha: 0.9),
+                      borderRadius: BorderRadius.circular(22),
+                      border: Border.all(
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.1)
+                            : Colors.black.withValues(alpha: 0.06),
+                        width: 1.2,
+                      ),
                     ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Portada del Video con badges y play overlay
-                      Stack(
-                        children: [
-                          Container(
-                            height: 180,
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              color: isDark
-                                  ? const Color(0xFF1E293B)
-                                  : const Color(0xFFE2E8F0),
-                              borderRadius: const BorderRadius.vertical(
-                                top: Radius.circular(22),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Portada del Video con badges y play overlay
+                        Stack(
+                          children: [
+                            Container(
+                              height: 180,
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: isDark
+                                    ? const Color(0xFF1E293B)
+                                    : const Color(0xFFE2E8F0),
+                                borderRadius: const BorderRadius.vertical(
+                                  top: Radius.circular(22),
+                                ),
                               ),
+                              child: widget.video.thumbnailUrl.isNotEmpty
+                                  ? Image.network(
+                                      widget.video.thumbnailUrl,
+                                      fit: BoxFit.cover,
+                                      cacheWidth: 640,
+                                      errorBuilder: (_, __, ___) => _buildFallbackThumbnail(),
+                                    )
+                                  : _buildFallbackThumbnail(),
                             ),
-                            child: widget.video.thumbnailUrl.isNotEmpty
-                                ? Image.network(
-                                    widget.video.thumbnailUrl,
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (_, __, ___) => _buildFallbackThumbnail(),
-                                  )
-                                : _buildFallbackThumbnail(),
-                          ),
 
                           // Gradiente de contraste sobre la imagen
                           Positioned.fill(
@@ -239,6 +241,7 @@ class _IosVideoCardState extends State<IosVideoCard> {
                         ),
                       ),
                     ],
+                  ),
                   ),
                 ),
               ),

@@ -22,9 +22,10 @@ class IndicatorTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
+    return RepaintBoundary(
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
         width: 100,
         decoration: BoxDecoration(
@@ -97,8 +98,10 @@ class IndicatorTile extends StatelessWidget {
                       ),
                     ),
                 ],
-              ))
-        ]),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

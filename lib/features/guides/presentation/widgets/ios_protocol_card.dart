@@ -43,11 +43,12 @@ class _IosProtocolCardState extends State<IosProtocolCard>
     final progress = totalSteps > 0 ? (widget.completedStepsCount / totalSteps) : 0.0;
     final isCompleted = widget.completedStepsCount == totalSteps && totalSteps > 0;
 
-    return AnimatedScale(
-      scale: _scale,
-      duration: const Duration(milliseconds: 140),
-      curve: Curves.easeOutCubic,
-      child: Container(
+    return RepaintBoundary(
+      child: AnimatedScale(
+        scale: _scale,
+        duration: const Duration(milliseconds: 140),
+        curve: Curves.easeOutCubic,
+        child: Container(
         margin: const EdgeInsets.only(bottom: 16),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(22),
@@ -213,6 +214,7 @@ class _IosProtocolCardState extends State<IosProtocolCard>
                         ),
                       ),
                     ],
+                  ),
                   ),
                 ),
               ),
