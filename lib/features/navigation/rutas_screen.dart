@@ -168,19 +168,19 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
     late LocationSettings settings;
     if (defaultTargetPlatform == TargetPlatform.iOS) {
       settings = AppleSettings(
-        accuracy: LocationAccuracy.balanced,
+        accuracy: LocationAccuracy.medium,
         distanceFilter: 8,
         pauseLocationUpdatesAutomatically: true,
         showBackgroundLocationIndicator: false,
       );
     } else if (defaultTargetPlatform == TargetPlatform.android) {
       settings = AndroidSettings(
-        accuracy: LocationAccuracy.balanced,
+        accuracy: LocationAccuracy.medium,
         distanceFilter: 8,
         intervalDuration: const Duration(seconds: 4),
       );
     } else {
-      settings = const LocationSettings(accuracy: LocationAccuracy.balanced, distanceFilter: 8);
+      settings = const LocationSettings(accuracy: LocationAccuracy.medium, distanceFilter: 8);
     }
 
     _idlePositionSubscription = Geolocator.getPositionStream(
