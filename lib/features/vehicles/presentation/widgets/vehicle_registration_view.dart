@@ -395,6 +395,20 @@ class _VehicleRegistrationViewState extends State<VehicleRegistrationView> {
       return Image.network(
         path,
         fit: BoxFit.contain,
+        cacheWidth: 600,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return Center(
+            child: CircularProgressIndicator(
+              value: loadingProgress.expectedTotalBytes != null
+                  ? loadingProgress.cumulativeBytesLoaded /
+                      loadingProgress.expectedTotalBytes!
+                  : null,
+              strokeWidth: 2,
+              color: const Color(0xFF035880),
+            ),
+          );
+        },
         errorBuilder: (_, __, ___) => Icon(
           widget.kind == VehicleKind.moto
               ? Icons.two_wheeler
@@ -408,6 +422,7 @@ class _VehicleRegistrationViewState extends State<VehicleRegistrationView> {
     return Image.asset(
       path,
       fit: BoxFit.contain,
+      cacheWidth: 600,
       errorBuilder: (_, __, ___) => Icon(
         widget.kind == VehicleKind.moto
             ? Icons.two_wheeler
@@ -432,6 +447,17 @@ class _VehicleRegistrationViewState extends State<VehicleRegistrationView> {
       return Image.network(
         logoPath,
         fit: BoxFit.contain,
+        cacheWidth: 120,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return const Center(
+            child: SizedBox(
+              width: 16,
+              height: 16,
+              child: CircularProgressIndicator(strokeWidth: 1.5),
+            ),
+          );
+        },
         errorBuilder: (_, __, ___) => Center(
           child: Text(
             marca.isNotEmpty ? marca[0] : '?',
@@ -444,6 +470,7 @@ class _VehicleRegistrationViewState extends State<VehicleRegistrationView> {
     return Image.asset(
       logoPath,
       fit: BoxFit.contain,
+      cacheWidth: 120,
       errorBuilder: (_, __, ___) => Center(
         child: Text(
           marca.isNotEmpty ? marca[0] : '?',
