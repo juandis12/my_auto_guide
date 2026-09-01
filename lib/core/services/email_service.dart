@@ -112,6 +112,15 @@ class EmailService {
   }
 
   /// Genera la plantilla HTML Premium para el reporte de multas (SIMIT)
+  static DateTime _calculateExpirationDate(DateTime recordedDate) {
+    final now = DateTime.now();
+    // Si la fecha registrada es en el pasado o hoy (fecha de expedición), la vigencia es de 1 año (año + 1)
+    if (recordedDate.isBefore(now)) {
+      return DateTime(recordedDate.year + 1, recordedDate.month, recordedDate.day);
+    }
+    return recordedDate;
+  }
+
   static String _buildHtmlReport({
     required String userName,
     required String placa,
@@ -135,20 +144,26 @@ class EmailService {
       if (lastSoat != null && lastSoat.isNotEmpty) {
         final d = DateTime.tryParse(lastSoat);
         if (d != null) {
-          final diff = d.difference(DateTime.now()).inDays;
+          final expDate = _calculateExpirationDate(d);
+          final diff = expDate.difference(DateTime.now()).inDays;
           final color = diff < 0 ? '#FF3B30' : (diff <= 30 ? '#FF9500' : '#00FF87');
-          final status = diff < 0 ? 'SOAT Vencido' : 'SOAT Vigente';
-          docItems.add('<div style="padding: 10px 0; border-bottom: 1.2px solid #1F2430; display: flex; justify-content: space-between; font-size: 13px;"><span style="color: #718096;">SOAT</span><span style="color: $color; font-weight: 700;">$status (${_fmtDate(d)})</span></div>');
+          final status = diff < 0
+              ? 'SOAT Vencido'
+              : (diff <= 30 ? 'SOAT Próximo a Vencer' : 'SOAT Vigente');
+          docItems.add('<div style="padding: 10px 0; border-bottom: 1.2px solid #1F2430; display: flex; justify-content: space-between; font-size: 13px;"><span style="color: #718096;">SOAT</span><span style="color: $color; font-weight: 700;">$status (Vence: ${_fmtDate(expDate)})</span></div>');
         }
       }
       final lastTecno = vehicleData['last_tecno'] as String?;
       if (lastTecno != null && lastTecno.isNotEmpty) {
         final d = DateTime.tryParse(lastTecno);
         if (d != null) {
-          final diff = d.difference(DateTime.now()).inDays;
+          final expDate = _calculateExpirationDate(d);
+          final diff = expDate.difference(DateTime.now()).inDays;
           final color = diff < 0 ? '#FF3B30' : (diff <= 30 ? '#FF9500' : '#00FF87');
-          final status = diff < 0 ? 'Tecnomecánica Vencida' : 'Tecnomecánica Vigente';
-          docItems.add('<div style="padding: 10px 0; border-bottom: 1.2px solid #1F2430; display: flex; justify-content: space-between; font-size: 13px;"><span style="color: #718096;">TECNOMECÁNICA</span><span style="color: $color; font-weight: 700;">$status (${_fmtDate(d)})</span></div>');
+          final status = diff < 0
+              ? 'Tecnomecánica Vencida'
+              : (diff <= 30 ? 'Tecnomecánica Próxima a Vencer' : 'Tecnomecánica Vigente');
+          docItems.add('<div style="padding: 10px 0; border-bottom: 1.2px solid #1F2430; display: flex; justify-content: space-between; font-size: 13px;"><span style="color: #718096;">TECNOMECÁNICA</span><span style="color: $color; font-weight: 700;">$status (Vence: ${_fmtDate(expDate)})</span></div>');
         }
       }
       if (docItems.isNotEmpty) {

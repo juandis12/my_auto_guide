@@ -230,7 +230,9 @@ class VehiclePdfReportService {
                         color: _checkDocumentColor(lastSoat, dangerColor, successColor),
                         bold: true,
                       ),
-                      _buildBodyCell(lastSoat != null ? 'Vencimiento: $lastSoat' : 'Sin fecha registrada'),
+                      _buildBodyCell(lastSoat != null
+                          ? 'Vencimiento: ${_formatExpirationDate(lastSoat)}'
+                          : 'Sin fecha registrada'),
                     ],
                   ),
                   pw.TableRow(
@@ -241,7 +243,9 @@ class VehiclePdfReportService {
                         color: _checkDocumentColor(lastTecno, dangerColor, successColor),
                         bold: true,
                       ),
-                      _buildBodyCell(lastTecno != null ? 'Vencimiento: $lastTecno' : 'Sin fecha registrada'),
+                      _buildBodyCell(lastTecno != null
+                          ? 'Vencimiento: ${_formatExpirationDate(lastTecno)}'
+                          : 'Sin fecha registrada'),
                     ],
                   ),
                 ],
@@ -355,18 +359,33 @@ class VehiclePdfReportService {
     );
   }
 
-  static String _checkDocumentStatus(String? dateStr) {
-    if (dateStr == null || dateStr.isEmpty) return 'Sin Registro';
+  static DateTime? _computeExpirationDate(String? dateStr) {
+    if (dateStr == null || dateStr.isEmpty) return null;
     final date = DateTime.tryParse(dateStr);
-    if (date == null) return 'Formato no válido';
-    return date.isBefore(DateTime.now()) ? 'VENCIDO' : 'VIGENTE';
+    if (date == null) return null;
+    final now = DateTime.now();
+    if (date.isBefore(now)) {
+      return DateTime(date.year + 1, date.month, date.day);
+    }
+    return date;
+  }
+
+  static String _formatExpirationDate(String? dateStr) {
+    final exp = _computeExpirationDate(dateStr);
+    if (exp == null) return dateStr ?? '';
+    return '${exp.day.toString().padLeft(2, '0')}/${exp.month.toString().padLeft(2, '0')}/${exp.year}';
+  }
+
+  static String _checkDocumentStatus(String? dateStr) {
+    final exp = _computeExpirationDate(dateStr);
+    if (exp == null) return 'Sin Registro';
+    return exp.isBefore(DateTime.now()) ? 'VENCIDO' : 'VIGENTE';
   }
 
   static PdfColor _checkDocumentColor(String? dateStr, PdfColor danger, PdfColor success) {
-    if (dateStr == null || dateStr.isEmpty) return PdfColors.grey700;
-    final date = DateTime.tryParse(dateStr);
-    if (date == null) return PdfColors.grey700;
-    return date.isBefore(DateTime.now()) ? danger : success;
+    final exp = _computeExpirationDate(dateStr);
+    if (exp == null) return PdfColors.grey700;
+    return exp.isBefore(DateTime.now()) ? danger : success;
   }
 
   /// Imprime o abre el menú nativo de compartir (funciona en iOS y Android)
