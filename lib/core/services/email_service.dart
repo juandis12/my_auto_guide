@@ -47,13 +47,21 @@ class EmailService {
       );
 
       if (response.status == 200 || response.status == 201) {
-        final data = response.data as Map<String, dynamic>?;
+        Map<String, dynamic>? data;
+        if (response.data is Map) {
+          data = Map<String, dynamic>.from(response.data as Map);
+        } else if (response.data is String) {
+          try {
+            final decoded = jsonDecode(response.data as String);
+            if (decoded is Map) data = Map<String, dynamic>.from(decoded);
+          } catch (_) {}
+        }
         if (data?['ok'] == true) {
           if (kDebugMode) debugPrint('[EMAIL] Reporte SIMIT enviado correctamente por Resend');
           return true;
         }
       }
-      if (kDebugMode) debugPrint('[EMAIL] Falló entrega SIMIT: ${response.data}');
+      if (kDebugMode) debugPrint('[EMAIL] Falló entrega SIMIT (status ${response.status}): ${response.data}');
     } catch (e) {
       if (kDebugMode) debugPrint('[EMAIL] Error invocando Edge Function: $e');
     }
@@ -98,13 +106,21 @@ class EmailService {
       );
 
       if (response.status == 200 || response.status == 201) {
-        final data = response.data as Map<String, dynamic>?;
+        Map<String, dynamic>? data;
+        if (response.data is Map) {
+          data = Map<String, dynamic>.from(response.data as Map);
+        } else if (response.data is String) {
+          try {
+            final decoded = jsonDecode(response.data as String);
+            if (decoded is Map) data = Map<String, dynamic>.from(decoded);
+          } catch (_) {}
+        }
         if (data?['ok'] == true) {
-          if (kDebugMode) debugPrint('[EMAIL] Alerta mecánica enviada correctamente');
+          if (kDebugMode) debugPrint('[EMAIL] Alerta mecánica enviada correctamente por correo a $toEmail');
           return true;
         }
       }
-      if (kDebugMode) debugPrint('[EMAIL] Falló entrega de alerta: ${response.data}');
+      if (kDebugMode) debugPrint('[EMAIL] Falló entrega de alerta (status ${response.status}): ${response.data}');
     } catch (e) {
       if (kDebugMode) debugPrint('[EMAIL] Error enviando alerta de mantenimiento: $e');
     }

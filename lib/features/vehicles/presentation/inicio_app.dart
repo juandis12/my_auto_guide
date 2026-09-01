@@ -2224,8 +2224,28 @@ class _InicioAppState extends State<InicioApp> {
 
   Future<void> _verificarYEnviarAlertasMantenimiento() async {
     final client = Supabase.instance.client;
-    final userEmail = client.auth.currentUser?.email;
     if (_cachedVehicleData == null) return;
+
+    // Obtención robusta de email con múltiples fallbacks (Auth -> UserMetadata -> Cached Vehicle -> Profiles Table)
+    String? userEmail = client.auth.currentUser?.email ??
+        client.auth.currentUser?.userMetadata?['email'] as String? ??
+        _cachedVehicleData?['user_email'] as String? ??
+        _cachedVehicleData?['email'] as String?;
+
+    if ((userEmail == null || userEmail.trim().isEmpty) && client.auth.currentUser != null) {
+      try {
+        final profile = await client
+            .from('profiles')
+            .select('email')
+            .eq('id', client.auth.currentUser!.id)
+            .maybeSingle();
+        if (profile != null && profile['email'] != null) {
+          userEmail = profile['email'] as String?;
+        }
+      } catch (e) {
+        debugPrint('[EMAIL] No se pudo obtener email de perfil: $e');
+      }
+    }
 
     final String brand = (_cachedVehicleData?['marca'] as String? ?? '').toUpperCase();
     final String nickname = _cachedVehicleData?['apodo'] as String? ?? 'Mi Vehículo';
@@ -2242,9 +2262,9 @@ class _InicioAppState extends State<InicioApp> {
 
         if (lastSent == null || DateTime.now().difference(lastSent).inDays >= 7) {
           // A) Enviar correo electrónico de una vez si hay email disponible
-          if (userEmail != null && userEmail.isNotEmpty) {
+          if (userEmail != null && userEmail.trim().isNotEmpty) {
             final success = await EmailService.sendMaintenanceAlertEmail(
-              toEmail: userEmail,
+              toEmail: userEmail.trim(),
               maintenanceType: key,
               remainingPct: pctActual,
               currentKms: currentKms,
@@ -2255,7 +2275,11 @@ class _InicioAppState extends State<InicioApp> {
             if (success) {
               await prefs.setString(lastSentKey, DateTime.now().toIso8601String());
               debugPrint('[EMAIL] Alerta Crítica (Rojo) de $key enviada por correo a $userEmail');
+            } else {
+              debugPrint('[EMAIL] ADVERTENCIA: Falló el despacho por correo para $key (email: $userEmail)');
             }
+          } else {
+            debugPrint('[EMAIL] OMITIDO: No se encontró email de usuario para enviar alerta de $key');
           }
 
           // B) Disparar notificación push/local inmediata DIRECTAMENTE AL TELÉFONO
@@ -2275,9 +2299,9 @@ class _InicioAppState extends State<InicioApp> {
 
         if (lastSent == null || DateTime.now().difference(lastSent).inDays >= 7) {
           // A) Enviar correo electrónico de una vez si hay email disponible
-          if (userEmail != null && userEmail.isNotEmpty) {
+          if (userEmail != null && userEmail.trim().isNotEmpty) {
             final success = await EmailService.sendMaintenanceAlertEmail(
-              toEmail: userEmail,
+              toEmail: userEmail.trim(),
               maintenanceType: key,
               remainingPct: pctActual,
               currentKms: currentKms,
@@ -2288,7 +2312,11 @@ class _InicioAppState extends State<InicioApp> {
             if (success) {
               await prefs.setString(lastSentKey, DateTime.now().toIso8601String());
               debugPrint('[EMAIL] Alerta Preventiva (Naranja) de $key enviada por correo a $userEmail');
+            } else {
+              debugPrint('[EMAIL] ADVERTENCIA: Falló el despacho por correo para $key (email: $userEmail)');
             }
+          } else {
+            debugPrint('[EMAIL] OMITIDO: No se encontró email de usuario para enviar alerta de $key');
           }
 
           // B) Disparar notificación push/local inmediata DIRECTAMENTE AL TELÉFONO
