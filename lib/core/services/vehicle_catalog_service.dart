@@ -6,13 +6,12 @@
 // registro y selección de vehículos en My Auto Guide.
 //
 // Incluye:
-//   - Marcas principales de automóviles (Toyota, Chevrolet, Renault, Mazda, Nissan,
-//     Kia, Hyundai, Volkswagen, Ford, Audi, Mercedes, Jeep, BYD, etc.)
-//   - Marcas principales de motocicletas (Yamaha, Suzuki, Bajaj, KTM, Kawasaki,
-//     BMW, Hero, AKT, Honda, Ducati, Victori, Triumph, etc.)
+//   - Marcas principales de automóviles organizadas por carpeta de marca.
+//   - Marcas principales de motocicletas organizadas por carpeta de marca.
 //   - Mapeo de logos locales en alta resolución y resolución dinámica CDN.
 // =============================================================================
 
+import 'dart:convert';
 import 'package:flutter/material.dart';
 
 class VehicleCatalogService {
@@ -21,7 +20,7 @@ class VehicleCatalogService {
   factory VehicleCatalogService() => _instance;
   VehicleCatalogService._internal();
 
-  // --- CAR CATALOG ---
+  // --- CAR CATALOG (Organizado por carpeta de marca) ---
   final Map<String, List<Map<String, String>>> _carCatalog = {
     'TOYOTA': [
       {'modelo': 'Corolla', 'img': 'assets/carros/toyota/corolla.png'},
@@ -34,8 +33,6 @@ class VehicleCatalogService {
       {'modelo': 'Fortuner', 'img': 'assets/carros/toyota/fortuner.png'},
       {'modelo': 'Corolla Cross', 'img': 'assets/carros/toyota/corolla_cross.png'},
       {'modelo': 'Corolla Cross GR-S', 'img': 'assets/carros/toyota/corolla_cross_gr-s.png'},
-      {'modelo': 'RAV4 Hybrid', 'img': 'assets/carros/toyota/corolla_cross.png'},
-      {'modelo': 'Prado TXL', 'img': 'assets/carros/toyota/landcruiser300.png'},
     ],
     'CHEVROLET': [
       {'modelo': 'Onix Turbo RS', 'img': 'assets/carros/chevrolet/jelly-onix-turbo-rs.png'},
@@ -50,167 +47,102 @@ class VehicleCatalogService {
       {'modelo': 'Montana', 'img': 'assets/carros/chevrolet/Montana.png'},
       {'modelo': 'Colorado RS', 'img': 'assets/carros/chevrolet/colorado.png'},
       {'modelo': 'Silverado', 'img': 'assets/carros/chevrolet/silverado.png'},
-      {'modelo': 'Captiva Turbo', 'img': 'assets/carros/chevrolet/tracker-RS.png'},
     ],
     'RENAULT': [
-      {'modelo': 'Duster Turbo', 'img': 'assets/car.png'},
-      {'modelo': 'Sandero Life/Zen', 'img': 'assets/car.png'},
-      {'modelo': 'Stepway Intens', 'img': 'assets/car.png'},
-      {'modelo': 'Logan Intens', 'img': 'assets/car.png'},
-      {'modelo': 'Kwid Outsider', 'img': 'assets/car.png'},
-      {'modelo': 'Kwid E-Tech 100% Eléctrico', 'img': 'assets/car.png'},
-      {'modelo': 'Kardian Premiere Edition', 'img': 'assets/car.png'},
-      {'modelo': 'Oroch Pick-up', 'img': 'assets/car.png'},
-      {'modelo': 'Megane E-Tech', 'img': 'assets/car.png'},
-      {'modelo': 'Master Furgón', 'img': 'assets/furgon.png'},
+      {'modelo': 'Duster', 'img': 'assets/carros/renault/duster.png'},
+      {'modelo': 'Sandero', 'img': 'assets/carros/renault/sandero.png'},
+      {'modelo': 'Stepway', 'img': 'assets/carros/renault/stepway.png'},
+      {'modelo': 'Logan', 'img': 'assets/carros/renault/logan.png'},
+      {'modelo': 'Kwid', 'img': 'assets/carros/renault/kwid.png'},
+      {'modelo': 'Kardian', 'img': 'assets/carros/renault/kardian.png'},
+      {'modelo': 'Oroch', 'img': 'assets/carros/renault/oroch.png'},
     ],
     'MAZDA': [
       {'modelo': 'Mazda 2 Hatchback', 'img': 'assets/carros/mazda/mazda2.png'},
       {'modelo': 'Mazda 2 Sedan', 'img': 'assets/carros/mazda/mazda2sedan.png'},
       {'modelo': 'Mazda 3 Sedan', 'img': 'assets/carros/mazda/mazda3.png'},
-      {'modelo': 'Mazda 3 Hatchback', 'img': 'assets/carros/mazda/mazda3.png'},
       {'modelo': 'CX-30 Grand Touring', 'img': 'assets/carros/mazda/mazda2.png'},
       {'modelo': 'CX-50 Grand Touring', 'img': 'assets/carros/mazda/mazda3.png'},
-      {'modelo': 'CX-60 Mild Hybrid', 'img': 'assets/carros/mazda/mazda2sedan.png'},
-      {'modelo': 'CX-90 Signature', 'img': 'assets/carros/mazda/mazda3.png'},
     ],
     'NISSAN': [
-      {'modelo': 'Versa Sense / Advance', 'img': 'assets/car.png'},
-      {'modelo': 'Kicks Advance / Exclusive', 'img': 'assets/car.png'},
-      {'modelo': 'Sentra SR', 'img': 'assets/car.png'},
-      {'modelo': 'Frontier Pro-4X', 'img': 'assets/car.png'},
-      {'modelo': 'Qashqai Exclusive AWD', 'img': 'assets/car.png'},
-      {'modelo': 'X-Trail e-POWER', 'img': 'assets/car.png'},
-      {'modelo': 'Patrol King Off-Road', 'img': 'assets/car.png'},
-      {'modelo': 'Urvan Microbus', 'img': 'assets/bus.png'},
+      {'modelo': 'Versa', 'img': 'assets/carros/nissan/versa.png'},
+      {'modelo': 'Kicks', 'img': 'assets/carros/nissan/kicks.png'},
+      {'modelo': 'Sentra', 'img': 'assets/carros/nissan/sentra.png'},
+      {'modelo': 'Frontier', 'img': 'assets/carros/nissan/frontier.png'},
+      {'modelo': 'Qashqai', 'img': 'assets/carros/nissan/qashqai.png'},
+      {'modelo': 'X-Trail', 'img': 'assets/carros/nissan/x-trail.png'},
     ],
     'KIA': [
-      {'modelo': 'Picanto Vibrant / Zenith', 'img': 'assets/car.png'},
-      {'modelo': 'Rio Sedan / Hatchback', 'img': 'assets/car.png'},
-      {'modelo': 'K3 Sedan / Cross', 'img': 'assets/car.png'},
-      {'modelo': 'Sonet Zenith', 'img': 'assets/car.png'},
-      {'modelo': 'Seltos Emotion / Zenith', 'img': 'assets/car.png'},
-      {'modelo': 'Sportage GT-Line', 'img': 'assets/car.png'},
-      {'modelo': 'Sorento Híbrida', 'img': 'assets/car.png'},
-      {'modelo': 'EV6 GT-Line Eléctrico', 'img': 'assets/car.png'},
-      {'modelo': 'EV9 GT Eléctrico', 'img': 'assets/car.png'},
+      {'modelo': 'Picanto', 'img': 'assets/carros/kia/picanto.png'},
+      {'modelo': 'Rio', 'img': 'assets/carros/kia/rio.png'},
+      {'modelo': 'Sonet', 'img': 'assets/carros/kia/sonet.png'},
+      {'modelo': 'Seltos', 'img': 'assets/carros/kia/seltos.png'},
+      {'modelo': 'Sportage', 'img': 'assets/carros/kia/sportage.png'},
     ],
     'HYUNDAI': [
-      {'modelo': 'Grand i10 HB / Sedan', 'img': 'assets/car.png'},
-      {'modelo': 'HB20 Getz / Accent', 'img': 'assets/car.png'},
-      {'modelo': 'Creta Premium', 'img': 'assets/car.png'},
-      {'modelo': 'Tucson Limited AWD', 'img': 'assets/car.png'},
-      {'modelo': 'Santa Fe Limited', 'img': 'assets/car.png'},
-      {'modelo': 'Kona Híbrida / Eléctrica', 'img': 'assets/car.png'},
-      {'modelo': 'Ioniq 5 EV', 'img': 'assets/car.png'},
-      {'modelo': 'Palisade 4WD', 'img': 'assets/car.png'},
+      {'modelo': 'HB20', 'img': 'assets/carros/hyundai/hb20.png'},
+      {'modelo': 'Creta', 'img': 'assets/carros/hyundai/creta.png'},
+      {'modelo': 'Tucson', 'img': 'assets/carros/hyundai/tucson.png'},
+      {'modelo': 'Santa Fe', 'img': 'assets/carros/hyundai/santa_fe.png'},
+      {'modelo': 'Kona', 'img': 'assets/carros/hyundai/kona.png'},
     ],
     'VOLKSWAGEN': [
-      {'modelo': 'Polo Track / Highline', 'img': 'assets/car.png'},
-      {'modelo': 'Virtus Comfortline', 'img': 'assets/car.png'},
-      {'modelo': 'Nivus Highline', 'img': 'assets/car.png'},
-      {'modelo': 'T-Cross Trendline / Highline', 'img': 'assets/car.png'},
-      {'modelo': 'Taos Highline', 'img': 'assets/car.png'},
-      {'modelo': 'Tiguan Elegance', 'img': 'assets/car.png'},
-      {'modelo': 'Amarok V6 Extreme', 'img': 'assets/car.png'},
-      {'modelo': 'Golf GTI', 'img': 'assets/car.png'},
-      {'modelo': 'Crafter Furgón', 'img': 'assets/furgon.png'},
+      {'modelo': 'Polo', 'img': 'assets/carros/volkswagen/polo.png'},
+      {'modelo': 'Virtus', 'img': 'assets/carros/volkswagen/virtus.png'},
+      {'modelo': 'Nivus', 'img': 'assets/carros/volkswagen/nivus.png'},
+      {'modelo': 'T-Cross', 'img': 'assets/carros/volkswagen/t-cross.png'},
+      {'modelo': 'Taos', 'img': 'assets/carros/volkswagen/taos.png'},
+      {'modelo': 'Amarok', 'img': 'assets/carros/volkswagen/amarok.png'},
+      {'modelo': 'Golf', 'img': 'assets/carros/volkswagen/golf.png'},
     ],
     'FORD': [
-      {'modelo': 'Ranger XLT / Limited / Raptor', 'img': 'assets/car.png'},
-      {'modelo': 'F-150 Lariat / Raptor', 'img': 'assets/car.png'},
-      {'modelo': 'Escape Titanium Híbrida', 'img': 'assets/car.png'},
-      {'modelo': 'Explorer Limited / ST', 'img': 'assets/car.png'},
-      {'modelo': 'Bronco Sport / Badlands', 'img': 'assets/car.png'},
-      {'modelo': 'Mustang GT / Dark Horse', 'img': 'assets/car.png'},
-      {'modelo': 'Transit Furgón', 'img': 'assets/furgon.png'},
+      {'modelo': 'Ranger', 'img': 'assets/carros/ford/ranger.png'},
+      {'modelo': 'F-150', 'img': 'assets/carros/ford/f-150.png'},
+      {'modelo': 'Escape', 'img': 'assets/carros/ford/escape.png'},
+      {'modelo': 'Explorer', 'img': 'assets/carros/ford/explorer.png'},
+      {'modelo': 'Bronco Sport', 'img': 'assets/carros/ford/bronco_sport.png'},
+      {'modelo': 'Mustang', 'img': 'assets/carros/ford/mustang.png'},
     ],
     'SUZUKI': [
-      {'modelo': 'Swift Híbrido Sedan / HB', 'img': 'assets/car.png'},
-      {'modelo': 'Jimny GLX / 5 Puertas', 'img': 'assets/car.png'},
-      {'modelo': 'Grand Vitara Boostergreen', 'img': 'assets/car.png'},
-      {'modelo': 'Fronx Boostergreen', 'img': 'assets/car.png'},
-      {'modelo': 'S-Presso', 'img': 'assets/car.png'},
-      {'modelo': 'Ertiga Híbrida 7 Pasajeros', 'img': 'assets/bus.png'},
+      {'modelo': 'Swift', 'img': 'assets/carros/suzuki/swift.png'},
+      {'modelo': 'Jimny', 'img': 'assets/carros/suzuki/jimny.png'},
+      {'modelo': 'Grand Vitara', 'img': 'assets/carros/suzuki/grand_vitara.png'},
+      {'modelo': 'Fronx', 'img': 'assets/carros/suzuki/fronx.png'},
     ],
     'HONDA': [
-      {'modelo': 'Civic e:HEV Híbrido', 'img': 'assets/car.png'},
-      {'modelo': 'CR-V Advance / Touring', 'img': 'assets/car.png'},
-      {'modelo': 'HR-V Uniq / Prestige', 'img': 'assets/car.png'},
-      {'modelo': 'ZR-V Touring', 'img': 'assets/car.png'},
-      {'modelo': 'Pilot Touring 4WD', 'img': 'assets/car.png'},
-      {'modelo': 'City Sedan / Hatchback', 'img': 'assets/car.png'},
+      {'modelo': 'Civic', 'img': 'assets/carros/honda/civic.png'},
+      {'modelo': 'CR-V', 'img': 'assets/carros/honda/cr-v.png'},
+      {'modelo': 'HR-V', 'img': 'assets/carros/honda/hr-v.png'},
+      {'modelo': 'City', 'img': 'assets/carros/honda/city.png'},
     ],
     'BMW': [
-      {'modelo': 'Serie 1 (118i / 128ti)', 'img': 'assets/car.png'},
-      {'modelo': 'Serie 2 Gran Coupé', 'img': 'assets/car.png'},
-      {'modelo': 'Serie 3 (320i / 330e Híbrido)', 'img': 'assets/car.png'},
-      {'modelo': 'Serie 4 Gran Coupé / M4', 'img': 'assets/car.png'},
-      {'modelo': 'X1 sDrive18i / xLine', 'img': 'assets/car.png'},
-      {'modelo': 'X3 xDrive30e Híbrido', 'img': 'assets/car.png'},
-      {'modelo': 'X5 xDrive50e Híbrido', 'img': 'assets/car.png'},
-      {'modelo': 'M3 Competition / M5', 'img': 'assets/car.png'},
-      {'modelo': 'i4 / iX3 100% Eléctrico', 'img': 'assets/car.png'},
+      {'modelo': 'Serie 3', 'img': 'assets/carros/bmw/serie_3.png'},
+      {'modelo': 'X1', 'img': 'assets/carros/bmw/x1.png'},
+      {'modelo': 'X3', 'img': 'assets/carros/bmw/x3.png'},
+      {'modelo': 'X5', 'img': 'assets/carros/bmw/x5.png'},
     ],
     'MERCEDES-BENZ': [
-      {'modelo': 'Clase A 200 Sedan / Hatchback', 'img': 'assets/car.png'},
-      {'modelo': 'Clase C 200 Mild-Hybrid', 'img': 'assets/car.png'},
-      {'modelo': 'Clase E 300 e Híbrido', 'img': 'assets/car.png'},
-      {'modelo': 'GLA 200 Progressive', 'img': 'assets/car.png'},
-      {'modelo': 'GLB 200 7 Puestos', 'img': 'assets/car.png'},
-      {'modelo': 'GLC 300 4MATIC Coupe', 'img': 'assets/car.png'},
-      {'modelo': 'GLE 450 4MATIC', 'img': 'assets/car.png'},
-      {'modelo': 'Mercedes-AMG A 45 S 4MATIC+', 'img': 'assets/car.png'},
+      {'modelo': 'Clase A', 'img': 'assets/carros/mercedes-benz/clase_a.png'},
+      {'modelo': 'GLA', 'img': 'assets/carros/mercedes-benz/gla.png'},
+      {'modelo': 'GLC', 'img': 'assets/carros/mercedes-benz/glc.png'},
     ],
     'AUDI': [
-      {'modelo': 'A3 Sedan / Sportback 35 TFSI', 'img': 'assets/car.png'},
-      {'modelo': 'A4 40 TFSI S line', 'img': 'assets/car.png'},
-      {'modelo': 'Q2 35 TFSI', 'img': 'assets/car.png'},
-      {'modelo': 'Q3 Sportback 35 TFSI', 'img': 'assets/car.png'},
-      {'modelo': 'Q5 45 TFSI quattro', 'img': 'assets/car.png'},
-      {'modelo': 'Q7 55 TFSI quattro 7 Plazas', 'img': 'assets/car.png'},
-      {'modelo': 'Q8 e-tron Eléctrico', 'img': 'assets/car.png'},
-      {'modelo': 'RS3 / RS5 Coupe', 'img': 'assets/car.png'},
+      {'modelo': 'A3', 'img': 'assets/carros/audi/a3.png'},
+      {'modelo': 'A4', 'img': 'assets/carros/audi/a4.png'},
+      {'modelo': 'Q3', 'img': 'assets/carros/audi/q3.png'},
+      {'modelo': 'Q5', 'img': 'assets/carros/audi/q5.png'},
     ],
     'JEEP': [
-      {'modelo': 'Renegade Longitude Turbo', 'img': 'assets/car.png'},
-      {'modelo': 'Compass Limited 4x2 / 4x4', 'img': 'assets/car.png'},
-      {'modelo': 'Commander Overland 7 Puestos', 'img': 'assets/car.png'},
-      {'modelo': 'Wrangler Rubicon 4x4', 'img': 'assets/car.png'},
-      {'modelo': 'Gladiator Rubicon Pick-up', 'img': 'assets/car.png'},
-      {'modelo': 'Grand Cherokee 4xe Híbrida', 'img': 'assets/car.png'},
+      {'modelo': 'Renegade', 'img': 'assets/carros/jeep/renegade.png'},
+      {'modelo': 'Compass', 'img': 'assets/carros/jeep/compass.png'},
+      {'modelo': 'Wrangler', 'img': 'assets/carros/jeep/wrangler.png'},
+      {'modelo': 'Grand Cherokee', 'img': 'assets/carros/jeep/grand_cherokee.png'},
     ],
     'BYD': [
-      {'modelo': 'Dolphin EV 100% Eléctrico', 'img': 'assets/car.png'},
-      {'modelo': 'Dolphin Mini (Seagull)', 'img': 'assets/car.png'},
-      {'modelo': 'Yuan Plus EV (Atto 3)', 'img': 'assets/car.png'},
-      {'modelo': 'Song Plus DM-i Híbrido Enchufable', 'img': 'assets/car.png'},
-      {'modelo': 'Seal Sedan EV', 'img': 'assets/car.png'},
-      {'modelo': 'Han EV Luxury', 'img': 'assets/car.png'},
-      {'modelo': 'Tang EV SUV 7 Pasajeros', 'img': 'assets/car.png'},
-      {'modelo': 'Shark Pick-up DM-i', 'img': 'assets/car.png'},
-    ],
-    'MITSUBISHI': [
-      {'modelo': 'L200 Sportero 4x4', 'img': 'assets/car.png'},
-      {'modelo': 'Montero Sport Takai 4WD', 'img': 'assets/car.png'},
-      {'modelo': 'Outlander Diamond PHEV', 'img': 'assets/car.png'},
-      {'modelo': 'Xpander Cross 7 Puestos', 'img': 'assets/bus.png'},
-      {'modelo': 'Eclipse Cross Turbo', 'img': 'assets/car.png'},
-    ],
-    'PEUGEOT': [
-      {'modelo': '208 GT / Allure', 'img': 'assets/car.png'},
-      {'modelo': '2008 Turbo Allure / GT', 'img': 'assets/car.png'},
-      {'modelo': '3008 GT Line', 'img': 'assets/car.png'},
-      {'modelo': '5008 7 Puestos', 'img': 'assets/car.png'},
-      {'modelo': 'Partner Furgón', 'img': 'assets/furgon.png'},
-    ],
-    'FIAT': [
-      {'modelo': 'Mobi Trekking', 'img': 'assets/car.png'},
-      {'modelo': 'Argo Trekking / Drive', 'img': 'assets/car.png'},
-      {'modelo': 'Pulse Drive / Audace / Impetus', 'img': 'assets/car.png'},
-      {'modelo': 'Fastback Audace / Limited Turbo', 'img': 'assets/car.png'},
-      {'modelo': 'Strada Volcano Doble Cabina', 'img': 'assets/car.png'},
-      {'modelo': 'Fiorino Furgón', 'img': 'assets/furgon.png'},
+      {'modelo': 'Dolphin', 'img': 'assets/carros/byd/dolphin.png'},
+      {'modelo': 'Song Plus', 'img': 'assets/carros/byd/song_plus.png'},
+      {'modelo': 'Yuan Plus', 'img': 'assets/carros/byd/yuan_plus.png'},
+      {'modelo': 'Seal', 'img': 'assets/carros/byd/seal.png'},
     ],
   };
 
@@ -231,12 +163,9 @@ class VehicleCatalogService {
     'AUDI': 'assets/logos/audi_logo.png',
     'JEEP': 'assets/logos/jeep_logo.png',
     'BYD': 'assets/logos/byd_logo.png',
-    'MITSUBISHI': 'assets/logos/mitsubishi_logo.png',
-    'PEUGEOT': 'assets/logos/peugeot_logo.png',
-    'FIAT': 'assets/logos/fiat_logo.png',
   };
 
-  // --- MOTO CATALOG ---
+  // --- MOTO CATALOG (Organizado por carpeta de marca) ---
   final Map<String, List<Map<String, String>>> _motoCatalog = {
     'YAMAHA': [
       {'modelo': 'MT 15', 'img': 'assets/motos/yamaha/mt15.png'},
@@ -246,12 +175,6 @@ class VehicleCatalogService {
       {'modelo': 'Crypton FI 115', 'img': 'assets/motos/yamaha/cripton.png'},
       {'modelo': 'N-MAX Connected 155', 'img': 'assets/motos/yamaha/nmax.png'},
       {'modelo': 'XTZ 150 Crosser', 'img': 'assets/motos/yamaha/XTZ150.png'},
-      {'modelo': 'XTZ 250 Lander', 'img': 'assets/motos/yamaha/XTZ150.png'},
-      {'modelo': 'MT 03', 'img': 'assets/motos/yamaha/mt15.png'},
-      {'modelo': 'MT 07', 'img': 'assets/motos/yamaha/mt15.png'},
-      {'modelo': 'MT 09 SP', 'img': 'assets/motos/yamaha/mt15.png'},
-      {'modelo': 'Ténéré 700 Rally', 'img': 'assets/motos/yamaha/XTZ150.png'},
-      {'modelo': 'Aerox 155', 'img': 'assets/motos/yamaha/nmax.png'},
     ],
     'BAJAJ': [
       {'modelo': 'Pulsar NS 200 FI ABS', 'img': 'assets/motos/bajaj/pulsar-ns200-fi-abs.png'},
@@ -279,14 +202,6 @@ class VehicleCatalogService {
     'SUZUKI': [
       {'modelo': 'Gixxer 150 FI', 'img': 'assets/motos/suzuki/gixxer150.png'},
       {'modelo': 'Gixxer SF 150 FI', 'img': 'assets/motos/suzuki/gixxersf150.png'},
-      {'modelo': 'Gixxer 250 FI ABS', 'img': 'assets/motos/suzuki/gixxer150.png'},
-      {'modelo': 'Gixxer SF 250 FI ABS', 'img': 'assets/motos/suzuki/gixxersf150.png'},
-      {'modelo': 'GN 125', 'img': 'assets/motos/suzuki/gixxer150.png'},
-      {'modelo': 'DR 150', 'img': 'assets/motos/suzuki/gixxer150.png'},
-      {'modelo': 'DR 650 SE', 'img': 'assets/motos/suzuki/gixxer150.png'},
-      {'modelo': 'V-Strom 250 SX', 'img': 'assets/motos/suzuki/gixxer150.png'},
-      {'modelo': 'V-Strom 650 XT / 800 DE', 'img': 'assets/motos/suzuki/gixxer150.png'},
-      {'modelo': 'GSX-S 750 / GSX-8S', 'img': 'assets/motos/suzuki/gixxer150.png'},
     ],
     'KTM': [
       {'modelo': 'Duke 200 NG', 'img': 'assets/motos/ktm/DUKE-200.png'},
@@ -297,8 +212,6 @@ class VehicleCatalogService {
       {'modelo': 'Adventure 250', 'img': 'assets/motos/ktm/KTM-250-Adventure.png'},
       {'modelo': 'Adventure 390', 'img': 'assets/motos/ktm/KTM-390-adv.png'},
       {'modelo': 'Adventure 390 SW', 'img': 'assets/motos/ktm/KTM-390-adventure.png'},
-      {'modelo': 'Adventure 790 / 890 R', 'img': 'assets/motos/ktm/KTM-390-adv.png'},
-      {'modelo': 'RC 200 / RC 390', 'img': 'assets/motos/ktm/DUKE-200.png'},
     ],
     'HERO': [
       {'modelo': 'Hunk 160 R 4V', 'img': 'assets/motos/hero/Hunk160R4v.png'},
@@ -318,80 +231,49 @@ class VehicleCatalogService {
     ],
     'AKT': [
       {'modelo': 'NKD 125', 'img': 'assets/motos/akt/NKD.png'},
-      {'modelo': 'NKD Classic 125', 'img': 'assets/motos/akt/NKD.png'},
       {'modelo': 'CR4 150', 'img': 'assets/motos/akt/CR4_150.png'},
       {'modelo': 'CR4 200 Pro', 'img': 'assets/motos/akt/CR4_200.png'},
       {'modelo': '250 R Naked', 'img': 'assets/motos/akt/250R.png'},
       {'modelo': 'Dynamic Pro 125', 'img': 'assets/motos/akt/dinamicpro.png'},
       {'modelo': 'Mawi 125 Scooter', 'img': 'assets/motos/akt/mawi.png'},
-      {'modelo': 'TT Dual Sport 200', 'img': 'assets/motos/akt/CR4_200.png'},
-      {'modelo': 'TT Dual Sport 250', 'img': 'assets/motos/akt/250R.png'},
-      {'modelo': 'Flex 125 LED', 'img': 'assets/motos/akt/NKD.png'},
     ],
     'KAWASAKI': [
       {'modelo': 'Ninja 400 ABS', 'img': 'assets/motos/kawasaki/ninja400.png'},
       {'modelo': 'Ninja 650 ABS', 'img': 'assets/motos/kawasaki/ninja650.png'},
-      {'modelo': 'Ninja ZX-4RR / ZX-6R', 'img': 'assets/motos/kawasaki/ninja400.png'},
-      {'modelo': 'Ninja ZX-10R', 'img': 'assets/motos/kawasaki/ninja650.png'},
       {'modelo': 'Z 400 ABS', 'img': 'assets/motos/kawasaki/z400.png'},
-      {'modelo': 'Z 650 / Z 900', 'img': 'assets/motos/kawasaki/z400.png'},
       {'modelo': 'Versys 650 ABS', 'img': 'assets/motos/kawasaki/versys650.png'},
-      {'modelo': 'Versys 300X', 'img': 'assets/motos/kawasaki/versys650.png'},
-      {'modelo': 'KLX 150 / 300R', 'img': 'assets/motos/kawasaki/versys650.png'},
-      {'modelo': 'KLR 650 Adventure', 'img': 'assets/motos/kawasaki/versys650.png'},
     ],
     'BMW': [
       {'modelo': 'G 310 R', 'img': 'assets/motos/bmw/g310r.png'},
       {'modelo': 'G 310 GS', 'img': 'assets/motos/bmw/g310gs.png'},
       {'modelo': 'F 900 R', 'img': 'assets/motos/bmw/f900r.png'},
-      {'modelo': 'F 900 XR', 'img': 'assets/motos/bmw/f900r.png'},
-      {'modelo': 'F 850 GS / F 900 GS', 'img': 'assets/motos/bmw/g310gs.png'},
-      {'modelo': 'R 1250 GS / R 1300 GS', 'img': 'assets/motos/bmw/g310gs.png'},
-      {'modelo': 'R 1250 GS Adventure', 'img': 'assets/motos/bmw/g310gs.png'},
-      {'modelo': 'S 1000 RR Sport', 'img': 'assets/motos/bmw/f900r.png'},
-      {'modelo': 'S 1000 XR', 'img': 'assets/motos/bmw/f900r.png'},
-      {'modelo': 'C 400 GT Scooter', 'img': 'assets/motos/bmw/g310r.png'},
     ],
     'HONDA': [
-      {'modelo': 'CB 125F Twister', 'img': 'assets/motos/hero/Hunk125r.png'},
-      {'modelo': 'CB 160F / CB 190R', 'img': 'assets/motos/hero/hunk160r.png'},
-      {'modelo': 'CB 300F Twister ABS', 'img': 'assets/motos/hero/Hunk160R4v.png'},
-      {'modelo': 'XR 150L / XR 190L', 'img': 'assets/motos/hero/Xpulse2004v.png'},
-      {'modelo': 'XRE 300 Rally / Sahara 300', 'img': 'assets/motos/hero/XpulsePro2004v.png'},
-      {'modelo': 'Navi 110 Automatic', 'img': 'assets/motos/akt/mawi.png'},
-      {'modelo': 'Dio 110 / PCX 160 ABS', 'img': 'assets/motos/yamaha/nmax.png'},
-      {'modelo': 'CB 650R / CBR 650R', 'img': 'assets/motos/kawasaki/ninja650.png'},
-      {'modelo': 'CRF 1100L Africa Twin', 'img': 'assets/motos/bmw/g310gs.png'},
-      {'modelo': 'Transalp XL750', 'img': 'assets/motos/kawasaki/versys650.png'},
+      {'modelo': 'Africa Twin CRF1100L', 'img': 'assets/motos/honda/africa_twin_crf1100l.png'},
+      {'modelo': 'XRE 300 Rally', 'img': 'assets/motos/honda/xre_300.png'},
     ],
     'DUCATI': [
-      {'modelo': 'Monster 937 / Plus', 'img': 'assets/motos/ktm/DUKE-200.png'},
-      {'modelo': 'Panigale V2 / V4', 'img': 'assets/motos/kawasaki/ninja650.png'},
-      {'modelo': 'Streetfighter V2 / V4', 'img': 'assets/motos/ktm/KTM-990-DUKE.png'},
-      {'modelo': 'Multistrada V4 S / Rally', 'img': 'assets/motos/bmw/g310gs.png'},
-      {'modelo': 'DesertX 937 Rally', 'img': 'assets/motos/bmw/g310gs.png'},
-      {'modelo': 'Scrambler Icon / Full Throttle', 'img': 'assets/motos/ktm/DUKE-200.png'},
-      {'modelo': 'Diavel V4', 'img': 'assets/motos/ktm/KTM1390superduke2025.png'},
-      {'modelo': 'Hypermotard 698 Mono / 950', 'img': 'assets/motos/ktm/DUKE-200.png'},
+      {'modelo': 'Monster 937', 'img': 'assets/motos/ducati/monster_937.png'},
+      {'modelo': 'Panigale V4', 'img': 'assets/motos/ducati/panigale_v4.png'},
+      {'modelo': 'Multistrada V4', 'img': 'assets/motos/ducati/multistrada_v4.png'},
+      {'modelo': 'Scrambler Icon', 'img': 'assets/motos/ducati/scrambler_icon.png'},
+      {'modelo': 'DesertX', 'img': 'assets/motos/ducati/desertx.png'},
+    ],
+    'TRIUMPH': [
+      {'modelo': 'Speed 400', 'img': 'assets/motos/triumph/speed_400.png'},
+      {'modelo': 'Trident 660', 'img': 'assets/motos/triumph/trident_660.png'},
+      {'modelo': 'Tiger 900 Rally', 'img': 'assets/motos/triumph/tiger_900_rally.png'},
+      {'modelo': 'Bonneville T120', 'img': 'assets/motos/triumph/bonneville_t120.png'},
+    ],
+    'ROYAL ENFIELD': [
+      {'modelo': 'Himalayan 450', 'img': 'assets/motos/royal_enfield/himalayan_450.png'},
+      {'modelo': 'Classic 350', 'img': 'assets/motos/royal_enfield/classic_350.png'},
+      {'modelo': 'Meteor 350', 'img': 'assets/motos/royal_enfield/meteor_350.png'},
+      {'modelo': 'Interceptor 650', 'img': 'assets/motos/royal_enfield/interceptor_650.png'},
+      {'modelo': 'Hunter 350', 'img': 'assets/motos/royal_enfield/hunter_350.png'},
     ],
     'VICTORI': [
       {'modelo': 'Venom 150', 'img': 'assets/motos/victori/victori_venom_150.png'},
-      {'modelo': 'Venom 180', 'img': 'assets/motos/victori/victori_venom_150.png'},
-      {'modelo': 'Venom 250 FI', 'img': 'assets/motos/victori/victori_venom_150.png'},
-      {'modelo': 'MRX 125 / MRX 150', 'img': 'assets/motos/yamaha/XTZ150.png'},
-      {'modelo': 'MRX Arizona 200', 'img': 'assets/motos/yamaha/XTZ150.png'},
-      {'modelo': 'Switch 150 Scooter', 'img': 'assets/motos/akt/mawi.png'},
-      {'modelo': 'Black 171', 'img': 'assets/motos/victori/victori_venom_150.png'},
-    ],
-    'TRIUMPH': [
-      {'modelo': 'Speed 400', 'img': 'assets/motos/bmw/g310r.png'},
-      {'modelo': 'Scrambler 400 X', 'img': 'assets/motos/bmw/g310gs.png'},
-      {'modelo': 'Trident 660', 'img': 'assets/motos/bmw/f900r.png'},
-      {'modelo': 'Street Triple 765 RS', 'img': 'assets/motos/bmw/f900r.png'},
-      {'modelo': 'Tiger 900 GT Pro / Rally Pro', 'img': 'assets/motos/kawasaki/versys650.png'},
-      {'modelo': 'Tiger 1200 Rally Explorer', 'img': 'assets/motos/bmw/g310gs.png'},
-      {'modelo': 'Bonneville T120', 'img': 'assets/motos/bmw/g310r.png'},
-      {'modelo': 'Rocket 3 R / GT (2500cc)', 'img': 'assets/motos/ktm/KTM1390superduke2025.png'},
     ],
   };
 
@@ -408,6 +290,7 @@ class VehicleCatalogService {
     'DUCATI': 'assets/logos/ducati_logo.png',
     'VICTORI': 'assets/logos/victori_logo.png',
     'TRIUMPH': 'assets/logos/triumph_logo.png',
+    'ROYAL ENFIELD': 'assets/logos/royal-enfield.png',
   };
 
   // --- BRAND COLORS (Shared) ---
@@ -442,6 +325,7 @@ class VehicleCatalogService {
     'DUCATI': const Color(0xFFCC0000),
     'VICTORI': const Color(0xFFCBA73D),
     'TRIUMPH': const Color(0xFF222222),
+    'ROYAL ENFIELD': const Color(0xFF990000),
   };
 
   // Getters
@@ -452,6 +336,23 @@ class VehicleCatalogService {
   Map<String, String> getMotoLogos() => _motoLogos;
 
   Map<String, Color> getBrandColors() => _brandColors;
+
+  Map<String, String> _cachedImages = {};
+  bool _hasLoadedImages = false;
+
+  /// Carga en memoria el diccionario de imágenes reales de vehículos
+  Future<void> loadCachedImages(BuildContext context) async {
+    if (_hasLoadedImages) return;
+    try {
+      final jsonStr = await DefaultAssetBundle.of(context)
+          .loadString('assets/data/vehicle_images.json');
+      final Map<String, dynamic> decoded = json.decode(jsonStr);
+      _cachedImages = decoded.map((k, v) => MapEntry(k, v.toString()));
+      _hasLoadedImages = true;
+    } catch (_) {
+      // Continua silenciosamente
+    }
+  }
 
   /// Obtiene la URL o asset del logo de cualquier marca (Carro o Moto)
   String getLogoForBrand(String brand) {
@@ -465,7 +366,6 @@ class VehicleCatalogService {
         .replaceAll(' ', '-')
         .replaceAll('_', '-');
 
-    // Primero intenta resolver en el paquete de logos local descargado
     return 'assets/logos/$slug.png';
   }
 
@@ -473,5 +373,29 @@ class VehicleCatalogService {
   Color getColorForBrand(String brand) {
     final upper = brand.trim().toUpperCase();
     return _brandColors[upper] ?? const Color(0xFF035880);
+  }
+
+  /// Retorna la URL o ruta local de imagen de un vehículo
+  String getImageForVehicle(String make, String model, {bool isMoto = false}) {
+    // 1. Buscar en catálogo local organizado por carpetas
+    final catalog = isMoto ? _motoCatalog : _carCatalog;
+    final upperMake = make.trim().toUpperCase();
+    if (catalog.containsKey(upperMake)) {
+      final match = catalog[upperMake]!.firstWhere(
+        (m) => (m['modelo'] ?? '').toUpperCase() == model.trim().toUpperCase(),
+        orElse: () => const {},
+      );
+      if (match.isNotEmpty && match['img'] != null && match['img'] != 'assets/car.png') {
+        return match['img']!;
+      }
+    }
+
+    // 2. Buscar en caché dinámica descargada
+    final key = '${make.trim()} ${model.trim()}'.toUpperCase();
+    if (_cachedImages.containsKey(key) && _cachedImages[key]!.isNotEmpty) {
+      return _cachedImages[key]!;
+    }
+
+    return isMoto ? 'assets/motos/yamaha/mt15.png' : 'assets/car.png';
   }
 }

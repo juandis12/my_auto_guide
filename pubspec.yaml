@@ -226,31 +226,35 @@ flutter:
     - assets/motos/ktm/KTM-390-adv.png
     - assets/motos/ktm/KTM-390-adventure.png
     - assets/motos/victori/victori_venom_150.png
-    - assets/carros/toyota/corolla.png
-    - assets/carros/toyota/hilux.png
-    - assets/carros/toyota/yaris.png
-    - assets/carros/toyota/yaris_cross.png 
-    - assets/carros/toyota/tundra.png
-    - assets/carros/toyota/landcruiser300.png
-    - assets/carros/toyota/hiluxcarga.png
-    - assets/carros/toyota/fortuner.png
-    - assets/carros/toyota/corolla_cross.png
-    - assets/carros/toyota/corolla_cross_gr-s.png
-    - assets/carros/mazda/mazda2.png
-    - assets/carros/mazda/mazda2sedan.png
-    - assets/carros/mazda/mazda3.png
-    - assets/carros/chevrolet/jelly-onix-turbo-rs.png
-    - assets/carros/chevrolet/2022-tambien-onix-turbo-hb.png
-    - assets/carros/chevrolet/2024-versiones-onix-turbo-ltz-at.png
-    - assets/carros/chevrolet/tracker-RS.png
-    - assets/carros/chevrolet/BLAZEREV.png
-    - assets/carros/chevrolet/SparkEUV.png
-    - assets/carros/chevrolet/traverse.png
-    - assets/carros/chevrolet/equinox-rs-blazer-rs.png
-    - assets/carros/chevrolet/blazers.png
-    - assets/carros/chevrolet/Montana.png
-    - assets/carros/chevrolet/colorado.png 
-    - assets/carros/chevrolet/silverado.png
+    - assets/carros/toyota/
+    - assets/carros/mazda/
+    - assets/carros/chevrolet/
+    - assets/carros/renault/
+    - assets/carros/nissan/
+    - assets/carros/kia/
+    - assets/carros/hyundai/
+    - assets/carros/volkswagen/
+    - assets/carros/ford/
+    - assets/carros/suzuki/
+    - assets/carros/honda/
+    - assets/carros/bmw/
+    - assets/carros/mercedes-benz/
+    - assets/carros/audi/
+    - assets/carros/jeep/
+    - assets/carros/byd/
+    - assets/motos/yamaha/
+    - assets/motos/suzuki/
+    - assets/motos/bajaj/
+    - assets/motos/ktm/
+    - assets/motos/hero/
+    - assets/motos/akt/
+    - assets/motos/kawasaki/
+    - assets/motos/bmw/
+    - assets/motos/honda/
+    - assets/motos/ducati/
+    - assets/motos/victori/
+    - assets/motos/triumph/
+    - assets/motos/royal_enfield/
 
 flutter_launcher_icons:
   android: true
