@@ -44,6 +44,8 @@ import 'dart:async';
 
 import '../../../core/services/notification_service.dart';
 import '../../../core/services/email_service.dart'; // [NUEVO] Alertas mecánicas por correo
+import '../../../core/services/app_update_service.dart';
+import '../../updater/presentation/app_update_lock_screen.dart';
 import '../../../core/services/vehicle_storage_service.dart';
 import '../../../core/logic/app_widget_logic.dart';
 import '../../../core/logic/vehicle_health_logic.dart';
@@ -1487,6 +1489,15 @@ class _InicioAppState extends State<InicioApp> {
 
       unawaited(_syncHealthWidget());
       unawaited(_verificarYEnviarAlertasMantenimiento());
+
+      // Verificar si hay actualización OTA obligatoria pendiente
+      final update = await AppUpdateService().checkForUpdate();
+      if (update != null && mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => AppUpdateLockScreen(updateInfo: update)),
+        );
+      }
     }
 
     return vehicleData;
