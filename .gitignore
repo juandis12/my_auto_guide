@@ -51,5 +51,11 @@ app.*.map.json
 android/app/google-services.json
 ios/Runner/GoogleService-Info.plist
 
+# Android Signing Keystore (Sensitive)
+android/key.properties
+*.jks
+*.keystore
+
 # ios-builder output
 /dist/
+
