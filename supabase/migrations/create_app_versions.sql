@@ -20,11 +20,18 @@ CREATE TABLE IF NOT EXISTS public.app_versions (
 ALTER TABLE public.app_versions ENABLE ROW LEVEL SECURITY;
 
 -- Política de lectura pública para que cualquier cliente autenticado o anónimo pueda chequear updates
-CREATE POLICY "Permitir lectura publica de app_versions"
-    ON public.app_versions
-    FOR SELECT
-    TO public
-    USING (true);
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_policies WHERE tablename = 'app_versions' AND schemaname = 'public' AND policyname = 'Permitir lectura publica de app_versions'
+    ) THEN
+        CREATE POLICY "Permitir lectura publica de app_versions"
+            ON public.app_versions
+            FOR SELECT
+            TO public
+            USING (true);
+    END IF;
+END $$;
 
 -- 2. Registro del Bucket 'app-releases' en Storage (si no existe)
 INSERT INTO storage.buckets (id, name, public)
@@ -32,8 +39,38 @@ VALUES ('app-releases', 'app-releases', true)
 ON CONFLICT (id) DO NOTHING;
 
 -- Política de descarga de archivos del bucket 'app-releases'
-CREATE POLICY "Descarga publica de app-releases"
-    ON storage.objects
-    FOR SELECT
-    TO public
-    USING (bucket_id = 'app-releases');
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_policies WHERE tablename = 'objects' AND schemaname = 'storage' AND policyname = 'Descarga publica de app-releases'
+    ) THEN
+        CREATE POLICY "Descarga publica de app-releases"
+            ON storage.objects
+            FOR SELECT
+            TO public
+            USING (bucket_id = 'app-releases');
+    END IF;
+END $$;
+
+-- 3. Registrar o actualizar la versión 1.1.0 (version_code: 2)
+INSERT INTO public.app_versions (
+    version_code,
+    version_name,
+    zip_url,
+    release_notes,
+    is_mandatory
+)
+VALUES (
+    2,
+    '1.1.0',
+    'https://github.com/juandis12/my_auto_guide/releases/download/v1.1.0/app-release.apk',
+    '• Sistema de Actualizaciones Automáticas OTA integrado\n• Notificaciones y alertas automáticas optimizadas\n• Mejoras generales de rendimiento y estabilidad',
+    true
+)
+ON CONFLICT (version_code) DO UPDATE 
+SET 
+    zip_url = EXCLUDED.zip_url,
+    version_name = EXCLUDED.version_name,
+    release_notes = EXCLUDED.release_notes,
+    is_mandatory = EXCLUDED.is_mandatory;
+
