@@ -10,8 +10,6 @@ class NavigationTelemetry {
   final DateTime? startTime;
   final double fuelConsumptionGal;
   final double estimatedCost;
-  final double bearing;
-  final bool isStationary;
 
   const NavigationTelemetry({
     this.currentPos,
@@ -22,8 +20,6 @@ class NavigationTelemetry {
     this.startTime,
     this.fuelConsumptionGal = 0.0,
     this.estimatedCost = 0.0,
-    this.bearing = 0.0,
-    this.isStationary = false,
   });
 
   NavigationTelemetry copyWith({
@@ -35,8 +31,6 @@ class NavigationTelemetry {
     DateTime? startTime,
     double? fuelConsumptionGal,
     double? estimatedCost,
-    double? bearing,
-    bool? isStationary,
   }) {
     return NavigationTelemetry(
       currentPos: currentPos ?? this.currentPos,
@@ -47,8 +41,6 @@ class NavigationTelemetry {
       startTime: startTime ?? this.startTime,
       fuelConsumptionGal: fuelConsumptionGal ?? this.fuelConsumptionGal,
       estimatedCost: estimatedCost ?? this.estimatedCost,
-      bearing: bearing ?? this.bearing,
-      isStationary: isStationary ?? this.isStationary,
     );
   }
 

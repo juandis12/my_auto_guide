@@ -4,7 +4,6 @@ import 'package:latlong2/latlong.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import '../../domain/models/navigation_telemetry.dart';
 import '../../logic/telemetry_calculator.dart';
-import '../../logic/gps_filter_service.dart';
 import 'package:my_auto_guide/core/services/navigation_service.dart';
 import 'package:my_auto_guide/core/services/voice_navigation_service.dart';
 
@@ -36,7 +35,6 @@ class NavigationController extends ChangeNotifier {
   List<NavigationStep> _steps = [];
   int _currentStepIndex = 0;
 
-  final GpsFilterService _gpsFilter = GpsFilterService();
   StreamSubscription<Map<String, dynamic>?>? _serviceSubscription;
 
   NavigationController({
@@ -126,7 +124,6 @@ class NavigationController extends ChangeNotifier {
   }
 
   void startNavigation({bool isFree = false}) {
-    _gpsFilter.reset();
     _state = isFree ? NavigationState.freeTracking : NavigationState.navigating;
     _telemetry = NavigationTelemetry(
       startTime: DateTime.now(),
@@ -149,46 +146,7 @@ class NavigationController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateCurrentPosition(
-    LatLng pos, {
-    double? speedMs, 
-    double? bgDistanceKm,
-    double? accuracy,
-    double? bearing,
-    bool? isStationary,
-    bool fromBackground = false,
-  }) {
-    LatLng activePos = pos;
-    double currentSpeed = speedMs ?? 0.0;
-    double currentBearing = bearing ?? _telemetry.bearing;
-    bool stationary = isStationary ?? (speedMs != null && speedMs < 0.8);
-
-    // Si viene directo de GPS satelital en foreground o idle, procesar con GpsFilterService
-    if (!fromBackground) {
-      final filterResult = _gpsFilter.filterPoint(
-        lat: pos.latitude,
-        lng: pos.longitude,
-        accuracy: accuracy ?? 10.0,
-        speedMs: currentSpeed,
-        heading: bearing,
-        activeRoutePoints: _state == NavigationState.navigating ? _routePoints : null,
-      );
-
-      if (filterResult == null) {
-        // Descartar lectura degradada o anómala
-        return;
-      }
-
-      activePos = filterResult.position;
-      currentSpeed = filterResult.speedMs;
-      currentBearing = filterResult.bearing;
-      stationary = filterResult.isStationary;
-    } else if (_state == NavigationState.navigating && _routePoints.length >= 2) {
-      // Map-Matching Snap-to-Route para eventos provenientes de background
-      final snapResult = GpsFilterService.snapToRoute(pos, _routePoints, maxDistanceMeters: 25.0);
-      activePos = snapResult.position;
-    }
-
+  void updateCurrentPosition(LatLng pos, {double? speedMs, double? bgDistanceKm}) {
     final oldPos = _telemetry.currentPos;
     
     // Actualizar puntos recorridos y distancia si estamos navegando
@@ -198,26 +156,16 @@ class NavigationController extends ChangeNotifier {
     double avgSpeed = _telemetry.averageSpeedKmH;
 
     if (_state == NavigationState.navigating || _state == NavigationState.freeTracking) {
-      pts = TelemetryCalculator.optimizeRoutePoints(
-        pts, 
-        activePos,
-        isStationary: stationary,
-        minDistanceThresholdMeters: 4.0,
-      );
+      pts = TelemetryCalculator.optimizeRoutePoints(pts, pos);
       
       if (bgDistanceKm != null && bgDistanceKm > dist) {
         dist = bgDistanceKm;
       } else if (oldPos != null) {
-        dist += TelemetryCalculator.calculateIncrementalDistance(
-          oldPos, 
-          activePos,
-          isStationary: stationary,
-          speedMs: currentSpeed,
-        );
+        dist += TelemetryCalculator.calculateIncrementalDistance(oldPos, pos);
       }
 
-      if (currentSpeed >= 0) {
-        final speedKmH = currentSpeed * 3.6;
+      if (speedMs != null && speedMs >= 0) {
+        final speedKmH = speedMs * 3.6;
         if (speedKmH > maxSpeed) maxSpeed = speedKmH;
       }
 
@@ -237,7 +185,7 @@ class NavigationController extends ChangeNotifier {
       // Umbral de 40 m: cubre curvas amplias y latencia de GPS urbano
       if (_steps.isNotEmpty && _currentStepIndex < _steps.length) {
         final stepLoc = _steps[_currentStepIndex].location;
-        final distToStep = const Distance().as(LengthUnit.Meter, activePos, stepLoc);
+        final distToStep = const Distance().as(LengthUnit.Meter, pos, stepLoc);
         if (distToStep < 40 && _currentStepIndex < _steps.length - 1) {
           _currentStepIndex++;
         }
@@ -246,7 +194,7 @@ class NavigationController extends ChangeNotifier {
       // Emisión de instrucciones por voz TTS
       if (_state == NavigationState.navigating && _steps.isNotEmpty) {
         VoiceNavigationService().processTelemetry(
-          currentPos: activePos,
+          currentPos: pos,
           steps: _steps,
           currentStepIndex: _currentStepIndex,
           destinationName: _destinationName,
@@ -255,18 +203,16 @@ class NavigationController extends ChangeNotifier {
     }
 
     _telemetry = _telemetry.copyWith(
-      currentPos: activePos,
+      currentPos: pos,
       travelledPoints: pts,
       distanceKm: dist,
       maxSpeedKmH: maxSpeed,
       averageSpeedKmH: avgSpeed,
-      bearing: currentBearing,
-      isStationary: stationary,
     );
 
     // Auto-completar si llegamos al destino (< 40 metros)
     if (_state == NavigationState.navigating && _destination != null) {
-      final distanceToEnd = const Distance().as(LengthUnit.Meter, activePos, _destination!);
+      final distanceToEnd = const Distance().as(LengthUnit.Meter, pos, _destination!);
       if (distanceToEnd < 40) {
         _state = NavigationState.completed;
       }
@@ -278,7 +224,6 @@ class NavigationController extends ChangeNotifier {
   void stopNavigation() {
     _serviceSubscription?.cancel();
     VoiceNavigationService().stop();
-    _gpsFilter.reset();
     _state = NavigationState.completed;
     notifyListeners();
   }
@@ -286,7 +231,6 @@ class NavigationController extends ChangeNotifier {
   /// Limpia la ruta activa y resetea a modo libre de espera, manteniendo la posición actual del GPS
   void clearRouteAndReset() {
     _serviceSubscription?.cancel();
-    _gpsFilter.reset();
     _state = NavigationState.idle;
     final currentPos = _telemetry.currentPos;
     _telemetry = NavigationTelemetry(currentPos: currentPos);
@@ -302,7 +246,6 @@ class NavigationController extends ChangeNotifier {
 
   void reset() {
     _serviceSubscription?.cancel();
-    _gpsFilter.reset();
     _state = NavigationState.idle;
     _telemetry = NavigationTelemetry.empty();
     _destination = null;
@@ -323,20 +266,9 @@ class NavigationController extends ChangeNotifier {
       final double lng = (event?['lng'] as num?)?.toDouble() ?? 0.0;
       final double speedMs = (event?['speed'] as num?)?.toDouble() ?? 0.0;
       final double bgDistanceKm = (event?['distance'] as num?)?.toDouble() ?? 0.0;
-      final double bearing = (event?['bearing'] as num?)?.toDouble() ?? 0.0;
-      final double accuracy = (event?['accuracy'] as num?)?.toDouble() ?? 10.0;
-      final bool isStationary = (event?['isStationary'] as bool?) ?? (speedMs < 0.8);
       
       if (lat != 0.0 && lng != 0.0) {
-        updateCurrentPosition(
-          LatLng(lat, lng), 
-          speedMs: speedMs, 
-          bgDistanceKm: bgDistanceKm,
-          bearing: bearing,
-          accuracy: accuracy,
-          isStationary: isStationary,
-          fromBackground: true,
-        );
+        updateCurrentPosition(LatLng(lat, lng), speedMs: speedMs, bgDistanceKm: bgDistanceKm);
       }
     });
   }

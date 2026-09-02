@@ -10,7 +10,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart'; // VULN-01
-import '../../features/navigation/logic/gps_filter_service.dart';
 import '../logic/app_widget_logic.dart';
 
 class BackgroundNavService {
@@ -66,43 +65,38 @@ class BackgroundNavService {
       service.stopSelf();
     });
 
-    // Seguimiento GPS con filtro de Kalman cinemático
+    // Seguimiento GPS
     double totalDistance = 0.0;
     LatLng? lastPos;
-    final gpsFilter = GpsFilterService(
-      maxAccuracyThreshold: 20.0,
-      minMovingSpeedMs: 0.8,
-      maxPlausibleSpeedMs: 55.0,
-    );
 
     try {
       final prefs = await SharedPreferences.getInstance();
       
       // =========================================================
-      // 1. INICIAR GPS CON PRECISIÓN VIAL ÓPTIMA (CRÍTICO)
+      // 1. INICIAR GPS INMEDIATAMENTE (CRÍTICO)
       // =========================================================
       late LocationSettings locationSettings;
       
       if (defaultTargetPlatform == TargetPlatform.android) {
         locationSettings = AndroidSettings(
-          accuracy: LocationAccuracy.bestForNavigation, 
-          distanceFilter: 3, // 3m para capturar maniobras fluidas
+          accuracy: LocationAccuracy.high, 
+          distanceFilter: 5, // 5m es óptimo para balancear precisión y eventos
           forceLocationManager: false, // FusedLocationProvider es mucho más confiable
-          intervalDuration: const Duration(milliseconds: 1500), 
+          intervalDuration: const Duration(seconds: 2), 
         );
       } else if (defaultTargetPlatform == TargetPlatform.iOS || defaultTargetPlatform == TargetPlatform.macOS) {
         locationSettings = AppleSettings(
-          accuracy: LocationAccuracy.bestForNavigation,
+          accuracy: LocationAccuracy.high,
           activityType: ActivityType.automotiveNavigation,
-          distanceFilter: 3,
+          distanceFilter: 5,
           pauseLocationUpdatesAutomatically: false,
           showBackgroundLocationIndicator: true,
           allowBackgroundLocationUpdates: true,
         );
       } else {
         locationSettings = const LocationSettings(
-          accuracy: LocationAccuracy.bestForNavigation,
-          distanceFilter: 3,
+          accuracy: LocationAccuracy.high,
+          distanceFilter: 5,
         );
       }
 
@@ -138,54 +132,31 @@ class BackgroundNavService {
       });
 
       // =========================================================
-      // 3. GESTIÓN DEL STREAM GPS CONTINUO CON FILTRADO KALMAN
+      // 3. GESTIÓN DEL STREAM GPS CONTINUO (SIN INTERRUPCIONES)
       // =========================================================
       StreamSubscription<Position>? gpsSubscription;
 
       gpsSubscription = Geolocator.getPositionStream(
         locationSettings: locationSettings,
       ).listen((Position position) async {
-        final filterResult = gpsFilter.filterPoint(
-          lat: position.latitude,
-          lng: position.longitude,
-          accuracy: position.accuracy,
-          speedMs: position.speed,
-          heading: position.heading,
-          timestamp: position.timestamp,
-        );
+        final currentPos = LatLng(position.latitude, position.longitude);
 
-        // Descartar lectura si fue rechazada por salto extremo o imprecisión > 20m
-        if (filterResult == null) return;
-
-        final currentPos = filterResult.position;
-
-        if (lastPos != null && !filterResult.isStationary) {
-          final distance = Geolocator.distanceBetween(
-            lastPos!.latitude,
-            lastPos!.longitude,
-            currentPos.latitude,
-            currentPos.longitude,
-          );
-          // Filtrar ruido: ignorar movimientos < 3.5m o saltos irreales > 250m
-          if (distance >= 3.5 && distance <= 250.0) {
+        if (lastPos != null) {
+          final distance = Geolocator.distanceBetween(lastPos!.latitude,
+              lastPos!.longitude, currentPos.latitude, currentPos.longitude);
+          // Filtrar ruido: ignorar movimientos < 3.0m (estacionado/semáforo) o saltos irreales > 300m
+          if (distance >= 3.0 && distance <= 300.0) {
             totalDistance += distance;
-            lastPos = currentPos;
           }
-        } else if (lastPos == null) {
-          lastPos = currentPos;
         }
+        lastPos = currentPos;
 
-        // PRIORIDAD 1: Actualizar la UI inmediatamente con datos filtrados
+        // PRIORIDAD 1: Actualizar la UI inmediatamente
         service.invoke('update', {
-          "lat": currentPos.latitude,
-          "lng": currentPos.longitude,
-          "rawLat": position.latitude,
-          "rawLng": position.longitude,
+          "lat": position.latitude,
+          "lng": position.longitude,
           "distance": totalDistance / 1000,
-          "speed": filterResult.speedMs, // En m/s
-          "bearing": filterResult.bearing,
-          "accuracy": position.accuracy,
-          "isStationary": filterResult.isStationary,
+          "speed": position.speed, // En m/s
         });
 
         // PRIORIDAD 2: Actualizar Notificación de Android
@@ -206,17 +177,16 @@ class BackgroundNavService {
           );
 
           prefs.setDouble('nav_total_distance', totalDistance / 1000);
-          prefs.setDouble('nav_last_lat', currentPos.latitude);
-          prefs.setDouble('nav_last_lng', currentPos.longitude);
+          prefs.setDouble('nav_last_lat', position.latitude);
+          prefs.setDouble('nav_last_lng', position.longitude);
 
           // Transmisión asíncrona segura
           supabaseChannel?.track({
-            'lat': currentPos.latitude,
-            'lng': currentPos.longitude,
+            'lat': position.latitude,
+            'lng': position.longitude,
             'dist': totalDistance / 1000,
             'ts': DateTime.now().millisecondsSinceEpoch,
-            'speed': filterResult.speedMs,
-            'bearing': filterResult.bearing,
+            'speed': position.speed,
           });
         } catch (e) {
           debugPrint('Fallo secundario en background: $e');
