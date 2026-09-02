@@ -76,16 +76,26 @@ class _CarRentalLoginScreenState extends State<CarRentalLoginScreen> {
     if (mounted) setState(() => canUseBiometrics = available);
   }
 
-  // Carga preferencias pero no autologuea de forma automática en el arranque
+  // Carga preferencias y autologuea si la sesión de Supabase está activa y "Recordarme" habilitado
   Future<void> _bootstrapSession() async {
     final prefs = await SharedPreferences.getInstance();
-    final shouldRemember = prefs.getBool('remember_me') ?? false;
+    final shouldRemember = prefs.getBool('remember_me') ?? true;
+    final savedEmail = prefs.getString('saved_email') ?? '';
     
-    if (mounted) setState(() => rememberMe = shouldRemember);
+    if (mounted) {
+      setState(() {
+        rememberMe = shouldRemember;
+        if (savedEmail.isNotEmpty) {
+          emailController.text = savedEmail;
+        } else if (_auth.currentUser != null && _auth.currentUser!.email != null) {
+          emailController.text = _auth.currentUser!.email!;
+        }
+      });
+    }
 
-    // Rellenar email del usuario actual si existe sesión previa
-    if (_auth.currentUser != null && _auth.currentUser!.email != null) {
-      emailController.text = _auth.currentUser!.email!;
+    // Si "Recordarme" está activo y hay una sesión válida en Supabase, ir directo al inicio
+    if (shouldRemember && _auth.currentUser != null) {
+      await _goToDestination();
     }
   }
 
@@ -160,9 +170,14 @@ class _CarRentalLoginScreenState extends State<CarRentalLoginScreen> {
          passwordController.text
       );
 
-      // Guardar preferencia de recordar
+      // Guardar preferencia de recordar e email
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('remember_me', rememberMe);
+      if (rememberMe) {
+        await prefs.setString('saved_email', emailController.text.trim());
+      } else {
+        await prefs.remove('saved_email');
+      }
 
       if (!mounted) return;
       await _goToDestination();

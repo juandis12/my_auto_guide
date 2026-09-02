@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'supabase_service.dart';
 
@@ -94,6 +95,7 @@ class AuthService {
     try {
       final res = await _supabase.auth.signInWithOAuth(
         OAuthProvider.google,
+        redirectTo: kIsWeb ? null : 'io.supabase.myautoguide://login-callback',
       );
       return res;
     } on AuthException catch (e) {
@@ -108,6 +110,7 @@ class AuthService {
     try {
       final res = await _supabase.auth.signInWithOAuth(
         OAuthProvider.facebook,
+        redirectTo: kIsWeb ? null : 'io.supabase.myautoguide://login-callback',
       );
       return res;
     } on AuthException catch (e) {

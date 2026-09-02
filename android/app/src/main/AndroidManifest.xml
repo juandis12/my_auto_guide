@@ -71,6 +71,14 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
 
+            <!-- Deep Linking para Callbacks de OAuth (Google, Facebook) -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="io.supabase.myautoguide" android:host="login-callback"/>
+            </intent-filter>
+
         </activity>
 
         <meta-data
