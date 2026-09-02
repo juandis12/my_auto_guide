@@ -21,6 +21,7 @@
 // =============================================================================
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'registro_screen.dart';
 import '../vehicles/presentation/Agregar_vehiculo.dart';
 import '../vehicles/presentation/inicio_app.dart';
@@ -29,8 +30,9 @@ import '../../core/logic/performance_guard.dart';
 import '../../shared/widgets/app_snack_bar.dart';
 import '../../shared/widgets/glass_text_field.dart';
 
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/services/biometric_service.dart';
+import '../../core/services/app_update_service.dart';
+import '../updater/presentation/app_update_lock_screen.dart';
 
 class CarRentalLoginScreen extends StatefulWidget {
   const CarRentalLoginScreen({super.key});
@@ -42,6 +44,7 @@ class CarRentalLoginScreen extends StatefulWidget {
 class _CarRentalLoginScreenState extends State<CarRentalLoginScreen> {
   final _auth = AuthService();
   final _biometric = BiometricService();
+  final _updateService = AppUpdateService();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
@@ -56,6 +59,14 @@ class _CarRentalLoginScreenState extends State<CarRentalLoginScreen> {
   }
 
   Future<void> _initSession() async {
+    final update = await _updateService.checkForUpdate();
+    if (update != null && mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => AppUpdateLockScreen(updateInfo: update)),
+      );
+      return;
+    }
     await _checkBiometrics();
     await _bootstrapSession();
   }

@@ -7,7 +7,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 // Delegamos todo el envio de emails a las Edge Functions de Supabase.
 
 class EmailService {
-  static const int maxDailyEmailsPerUser = 2;
+  static const int maxDailyEmailsPerUser = 10;
 
   static String _getDailyEmailKey(String userEmail) {
     final todayStr = DateTime.now().toIso8601String().split('T').first;

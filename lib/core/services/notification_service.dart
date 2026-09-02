@@ -27,6 +27,11 @@ class NotificationService {
       requestAlertPermission: true,
       requestBadgePermission: true,
       requestSoundPermission: true,
+      defaultPresentAlert: true,
+      defaultPresentSound: true,
+      defaultPresentBadge: true,
+      defaultPresentBanner: true,
+      defaultPresentList: true,
     );
 
     const InitializationSettings initializationSettings =
@@ -36,6 +41,18 @@ class NotificationService {
     );
 
     await _notificationsPlugin.initialize(initializationSettings);
+
+    // Solicitar permisos explícitos en iOS
+    if (Platform.isIOS || Platform.isMacOS) {
+      await _notificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin>()
+          ?.requestPermissions(
+            alert: true,
+            badge: true,
+            sound: true,
+          );
+    }
 
     // Crear canales específicos
     if (Platform.isAndroid) {
@@ -124,6 +141,9 @@ class NotificationService {
       presentAlert: true,
       presentBadge: true,
       presentSound: true,
+      presentBanner: true,
+      presentList: true,
+      interruptionLevel: InterruptionLevel.active,
     );
 
     const NotificationDetails notificationDetails = NotificationDetails(
@@ -132,8 +152,11 @@ class NotificationService {
     );
 
     if (scheduledDate != null) {
-      // Si la fecha programada es en el pasado, no programar
-      if (scheduledDate.isBefore(DateTime.now())) return;
+      // Si la fecha programada es en el pasado o en los próximos 10 segundos, mostrar inmediatamente
+      if (scheduledDate.isBefore(DateTime.now().add(const Duration(seconds: 10)))) {
+        await _notificationsPlugin.show(id, title, body, notificationDetails);
+        return;
+      }
 
       final hasPermission =
           context != null ? await ensureExactAlarmsEnabled(context) : false;

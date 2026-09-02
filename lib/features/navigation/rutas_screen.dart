@@ -166,21 +166,22 @@ class _RutasScreenState extends State<RutasScreen> with TickerProviderStateMixin
   void _iniciarSeguimientoIdle() {
     _idlePositionSubscription?.cancel();
     late LocationSettings settings;
-    if (defaultTargetPlatform == TargetPlatform.iOS) {
+    if (defaultTargetPlatform == TargetPlatform.iOS || defaultTargetPlatform == TargetPlatform.macOS) {
       settings = AppleSettings(
-        accuracy: LocationAccuracy.medium,
-        distanceFilter: 8,
-        pauseLocationUpdatesAutomatically: true,
-        showBackgroundLocationIndicator: false,
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 3,
+        pauseLocationUpdatesAutomatically: false,
+        allowBackgroundLocationUpdates: true,
+        showBackgroundLocationIndicator: true,
       );
     } else if (defaultTargetPlatform == TargetPlatform.android) {
       settings = AndroidSettings(
-        accuracy: LocationAccuracy.medium,
-        distanceFilter: 8,
-        intervalDuration: const Duration(seconds: 4),
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 3,
+        intervalDuration: const Duration(seconds: 2),
       );
     } else {
-      settings = const LocationSettings(accuracy: LocationAccuracy.medium, distanceFilter: 8);
+      settings = const LocationSettings(accuracy: LocationAccuracy.high, distanceFilter: 3);
     }
 
     _idlePositionSubscription = Geolocator.getPositionStream(

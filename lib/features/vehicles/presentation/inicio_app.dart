@@ -44,6 +44,8 @@ import 'dart:async';
 
 import '../../../core/services/notification_service.dart';
 import '../../../core/services/email_service.dart'; // [NUEVO] Alertas mecánicas por correo
+import '../../../core/services/app_update_service.dart';
+import '../../updater/presentation/app_update_lock_screen.dart';
 import '../../../core/services/vehicle_storage_service.dart';
 import '../../../core/logic/app_widget_logic.dart';
 import '../../../core/logic/vehicle_health_logic.dart';
@@ -400,9 +402,61 @@ class _InicioAppState extends State<InicioApp> {
     return double.tryParse(value.toString()) ?? 0.0;
   }
 
+  void _aplicarDatosVehiculo(Map<String, dynamic> row) {
+    _lastCadena = row['last_cadena'] != null ? DateTime.tryParse(row['last_cadena'].toString()) : null;
+    _lastFiltro = row['last_filtro'] != null ? DateTime.tryParse(row['last_filtro'].toString()) : null;
+    _lastAceite = row['last_aceite'] != null ? DateTime.tryParse(row['last_aceite'].toString()) : null;
+    _lastSoat = row['last_soat'] != null ? DateTime.tryParse(row['last_soat'].toString()) : null;
+    _lastTecno = row['last_tecno'] != null ? DateTime.tryParse(row['last_tecno'].toString()) : null;
+
+    final currentKms = _asDouble(row['kms']);
+    final kmc = _asDouble(row['kms_last_cadena']);
+    final kmf = _asDouble(row['kms_last_filtro']);
+    final kma = _asDouble(row['kms_last_aceite']);
+    final marca = (row['marca'] as String? ?? '').toUpperCase();
+    final isCar = marca.contains('CARRO') || (row['apodo'] as String? ?? '').toUpperCase().contains('CARRO');
+
+    _pctCadena = VehicleHealthLogic.calculateHybridPercentage(
+      lastDate: _lastCadena,
+      lastKms: kmc,
+      cycleDays: 15,
+      cycleKms: 500,
+      currentKms: currentKms,
+    );
+    _pctFiltro = VehicleHealthLogic.calculateHybridPercentage(
+      lastDate: _lastFiltro,
+      lastKms: kmf,
+      cycleDays: 90,
+      cycleKms: 5000,
+      currentKms: currentKms,
+    );
+    _pctAceite = VehicleHealthLogic.calculateHybridPercentage(
+      lastDate: _lastAceite,
+      lastKms: kma,
+      cycleDays: 90,
+      cycleKms: isCar ? 5000 : 3000,
+      currentKms: currentKms,
+    );
+    _pctSoat = VehicleHealthLogic.calculateHybridPercentage(
+      lastDate: _lastSoat,
+      lastKms: 0,
+      cycleDays: 365,
+      cycleKms: 1,
+      currentKms: 0,
+    );
+    _pctTecno = VehicleHealthLogic.calculateHybridPercentage(
+      lastDate: _lastTecno,
+      lastKms: 0,
+      cycleDays: 365,
+      cycleKms: 1,
+      currentKms: 0,
+    );
+  }
+
   Future<Map<String, dynamic>> _cargar() async {
     if (!mounted) return {};
     if (_cachedVehicleData != null) {
+      _aplicarDatosVehiculo(_cachedVehicleData!);
       return _cachedVehicleData!;
     }
     try {
@@ -414,6 +468,7 @@ class _InicioAppState extends State<InicioApp> {
           .eq('id', widget.vehiculoId)
           .single();
       _cachedVehicleData = row;
+      _aplicarDatosVehiculo(row);
       return row;
     } catch (e) {
       debugPrint('Error cargando datos del vehículo: $e');
@@ -1421,6 +1476,7 @@ class _InicioAppState extends State<InicioApp> {
 
     // Precargar URLs firmadas antes de pintar la UI
     if (vehicleData.isNotEmpty) {
+      _aplicarDatosVehiculo(vehicleData);
       _soatPath = vehicleData['soat_path'] as String?;
       _tecnoPath = vehicleData['tecno_path'] as String?;
       _seguroPath = vehicleData['seguro_path'] as String?;
@@ -1430,6 +1486,18 @@ class _InicioAppState extends State<InicioApp> {
       if (_tecnoPath != null) _tecnoSigned = await _signedUrlCachedFor(_tecnoPath!);
       if (_seguroPath != null) _seguroSigned = await _signedUrlCachedFor(_seguroPath!);
       if (_propPath != null) _propSigned = await _signedUrlCachedFor(_propPath!);
+
+      unawaited(_syncHealthWidget());
+      unawaited(_verificarYEnviarAlertasMantenimiento());
+
+      // Verificar si hay actualización OTA obligatoria pendiente
+      final update = await AppUpdateService().checkForUpdate();
+      if (update != null && mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => AppUpdateLockScreen(updateInfo: update)),
+        );
+      }
     }
 
     return vehicleData;
@@ -1547,24 +1615,22 @@ class _InicioAppState extends State<InicioApp> {
           );
 
           final vencimiento = remainingDays <= 0
-              ? DateTime.now().add(const Duration(hours: 1))
+              ? DateTime.now()
               : DateTime.now().add(Duration(days: remainingDays));
 
-          if (vencimiento.isAfter(DateTime.now().subtract(const Duration(minutes: 5)))) {
-            if (!mounted) return;
-            await NotificationService().ensureExactAlarmsEnabled(context);
-            if (!mounted) return;
+          if (!mounted) return;
+          await NotificationService().ensureExactAlarmsEnabled(context);
+          if (!mounted) return;
 
-            await NotificationService().showMaintenanceNotification(
-              id: tipo.hashCode,
-              title: remainingDays <= 0 ? '¡Mantenimiento Vencido!' : '¡Mantenimiento próximo!',
-              body: remainingDays <= 0
-                  ? 'El $tipo de tu vehículo ha alcanzado su límite de kilometraje/tiempo.'
-                  : 'Debes realizar el mantenimiento de $tipo en aprox. $remainingDays días.',
-              scheduledDate: vencimiento,
-              context: context,
-            );
-          }
+          await NotificationService().showMaintenanceNotification(
+            id: tipo.hashCode,
+            title: remainingDays <= 0 ? '🚨 ¡$tipo Vencido!' : (remainingDays <= 7 ? '⚠️ ¡$tipo Próximo a Vencer!' : 'Recordatorio de $tipo'),
+            body: remainingDays <= 0
+                ? 'El $tipo de tu vehículo ha alcanzado su límite. Requiere atención inmediata.'
+                : 'Debes realizar el mantenimiento o trámite de $tipo en aprox. $remainingDays días.',
+            scheduledDate: remainingDays <= 0 ? null : vencimiento,
+            context: context,
+          );
         }
 
         final double currentKmsVal = _asDouble(_cachedVehicleData?['kms']);
@@ -1576,13 +1642,13 @@ class _InicioAppState extends State<InicioApp> {
             (_cachedVehicleData?['apodo'] as String? ?? '').toUpperCase().contains('CARRO');
         final double avgKmUsage = isCarVal ? 35.0 : 25.0;
 
-        checkAndSchedule('lubricación de cadena', _lastCadena, 15, 500, kmcVal, currentKmsVal, avgKmUsage);
-        checkAndSchedule('filtro de aire', _lastFiltro, 90, 5000, kmfVal, currentKmsVal, avgKmUsage);
-        checkAndSchedule('cambio de aceite', _lastAceite, 90, isCarVal ? 5000 : 3000, kmaVal, currentKmsVal, avgKmUsage);
+        checkAndSchedule('Lubricación de cadena', _lastCadena, 15, 500, kmcVal, currentKmsVal, avgKmUsage);
+        checkAndSchedule('Filtro de aire', _lastFiltro, 90, 5000, kmfVal, currentKmsVal, avgKmUsage);
+        checkAndSchedule('Cambio de aceite', _lastAceite, 90, isCarVal ? 5000 : 3000, kmaVal, currentKmsVal, avgKmUsage);
         checkAndSchedule('SOAT', _lastSoat, 365, 999999, 0, 0, avgKmUsage);
         checkAndSchedule('Tecnomecánica', _lastTecno, 365, 999999, 0, 0, avgKmUsage);
         
-        // [NUEVO] Alertas por correo de doble nivel (Preventiva 40%-50% / Crítica <10%)
+        // Alertas por correo de doble nivel (Preventiva 40%-50% / Crítica <10%)
         unawaited(_verificarYEnviarAlertasMantenimiento());
       });
     }
@@ -2260,8 +2326,8 @@ class _InicioAppState extends State<InicioApp> {
         final lastSentStr = prefs.getString(lastSentKey);
         final lastSent = lastSentStr != null ? DateTime.tryParse(lastSentStr) : null;
 
-        if (lastSent == null || DateTime.now().difference(lastSent).inDays >= 7) {
-          // A) Enviar correo electrónico de una vez si hay email disponible
+        if (lastSent == null || DateTime.now().difference(lastSent).inHours >= 24) {
+          // A) Enviar correo electrónico si hay email disponible
           if (userEmail != null && userEmail.trim().isNotEmpty) {
             final success = await EmailService.sendMaintenanceAlertEmail(
               toEmail: userEmail.trim(),
@@ -2286,7 +2352,7 @@ class _InicioAppState extends State<InicioApp> {
           await NotificationService().showMaintenanceNotification(
             id: (widget.vehiculoId + key + '_critica').hashCode,
             title: '🚨 ALERTA CRÍTICA: $key',
-            body: 'El servicio de $key en $nickname ha vencido o requiere atención inmediata.',
+            body: 'El servicio o trámite de $key en $nickname ha vencido o requiere atención inmediata.',
             scheduledDate: null, // Disparo inmediato en pantalla de dispositivo móvil
           );
         }
@@ -2297,8 +2363,8 @@ class _InicioAppState extends State<InicioApp> {
         final lastSentStr = prefs.getString(lastSentKey);
         final lastSent = lastSentStr != null ? DateTime.tryParse(lastSentStr) : null;
 
-        if (lastSent == null || DateTime.now().difference(lastSent).inDays >= 7) {
-          // A) Enviar correo electrónico de una vez si hay email disponible
+        if (lastSent == null || DateTime.now().difference(lastSent).inHours >= 24) {
+          // A) Enviar correo electrónico si hay email disponible
           if (userEmail != null && userEmail.trim().isNotEmpty) {
             final success = await EmailService.sendMaintenanceAlertEmail(
               toEmail: userEmail.trim(),
@@ -2323,7 +2389,7 @@ class _InicioAppState extends State<InicioApp> {
           await NotificationService().showMaintenanceNotification(
             id: (widget.vehiculoId + key + '_preventiva').hashCode,
             title: '⚠️ Mantenimiento Próximo: $key',
-            body: 'El servicio de $key en $nickname está próximo a vencerse.',
+            body: 'El servicio o trámite de $key en $nickname está próximo a vencerse.',
             scheduledDate: null, // Disparo inmediato en pantalla de dispositivo móvil
           );
         }
