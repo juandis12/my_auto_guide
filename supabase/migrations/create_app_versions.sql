@@ -61,10 +61,10 @@ INSERT INTO public.app_versions (
     is_mandatory
 )
 VALUES (
-    2,
+    7,
     '1.1.0',
     'https://github.com/juandis12/my_auto_guide/releases/download/v1.1.0/app-release.apk',
-    '• Sistema de Actualizaciones Automáticas OTA integrado\n• Notificaciones y alertas automáticas optimizadas\n• Mejoras generales de rendimiento y estabilidad',
+    '• Mejoras en el sistema ',
     true
 )
 ON CONFLICT (version_code) DO UPDATE 
