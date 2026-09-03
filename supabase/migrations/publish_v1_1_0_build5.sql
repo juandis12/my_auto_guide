@@ -11,10 +11,10 @@ INSERT INTO public.app_versions (
     min_supported_version
 )
 VALUES (
-    6,
+    7,
     '1.1.0',
     'https://github.com/juandis12/my_auto_guide/releases/download/v1.1.0/app-release.apk',
-    '• Buscador inteligente de manuales y fichas técnicas (búsqueda tolerante a espacios y caracteres).\n• Corrección del botón "Recordarme" y auto-login de sesión activa.\n• Soporte de redirección Deep Link para inicio de sesión con Google y Facebook en iOS y Android.\n• Solución definitiva a conflictos de firma de instalación OTA.',
+    '•Mejoras generales en el rendimiento y estabilidad de la aplicación.',
     true,
     1
 )
