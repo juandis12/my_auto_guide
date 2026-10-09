@@ -86,5 +86,9 @@
 	<string>Necesitamos acceso a tu galería de fotos para subir imágenes de tu vehículo y documentos.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Necesitamos acceso al micrófono para el correcto funcionamiento de la cámara.</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Necesitamos acceso al Bluetooth para conectarnos a tu escáner OBD2 (ScanMate) y leer los datos del vehículo en tiempo real.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>Necesitamos acceso al Bluetooth para conectarnos a tu escáner OBD2 (ScanMate) y leer los datos del vehículo en tiempo real.</string>
 </dict>
 </plist>
