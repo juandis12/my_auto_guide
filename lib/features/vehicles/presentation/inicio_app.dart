@@ -82,6 +82,7 @@ import 'Agregar_carro.dart';
 import '../../../core/services/supabase_service.dart';
 import '../../../core/services/odometer_history_service.dart';
 import 'widgets/insurance_picker_sheet.dart';
+import '../../obd_scanner/presentation/screens/scanner_dashboard_screen.dart';
 
 // Modelos Refactorizados
 import '../domain/models/vehicle_analytics.dart';
@@ -2351,6 +2352,15 @@ class _InicioAppState extends State<InicioApp> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SectionTitle(text: 'Herramientas y Servicios'),
+                      const SizedBox(height: 12),
+                      GradientButton(
+                          icon: Icons.settings_bluetooth_rounded,
+                          text: 'Diagnóstico OBD2 (Scanner)',
+                          onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => const ScannerDashboardScreen())),
+                          brandTheme: bTheme),
                       const SizedBox(height: 12),
                       GradientButton(
                           icon: Icons.map_rounded,
