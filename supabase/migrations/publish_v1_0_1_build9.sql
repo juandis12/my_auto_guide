@@ -25,4 +25,3 @@ SET
     release_notes = EXCLUDED.release_notes,
     is_mandatory = EXCLUDED.is_mandatory,
     min_supported_version = EXCLUDED.min_supported_version;
-

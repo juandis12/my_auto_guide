@@ -22,6 +22,7 @@ import '../../core/services/supabase_service.dart';
 import '../../core/theme/app_apple_theme.dart';
 import '../../shared/widgets/app_snack_bar.dart';
 import '../vehicles/domain/models/insurance_company_model.dart';
+import '../vehicles/presentation/widgets/insurance_picker_sheet.dart';
 import 'data/models/guide_protocol_model.dart';
 import 'data/models/guide_video_model.dart';
 import 'data/repositories/guide_storage_repository.dart';
@@ -338,134 +339,51 @@ class _AccidenteScreenState extends State<AccidenteScreen> {
     }
   }
 
-  void _mostrarSheetAsignarAseguradora() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+  Future<void> _mostrarSheetAsignarAseguradora() async {
     final isMoto = (_vehiculoData?['marca'] as String? ?? '')
             .toLowerCase()
             .contains('moto') ||
         (_vehiculoData?['modelo'] as String? ?? '')
             .toLowerCase()
             .contains('moto');
-    final opciones =
-        InsuranceCatalogService.getInsurersForSelection(isMoto: isMoto);
 
-    String tempId = _insuranceCompany?.id ?? InsuranceCatalogService.noneId;
-    int initialIndex = opciones.indexWhere((o) => o.id == tempId);
-    if (initialIndex < 0) initialIndex = 0;
-    int tempIndex = initialIndex;
-
-    showCupertinoModalPopup<void>(
+    final selected = await InsurancePickerSheet.show(
       context: context,
-      builder: (modalCtx) {
-        return Container(
-          height: 340,
-          color: isDark ? const Color(0xFF1C1C1E) : CupertinoColors.systemBackground,
-          child: SafeArea(
-            top: false,
-            child: Column(
-              children: [
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                        color: isDark ? Colors.white12 : Colors.black12,
-                        width: 0.5,
-                      ),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      CupertinoButton(
-                        padding: EdgeInsets.zero,
-                        child: const Text('Cancelar',
-                            style: TextStyle(color: CupertinoColors.systemGrey)),
-                        onPressed: () => Navigator.of(modalCtx).pop(),
-                      ),
-                      Text(
-                        'Seleccionar Aseguradora',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: isDark ? Colors.white : Colors.black87,
-                        ),
-                      ),
-                      CupertinoButton(
-                        padding: EdgeInsets.zero,
-                        child: const Text('Guardar',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF035880),
-                            )),
-                        onPressed: () async {
-                          final selected = opciones[tempIndex];
-                          Navigator.of(modalCtx).pop();
-                          if (_vehiculoId != null) {
-                            try {
-                              await SupabaseService().updateInsuranceCompany(
-                                _vehiculoId!,
-                                selected.id,
-                              );
-                              setState(() {
-                                if (selected.id ==
-                                    InsuranceCatalogService.noneId) {
-                                  _insuranceCompany = null;
-                                  _hasNoInsurance = true;
-                                } else {
-                                  _insuranceCompany = selected;
-                                  _hasNoInsurance = false;
-                                }
-                              });
-                              if (mounted) {
-                                AppSnackBar.show(
-                                  context,
-                                  'Aseguradora actualizada a ${selected.name}',
-                                );
-                              }
-                            } catch (e) {
-                              if (mounted) {
-                                AppSnackBar.show(
-                                    context, 'Error al guardar aseguradora: $e');
-                              }
-                            }
-                          }
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: CupertinoPicker(
-                    scrollController: FixedExtentScrollController(
-                        initialItem: initialIndex),
-                    itemExtent: 44,
-                    onSelectedItemChanged: (index) => tempIndex = index,
-                    children: opciones.map((c) {
-                      final isNone = c.id == InsuranceCatalogService.noneId;
-                      return Center(
-                        child: Text(
-                          c.name,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight:
-                                isNone ? FontWeight.w500 : FontWeight.w600,
-                            color: isNone
-                                ? (isDark ? Colors.white70 : Colors.black54)
-                                : (isDark ? Colors.white : const Color(0xFF035880)),
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
+      currentId: _insuranceCompany?.id ?? InsuranceCatalogService.noneId,
+      isMoto: isMoto,
+      title: 'Seleccionar Aseguradora',
+      confirmButtonText: 'Guardar',
     );
+
+    if (selected == null || !mounted) return;
+
+    if (_vehiculoId != null) {
+      try {
+        await SupabaseService().updateInsuranceCompany(
+          _vehiculoId!,
+          selected.id,
+        );
+        setState(() {
+          if (selected.id == InsuranceCatalogService.noneId) {
+            _insuranceCompany = null;
+            _hasNoInsurance = true;
+          } else {
+            _insuranceCompany = selected;
+            _hasNoInsurance = false;
+          }
+        });
+        if (mounted) {
+          AppSnackBar.show(
+            context,
+            'Aseguradora actualizada a ${selected.name}',
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          AppSnackBar.show(context, 'Error al guardar aseguradora: $e');
+        }
+      }
+    }
   }
 
   Future<void> _togglePaso(int index) async {
@@ -887,3 +805,4 @@ class _AccidenteScreenState extends State<AccidenteScreen> {
       ),
     );
   }
+}

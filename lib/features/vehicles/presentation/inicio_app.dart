@@ -81,6 +81,7 @@ import 'Agregar_vehiculo.dart';
 import 'Agregar_carro.dart';
 import '../../../core/services/supabase_service.dart';
 import '../../../core/services/odometer_history_service.dart';
+import 'widgets/insurance_picker_sheet.dart';
 
 // Modelos Refactorizados
 import '../domain/models/vehicle_analytics.dart';
@@ -467,7 +468,7 @@ class _InicioAppState extends State<InicioApp> {
       final row = await supabase
           .from('vehiculos')
           .select(
-            'marca, modelo, apodo, kms, image_path, last_cadena, last_filtro, last_aceite, last_soat, last_tecno, soat_path, tecno_path, seguro_path, propiedad_path, kms_last_cadena, kms_last_filtro, kms_last_aceite, placa, cedula, simit_status, simit_fines_data, simit_last_check, has_360_view, images_360_urls',
+            'marca, modelo, apodo, kms, image_path, last_cadena, last_filtro, last_aceite, last_soat, last_tecno, soat_path, tecno_path, seguro_path, propiedad_path, kms_last_cadena, kms_last_filtro, kms_last_aceite, placa, cedula, aseguradora_id, simit_status, simit_fines_data, simit_last_check, has_360_view, images_360_urls',
           )
           .eq('id', widget.vehiculoId)
           .single();
@@ -1463,140 +1464,63 @@ class _InicioAppState extends State<InicioApp> {
     );
   }
 
-  void _cambiarAseguradoraVehiculo() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final marcaVal =
+  Future<void> _cambiarAseguradoraVehiculo() async {
+    final String marcaVal =
         (_cachedVehicleData?['marca'] as String? ?? '').toLowerCase();
-    final bool isMoto = marcaVal.contains('moto') ||
-        marcaVal.contains('yamaha') ||
-        marcaVal.contains('suzuki') ||
-        marcaVal.contains('honda') ||
-        marcaVal.contains('kawasaki') ||
-        marcaVal.contains('ktm') ||
-        marcaVal.contains('bajaj') ||
-        marcaVal.contains('ducati');
-
-    final opciones =
-        InsuranceCatalogService.getInsurersForSelection(isMoto: isMoto);
+    final String apodoVal =
+        (_cachedVehicleData?['apodo'] as String? ?? '').toLowerCase();
+    final bool isMoto = !apodoVal.contains('carro') &&
+        (marcaVal.contains('moto') ||
+            marcaVal.contains('yamaha') ||
+            marcaVal.contains('suzuki') ||
+            marcaVal.contains('honda') ||
+            marcaVal.contains('kawasaki') ||
+            marcaVal.contains('ktm') ||
+            marcaVal.contains('bajaj') ||
+            marcaVal.contains('ducati') ||
+            marcaVal.contains('akt') ||
+            marcaVal.contains('bmw'));
 
     final String currentId = _cachedVehicleData?['aseguradora_id'] as String? ??
         InsuranceCatalogService.noneId;
-    int initialIndex = opciones.indexWhere((o) => o.id == currentId);
-    if (initialIndex < 0) initialIndex = 0;
-    int tempIndex = initialIndex;
 
-    showCupertinoModalPopup<void>(
+    final selected = await InsurancePickerSheet.show(
       context: context,
-      builder: (modalCtx) {
-        return Container(
-          height: 330,
-          color: isDark
-              ? const Color(0xFF1C1C1E)
-              : CupertinoColors.systemBackground,
-          child: SafeArea(
-            top: false,
-            child: Column(
-              children: [
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                        color: isDark ? Colors.white12 : Colors.black12,
-                        width: 0.5,
-                      ),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      CupertinoButton(
-                        padding: EdgeInsets.zero,
-                        child: const Text('Cancelar',
-                            style: TextStyle(color: CupertinoColors.systemGrey)),
-                        onPressed: () => Navigator.of(modalCtx).pop(),
-                      ),
-                      Text(
-                        'Aseguradora Todo Riesgo',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: isDark ? Colors.white : Colors.black87,
-                        ),
-                      ),
-                      CupertinoButton(
-                        padding: EdgeInsets.zero,
-                        child: const Text('Guardar',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF035880),
-                            )),
-                        onPressed: () async {
-                          final selected = opciones[tempIndex];
-                          Navigator.of(modalCtx).pop();
-                          try {
-                            await SupabaseService().updateInsuranceCompany(
-                              widget.vehiculoId,
-                              selected.id,
-                            );
-                            setState(() {
-                              if (_cachedVehicleData != null) {
-                                _cachedVehicleData!['aseguradora_id'] =
-                                    selected.id == InsuranceCatalogService.noneId
-                                        ? null
-                                        : selected.id;
-                              }
-                            });
-                            if (mounted) {
-                              AppSnackBar.show(
-                                context,
-                                'Aseguradora actualizada a ${selected.name}',
-                              );
-                            }
-                          } catch (e) {
-                            if (mounted) {
-                              AppSnackBar.show(
-                                context,
-                                'Error al actualizar aseguradora: $e',
-                              );
-                            }
-                          }
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: CupertinoPicker(
-                    scrollController: FixedExtentScrollController(
-                        initialItem: initialIndex),
-                    itemExtent: 44,
-                    onSelectedItemChanged: (index) => tempIndex = index,
-                    children: opciones.map((c) {
-                      final isNone = c.id == InsuranceCatalogService.noneId;
-                      return Center(
-                        child: Text(
-                          c.name,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight:
-                                isNone ? FontWeight.w500 : FontWeight.w600,
-                            color: isNone
-                                ? (isDark ? Colors.white70 : Colors.black54)
-                                : (isDark ? Colors.white : const Color(0xFF035880)),
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
+      currentId: currentId,
+      isMoto: isMoto,
+      title: 'Aseguradora Todo Riesgo',
+      confirmButtonText: 'Guardar',
     );
+
+    if (selected == null || !mounted) return;
+
+    try {
+      await SupabaseService().updateInsuranceCompany(
+        widget.vehiculoId,
+        selected.id,
+      );
+      setState(() {
+        if (_cachedVehicleData != null) {
+          _cachedVehicleData!['aseguradora_id'] =
+              selected.id == InsuranceCatalogService.noneId
+                  ? null
+                  : selected.id;
+        }
+      });
+      if (mounted) {
+        AppSnackBar.show(
+          context,
+          'Aseguradora actualizada a ${selected.name}',
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        AppSnackBar.show(
+          context,
+          'Error al actualizar aseguradora: $e',
+        );
+      }
+    }
   }
 
   Widget _buildInsuranceBanner(bool isDark) {
@@ -1604,92 +1528,185 @@ class _InicioAppState extends State<InicioApp> {
     final InsuranceCompany? company = InsuranceCatalogService.findById(insId);
     final bool hasInsurance = company != null;
 
+    const primaryColor = Color(0xFF035880);
+    const accentCyan = Color(0xFF38BDF8);
+
     return Container(
       margin: const EdgeInsets.only(top: 14),
-      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: isDark
-            ? Colors.white.withOpacity(0.04)
-            : Colors.black.withOpacity(0.02),
+            ? const Color(0xFF1E293B).withValues(alpha: 0.65)
+            : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: hasInsurance
-              ? const Color(0xFF035880).withOpacity(0.3)
+              ? (isDark
+                  ? accentCyan.withValues(alpha: 0.3)
+                  : primaryColor.withValues(alpha: 0.25))
               : (isDark ? Colors.white12 : Colors.black12),
+          width: 1.1,
         ),
+        boxShadow: isDark
+            ? []
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 10,
+                  offset: const Offset(0, 3),
+                ),
+              ],
       ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: (hasInsurance ? const Color(0xFF035880) : Colors.grey)
-                  .withOpacity(0.12),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              hasInsurance
-                  ? Icons.verified_user_rounded
-                  : Icons.shield_outlined,
-              color: hasInsurance
-                  ? const Color(0xFF035880)
-                  : (isDark ? Colors.white54 : Colors.grey),
-              size: 20,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: _cambiarAseguradoraVehiculo,
+          child: Padding(
+            padding: const EdgeInsets.all(14),
+            child: Row(
               children: [
-                Text(
-                  'Aseguradora Todo Riesgo',
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white54 : Colors.black54,
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: hasInsurance
+                          ? [
+                              const Color(0xFF035880),
+                              const Color(0xFF0284C7),
+                            ]
+                          : (isDark
+                              ? [Colors.white12, Colors.white10]
+                              : [Colors.grey.shade200, Colors.grey.shade300]),
+                    ),
+                    shape: BoxShape.circle,
+                    boxShadow: hasInsurance
+                        ? [
+                            BoxShadow(
+                              color: const Color(0xFF0284C7)
+                                  .withValues(alpha: 0.25),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ]
+                        : null,
+                  ),
+                  child: Icon(
+                    hasInsurance
+                        ? Icons.verified_user_rounded
+                        : Icons.shield_outlined,
+                    color: hasInsurance
+                        ? Colors.white
+                        : (isDark ? Colors.white54 : Colors.grey.shade600),
+                    size: 22,
                   ),
                 ),
-                const SizedBox(height: 2),
-                Text(
-                  hasInsurance
-                      ? company.name
-                      : 'No configurada (Sin todo riesgo)',
-                  style: TextStyle(
-                    fontSize: 13.5,
-                    fontWeight: FontWeight.bold,
-                    color: isDark ? Colors.white : Colors.black87,
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            'ASEGURADORA TODO RIESGO',
+                            style: TextStyle(
+                              fontSize: 10.5,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 0.6,
+                              color: hasInsurance
+                                  ? (isDark ? accentCyan : primaryColor)
+                                  : (isDark ? Colors.white54 : Colors.black45),
+                            ),
+                          ),
+                          if (hasInsurance) ...[
+                            const SizedBox(width: 6),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 6, vertical: 1.5),
+                              decoration: BoxDecoration(
+                                color: (isDark ? accentCyan : primaryColor)
+                                    .withValues(alpha: 0.12),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: Text(
+                                'Activa',
+                                style: TextStyle(
+                                  fontSize: 9.5,
+                                  fontWeight: FontWeight.bold,
+                                  color: isDark ? accentCyan : primaryColor,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        hasInsurance
+                            ? company.name
+                            : 'Sin configurar (Toca para asignar)',
+                        style: TextStyle(
+                          fontSize: 14.5,
+                          fontWeight: FontWeight.w700,
+                          color: isDark ? Colors.white : Colors.black87,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      if (hasInsurance && company.emergencyPhone.isNotEmpty) ...[
+                        const SizedBox(height: 2),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.phone_rounded,
+                              size: 11,
+                              color: isDark ? Colors.white54 : Colors.black45,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              'Asistencia: ${company.emergencyPhone}',
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: isDark ? Colors.white60 : Colors.black54,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ],
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                  decoration: BoxDecoration(
+                    color: (isDark ? accentCyan : primaryColor)
+                        .withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: (isDark ? accentCyan : primaryColor)
+                          .withValues(alpha: 0.25),
+                      width: 1,
+                    ),
+                  ),
+                  child: Text(
+                    hasInsurance ? 'Cambiar' : 'Asignar',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: isDark ? accentCyan : primaryColor,
+                    ),
+                  ),
                 ),
               ],
             ),
           ),
-          OutlinedButton(
-            onPressed: _cambiarAseguradoraVehiculo,
-            style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              minimumSize: Size.zero,
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              side: BorderSide(
-                color: isDark ? Colors.white24 : Colors.black26,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-            child: Text(
-              hasInsurance ? 'Cambiar' : 'Asignar',
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: isDark ? Colors.white70 : const Color(0xFF035880),
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
