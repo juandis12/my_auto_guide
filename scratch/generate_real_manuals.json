@@ -1,0 +1,5 @@
+{
+  "projectId": "17134313066825784110",
+  "deviceType": "MOBILE",
+  "prompt": "Exact 1:1 Mobile UI screen for MY AUTO GUIDE 'Manuales & Fichas Técnicas' (lib/features/manuals/presentation/manuales_screen.dart). Theme: Apple HIG Dynamic Midnight (#080C14 background, glass surfaces #0F172A). Apple Large Title SliverAppBar: 'Manuales de Taller' with blur effect. Search bar with search icon: 'Buscar manual por modelo o cilindrada...'. Horizontal Brand Filter Pills: 'Todas' (active cyan pill), 'Yamaha', 'Honda', 'Suzuki', 'Kawasaki', 'Bajaj', 'KTM', 'BMW'. List of Manual Cards: 1. 'Manual de Taller Yamaha MT-09 (2021-2024)' (PDF • 48.5 MB • Idioma: Español • Esquema Eléctrico Completo), 2. 'Manual de Propietario Suzuki Gixxer 250' (PDF • 12.2 MB • Guía Mantenimiento), 3. 'Manual de Servicio Kawasaki Ninja 400' (PDF • 34.8 MB). Each card features a technical manual cover thumbnail, page count, and glowing 'Ver Manual PDF' action button."
+}

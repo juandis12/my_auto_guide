@@ -1,0 +1,5 @@
+{
+  "projectId": "17134313066825784110",
+  "deviceType": "MOBILE",
+  "prompt": "Exact 1:1 Mobile UI screen for MY AUTO GUIDE 'Marketplace de Talleres' (lib/features/marketplace/presentation/marketplace_talleres_screen.dart). Theme: Dynamic Midnight (#080C14 background, slate surfaces #0F172A). AppBar: Title 'Marketplace de Talleres'. Top Special Offer Banner: Teal/Emerald gradient card (15% OFF en Frenos - Beneficio My Auto Guide, Válido en talleres aliados por diagnóstico de tu IA) with white QR Code icon in circular container. Section Header: 'Recomendados por tu IA'. Vertical List of Workshop Cards (_WorkshopCard): 1. 'Taller Central Specialized' (Mecánica General • Motos, 4.8 stars, 1.2 km away, workshop photo), 2. 'Auto Fix Elite' (Frenos y Suspensión • Carros, 4.9 stars, 2.5 km away, workshop photo), 3. 'LubriExpress Premium' (Cambio de Aceite, 4.5 stars, 0.8 km away, workshop photo). Each card has distance badge, star rating, and glassmorphic outline. Clean Colombian automotive aesthetic."
+}

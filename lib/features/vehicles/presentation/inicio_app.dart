@@ -29,6 +29,7 @@
 //
 // =============================================================================
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:photo_view/photo_view.dart';
@@ -41,6 +42,9 @@ import 'package:http/http.dart' as http;
 import 'package:printing/printing.dart';
 import 'dart:io';
 import 'dart:async';
+
+import '../../../core/services/insurance_catalog_service.dart';
+import '../domain/models/insurance_company_model.dart';
 
 import '../../../core/services/notification_service.dart';
 import '../../../core/services/email_service.dart'; // [NUEVO] Alertas mecánicas por correo
@@ -943,7 +947,8 @@ class _InicioAppState extends State<InicioApp> {
   void _abrirGuias() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => const GuiaScreen()),
+      MaterialPageRoute(
+          builder: (_) => GuiaScreen(vehiculoId: widget.vehiculoId)),
     );
   }
 
@@ -1455,6 +1460,237 @@ class _InicioAppState extends State<InicioApp> {
           },
         );
       },
+    );
+  }
+
+  void _cambiarAseguradoraVehiculo() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final marcaVal =
+        (_cachedVehicleData?['marca'] as String? ?? '').toLowerCase();
+    final bool isMoto = marcaVal.contains('moto') ||
+        marcaVal.contains('yamaha') ||
+        marcaVal.contains('suzuki') ||
+        marcaVal.contains('honda') ||
+        marcaVal.contains('kawasaki') ||
+        marcaVal.contains('ktm') ||
+        marcaVal.contains('bajaj') ||
+        marcaVal.contains('ducati');
+
+    final opciones =
+        InsuranceCatalogService.getInsurersForSelection(isMoto: isMoto);
+
+    final String currentId = _cachedVehicleData?['aseguradora_id'] as String? ??
+        InsuranceCatalogService.noneId;
+    int initialIndex = opciones.indexWhere((o) => o.id == currentId);
+    if (initialIndex < 0) initialIndex = 0;
+    int tempIndex = initialIndex;
+
+    showCupertinoModalPopup<void>(
+      context: context,
+      builder: (modalCtx) {
+        return Container(
+          height: 330,
+          color: isDark
+              ? const Color(0xFF1C1C1E)
+              : CupertinoColors.systemBackground,
+          child: SafeArea(
+            top: false,
+            child: Column(
+              children: [
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color: isDark ? Colors.white12 : Colors.black12,
+                        width: 0.5,
+                      ),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      CupertinoButton(
+                        padding: EdgeInsets.zero,
+                        child: const Text('Cancelar',
+                            style: TextStyle(color: CupertinoColors.systemGrey)),
+                        onPressed: () => Navigator.of(modalCtx).pop(),
+                      ),
+                      Text(
+                        'Aseguradora Todo Riesgo',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: isDark ? Colors.white : Colors.black87,
+                        ),
+                      ),
+                      CupertinoButton(
+                        padding: EdgeInsets.zero,
+                        child: const Text('Guardar',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF035880),
+                            )),
+                        onPressed: () async {
+                          final selected = opciones[tempIndex];
+                          Navigator.of(modalCtx).pop();
+                          try {
+                            await SupabaseService().updateInsuranceCompany(
+                              widget.vehiculoId,
+                              selected.id,
+                            );
+                            setState(() {
+                              if (_cachedVehicleData != null) {
+                                _cachedVehicleData!['aseguradora_id'] =
+                                    selected.id == InsuranceCatalogService.noneId
+                                        ? null
+                                        : selected.id;
+                              }
+                            });
+                            if (mounted) {
+                              AppSnackBar.show(
+                                context,
+                                'Aseguradora actualizada a ${selected.name}',
+                              );
+                            }
+                          } catch (e) {
+                            if (mounted) {
+                              AppSnackBar.show(
+                                context,
+                                'Error al actualizar aseguradora: $e',
+                              );
+                            }
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: CupertinoPicker(
+                    scrollController: FixedExtentScrollController(
+                        initialItem: initialIndex),
+                    itemExtent: 44,
+                    onSelectedItemChanged: (index) => tempIndex = index,
+                    children: opciones.map((c) {
+                      final isNone = c.id == InsuranceCatalogService.noneId;
+                      return Center(
+                        child: Text(
+                          c.name,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight:
+                                isNone ? FontWeight.w500 : FontWeight.w600,
+                            color: isNone
+                                ? (isDark ? Colors.white70 : Colors.black54)
+                                : (isDark ? Colors.white : const Color(0xFF035880)),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildInsuranceBanner(bool isDark) {
+    final String? insId = _cachedVehicleData?['aseguradora_id'] as String?;
+    final InsuranceCompany? company = InsuranceCatalogService.findById(insId);
+    final bool hasInsurance = company != null;
+
+    return Container(
+      margin: const EdgeInsets.only(top: 14),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: isDark
+            ? Colors.white.withOpacity(0.04)
+            : Colors.black.withOpacity(0.02),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: hasInsurance
+              ? const Color(0xFF035880).withOpacity(0.3)
+              : (isDark ? Colors.white12 : Colors.black12),
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: (hasInsurance ? const Color(0xFF035880) : Colors.grey)
+                  .withOpacity(0.12),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              hasInsurance
+                  ? Icons.verified_user_rounded
+                  : Icons.shield_outlined,
+              color: hasInsurance
+                  ? const Color(0xFF035880)
+                  : (isDark ? Colors.white54 : Colors.grey),
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Aseguradora Todo Riesgo',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? Colors.white54 : Colors.black54,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  hasInsurance
+                      ? company.name
+                      : 'No configurada (Sin todo riesgo)',
+                  style: TextStyle(
+                    fontSize: 13.5,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white : Colors.black87,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+          OutlinedButton(
+            onPressed: _cambiarAseguradoraVehiculo,
+            style: OutlinedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              minimumSize: Size.zero,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              side: BorderSide(
+                color: isDark ? Colors.white24 : Colors.black26,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            child: Text(
+              hasInsurance ? 'Cambiar' : 'Asignar',
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: isDark ? Colors.white70 : const Color(0xFF035880),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -2006,6 +2242,7 @@ class _InicioAppState extends State<InicioApp> {
                                                     fileName: 'Tarjeta de Propiedad')))),
                               ],
                             ),
+                            _buildInsuranceBanner(isDark),
                           ],
                         ),
                       ),

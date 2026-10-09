@@ -15,9 +15,13 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+import '../../core/services/insurance_catalog_service.dart';
+import '../../core/services/supabase_service.dart';
 import '../../core/theme/app_apple_theme.dart';
 import '../../shared/widgets/app_snack_bar.dart';
+import '../vehicles/domain/models/insurance_company_model.dart';
 import 'data/models/guide_protocol_model.dart';
 import 'data/models/guide_video_model.dart';
 import 'data/repositories/guide_storage_repository.dart';
@@ -31,7 +35,9 @@ import 'presentation/widgets/ios_video_card.dart';
 //                   PANTALLA PRINCIPAL DE GUÍAS
 // =============================================================
 class GuiaScreen extends StatefulWidget {
-  const GuiaScreen({super.key});
+  final String? vehiculoId;
+
+  const GuiaScreen({super.key, this.vehiculoId});
 
   @override
   State<GuiaScreen> createState() => _GuiaScreenState();
@@ -71,6 +77,7 @@ class _GuiaScreenState extends State<GuiaScreen> {
           color: protocol.accentColor,
           pasos: protocol.steps,
           protocol: protocol,
+          vehiculoId: widget.vehiculoId,
         ),
       ),
     );
@@ -175,6 +182,7 @@ class AccidenteScreen extends StatefulWidget {
   final Color color;
   final List<String> pasos;
   final GuideProtocol? protocol;
+  final String? vehiculoId;
 
   const AccidenteScreen({
     super.key,
@@ -182,6 +190,7 @@ class AccidenteScreen extends StatefulWidget {
     required this.color,
     required this.pasos,
     this.protocol,
+    this.vehiculoId,
   });
 
   @override
@@ -196,6 +205,11 @@ class _AccidenteScreenState extends State<AccidenteScreen> {
   List<bool> _pasosCompletos = [];
   List<File> _imagenes = [];
   bool _isLoading = true;
+
+  String? _vehiculoId;
+  Map<String, dynamic>? _vehiculoData;
+  InsuranceCompany? _insuranceCompany;
+  bool _hasNoInsurance = false;
 
   @override
   void initState() {
@@ -225,6 +239,34 @@ class _AccidenteScreenState extends State<AccidenteScreen> {
     );
     final photos = await _repository.loadEvidencePhotos(_activeProtocol.id);
 
+    // Cargar datos de la aseguradora del vehículo
+    _vehiculoId = widget.vehiculoId;
+    try {
+      if (_vehiculoId != null && _vehiculoId!.isNotEmpty) {
+        _vehiculoData = await SupabaseService().getVehicleById(_vehiculoId!);
+      }
+      if (_vehiculoData == null) {
+        final vehs = await SupabaseService().getVehicles();
+        if (vehs.isNotEmpty) {
+          _vehiculoData = vehs.first;
+          _vehiculoId = _vehiculoData?['id'] as String?;
+        }
+      }
+
+      final String? insId = _vehiculoData?['aseguradora_id'] as String?;
+      if (insId != null &&
+          insId.isNotEmpty &&
+          insId != InsuranceCatalogService.noneId) {
+        _insuranceCompany = InsuranceCatalogService.findById(insId);
+        _hasNoInsurance = false;
+      } else {
+        _insuranceCompany = null;
+        _hasNoInsurance = true;
+      }
+    } catch (e) {
+      debugPrint('Error cargando aseguradora en AccidenteScreen: $e');
+    }
+
     if (mounted) {
       setState(() {
         _pasosCompletos = steps;
@@ -232,6 +274,198 @@ class _AccidenteScreenState extends State<AccidenteScreen> {
         _isLoading = false;
       });
     }
+  }
+
+  Future<void> _contactarAseguradora() async {
+    if (_insuranceCompany == null) {
+      _mostrarSheetAsignarAseguradora();
+      return;
+    }
+
+    final company = _insuranceCompany!;
+
+    // 1. Prioridad: WhatsApp directo
+    if (company.whatsappUrl != null) {
+      try {
+        final waUri = Uri.parse(company.whatsappUrl!);
+        if (await canLaunchUrl(waUri)) {
+          await launchUrl(waUri, mode: LaunchMode.externalApplication);
+          return;
+        }
+      } catch (e) {
+        debugPrint('Error abriendo WhatsApp aseguradora: $e');
+      }
+    }
+
+    // 2. Fallback: Portal web oficial de siniestros
+    if (company.webClaimsUrl.isNotEmpty) {
+      try {
+        final webUri = Uri.parse(company.webClaimsUrl);
+        if (await canLaunchUrl(webUri)) {
+          await launchUrl(webUri, mode: LaunchMode.externalApplication);
+          return;
+        }
+      } catch (e) {
+        debugPrint('Error abriendo web aseguradora: $e');
+      }
+    }
+
+    // 3. Fallback: Marcación telefónica directa
+    try {
+      final phoneUri = Uri.parse(company.callUrl);
+      if (await canLaunchUrl(phoneUri)) {
+        await launchUrl(phoneUri);
+        return;
+      }
+    } catch (_) {}
+
+    if (mounted) {
+      AppSnackBar.show(
+        context,
+        'Línea de emergencia ${company.name}: ${company.emergencyPhone}',
+      );
+    }
+  }
+
+  Future<void> _llamarLineaEmergencia(String tel) async {
+    try {
+      final uri = Uri.parse('tel:$tel');
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri);
+      }
+    } catch (e) {
+      debugPrint('Error al marcar $tel: $e');
+    }
+  }
+
+  void _mostrarSheetAsignarAseguradora() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isMoto = (_vehiculoData?['marca'] as String? ?? '')
+            .toLowerCase()
+            .contains('moto') ||
+        (_vehiculoData?['modelo'] as String? ?? '')
+            .toLowerCase()
+            .contains('moto');
+    final opciones =
+        InsuranceCatalogService.getInsurersForSelection(isMoto: isMoto);
+
+    String tempId = _insuranceCompany?.id ?? InsuranceCatalogService.noneId;
+    int initialIndex = opciones.indexWhere((o) => o.id == tempId);
+    if (initialIndex < 0) initialIndex = 0;
+    int tempIndex = initialIndex;
+
+    showCupertinoModalPopup<void>(
+      context: context,
+      builder: (modalCtx) {
+        return Container(
+          height: 340,
+          color: isDark ? const Color(0xFF1C1C1E) : CupertinoColors.systemBackground,
+          child: SafeArea(
+            top: false,
+            child: Column(
+              children: [
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color: isDark ? Colors.white12 : Colors.black12,
+                        width: 0.5,
+                      ),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      CupertinoButton(
+                        padding: EdgeInsets.zero,
+                        child: const Text('Cancelar',
+                            style: TextStyle(color: CupertinoColors.systemGrey)),
+                        onPressed: () => Navigator.of(modalCtx).pop(),
+                      ),
+                      Text(
+                        'Seleccionar Aseguradora',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: isDark ? Colors.white : Colors.black87,
+                        ),
+                      ),
+                      CupertinoButton(
+                        padding: EdgeInsets.zero,
+                        child: const Text('Guardar',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF035880),
+                            )),
+                        onPressed: () async {
+                          final selected = opciones[tempIndex];
+                          Navigator.of(modalCtx).pop();
+                          if (_vehiculoId != null) {
+                            try {
+                              await SupabaseService().updateInsuranceCompany(
+                                _vehiculoId!,
+                                selected.id,
+                              );
+                              setState(() {
+                                if (selected.id ==
+                                    InsuranceCatalogService.noneId) {
+                                  _insuranceCompany = null;
+                                  _hasNoInsurance = true;
+                                } else {
+                                  _insuranceCompany = selected;
+                                  _hasNoInsurance = false;
+                                }
+                              });
+                              if (mounted) {
+                                AppSnackBar.show(
+                                  context,
+                                  'Aseguradora actualizada a ${selected.name}',
+                                );
+                              }
+                            } catch (e) {
+                              if (mounted) {
+                                AppSnackBar.show(
+                                    context, 'Error al guardar aseguradora: $e');
+                              }
+                            }
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: CupertinoPicker(
+                    scrollController: FixedExtentScrollController(
+                        initialItem: initialIndex),
+                    itemExtent: 44,
+                    onSelectedItemChanged: (index) => tempIndex = index,
+                    children: opciones.map((c) {
+                      final isNone = c.id == InsuranceCatalogService.noneId;
+                      return Center(
+                        child: Text(
+                          c.name,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight:
+                                isNone ? FontWeight.w500 : FontWeight.w600,
+                            color: isNone
+                                ? (isDark ? Colors.white70 : Colors.black54)
+                                : (isDark ? Colors.white : const Color(0xFF035880)),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   Future<void> _togglePaso(int index) async {
@@ -449,9 +683,207 @@ class _AccidenteScreenState extends State<AccidenteScreen> {
                   ),
                 ),
 
+                // Tarjeta de Contacto con Aseguradora (Solo en Accidente Leve y Grave)
+                if (_activeProtocol.id == 'leve' || _activeProtocol.id == 'grave')
+                  SliverToBoxAdapter(
+                    child: _buildInsuranceContactCard(isDark),
+                  ),
+
                 const SliverToBoxAdapter(child: SizedBox(height: 40)),
               ],
             ),
     );
   }
-}
+
+  Widget _buildInsuranceContactCard(bool isDark) {
+    final company = _insuranceCompany;
+    final hasCompany = company != null;
+    final hasWa = company?.whatsappUrl != null;
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E2430) : Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(
+          color: hasCompany
+              ? _activeProtocol.accentColor.withValues(alpha: 0.3)
+              : Colors.amber.withValues(alpha: 0.3),
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: (hasCompany
+                          ? (hasWa ? const Color(0xFF25D366) : const Color(0xFF035880))
+                          : Colors.amber)
+                      .withValues(alpha: 0.15),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  hasCompany
+                      ? (hasWa ? Icons.chat_bubble_rounded : Icons.language_rounded)
+                      : Icons.shield_outlined,
+                  color: hasCompany
+                      ? (hasWa ? const Color(0xFF25D366) : const Color(0xFF035880))
+                      : Colors.amber,
+                  size: 22,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'ASISTENCIA DE ASEGURADORA',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 0.5,
+                        color: isDark ? Colors.white54 : Colors.black54,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      hasCompany ? company.name : 'Sin aseguradora registrada',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: isDark ? Colors.white : Colors.black87,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (hasCompany)
+                IconButton(
+                  tooltip: 'Cambiar aseguradora',
+                  icon: const Icon(Icons.edit_outlined, size: 20),
+                  color: isDark ? Colors.white54 : Colors.black45,
+                  onPressed: _mostrarSheetAsignarAseguradora,
+                ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            hasCompany
+                ? (hasWa
+                    ? 'Comunícate directamente con el canal oficial de WhatsApp de ${company.name} para reportar el siniestro con un asesor.'
+                    : 'Accede al portal oficial de siniestros de ${company.name} para radicar tu asistencia.')
+                : 'No seleccionaste una aseguradora todo riesgo al crear este vehículo. Puedes asignar una o llamar al 123.',
+            style: TextStyle(
+              fontSize: 13,
+              height: 1.4,
+              color: isDark ? Colors.white70 : Colors.black87,
+            ),
+          ),
+          const SizedBox(height: 16),
+          if (hasCompany) ...[
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: ElevatedButton.icon(
+                onPressed: _contactarAseguradora,
+                icon: Icon(
+                  hasWa ? Icons.chat_rounded : Icons.open_in_browser_rounded,
+                  color: Colors.white,
+                  size: 20,
+                ),
+                label: Text(
+                  hasWa
+                      ? 'Contactar por WhatsApp'
+                      : 'Ir al Portal de Siniestros',
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor:
+                      hasWa ? const Color(0xFF25D366) : const Color(0xFF035880),
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            SizedBox(
+              width: double.infinity,
+              height: 44,
+              child: OutlinedButton.icon(
+                onPressed: () =>
+                    _llamarLineaEmergencia(company.emergencyPhone),
+                icon: const Icon(Icons.phone_in_talk_rounded, size: 18),
+                label: Text('Llamar línea ${company.emergencyPhone}'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor:
+                      isDark ? Colors.white70 : const Color(0xFF035880),
+                  side: BorderSide(
+                    color: isDark ? Colors.white24 : Colors.black12,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                ),
+              ),
+            ),
+          ] else ...[
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () => _llamarLineaEmergencia('123'),
+                    icon: const Icon(Icons.phone_rounded,
+                        color: Colors.redAccent, size: 18),
+                    label: const Text('Llamar 123',
+                        style: TextStyle(color: Colors.redAccent)),
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: Colors.redAccent),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: _mostrarSheetAsignarAseguradora,
+                    icon: const Icon(Icons.add_moderator_rounded,
+                        color: Colors.white, size: 18),
+                    label: const Text('Asignar',
+                        style: TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.bold)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF035880),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }

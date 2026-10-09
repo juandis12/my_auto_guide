@@ -1,0 +1,5 @@
+{
+  "projectId": "17134313066825784110",
+  "deviceType": "MOBILE",
+  "prompt": "High-fidelity Mobile UI screen for MY AUTO GUIDE - Garage & Vehicle Health Dashboard. Theme: Apple HIG Dynamic Midnight (#080C14 background, slate surfaces #0F172A and #1E293B, electric blue #2563EB and glowing electric cyan #38BDF8 accents). Features: Top vehicle switcher pill (Yamaha MT-09 / Chevrolet Onix Turbo) with brand accent gradient. Hero Card showing a sleek 3D rendered vehicle illustration with glowing ground shadows. Digital Odometer HUD widget showing 24,580 km and health status progress bars (Engine Oil: 82% Green, Brake Pads: 65% Yellow, Tire Tread: 90% Green). Grid of 4 glassmorphic status cards: 1. SOAT (Valid until Dec 2026 - Green badge), 2. Tecnomecánica (Valid - Green badge), 3. Battery Health (12.6V Optimal - Cyan badge), 4. Next Maintenance in 1,420 km (Amber badge). Quick action floating buttons row: 'Registrar Tanqueo' (+Fuel icon), 'Escanear Falla' (OBD icon), 'Ver Manuales' (Book icon). Bottom glass navigation bar with active Garage tab highlighted in neon cyan. Typography Outfit, modern automotive dark mode."
+}

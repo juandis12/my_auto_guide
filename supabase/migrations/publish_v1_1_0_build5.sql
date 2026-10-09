@@ -11,10 +11,10 @@ INSERT INTO public.app_versions (
     min_supported_version
 )
 VALUES (
-    7,
-    '1.1.0',
-    'https://github.com/juandis12/my_auto_guide/releases/download/v1.1.0/app-release.apk',
-    '•Mejoras generales en el rendimiento y estabilidad de la aplicación.',
+    8,
+    '1.0.0',
+    'https://github.com/juandis12/my_auto_guide/releases/download/v1.0.0/app-release.apk',
+    '•Correccion de errores menores en el registro de vehiculos y funcionamiento de los botones y se añaden funciones de aseguradora todo riesgo de los vehiculos.',
     true,
     1
 )

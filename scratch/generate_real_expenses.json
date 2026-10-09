@@ -1,0 +1,5 @@
+{
+  "projectId": "17134313066825784110",
+  "deviceType": "MOBILE",
+  "prompt": "Exact 1:1 Mobile UI screen for MY AUTO GUIDE 'GastosScreen' (lib/features/expenses/presentation/gastos_screen.dart). Theme: Dynamic Midnight (#080C14 background, surface cards #0F172A). AppBar: Title 'Gestión de Gastos' with PDF Export icon button. Vehicle Header Card: Yamaha logo, motorcycle image, 'La Bestia', 'YAMAHA MT-09'. Total Spent Summary Card: '$485.000 COP Total Gastado' with interactive circular category distribution chart (Combustible 55%, Mantenimiento 30%, Lavado 15%). Expense Transactions List: 1. Combustible entry: 'Tanqueo Gasolina Extra' (-$45.000 COP, 12 Sep), 2. Mantenimiento entry: 'Cambio Pastillas de Freno' (-$120.000 COP, 05 Sep), 3. Lavado entry: 'Lavado Premium y Engrase' (-$25.000 COP, 01 Sep). Floating Action Button '+' to open 'Registrar Gasto' bottom sheet with category dropdown and amount input in COP. Outfit font, sleek dark mode."
+}

@@ -1,0 +1,5 @@
+{
+  "projectId": "17134313066825784110",
+  "deviceType": "TABLET",
+  "prompt": "High-fidelity Landscape Tablet / Car Dashboard HUD screen for MY AUTO GUIDE (CarPlay / Android Auto format). Theme: Dynamic Midnight (#080C14, slate #0F172A, neon cyan #38BDF8, electric blue #2563EB). Split-screen Automotive layout: Left side (60% width): Full-screen Dark vector GPS navigation map with live turn guidance, speed camera radar warnings, and dynamic route line. Right side (40% width): Multi-widget telemetry center stack: 1. Big Digital Speedometer (72 km/h) with speed limit badge (60 km/h) and lean angle / G-force meter, 2. Live Vehicle Telemetry Card (Coolant Temp: 88°C Optimal, Battery: 13.8V, Fuel Range: 185 km remaining), 3. AI Copilot status pill 'Ruta despejada, próximo radar en 1.8 km'. Glassmorphic cards with subtle cyan glow borders."
+}

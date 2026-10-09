@@ -16,12 +16,15 @@
 //
 // =============================================================================
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../../core/services/insurance_catalog_service.dart';
 import '../../../../core/services/supabase_service.dart';
 import '../../../../core/services/vehicle_catalog_service.dart';
 import '../../../../shared/widgets/app_snack_bar.dart';
+import '../../domain/models/insurance_company_model.dart';
 import '../inicio_app.dart';
 
 /// Tipo de vehículo que se está registrando.
@@ -74,6 +77,8 @@ class _VehicleRegistrationViewState extends State<VehicleRegistrationView> {
   final TextEditingController _placaController = TextEditingController();
   final TextEditingController _cedulaController = TextEditingController();
 
+  String _aseguradoraId = InsuranceCatalogService.noneId;
+
   final supabase = Supabase.instance.client;
 
   List<Map<String, String>> get modelosDeMarca =>
@@ -111,6 +116,117 @@ class _VehicleRegistrationViewState extends State<VehicleRegistrationView> {
       indexModelo = 0;
       _page.jumpToPage(0);
     });
+  }
+
+  void _mostrarSelectorAseguradora() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isMoto = widget.kind == VehicleKind.moto;
+    final opciones =
+        InsuranceCatalogService.getInsurersForSelection(isMoto: isMoto);
+
+    int initialIndex =
+        opciones.indexWhere((element) => element.id == _aseguradoraId);
+    if (initialIndex < 0) initialIndex = 0;
+    int tempIndex = initialIndex;
+
+    showCupertinoModalPopup<void>(
+      context: context,
+      builder: (BuildContext modalContext) {
+        return Container(
+          height: 320,
+          color: isDark
+              ? const Color(0xFF1C1C1E)
+              : CupertinoColors.systemBackground,
+          child: SafeArea(
+            top: false,
+            child: Column(
+              children: [
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color: isDark ? Colors.white12 : Colors.black12,
+                        width: 0.5,
+                      ),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      CupertinoButton(
+                        padding: EdgeInsets.zero,
+                        child: const Text('Cancelar',
+                            style: TextStyle(color: CupertinoColors.systemGrey)),
+                        onPressed: () => Navigator.of(modalContext).pop(),
+                      ),
+                      Text(
+                        'Aseguradora Todo Riesgo',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: isDark ? Colors.white : Colors.black87,
+                        ),
+                      ),
+                      CupertinoButton(
+                        padding: EdgeInsets.zero,
+                        child: const Text('Listo',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF035880),
+                            )),
+                        onPressed: () {
+                          setState(() {
+                            _aseguradoraId = opciones[tempIndex].id;
+                          });
+                          Navigator.of(modalContext).pop();
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: CupertinoPicker(
+                    scrollController: FixedExtentScrollController(
+                        initialItem: initialIndex),
+                    itemExtent: 44,
+                    onSelectedItemChanged: (int index) {
+                      tempIndex = index;
+                    },
+                    children: opciones.map((company) {
+                      final isNone =
+                          company.id == InsuranceCatalogService.noneId;
+                      return Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Text(
+                            company.name,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: isNone
+                                  ? FontWeight.w500
+                                  : FontWeight.w600,
+                              color: isNone
+                                  ? (isDark ? Colors.white70 : Colors.black54)
+                                  : (isDark
+                                      ? Colors.white
+                                      : const Color(0xFF035880)),
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   // Guardar en Supabase y navegar
@@ -153,6 +269,7 @@ class _VehicleRegistrationViewState extends State<VehicleRegistrationView> {
         imagePath: imagePath,
         placa: placa,
         cedula: cedula,
+        aseguradoraId: _aseguradoraId,
       );
 
       if (!mounted) return;
@@ -328,6 +445,7 @@ class _VehicleRegistrationViewState extends State<VehicleRegistrationView> {
                 _buildField(
                     _modeloController, 'Modelo (Año)', Icons.calendar_today),
                 _buildField(_apodoController, 'Apodo', Icons.edit),
+                _buildInsuranceSelectorField(),
                 const SizedBox(height: 18),
                 SizedBox(
                   width: double.infinity,
@@ -347,6 +465,84 @@ class _VehicleRegistrationViewState extends State<VehicleRegistrationView> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildInsuranceSelectorField() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final company = InsuranceCatalogService.findById(_aseguradoraId);
+    final isNone = company == null;
+    final displayName =
+        isNone ? 'No tengo aseguradora todo riesgo' : company.name;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 14),
+      decoration: BoxDecoration(
+        color: isDark
+            ? Colors.white.withOpacity(0.05)
+            : Colors.black.withOpacity(0.03),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: !isNone
+              ? const Color(0xFF035880).withOpacity(0.4)
+              : (isDark ? Colors.white10 : Colors.black12),
+        ),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(12),
+          onTap: _mostrarSelectorAseguradora,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.verified_user_rounded,
+                  color: isNone
+                      ? (isDark ? Colors.white54 : Colors.black45)
+                      : const Color(0xFF035880),
+                  size: 24,
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Aseguradora Todo Riesgo',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: isDark ? Colors.white54 : Colors.black54,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        displayName,
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight:
+                              isNone ? FontWeight.normal : FontWeight.w600,
+                          color: isNone
+                              ? (isDark ? Colors.white70 : Colors.black54)
+                              : (isDark ? Colors.white : Colors.black87),
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  Icons.keyboard_arrow_down_rounded,
+                  color: isDark ? Colors.white54 : Colors.black45,
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

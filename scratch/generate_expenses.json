@@ -1,0 +1,5 @@
+{
+  "projectId": "17134313066825784110",
+  "deviceType": "MOBILE",
+  "prompt": "High-fidelity Mobile UI screen for MY AUTO GUIDE - Expense Log & Fuel Analytics. Theme: Dynamic Midnight (#080C14, slate #0F172A, card #1E293B, cyan #38BDF8, emerald green #22C55E). Monthly Summary Card: '$485.000 COP gastados este mes' with interactive donut chart breaking down: Combustible (55%), Mantenimiento preventivo (30%), Lavado/Parqueo (15%). Key Telemetry Metric Card: 'Eficiencia de Combustible: 74 km / galón (+6% vs mes anterior)' with neon green trend arrow. Fuel price history mini sparkline chart. Recent log list: 'Tanqueo Gasolina Extra' (-$45.000 COP, 3.2 gal @ $14.062), 'Cambio de Pastillas de Freno' (-$120.000 COP), 'Lavado Premium' (-$25.000 COP). Floating glowing '+' button to log new fuel or expense entry."
+}

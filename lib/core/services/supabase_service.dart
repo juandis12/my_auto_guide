@@ -108,21 +108,84 @@ class SupabaseService {
     required String imagePath,
     String placa = '',
     String cedula = '',
+    String? aseguradoraId,
   }) async {
-    return await client
-        .from('vehiculos')
-        .insert({
-          'user_id': userId,
-          'marca': marca,
-          'modelo': modelo,
-          'apodo': apodo,
-          'kms': kms,
-          'image_path': imagePath,
-          'placa': placa,
-          'cedula': _hashCedula(cedula), // VULN-05: Guardamos hash, no la cedula real
-        })
-        .select()
-        .single();
+    final cleanInsurance = (aseguradoraId == null ||
+            aseguradoraId.isEmpty ||
+            aseguradoraId == 'none')
+        ? null
+        : aseguradoraId;
+
+    final data = <String, dynamic>{
+      'user_id': userId,
+      'marca': marca,
+      'modelo': modelo,
+      'apodo': apodo,
+      'kms': kms,
+      'image_path': imagePath,
+      'placa': placa,
+      'cedula': _hashCedula(cedula), // VULN-05: Guardamos hash, no la cedula real
+      'aseguradora_id': cleanInsurance,
+    };
+
+    try {
+      return await client.from('vehiculos').insert(data).select().single();
+    } on PostgrestException catch (e) {
+      // Fallback resiliente si la columna aseguradora_id aún no existe en Supabase
+      if (e.message.contains("aseguradora_id") || e.code == '42703') {
+        debugPrint(
+            'SupabaseService: Columna aseguradora_id no detectada, insertando sin ella');
+        final fallbackData = Map<String, dynamic>.from(data)
+          ..remove('aseguradora_id');
+        return await client
+            .from('vehiculos')
+            .insert(fallbackData)
+            .select()
+            .single();
+      }
+      rethrow;
+    }
+  }
+
+  Future<void> updateInsuranceCompany(
+      String vehicleId, String? aseguradoraId) async {
+    final userId = currentUser?.id;
+    if (userId == null) return;
+
+    final cleanVal = (aseguradoraId == null ||
+            aseguradoraId.isEmpty ||
+            aseguradoraId == 'none')
+        ? null
+        : aseguradoraId;
+
+    try {
+      await client
+          .from('vehiculos')
+          .update({'aseguradora_id': cleanVal})
+          .eq('id', vehicleId)
+          .eq('user_id', userId);
+    } catch (e) {
+      debugPrint('SupabaseService: Error actualizando aseguradora: $e');
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>?> getVehicleById(String vehicleId) async {
+    final userId = currentUser?.id;
+    if (userId == null) return null;
+
+    try {
+      final res = await client
+          .from('vehiculos')
+          .select()
+          .eq('id', vehicleId)
+          .eq('user_id', userId)
+          .maybeSingle();
+      return res;
+    } catch (e) {
+      debugPrint('SupabaseService: Error obteniendo vehículo $vehicleId: $e');
+      return null;
+    }
   }
 
   Future<void> updateMaintenanceDates(

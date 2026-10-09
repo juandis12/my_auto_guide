@@ -1,0 +1,98 @@
+<svg width="390" height="844" viewBox="0 0 390 844" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="aiBgGrad" x1="0" y1="0" x2="390" y2="844" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#080C14"/>
+      <stop offset="50%" stop-color="#140D24"/>
+      <stop offset="100%" stop-color="#080C14"/>
+    </linearGradient>
+
+    <linearGradient id="aiBubbleGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1E293B" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#0F172A" stop-opacity="0.95"/>
+    </linearGradient>
+
+    <linearGradient id="purpleGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#7C3AED"/>
+      <stop offset="100%" stop-color="#A855F7"/>
+    </linearGradient>
+
+    <linearGradient id="btnWarningGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#D97706"/>
+      <stop offset="100%" stop-color="#F59E0B"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background with Violet AI Glow -->
+  <rect width="390" height="844" rx="44" fill="url(#aiBgGrad)"/>
+  <circle cx="350" cy="120" r="140" fill="#7C3AED" fill-opacity="0.15"/>
+  <circle cx="40" cy="500" r="160" fill="#2563EB" fill-opacity="0.1"/>
+
+  <!-- Status Bar -->
+  <text x="36" y="34" fill="#F8FAFC" font-family="'Outfit', -apple-system, sans-serif" font-size="14" font-weight="700">9:43</text>
+  <path d="M328 24C328 22.8954 328.895 22 330 22H348C349.105 22 350 22.8954 350 24V32C350 33.1046 349.105 34 348 34H330C328.895 34 328 33.1046 328 32V24Z" stroke="#94A3B8" stroke-width="2"/>
+  <rect x="331" y="25" width="13" height="6" rx="1.5" fill="#A855F7"/>
+  <path d="M352 27V29" stroke="#94A3B8" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Top App Bar -->
+  <rect x="20" y="52" width="350" height="46" fill="transparent"/>
+  <rect x="20" y="56" width="38" height="38" rx="19" fill="#1E293B" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+  <text x="32" y="80" fill="#FFFFFF" font-size="16">←</text>
+
+  <text x="68" y="74" fill="#FFFFFF" font-family="'Outfit', -apple-system, sans-serif" font-size="16" font-weight="800">Experto Mecánico IA</text>
+  <text x="68" y="88" fill="#34D399" font-family="'Outfit', -apple-system, sans-serif" font-size="11" font-weight="600">● En línea • Motor GPT-4o Auto</text>
+
+  <!-- Vehicle Target Badge -->
+  <rect x="20" y="104" width="350" height="36" rx="12" fill="#1E293B" fill-opacity="0.8" stroke="rgba(168,85,247,0.3)" stroke-width="1"/>
+  <text x="36" y="127" fill="#94A3B8" font-family="'Outfit', -apple-system, sans-serif" font-size="11">Vehículo conectado: <tspan fill="#38BDF8" font-weight="700">Mazda 3 (48.250 km)</tspan></text>
+
+  <!-- Bot Message 1 -->
+  <circle cx="38" cy="170" r="16" fill="url(#purpleGrad)"/>
+  <text x="31" y="176" font-size="14">✨</text>
+  <rect x="62" y="152" width="280" height="66" rx="20" fill="url(#aiBubbleGrad)" stroke="rgba(168,85,247,0.2)" stroke-width="1"/>
+  <text x="78" y="174" fill="#F8FAFC" font-family="'Outfit', -apple-system, sans-serif" font-size="12" font-weight="500">Hola Juan. ¿Qué síntoma, ruido o código de falla notas en tu Mazda 3 hoy?</text>
+  <text x="326" y="208" text-anchor="end" fill="#64748B" font-family="'Outfit', -apple-system, sans-serif" font-size="10">09:41</text>
+
+  <!-- User Message 1 -->
+  <rect x="94" y="230" width="276" height="66" rx="20" fill="url(#purpleGrad)"/>
+  <text x="110" y="252" fill="#FFFFFF" font-family="'Outfit', -apple-system, sans-serif" font-size="12" font-weight="600">Siento una vibración en el pedal del freno cada vez que voy a más de 80 km/h.</text>
+  <text x="354" y="286" text-anchor="end" fill="#E9D5FF" font-family="'Outfit', -apple-system, sans-serif" font-size="10">09:42 ✓✓</text>
+
+  <!-- Bot Diagnosis Card -->
+  <circle cx="38" cy="326" r="16" fill="url(#purpleGrad)"/>
+  <text x="31" y="332" font-size="14">✨</text>
+  <rect x="62" y="308" width="308" height="248" rx="22" fill="url(#aiBubbleGrad)" stroke="rgba(245,158,11,0.3)" stroke-width="1"/>
+
+  <!-- Severity Tag -->
+  <rect x="78" y="322" width="112" height="24" rx="12" fill="#78350F" stroke="#D97706" stroke-width="1"/>
+  <text x="88" y="338" fill="#FDE68A" font-family="'Outfit', -apple-system, sans-serif" font-size="11" font-weight="700">⚠️ Severidad Media</text>
+
+  <text x="78" y="366" fill="#FFFFFF" font-family="'Outfit', -apple-system, sans-serif" font-size="13" font-weight="800">Diagnóstico Preliminar:</text>
+  <text x="78" y="388" fill="#CBD5E1" font-family="'Outfit', -apple-system, sans-serif" font-size="11">1. Discos de freno delanteros alabeados (ondulados).</text>
+  <text x="78" y="408" fill="#CBD5E1" font-family="'Outfit', -apple-system, sans-serif" font-size="11">2. Desgaste irregular o cristalización de pastillas.</text>
+  <text x="78" y="428" fill="#CBD5E1" font-family="'Outfit', -apple-system, sans-serif" font-size="11">3. Posible desbalanceo en tren delantero.</text>
+
+  <line x1="78" y1="446" x2="354" y2="446" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+  <text x="78" y="466" fill="#94A3B8" font-family="'Outfit', -apple-system, sans-serif" font-size="11">Sugerencia: Rectificación o reemplazo de discos.</text>
+
+  <!-- Direct Link to Marketplace -->
+  <rect x="78" y="486" width="276" height="46" rx="14" fill="url(#btnWarningGrad)"/>
+  <text x="216" y="514" text-anchor="middle" fill="#FFFFFF" font-family="'Outfit', -apple-system, sans-serif" font-size="12" font-weight="800">🛠️ Cotizar en 3 Talleres de Frenos</text>
+
+  <!-- Quick Suggestion Pills -->
+  <rect x="20" y="670" width="168" height="34" rx="17" fill="#1E293B" stroke="rgba(168,85,247,0.2)" stroke-width="1"/>
+  <text x="104" y="692" text-anchor="middle" fill="#C084FC" font-family="'Outfit', -apple-system, sans-serif" font-size="11" font-weight="600">¿Es peligroso viajar así?</text>
+
+  <rect x="196" y="670" width="174" height="34" rx="17" fill="#1E293B" stroke="rgba(168,85,247,0.2)" stroke-width="1"/>
+  <text x="283" y="692" text-anchor="middle" fill="#C084FC" font-family="'Outfit', -apple-system, sans-serif" font-size="11" font-weight="600">¿Cuánto cuesta el arreglo?</text>
+
+  <!-- Input Field Bar -->
+  <rect x="20" y="718" width="350" height="54" rx="27" fill="#1E293B" stroke="rgba(168,85,247,0.3)" stroke-width="1"/>
+  <circle cx="48" cy="745" r="16" fill="#0F172A"/>
+  <text x="42" y="750" fill="#A855F7" font-size="14">📎</text>
+  <text x="76" y="750" fill="#64748B" font-family="'Outfit', -apple-system, sans-serif" font-size="13">Describe el ruido o síntoma...</text>
+  <circle cx="340" cy="745" r="18" fill="url(#purpleGrad)"/>
+  <text x="333" y="751" fill="#FFFFFF" font-size="14">➤</text>
+
+  <!-- Home Indicator -->
+  <rect x="130" y="830" width="130" height="4" rx="2" fill="#475569"/>
+</svg>
