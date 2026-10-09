@@ -16,7 +16,7 @@ class MyAutoGuideCarAppService : CarAppService() {
         }
     }
 
-    override fun createSession(): Session {
+    override fun onCreateSession(sessionInfo: androidx.car.app.SessionInfo): Session {
         return MyAutoGuideSession()
     }
 }
