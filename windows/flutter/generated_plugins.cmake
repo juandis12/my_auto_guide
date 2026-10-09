@@ -7,6 +7,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   connectivity_plus
   file_selector_windows
   firebase_core
+  flutter_blue_plus_winrt
   flutter_secure_storage_windows
   flutter_tts
   geolocator_windows
