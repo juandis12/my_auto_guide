@@ -57,7 +57,7 @@ class ObdBluetoothService {
       }
     });
 
-    await device.connect(autoConnect: false);
+    await device.connect(autoConnect: false, license: License.nonprofit);
   }
 
   Future<void> _discoverServices(BluetoothDevice device) async {

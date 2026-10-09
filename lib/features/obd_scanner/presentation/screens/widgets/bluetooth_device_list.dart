@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/scanner_provider.dart';
+import '../../providers/scanner_provider.dart';
 
 class BluetoothDeviceListWidget extends StatelessWidget {
   final ScannerProvider provider;

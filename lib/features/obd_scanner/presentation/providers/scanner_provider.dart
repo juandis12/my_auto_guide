@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
-import '../data/obd_bluetooth_service.dart';
-import '../data/obd_decoder.dart';
+import '../../data/obd_bluetooth_service.dart';
+import '../../data/obd_decoder.dart';
 
 enum ScannerState { disconnected, scanning, connecting, connected, error }
 

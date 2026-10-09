@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import '../../../core/services/ai_bot_service.dart';
+import '../../../../core/services/ai_bot_service.dart';
 import '../providers/scanner_provider.dart';
 import 'widgets/bluetooth_device_list.dart';
 
