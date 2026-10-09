@@ -235,7 +235,7 @@ class _AppUpdateLockScreenState extends State<AppUpdateLockScreen> with SingleTi
                             ),
                             const SizedBox(height: 12),
                             Text(
-                              widget.updateInfo.releaseNotes,
+                              widget.updateInfo.releaseNotes.replaceAll(r'\n', '\n'),
                               style: const TextStyle(
                                 fontSize: 13,
                                 color: Color(0xFFE2E8F0),
