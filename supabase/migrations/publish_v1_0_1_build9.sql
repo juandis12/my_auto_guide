@@ -1,5 +1,5 @@
 -- =============================================================================
--- publish_v1_0_1_build9.sql — REGISTRO DE ACTUALIZACIÓN OBLIGATORIA v1.0.1+9
+-- publish_v1_0_1_build9.sql — REGISTRO DE ACTUALIZACIÓN OBLIGATORIA v1.1.0+9
 -- =============================================================================
 
 INSERT INTO public.app_versions (
