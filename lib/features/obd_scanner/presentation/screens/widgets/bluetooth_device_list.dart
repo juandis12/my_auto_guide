@@ -5,7 +5,7 @@ import '../../providers/scanner_provider.dart';
 class BluetoothDeviceListWidget extends StatelessWidget {
   final ScannerProvider provider;
 
-  const BluetoothDeviceListWidget({Key? key, required this.provider}) : super(key: key);
+  const BluetoothDeviceListWidget({super.key, required this.provider});
 
   @override
   Widget build(BuildContext context) {
