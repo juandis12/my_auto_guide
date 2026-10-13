@@ -6,7 +6,7 @@ import '../providers/scanner_provider.dart';
 import 'widgets/bluetooth_device_list.dart';
 
 class ScannerDashboardScreen extends StatefulWidget {
-  const ScannerDashboardScreen({Key? key}) : super(key: key);
+  const ScannerDashboardScreen({super.key});
 
   @override
   State<ScannerDashboardScreen> createState() => _ScannerDashboardScreenState();
@@ -78,6 +78,24 @@ class _ScannerDashboardScreenState extends State<ScannerDashboardScreen> {
                   ),
                   const SizedBox(height: 20),
 
+                  // Mensaje de Error si existe
+                  if (provider.errorMessage.isNotEmpty && provider.state == ScannerState.error) ...[
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.red.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.redAccent.withValues(alpha: 0.5)),
+                      ),
+                      child: Text(
+                        provider.errorMessage,
+                        style: const TextStyle(color: Colors.redAccent, fontSize: 13),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                  ],
+
                   // Botón Principal de Escaneo
                   if (provider.state == ScannerState.disconnected || provider.state == ScannerState.error)
                     ElevatedButton.icon(
@@ -94,6 +112,30 @@ class _ScannerDashboardScreenState extends State<ScannerDashboardScreen> {
                       ),
                       icon: const Icon(Icons.bluetooth_searching, color: Colors.white),
                       label: const Text('Buscar Escáner', style: TextStyle(color: Colors.white, fontSize: 16)),
+                    ),
+
+                  if (provider.state == ScannerState.connecting || provider.state == ScannerState.initializing)
+                    Column(
+                      children: [
+                        const SizedBox(height: 10),
+                        const CircularProgressIndicator(color: Colors.amberAccent),
+                        const SizedBox(height: 12),
+                        Text(
+                          provider.state == ScannerState.connecting
+                              ? "Estableciendo conexión Bluetooth BLE..."
+                              : "Sincronizando bus CAN y protocolo de motor...",
+                          style: const TextStyle(color: Colors.white70, fontSize: 14),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 14),
+                        OutlinedButton(
+                          onPressed: () => provider.disconnect(),
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(color: Colors.redAccent),
+                          ),
+                          child: const Text('Cancelar', style: TextStyle(color: Colors.redAccent)),
+                        ),
+                      ],
                     ),
 
                   if (provider.state == ScannerState.connected)
@@ -137,7 +179,7 @@ class _ScannerDashboardScreenState extends State<ScannerDashboardScreen> {
                             : Wrap(
                                 spacing: 10,
                                 children: provider.currentDtcs.map((dtc) => Chip(
-                                  backgroundColor: Colors.redAccent.withOpacity(0.2),
+                                  backgroundColor: Colors.redAccent.withValues(alpha: 0.2),
                                   label: Text(dtc, style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
                                 )).toList(),
                               ),
@@ -284,6 +326,7 @@ class _ScannerDashboardScreenState extends State<ScannerDashboardScreen> {
       case ScannerState.disconnected: return Colors.grey;
       case ScannerState.scanning: return Colors.blue;
       case ScannerState.connecting: return Colors.orange;
+      case ScannerState.initializing: return Colors.amber;
       case ScannerState.connected: return Colors.green;
       case ScannerState.error: return Colors.red;
     }
@@ -294,6 +337,7 @@ class _ScannerDashboardScreenState extends State<ScannerDashboardScreen> {
       case ScannerState.disconnected: return Icons.bluetooth_disabled;
       case ScannerState.scanning: return Icons.bluetooth_searching;
       case ScannerState.connecting: return Icons.bluetooth_connected;
+      case ScannerState.initializing: return Icons.sync;
       case ScannerState.connected: return Icons.directions_car;
       case ScannerState.error: return Icons.error_outline;
     }
@@ -302,8 +346,9 @@ class _ScannerDashboardScreenState extends State<ScannerDashboardScreen> {
   String _getStatusText(ScannerState state) {
     switch (state) {
       case ScannerState.disconnected: return "Escáner Desconectado";
-      case ScannerState.scanning: return "Buscando Escáner (Ej: ScanMate)...";
+      case ScannerState.scanning: return "Buscando Escáner...";
       case ScannerState.connecting: return "Conectando al Escáner...";
+      case ScannerState.initializing: return "Sincronizando con ECU del Vehículo...";
       case ScannerState.connected: return "Conectado al Vehículo";
       case ScannerState.error: return "Error de Conexión";
     }

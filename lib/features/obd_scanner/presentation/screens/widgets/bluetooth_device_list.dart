@@ -62,7 +62,11 @@ class BluetoothDeviceListWidget extends StatelessWidget {
                             return ListTile(
                               leading: const Icon(Icons.bluetooth, color: Colors.white),
                               title: Text(
-                                device.platformName,
+                                device.platformName.isNotEmpty
+                                    ? device.platformName
+                                    : (deviceResult.advertisementData.advName.isNotEmpty
+                                        ? deviceResult.advertisementData.advName
+                                        : "Dispositivo OBD BLE"),
                                 style: const TextStyle(color: Colors.white),
                               ),
                               subtitle: Text(
