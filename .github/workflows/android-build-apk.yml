@@ -24,7 +24,7 @@ on:
         type: boolean
         default: false
       flutter_version:
-        description: 'Flutter version to use (e.g., 3.24.0). Empty means latest stable.'
+        description: 'Versión del SDK de Flutter (ej: 3.27.0). ¡DEJAR VACÍO para usar la última estable (Recomendado)! NO es la versión de la app.'
         required: false
         type: string
         default: ''
@@ -58,12 +58,26 @@ jobs:
             echo "type=native" >> $GITHUB_OUTPUT
           fi
 
+      - name: Resolve Flutter SDK Version
+        if: steps.detect.outputs.type == 'flutter'
+        id: resolve-flutter
+        run: |
+          RAW_VER="${{ inputs.flutter_version }}"
+          # Si está vacío o parece versión de app (ej: 1.x.x, 2.x.x, o contiene +), usar la última estable
+          if [ -z "$RAW_VER" ] || [[ "$RAW_VER" =~ ^1\. ]] || [[ "$RAW_VER" =~ ^2\. ]] || [[ "$RAW_VER" == *"+"* ]]; then
+            echo "version=" >> $GITHUB_OUTPUT
+            echo "channel=stable" >> $GITHUB_OUTPUT
+          else
+            echo "version=$RAW_VER" >> $GITHUB_OUTPUT
+            echo "channel=stable" >> $GITHUB_OUTPUT
+          fi
+
       - name: Setup Flutter
         if: steps.detect.outputs.type == 'flutter'
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: ${{ inputs.flutter_version || '' }}
-          channel: ${{ inputs.flutter_version && 'stable' || 'stable' }}
+          flutter-version: ${{ steps.resolve-flutter.outputs.version }}
+          channel: ${{ steps.resolve-flutter.outputs.channel }}
           cache: true
 
       - name: Flutter pub get
