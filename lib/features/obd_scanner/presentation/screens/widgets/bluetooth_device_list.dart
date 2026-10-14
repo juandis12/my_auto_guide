@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import '../../../../core/theme/app_apple_theme.dart';
-import '../../providers/scanner_provider.dart';
+import 'package:my_auto_guide/core/theme/app_apple_theme.dart';
+import 'package:my_auto_guide/features/obd_scanner/presentation/providers/scanner_provider.dart';
 
 /// Modal estilo iOS (Cupertino Sheet) para escanear y conectar adaptadores OBD-II
 class BluetoothDeviceListWidget extends StatelessWidget {
@@ -26,7 +26,7 @@ class BluetoothDeviceListWidget extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                 decoration: BoxDecoration(
-                  color: AppAppleTheme.midnightSurface.withValues(alpha: 0.92),
+                  color: AppAppleTheme.midnightSurface.withValues(alpha: 0.94),
                   borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
                   border: Border.all(
                     color: Colors.white.withValues(alpha: 0.12),
@@ -122,7 +122,7 @@ class BluetoothDeviceListWidget extends StatelessWidget {
                                       Text(
                                         scanProvider.state == ScannerState.scanning
                                             ? "Buscando dispositivos cercanos...\nAsegúrate de que el escáner esté en el puerto OBD del auto."
-                                            : "No se encontraron escáneres.\nVerifica que el carro tenga el switch en ON.",
+                                            : "No se encontraron escáneres.\nVerifica que el carro tenga el motor encendido.",
                                         textAlign: TextAlign.center,
                                         style: GoogleFonts.outfit(
                                           color: Colors.white.withValues(alpha: 0.65),
@@ -211,7 +211,6 @@ class BluetoothDeviceListWidget extends StatelessWidget {
                                         ),
                                         color: AppAppleTheme.electricBlue,
                                         borderRadius: BorderRadius.circular(20),
-                                        minSize: 34,
                                         onPressed: () {
                                           HapticFeedback.mediumImpact();
                                           Navigator.pop(context);

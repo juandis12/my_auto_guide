@@ -5,8 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import '../../../../core/theme/app_apple_theme.dart';
-import '../../../../core/services/ai_bot_service.dart';
+import 'package:my_auto_guide/core/theme/app_apple_theme.dart';
+import 'package:my_auto_guide/core/services/ai_bot_service.dart';
 import '../providers/scanner_provider.dart';
 import 'widgets/bluetooth_device_list.dart';
 
@@ -166,7 +166,6 @@ class _ScannerDashboardScreenState extends State<ScannerDashboardScreen> with Si
           // Botón Regresar estilo Cupertino
           CupertinoButton(
             padding: EdgeInsets.zero,
-            minSize: 38,
             onPressed: () {
               HapticFeedback.lightImpact();
               Navigator.of(context).maybePop();
@@ -245,7 +244,6 @@ class _ScannerDashboardScreenState extends State<ScannerDashboardScreen> with Si
         badgeText = 'ERROR';
         break;
       case ScannerState.disconnected:
-      default:
         badgeColor = Colors.white38;
         badgeText = 'STANDBY';
         break;
@@ -434,7 +432,6 @@ class _ScannerDashboardScreenState extends State<ScannerDashboardScreen> with Si
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       color: Colors.redAccent.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(12),
-                      minSize: 32,
                       onPressed: () {
                         HapticFeedback.lightImpact();
                         provider.disconnect();
@@ -581,7 +578,7 @@ class _ScannerDashboardScreenState extends State<ScannerDashboardScreen> with Si
                             decoration: BoxDecoration(
                               color: AppAppleTheme.electricCyan.withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(8),
-                            ],
+                            ),
                             child: const Icon(
                               CupertinoIcons.gauge,
                               color: AppAppleTheme.electricCyan,
@@ -1145,7 +1142,6 @@ class _ScannerDashboardScreenState extends State<ScannerDashboardScreen> with Si
       case ScannerState.error:
         return 'Fallo de Enlace OBD2';
       case ScannerState.disconnected:
-      default:
         return 'Escáner Desconectado';
     }
   }
@@ -1163,7 +1159,6 @@ class _ScannerDashboardScreenState extends State<ScannerDashboardScreen> with Si
       case ScannerState.error:
         return 'No fue posible comunicar con la computadora del motor. Verifica la ignición.';
       case ScannerState.disconnected:
-      default:
         return 'Conecta el dispositivo en el puerto OBD-II y enciende el motor.';
     }
   }
