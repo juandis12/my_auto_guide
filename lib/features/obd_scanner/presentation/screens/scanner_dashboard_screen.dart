@@ -11,7 +11,8 @@ import '../providers/scanner_provider.dart';
 import 'widgets/bluetooth_device_list.dart';
 
 class ScannerDashboardScreen extends StatefulWidget {
-  const ScannerDashboardScreen({super.key});
+  final String? initialVehicleName;
+  const ScannerDashboardScreen({super.key, this.initialVehicleName});
 
   @override
   State<ScannerDashboardScreen> createState() => _ScannerDashboardScreenState();
@@ -53,7 +54,7 @@ class _ScannerDashboardScreenState extends State<ScannerDashboardScreen> with Si
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => ScannerProvider(),
+      create: (_) => ScannerProvider(initialVehicleName: widget.initialVehicleName),
       child: Scaffold(
         backgroundColor: AppAppleTheme.midnightBackground,
         body: Stack(
@@ -202,12 +203,14 @@ class _ScannerDashboardScreenState extends State<ScannerDashboardScreen> with Si
                   ),
                 ),
                 Text(
-                  'Telemetría en Vivo • Spark ECU',
+                  'Telemetría en Vivo • ${provider.vehicleDisplayName}',
                   style: GoogleFonts.outfit(
                     fontSize: 12,
                     fontWeight: FontWeight.w400,
                     color: Colors.white.withValues(alpha: 0.55),
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
@@ -366,7 +369,7 @@ class _ScannerDashboardScreenState extends State<ScannerDashboardScreen> with Si
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          _getStatusSubtitle(provider.state),
+                          _getStatusSubtitle(provider.state, provider.vehicleDisplayName),
                           style: GoogleFonts.outfit(
                             fontSize: 13,
                             color: Colors.white.withValues(alpha: 0.6),
@@ -408,6 +411,39 @@ class _ScannerDashboardScreenState extends State<ScannerDashboardScreen> with Si
                     ],
                   ),
                 ),
+                const SizedBox(height: 10),
+                GestureDetector(
+                  onTap: () {
+                    HapticFeedback.selectionClick();
+                    _showProtocolSelectorSheet(context, provider);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.05),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(CupertinoIcons.slider_horizontal_3, size: 14, color: AppAppleTheme.electricCyan),
+                        const SizedBox(width: 8),
+                        Text(
+                          provider.protocolOverride == null
+                              ? 'Protocolo: Automático (Recomendado)'
+                              : 'Protocolo Forzado: ${provider.protocolOverride}',
+                          style: GoogleFonts.outfit(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: AppAppleTheme.electricCyan,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
 
               if (isWorking)
                 Row(
@@ -420,8 +456,8 @@ class _ScannerDashboardScreenState extends State<ScannerDashboardScreen> with Si
                     Expanded(
                       child: Text(
                         provider.state == ScannerState.connecting
-                            ? 'Conectando con ScanMate...'
-                            : 'Negociando bus CAN del Spark...',
+                            ? 'Conectando con escáner OBD2...'
+                            : 'Sincronizando bus con ${provider.vehicleDisplayName}...',
                         style: GoogleFonts.outfit(
                           fontSize: 13,
                           color: Colors.white.withValues(alpha: 0.8),
@@ -516,6 +552,8 @@ class _ScannerDashboardScreenState extends State<ScannerDashboardScreen> with Si
     final rpmVal = provider.liveMetrics['RPM']?['value'];
     final speedVal = provider.liveMetrics['Speed']?['value'];
     final tempVal = provider.liveMetrics['CoolantTemp']?['value'];
+    final loadVal = provider.liveMetrics['EngineLoad']?['value'];
+    final voltVal = provider.batteryVoltage;
 
     final numRpm = (rpmVal is num) ? rpmVal.toDouble() : 0.0;
     final rpmPercentage = (numRpm / 7000.0).clamp(0.0, 1.0);
@@ -539,7 +577,7 @@ class _ScannerDashboardScreenState extends State<ScannerDashboardScreen> with Si
                 ),
               ),
               Text(
-                'ISO 15765-4 CAN',
+                provider.detectedProtocol,
                 style: GoogleFonts.outfit(
                   fontSize: 11,
                   fontWeight: FontWeight.w500,
@@ -722,6 +760,48 @@ class _ScannerDashboardScreenState extends State<ScannerDashboardScreen> with Si
             ),
           ],
         ),
+
+        const SizedBox(height: 14),
+
+        // 3. Grilla de Tarjetas de Voltaje de Batería + Carga de Motor (Universal)
+        Row(
+          children: [
+            // Voltaje de Batería 12V (Leído directo del pin 16 vía ATRV)
+            Expanded(
+              child: _buildMetricTile(
+                title: 'Batería 12V',
+                value: voltVal != null ? '$voltVal' : '---',
+                unit: 'V',
+                icon: CupertinoIcons.bolt_fill,
+                accentColor: (voltVal != null && voltVal >= 13.2)
+                    ? const Color(0xFF10B981)
+                    : (voltVal != null && voltVal < 11.9
+                        ? Colors.redAccent
+                        : const Color(0xFFF59E0B)),
+                statusTag: voltVal != null
+                    ? (voltVal >= 13.2
+                        ? 'Alternador OK'
+                        : (voltVal < 11.9 ? 'Baja' : 'En reposo'))
+                    : '---',
+              ),
+            ),
+            const SizedBox(width: 14),
+
+            // Carga de Motor (Calculated Engine Load)
+            Expanded(
+              child: _buildMetricTile(
+                title: 'Carga Motor',
+                value: loadVal != null ? '$loadVal' : '---',
+                unit: '%',
+                icon: CupertinoIcons.flame,
+                accentColor: (loadVal is num && loadVal > 80)
+                    ? Colors.redAccent
+                    : AppAppleTheme.electricCyan,
+                statusTag: (loadVal is num && loadVal > 80) ? 'Exigido' : 'Normal',
+              ),
+            ),
+          ],
+        ),
       ],
     );
   }
@@ -887,7 +967,7 @@ class _ScannerDashboardScreenState extends State<ScannerDashboardScreen> with Si
                             Text(
                               hasDtcs
                                   ? '${provider.currentDtcs.length} alerta(s) registradas en la ECU'
-                                  : 'No se encontraron códigos de error en el Spark.',
+                                  : 'No se encontraron códigos de error en ${provider.vehicleDisplayName}.',
                               style: GoogleFonts.outfit(
                                 fontSize: 12,
                                 color: Colors.white.withValues(alpha: 0.6),
@@ -959,7 +1039,7 @@ class _ScannerDashboardScreenState extends State<ScannerDashboardScreen> with Si
                         borderRadius: BorderRadius.circular(18),
                         onPressed: () {
                           HapticFeedback.heavyImpact();
-                          _diagnoseWithAI(context, provider.currentDtcs);
+                          _diagnoseWithAI(context, provider.vehicleDisplayName, provider.currentDtcs);
                         },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -978,12 +1058,62 @@ class _ScannerDashboardScreenState extends State<ScannerDashboardScreen> with Si
                         ),
                       ),
                     ),
+
+                    // Botón Borrar Códigos (Modo 04)
+                    const SizedBox(height: 10),
+                    CupertinoButton(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      color: Colors.redAccent.withValues(alpha: 0.14),
+                      borderRadius: BorderRadius.circular(16),
+                      onPressed: () => _confirmClearDtcs(context, provider),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(CupertinoIcons.trash, color: Colors.redAccent, size: 16),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Borrar Códigos (Apagar Check Engine)',
+                            style: GoogleFonts.outfit(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.redAccent,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    if (provider.pendingDtcs.isNotEmpty) ...[
+                      const SizedBox(height: 10),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Colors.amber.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: Colors.amber.withValues(alpha: 0.3)),
+                        ),
+                        child: Text(
+                          'Pendientes (Modo 07): ${provider.pendingDtcs.join(", ")}',
+                          style: GoogleFonts.outfit(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.amberAccent,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ],
                   ],
                 ],
               ),
             ),
           ),
         ),
+
+        const SizedBox(height: 16),
+
+        // Aviso Especial de Testigos de Seguridad (Airbag SRS / ABS)
+        _buildSpecialWarningLightsCard(context, provider),
       ],
     );
   }
@@ -1025,14 +1155,14 @@ class _ScannerDashboardScreenState extends State<ScannerDashboardScreen> with Si
                   _buildGuideStep(
                     stepNumber: '1',
                     title: 'Inserta el Escáner',
-                    description: 'Conecta tu ScanMate en el puerto OBD2 del Spark (ubicado debajo del volante).',
+                    description: 'Conecta tu escáner en el puerto OBD2 del vehículo (ubicado generalmente debajo del volante o tablero).',
                     icon: CupertinoIcons.bolt_horizontal_circle,
                   ),
                   const Divider(color: Colors.white12, height: 26),
                   _buildGuideStep(
                     stepNumber: '2',
                     title: 'Enciende el Motor',
-                    description: 'Para leer RPM, Velocidad y Temperatura en tiempo real, el motor debe estar en marcha.',
+                    description: 'Para leer RPM, Velocidad y Temperatura en tiempo real, el switch debe estar en ON o el motor en marcha.',
                     icon: CupertinoIcons.flame_fill,
                   ),
                   const Divider(color: Colors.white12, height: 26),
@@ -1134,7 +1264,7 @@ class _ScannerDashboardScreenState extends State<ScannerDashboardScreen> with Si
       case ScannerState.connected:
         return 'Conectado al Vehículo';
       case ScannerState.initializing:
-        return 'Sincronizando Protocolo CAN';
+        return 'Sincronizando Protocolo Vehicular';
       case ScannerState.connecting:
         return 'Enlazando Bluetooth BLE';
       case ScannerState.scanning:
@@ -1146,16 +1276,17 @@ class _ScannerDashboardScreenState extends State<ScannerDashboardScreen> with Si
     }
   }
 
-  String _getStatusSubtitle(ScannerState state) {
+  String _getStatusSubtitle(ScannerState state, [String? vehicleName]) {
+    final vName = (vehicleName != null && vehicleName.isNotEmpty) ? vehicleName : 'el vehículo';
     switch (state) {
       case ScannerState.connected:
-        return 'Transmisión de telemetría activa en tiempo real con la ECU del Chevrolet Spark.';
+        return 'Transmisión de telemetría activa en tiempo real con la ECU de $vName.';
       case ScannerState.initializing:
-        return 'Configurando velocidad de baudios (500k) y protocolo SAE J1979...';
+        return 'Configurando baudios y sincronizando protocolos (KWP2000 / CAN / ISO)...';
       case ScannerState.connecting:
         return 'Negociando canales GATT y tamaño de MTU con el adaptador...';
       case ScannerState.scanning:
-        return 'Rastreando ScanMate, ThinkDiag y adaptadores compatibles...';
+        return 'Rastreando escáneres OBD2 y adaptadores compatibles...';
       case ScannerState.error:
         return 'No fue posible comunicar con la computadora del motor. Verifica la ignición.';
       case ScannerState.disconnected:
@@ -1173,7 +1304,12 @@ class _ScannerDashboardScreenState extends State<ScannerDashboardScreen> with Si
   }
 
   /// Diálogo de Diagnóstico IA estilo Apple Card
-  void _diagnoseWithAI(BuildContext context, List<String> dtcs) async {
+  void _diagnoseWithAI(
+    BuildContext context,
+    String vehicleName,
+    List<String> dtcs, {
+    String? customQuestion,
+  }) async {
     showCupertinoDialog(
       context: context,
       builder: (_) => BackdropFilter(
@@ -1198,7 +1334,11 @@ class _ScannerDashboardScreenState extends State<ScannerDashboardScreen> with Si
                 const CupertinoActivityIndicator(radius: 14),
                 const SizedBox(height: 14),
                 Text(
-                  'Consultando los sistemas de diagnóstico para ${dtcs.join(", ")}...',
+                  customQuestion != null
+                      ? 'Consultando al especialista automotriz...'
+                      : (dtcs.isEmpty
+                          ? 'Consultando los sistemas de diagnóstico para $vehicleName...'
+                          : 'Consultando los sistemas de diagnóstico para ${dtcs.join(", ")}...'),
                   style: GoogleFonts.outfit(fontSize: 13),
                   textAlign: TextAlign.center,
                 ),
@@ -1209,12 +1349,14 @@ class _ScannerDashboardScreenState extends State<ScannerDashboardScreen> with Si
       ),
     );
 
-    final prompt = "Actúa como un ingeniero mecánico automotriz experto de My Auto Guide. "
-        "El vehículo es un Chevrolet Spark y el escáner OBD2 acaba de detectar estos códigos de error: ${dtcs.join(', ')}. "
-        "Explica en español directo y conciso: "
-        "1) Qué componente falla. "
-        "2) Nivel de riesgo (¿es seguro rodar?). "
-        "3) Solución recomendada y repuestos.";
+    final prompt = customQuestion ?? (
+      "Actúa como un ingeniero mecánico automotriz experto de My Auto Guide. "
+      "El vehículo es un $vehicleName y el escáner OBD2 acaba de detectar estos códigos de error: ${dtcs.join(', ')}. "
+      "Explica en español directo y conciso: "
+      "1) Qué componente falla. "
+      "2) Nivel de riesgo (¿es seguro rodar?). "
+      "3) Solución recomendada y repuestos."
+    );
 
     final response = await AIBotService().sendMessage(prompt);
 
@@ -1318,5 +1460,477 @@ class _ScannerDashboardScreenState extends State<ScannerDashboardScreen> with Si
         ),
       );
     }
+  }
+
+  /// Tarjeta de advertencia y diagnóstico para testigos especiales (Airbag SRS, ABS, ESP)
+  Widget _buildSpecialWarningLightsCard(BuildContext context, ScannerProvider provider) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(22),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+        child: Container(
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF59E0B).withValues(alpha: 0.10),
+            borderRadius: BorderRadius.circular(22),
+            border: Border.all(
+              color: const Color(0xFFF59E0B).withValues(alpha: 0.35),
+              width: 1.2,
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF59E0B).withValues(alpha: 0.20),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      CupertinoIcons.exclamationmark_shield_fill,
+                      color: Color(0xFFF59E0B),
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '¿Testigo de Airbag (SRS) o ABS encendido?',
+                          style: GoogleFonts.outfit(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'Módulo de Carrocería / Seguridad',
+                          style: GoogleFonts.outfit(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w500,
+                            color: const Color(0xFFFCD34D),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'El estándar OBD-II genérico solo consulta la computadora de Motor (ECM/PCM - Códigos Pxxxx). '
+                'El sistema de Airbag (SRS) y frenos ABS residen en módulos independientes con protocolos propietarios (Códigos Bxxxx / Cxxxx).\n\n'
+                'En camionetas Nissan (Navara / Frontier) y la mayoría de vehículos, la causa #1 de testigo de Airbag encendido es la cinta flexible del volante (Clock Spring / Spiral Cable, código B1049) o conectores amarillos bajo los asientos.',
+                style: GoogleFonts.outfit(
+                  fontSize: 12,
+                  color: Colors.white.withValues(alpha: 0.8),
+                  height: 1.4,
+                ),
+              ),
+              const SizedBox(height: 14),
+              CupertinoButton(
+                padding: const EdgeInsets.symmetric(vertical: 11, horizontal: 16),
+                color: const Color(0xFFF59E0B).withValues(alpha: 0.22),
+                borderRadius: BorderRadius.circular(14),
+                onPressed: () {
+                  HapticFeedback.lightImpact();
+                  _showAirbagDiagnosisGuide(context, provider.vehicleDisplayName);
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(CupertinoIcons.wrench_fill, color: Color(0xFFFCD34D), size: 16),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Guía y Autodiagnóstico de Airbag',
+                      style: GoogleFonts.outfit(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        color: const Color(0xFFFCD34D),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Modal interactiva con guía paso a paso para diagnosticar Airbag y truco de llave Nissan
+  void _showAirbagDiagnosisGuide(BuildContext context, String vehicleName) {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (_) => ClipRRect(
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+          child: Container(
+            height: MediaQuery.of(context).size.height * 0.82,
+            padding: const EdgeInsets.all(22),
+            decoration: BoxDecoration(
+              color: AppAppleTheme.midnightSurface.withValues(alpha: 0.95),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
+            ),
+            child: SafeArea(
+              top: false,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 38,
+                      height: 5,
+                      decoration: BoxDecoration(
+                        color: Colors.white24,
+                        borderRadius: BorderRadius.circular(2.5),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF59E0B).withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(CupertinoIcons.shield_slash_fill, color: Color(0xFFF59E0B), size: 20),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          'Diagnóstico Airbag (SRS) • $vehicleName',
+                          style: GoogleFonts.outfit(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 14),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildAirbagInfoCard(
+                            title: '1. ¿Por qué el escáner OBD2 no detectó el Airbag?',
+                            content:
+                                'El estándar universal OBD-II (SAE J1979) fue creado por ley para regular emisiones del motor (Powertrain - Códigos Pxxxx). '
+                                'El módulo de Airbag (SRS) es una computadora de seguridad separada (Body - Códigos Bxxxx) y no responde al comando estándar "03". Requiere un escáner con protocolo OEM o el método manual de destellos.',
+                          ),
+                          const SizedBox(height: 12),
+                          _buildAirbagInfoCard(
+                            title: '2. Falla Típica en Nissan Navara / Pickups',
+                            content:
+                                '• Cinta Espiral del Volante (Clock Spring / Spiral Cable):\n'
+                                'Es el flex eléctrico dentro del timón. Por el giro constante se quiebra y la ECU de Airbag pierde contacto con la bolsa del conductor (DTC B1049). Si tampoco funciona la bocina (pito) o mandos del timón, el Clock Spring está 100% roto.\n\n'
+                                '• Conectores Amarillos bajo los Asientos:\n'
+                                'Al mover los asientos, los conectores de los pretensores o airbags laterales se aflojan.',
+                          ),
+                          const SizedBox(height: 12),
+                          _buildAirbagInfoCard(
+                            title: '3. Procedimiento Secreto de Autodiagnóstico Nissan (Sin Escáner)',
+                            content:
+                                'Puedes leer y resetear el testigo de Airbag con la llave de encendido:\n\n'
+                                '1. Gira la llave a ON (sin encender motor).\n'
+                                '2. El testigo de Airbag se encenderá fijo por ~7 segundos.\n'
+                                '3. Justo en el segundo que se APAGUE, gira la llave a OFF de inmediato.\n'
+                                '4. Espera más de 3 segundos con la llave en OFF.\n'
+                                '5. Repite los pasos 1 al 4 EXACTAMENTE 3 VECES seguidas.\n'
+                                '6. En la 4ª vez, gira a ON: El sistema entrará en "Modo Diagnóstico" y parpadeará el código exacto.\n'
+                                '7. Si la falla era un falso contacto, este ciclo borra el testigo.',
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CupertinoButton(
+                          color: const Color(0xFF8B5CF6).withValues(alpha: 0.25),
+                          borderRadius: BorderRadius.circular(16),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            final question =
+                                "Actúa como un ingeniero mecánico especialista en Nissan y vehículos multimarca. "
+                                "En mi vehículo ($vehicleName) tengo el testigo de AIRBAG encendido pero el escáner de motor no muestra códigos. "
+                                "Explícame detalladamente cómo diagnosticar la cinta del volante (Clock Spring / Spiral Cable), cómo probar los conectores de asiento y cómo solucionarlo.";
+                            _diagnoseWithAI(context, vehicleName, [], customQuestion: question);
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(CupertinoIcons.sparkles, color: Color(0xFFC084FC), size: 16),
+                              const SizedBox(width: 8),
+                              Text(
+                                'Preguntar a IA',
+                                style: GoogleFonts.outfit(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: const Color(0xFFC084FC),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      CupertinoButton(
+                        color: AppAppleTheme.electricBlue,
+                        borderRadius: BorderRadius.circular(16),
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: Text(
+                          'Cerrar',
+                          style: GoogleFonts.outfit(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAirbagInfoCard({required String title, required String content}) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: GoogleFonts.outfit(
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              color: const Color(0xFFFCD34D),
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            content,
+            style: GoogleFonts.outfit(
+              fontSize: 12,
+              color: Colors.white.withValues(alpha: 0.85),
+              height: 1.45,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Modal interactiva para seleccionar o forzar cualquiera de los 10 protocolos OBD universales
+  void _showProtocolSelectorSheet(BuildContext context, ScannerProvider provider) {
+    final protocols = [
+      {'name': 'Automático (Recomendado)', 'cmd': null, 'desc': 'Escaneo inteligente multi-bus de 10 protocolos'},
+      {'name': 'ISO 14230-4 KWP (Fast Init)', 'cmd': 'ATSP5', 'desc': 'Nissan Navara, Renault Duster, Hyundai, Pickups Diésel'},
+      {'name': 'ISO 15765-4 CAN (11-bit, 500k)', 'cmd': 'ATSP6', 'desc': 'Toyota, Chevrolet, Ford, Mazda, VW modernos'},
+      {'name': 'ISO 15765-4 CAN (11-bit, 250k)', 'cmd': 'ATSP8', 'desc': 'Pickups diésel pesadas y Ford Transit'},
+      {'name': 'ISO 14230-4 KWP (5-baud init)', 'cmd': 'ATSP4', 'desc': 'Vehículos asiáticos y europeos KWP lento'},
+      {'name': 'ISO 9141-2', 'cmd': 'ATSP3', 'desc': 'Asiáticos y europeos clásicos pre-2005'},
+      {'name': 'ISO 15765-4 CAN (29-bit, 500k)', 'cmd': 'ATSP7', 'desc': 'Comerciales europeos y Honda CAN 29-bit'},
+      {'name': 'SAE J1850 PWM', 'cmd': 'ATSP1', 'desc': 'Ford clásico pre-2008 (41.6k)'},
+      {'name': 'SAE J1850 VPW', 'cmd': 'ATSP2', 'desc': 'General Motors y Chrysler clásico pre-2008 (10.4k)'},
+    ];
+
+    showCupertinoModalPopup(
+      context: context,
+      builder: (_) => ClipRRect(
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+          child: Container(
+            height: MediaQuery.of(context).size.height * 0.72,
+            padding: const EdgeInsets.all(22),
+            decoration: BoxDecoration(
+              color: AppAppleTheme.midnightSurface.withValues(alpha: 0.95),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
+            ),
+            child: SafeArea(
+              top: false,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 38,
+                      height: 5,
+                      decoration: BoxDecoration(
+                        color: Colors.white24,
+                        borderRadius: BorderRadius.circular(2.5),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Protocolo de Comunicación OBD2',
+                    style: GoogleFonts.outfit(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Fuerza un protocolo específico si tu vehículo no conecta en automático.',
+                    style: GoogleFonts.outfit(
+                      fontSize: 12,
+                      color: Colors.white60,
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  Expanded(
+                    child: ListView.separated(
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: protocols.length,
+                      separatorBuilder: (_, __) => const SizedBox(height: 8),
+                      itemBuilder: (ctx, i) {
+                        final p = protocols[i];
+                        final isSelected = provider.protocolOverride == p['cmd'];
+                        return GestureDetector(
+                          onTap: () {
+                            HapticFeedback.lightImpact();
+                            provider.setProtocolOverride(p['cmd']);
+                            Navigator.pop(ctx);
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? AppAppleTheme.electricBlue.withValues(alpha: 0.20)
+                                  : Colors.white.withValues(alpha: 0.04),
+                              borderRadius: BorderRadius.circular(14),
+                              border: Border.all(
+                                color: isSelected
+                                    ? AppAppleTheme.electricCyan
+                                    : Colors.white.withValues(alpha: 0.08),
+                                width: isSelected ? 1.5 : 1,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        p['name']!,
+                                        style: GoogleFonts.outfit(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 2),
+                                      Text(
+                                        p['desc']!,
+                                        style: GoogleFonts.outfit(
+                                          fontSize: 11,
+                                          color: Colors.white54,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                if (isSelected)
+                                  const Icon(CupertinoIcons.checkmark_circle_fill,
+                                      color: AppAppleTheme.electricCyan, size: 20),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Diálogo de confirmación para borrar códigos de falla (Modo 04)
+  void _confirmClearDtcs(BuildContext context, ScannerProvider provider) {
+    showCupertinoDialog(
+      context: context,
+      builder: (_) => CupertinoAlertDialog(
+        title: const Text('¿Borrar Códigos de Falla?'),
+        content: const Padding(
+          padding: EdgeInsets.only(top: 8.0),
+          child: Text(
+            'Esto enviará el comando Modo 04 a la ECU del vehículo para borrar los códigos almacenados y apagar el testigo Check Engine.\n\n'
+            'Asegúrate de haber corregido la falla mecánica y tener el switch en ON con motor apagado.',
+          ),
+        ),
+        actions: [
+          CupertinoDialogAction(
+            child: const Text('Cancelar'),
+            onPressed: () => Navigator.pop(context),
+          ),
+          CupertinoDialogAction(
+            isDestructiveAction: true,
+            child: const Text('Borrar Códigos'),
+            onPressed: () async {
+              Navigator.pop(context);
+              final success = await provider.clearAllDtcs();
+              if (context.mounted) {
+                showCupertinoDialog(
+                  context: context,
+                  builder: (ctx) => CupertinoAlertDialog(
+                    title: Text(success ? 'Códigos Borrados' : 'No se pudo borrar'),
+                    content: Text(
+                      success
+                          ? 'Los códigos fueron borrados exitosamente de la ECU. El testigo Check Engine debería apagarse.'
+                          : 'La ECU no respondió al comando de borrado. Asegúrate de tener la ignición en ON con motor apagado.',
+                    ),
+                    actions: [
+                      CupertinoDialogAction(
+                        child: const Text('OK'),
+                        onPressed: () => Navigator.pop(ctx),
+                      ),
+                    ],
+                  ),
+                );
+              }
+            },
+          ),
+        ],
+      ),
+    );
   }
 }

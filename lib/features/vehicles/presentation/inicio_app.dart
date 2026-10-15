@@ -2356,10 +2356,17 @@ class _InicioAppState extends State<InicioApp> {
                       GradientButton(
                           icon: Icons.settings_bluetooth_rounded,
                           text: 'Diagnóstico OBD2 (Scanner)',
-                          onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) => const ScannerDashboardScreen())),
+                          onTap: () {
+                            final marca = _cachedVehicleData?['marca']?.toString() ?? '';
+                            final modelo = _cachedVehicleData?['modelo']?.toString() ?? '';
+                            final full = '$marca $modelo'.trim();
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => ScannerDashboardScreen(
+                                      initialVehicleName: full.isNotEmpty ? full : null,
+                                    )));
+                          },
                           brandTheme: bTheme),
                       const SizedBox(height: 12),
                       GradientButton(

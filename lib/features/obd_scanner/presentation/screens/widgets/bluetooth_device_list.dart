@@ -84,7 +84,7 @@ class BluetoothDeviceListWidget extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 2),
                                 Text(
-                                  'Busca tu ScanMate o adaptador ELM327 BLE',
+                                  'Busca tu escáner OBD-II o adaptador BLE',
                                   style: GoogleFonts.outfit(
                                     fontSize: 13,
                                     color: Colors.white.withValues(alpha: 0.6),
@@ -148,18 +148,22 @@ class BluetoothDeviceListWidget extends StatelessWidget {
                                       ? rawName.trim()
                                       : "Dispositivo OBD2";
 
-                                  final isThinkDiag = name.toLowerCase().contains("scanmate") ||
-                                      name.toLowerCase().contains("think") ||
-                                      name.toLowerCase().contains("obd");
+                                  final isObdAdapter = name.toLowerCase().contains("obd") ||
+                                      name.toLowerCase().contains("elm") ||
+                                      name.toLowerCase().contains("scan") ||
+                                      name.toLowerCase().contains("vgate") ||
+                                      name.toLowerCase().contains("viecar") ||
+                                      name.toLowerCase().contains("vlink") ||
+                                      name.toLowerCase().contains("think");
 
                                   return Container(
                                     decoration: BoxDecoration(
-                                      color: isThinkDiag
+                                      color: isObdAdapter
                                           ? AppAppleTheme.electricBlue.withValues(alpha: 0.12)
                                           : Colors.white.withValues(alpha: 0.04),
                                       borderRadius: BorderRadius.circular(18),
                                       border: Border.all(
-                                        color: isThinkDiag
+                                        color: isObdAdapter
                                             ? AppAppleTheme.electricCyan.withValues(alpha: 0.4)
                                             : Colors.white.withValues(alpha: 0.08),
                                         width: 1.2,
@@ -174,16 +178,16 @@ class BluetoothDeviceListWidget extends StatelessWidget {
                                         width: 40,
                                         height: 40,
                                         decoration: BoxDecoration(
-                                          color: isThinkDiag
+                                          color: isObdAdapter
                                               ? AppAppleTheme.electricCyan.withValues(alpha: 0.2)
                                               : Colors.white.withValues(alpha: 0.08),
                                           borderRadius: BorderRadius.circular(12),
                                         ),
                                         child: Icon(
-                                          isThinkDiag
+                                          isObdAdapter
                                               ? CupertinoIcons.car_detailed
                                               : CupertinoIcons.radiowaves_right,
-                                          color: isThinkDiag
+                                          color: isObdAdapter
                                               ? AppAppleTheme.electricCyan
                                               : Colors.white70,
                                           size: 20,
