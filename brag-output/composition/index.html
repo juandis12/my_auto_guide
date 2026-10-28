@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MY AUTO GUIDE - Video Presentación Oficial 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background: #030712;
+      color: #FFFFFF;
+      font-family: 'Outfit', sans-serif;
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #stage-container {
+      width: 1920px;
+      height: 1080px;
+      position: relative;
+      background: radial-gradient(circle at 50% 30%, #0d1527 0%, #060913 60%, #020408 100%);
+      overflow: hidden;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+      transform-origin: center center;
+    }
+
+    /* Ambient Glows */
+    .ambient-glow {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(140px);
+      opacity: 0.4;
+      pointer-events: none;
+      transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .glow-1 {
+      width: 650px;
+      height: 650px;
+      background: #00e5ff;
+      top: -150px;
+      left: -150px;
+    }
+    .glow-2 {
+      width: 750px;
+      height: 750px;
+      background: #7c3aed;
+      bottom: -200px;
+      right: -200px;
+    }
+    .glow-3 {
+      width: 500px;
+      height: 500px;
+      background: #2563eb;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    /* Tech grid texture */
+    .grid-overlay {
+      position: absolute;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 70px 70px;
+      pointer-events: none;
+    }
+
+    /* Header Brand Pill */
+    .top-nav {
+      position: absolute;
+      top: 40px;
+      left: 70px;
+      right: 70px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+    }
+    .brand-badge {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 10px 24px;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 999px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      font-size: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    }
+    .brand-badge img {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+    }
+    .tag-live {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      background: rgba(14, 165, 233, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 800;
+      color: #38bdf8;
+      letter-spacing: 1px;
+    }
+    .tag-live::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #38bdf8;
+      box-shadow: 0 0 10px #38bdf8;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    /* Scene Layouts */
+    .scene {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      padding: 120px 80px 100px;
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.98);
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .scene.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: scale(1.0);
+    }
+
+    .copy-col {
+      flex: 1.1;
+      max-width: 780px;
+      z-index: 10;
+    }
+    .copy-kicker {
+      display: inline-block;
+      padding: 6px 14px;
+      background: rgba(0, 229, 255, 0.12);
+      border: 1px solid rgba(0, 229, 255, 0.4);
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 800;
+      color: #00e5ff;
+      letter-spacing: 1.5px;
+      margin-bottom: 22px;
+      text-transform: uppercase;
+    }
+    .copy-title {
+      font-size: 56px;
+      font-weight: 900;
+      line-height: 1.12;
+      letter-spacing: -1.5px;
+      margin-bottom: 20px;
+    }
+    .copy-desc {
+      font-size: 22px;
+      line-height: 1.5;
+      color: #94a3b8;
+      margin-bottom: 36px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .feature-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .f-pill {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 18px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 700;
+      color: #f1f5f9;
+      backdrop-filter: blur(10px);
+    }
+
+    /* Gradient texts */
+    .grad-cyan {
+      background: linear-gradient(135deg, #00e5ff 0%, #38bdf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .grad-emerald {
+      background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .grad-amber {
+      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .grad-purple {
+      background: linear-gradient(135deg, #c084fc 0%, #a855f7 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Device Mockup Column */
+    .mockup-col {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      perspective: 1200px;
+    }
+
+    /* Realistic Phone Device */
+    .phone-device {
+      width: 420px;
+      height: 890px;
+      background: #0d111a;
+      border-radius: 52px;
+      padding: 12px;
+      box-shadow: 
+        0 35px 80px rgba(0, 0, 0, 0.85),
+        0 10px 25px rgba(0, 0, 0, 0.6),
+        inset 0 0 0 2px rgba(255, 255, 255, 0.12),
+        inset 0 0 0 4px #1b2230;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      z-index: 10;
+      transition: transform 0.4s ease;
+      animation: floatHero 4s ease-in-out infinite alternate;
+    }
+    @keyframes floatHero {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-12px); }
+    }
+
+    .phone-screen {
+      width: 100%;
+      height: 100%;
+      border-radius: 40px;
+      overflow: hidden;
+      position: relative;
+      background: #000000;
+    }
+
+    .phone-screen img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+    }
+
+    /* Dynamic Island pill */
+    .phone-device::before {
+      content: '';
+      position: absolute;
+      top: 22px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 24px;
+      background: #000000;
+      border-radius: 12px;
+      z-index: 25;
+      box-shadow: inset 0 0 4px rgba(255, 255, 255, 0.2);
+    }
+
+    /* Camera lens dot */
+    .phone-device::after {
+      content: '';
+      position: absolute;
+      top: 29px;
+      left: calc(50% + 28px);
+      width: 10px;
+      height: 10px;
+      background: #111a2c;
+      border-radius: 50%;
+      z-index: 26;
+      border: 1px solid #1e293b;
+    }
+
+    /* Glass glare highlight */
+    .phone-glare {
+      position: absolute;
+      inset: 12px;
+      border-radius: 40px;
+      pointer-events: none;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.02) 35%, transparent 60%);
+      z-index: 20;
+    }
+
+    /* Angled Secondary Device Behind */
+    .phone-secondary {
+      position: absolute;
+      width: 380px;
+      height: 810px;
+      top: 60px;
+      left: -60px;
+      opacity: 0.75;
+      transform: scale(0.92) rotate(-5deg);
+      filter: brightness(0.85);
+      z-index: 5;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8);
+      animation: floatSecondary 4s ease-in-out infinite alternate 1.5s;
+    }
+    @keyframes floatSecondary {
+      0% { transform: scale(0.92) rotate(-5deg) translateY(0); }
+      100% { transform: scale(0.92) rotate(-5deg) translateY(10px); }
+    }
+
+    /* Floating Glass Badge Pills */
+    .floating-pill {
+      position: absolute;
+      background: rgba(15, 23, 42, 0.88);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      padding: 12px 20px;
+      border-radius: 16px;
+      font-size: 14px;
+      font-weight: 800;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+      animation: floatPill 3.5s ease-in-out infinite alternate;
+      z-index: 30;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    @keyframes floatPill {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-8px); }
+    }
+    .pill-icon {
+      font-size: 20px;
+    }
+    .pill-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: #FFFFFF;
+    }
+    .pill-sub {
+      font-size: 12px;
+      color: #94a3b8;
+      font-weight: 500;
+    }
+
+    /* Scene 5 Outro Showcase */
+    #scene5 {
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 80px 40px;
+    }
+    .outro-devices-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+      margin-bottom: 30px;
+      width: 100%;
+    }
+    .outro-phone-side {
+      width: 320px;
+      height: 680px;
+      border-radius: 42px;
+      padding: 10px;
+      opacity: 0.7;
+      transform: scale(0.85);
+      filter: brightness(0.8);
+      transition: all 0.4s ease;
+    }
+    .outro-phone-center {
+      width: 380px;
+      height: 800px;
+      border-radius: 48px;
+      padding: 11px;
+      transform: scale(1.0);
+      z-index: 20;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9), 0 0 40px rgba(0, 229, 255, 0.25);
+    }
+    .outro-card {
+      background: rgba(15, 23, 42, 0.92);
+      backdrop-filter: blur(25px);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      border-radius: 28px;
+      padding: 24px 48px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+      max-width: 900px;
+    }
+    .outro-title {
+      font-size: 48px;
+      font-weight: 900;
+      margin-bottom: 8px;
+      letter-spacing: -1px;
+    }
+    .outro-tagline {
+      font-size: 20px;
+      color: #94a3b8;
+      margin-bottom: 20px;
+    }
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, #0070f3 0%, #00e5ff 100%);
+      color: #FFFFFF;
+      padding: 14px 38px;
+      border-radius: 999px;
+      font-size: 18px;
+      font-weight: 800;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 10px 30px rgba(0, 112, 243, 0.5);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .cta-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 15px 40px rgba(0, 229, 255, 0.6);
+    }
+
+    /* Bottom Timeline Bar */
+    .bottom-timeline {
+      position: absolute;
+      bottom: 25px;
+      left: 70px;
+      right: 70px;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 22px;
+      padding: 14px 28px;
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      z-index: 100;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+    }
+    .timeline-bar-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .timeline-track {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 4px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .timeline-progress {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #00e5ff, #3b82f6, #a855f7);
+      border-radius: 4px;
+      transition: width 0.08s linear;
+    }
+    .timeline-time {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: 700;
+      color: #94a3b8;
+    }
+    .ctrl-btns {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .ctrl-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #FFFFFF;
+      padding: 8px 18px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.2s;
+    }
+    .ctrl-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+    .ctrl-btn.active {
+      background: #00e5ff;
+      color: #030712;
+      border-color: #00e5ff;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="stage-container">
+    <!-- Ambient Lighting Effects -->
+    <div class="ambient-glow glow-1" id="glow1"></div>
+    <div class="ambient-glow glow-2" id="glow2"></div>
+    <div class="ambient-glow glow-3" id="glow3"></div>
+    <div class="grid-overlay"></div>
+
+    <!-- Header / Brand Bar -->
+    <header class="top-nav">
+      <div class="brand-badge">
+        <img src="assets/logo.png" alt="MY AUTO GUIDE Icon">
+        <span>MY AUTO GUIDE</span>
+      </div>
+      <div class="tag-live">DEMOSTRACIÓN REAL EN VIVO • OFICIAL 2026</div>
+    </header>
+
+    <!-- ==================== SCENE 1: GARAJE & ESTADO (0.0s - 4.5s) ==================== -->
+    <section class="scene active" id="scene1">
+      <div class="copy-col">
+        <span class="copy-kicker">01 // GARAJE INTELIGENTE</span>
+        <h1 class="copy-title">
+          ¿Aún adivinas qué le pasa a <span class="grad-cyan">tu vehículo?</span>
+        </h1>
+        <p class="copy-desc">
+          Olvida notas perdidas y alertas ignoradas. Centraliza el estado real, odómetro y salud técnica de tu moto o carro con visualización 360°.
+        </p>
+        <div class="feature-pills">
+          <div class="f-pill">🏍️ Pulsar, Yamaha & Honda</div>
+          <div class="f-pill">🚗 Mazda, Chevrolet & Más</div>
+          <div class="f-pill">📊 Índice ISH en Vivo</div>
+          <div class="f-pill">🏆 Medallas & Logros</div>
+        </div>
+      </div>
+
+      <div class="mockup-col">
+        <!-- Floating Pills -->
+        <div class="floating-pill" style="top: 100px; left: -40px;">
+          <span class="pill-icon">🏍️</span>
+          <div>
+            <div class="pill-title">Pulsar NS 200 FI</div>
+            <div class="pill-sub">59.433 KM Registrados</div>
+          </div>
+        </div>
+        <div class="floating-pill" style="top: 360px; right: -30px; border-color:#f59e0b; animation-delay: 1.5s;">
+          <span class="pill-icon">⚠️</span>
+          <div>
+            <div class="pill-title">Alerta Preventiva SOAT</div>
+            <div class="pill-sub">26 días para renovación</div>
+          </div>
+        </div>
+        <div class="floating-pill" style="bottom: 80px; left: -20px; border-color:#a855f7; animation-delay: 2.2s;">
+          <span class="pill-icon">✨</span>
+          <div>
+            <div class="pill-title">IA Experto Conectado</div>
+            <div class="pill-sub">Diagnóstico 100% activo</div>
+          </div>
+        </div>
+
+        <!-- Secondary Phone (Dashboard IA) -->
+        <div class="phone-device phone-secondary">
+          <div class="phone-screen">
+            <img src="assets/screens/screen_02_dashboard_ia.jpg" alt="Diagnóstico IA Screen">
+          </div>
+          <div class="phone-glare"></div>
+        </div>
+
+        <!-- Hero Phone (Inicio / Garaje 360) -->
+        <div class="phone-device">
+          <div class="phone-screen">
+            <img src="assets/screens/screen_01_home.jpg" alt="Garaje Principal My Auto Guide">
+          </div>
+          <div class="phone-glare"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SCENE 2: NAVEGACIÓN GPS & TELEMETRÍA (4.5s - 9.0s) ==================== -->
+    <section class="scene" id="scene2">
+      <div class="copy-col">
+        <span class="copy-kicker" style="color:#22c55e; border-color:rgba(34,197,94,0.4); background:rgba(34,197,94,0.12);">02 // TELEMETRÍA & RUTAS</span>
+        <h1 class="copy-title">
+          Navegación GPS en vivo y <span class="grad-emerald">control de recorridos</span>
+        </h1>
+        <p class="copy-desc">
+          Mapas vectoriales nocturnos optimizados para conducción. Monitorea cada kilómetro, registra trayectos automáticamente y consulta métricas de consumo en tiempo real.
+        </p>
+        <div class="feature-pills">
+          <div class="f-pill">🗺️ Mapas Vectoriales Nocturnos</div>
+          <div class="f-pill">⚡ Cero Consumo Excesivo</div>
+          <div class="f-pill">🏍️ Cursor Moto en Vivo</div>
+          <div class="f-pill">📈 IA Insights Semanales</div>
+        </div>
+      </div>
+
+      <div class="mockup-col">
+        <div class="floating-pill" style="top: 90px; right: -20px; border-color:#22c55e;">
+          <span class="pill-icon">📍</span>
+          <div>
+            <div class="pill-title">Rutas Vectoriales</div>
+            <div class="pill-sub">Girardot • Carrera 22</div>
+          </div>
+        </div>
+        <div class="floating-pill" style="top: 360px; left: -40px; border-color:#00e5ff; animation-delay: 1.5s;">
+          <span class="pill-icon">▲</span>
+          <div>
+            <div class="pill-title">Recorrido Libre</div>
+            <div class="pill-sub">Odómetro suma en vivo</div>
+          </div>
+        </div>
+        <div class="floating-pill" style="bottom: 80px; right: -30px; border-color:#22c55e; animation-delay: 2.2s;">
+          <span class="pill-icon">🧠</span>
+          <div>
+            <div class="pill-title">IA Insights: 100%</div>
+            <div class="pill-sub">Salud del Activo Excelente</div>
+          </div>
+        </div>
+
+        <!-- Secondary Phone (Historial de Viajes) -->
+        <div class="phone-device phone-secondary">
+          <div class="phone-screen">
+            <img src="assets/screens/screen_06_trips_ia.jpg" alt="Historial de Viajes IA">
+          </div>
+          <div class="phone-glare"></div>
+        </div>
+
+        <!-- Hero Phone (GPS Map) -->
+        <div class="phone-device">
+          <div class="phone-screen">
+            <img src="assets/screens/screen_05_gps_nav.jpg" alt="Navegación GPS My Auto Guide">
+          </div>
+          <div class="phone-glare"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SCENE 3: MANTENIMIENTO PREDICTIVO (9.0s - 13.5s) ==================== -->
+    <section class="scene" id="scene3">
+      <div class="copy-col">
+        <span class="copy-kicker" style="color:#f59e0b; border-color:rgba(245,158,11,0.4); background:rgba(245,158,11,0.12);">03 // SALUD PREVENTIVA & TALLER</span>
+        <h1 class="copy-title">
+          Mantenimiento predictivo que <span class="grad-amber">ahorra millones</span>
+        </h1>
+        <p class="copy-desc">
+          Semáforo visual de vida útil para cadena, aceite y filtros. Calcula desgastes exactos según tus hábitos reales y programa tus revisiones antes de que sea costoso.
+        </p>
+        <div class="feature-pills">
+          <div class="f-pill">⚙️ Lubricación de Cadena</div>
+          <div class="f-pill">🛢️ Cambio Aceite Motor</div>
+          <div class="f-pill">💨 Filtro de Aire</div>
+          <div class="f-pill">🔔 Alertas Proactivas</div>
+        </div>
+      </div>
+
+      <div class="mockup-col">
+        <div class="floating-pill" style="top: 90px; left: -40px; border-color:#f59e0b;">
+          <span class="pill-icon">🔧</span>
+          <div>
+            <div class="pill-title">Salud Preventiva 46%</div>
+            <div class="pill-sub">Odómetro: 59.433 km</div>
+          </div>
+        </div>
+        <div class="floating-pill" style="top: 360px; right: -30px; border-color:#22c55e; animation-delay: 1.5s;">
+          <span class="pill-icon">🛢️</span>
+          <div>
+            <div class="pill-title">Aceite de Motor (73%)</div>
+            <div class="pill-sub">Ciclo recomendado 90 días</div>
+          </div>
+        </div>
+        <div class="floating-pill" style="bottom: 80px; left: -20px; border-color:#00e5ff; animation-delay: 2.2s;">
+          <span class="pill-icon">✅</span>
+          <div>
+            <div class="pill-title">Guardar y Calcular</div>
+            <div class="pill-sub">Métricas actualizadas</div>
+          </div>
+        </div>
+
+        <!-- Secondary Phone (Mantenimiento Aceite y SOAT) -->
+        <div class="phone-device phone-secondary">
+          <div class="phone-screen">
+            <img src="assets/screens/screen_08_maint_oil_soat.jpg" alt="Mantenimientos Aceite y SOAT">
+          </div>
+          <div class="phone-glare"></div>
+        </div>
+
+        <!-- Hero Phone (Mantenimientos) -->
+        <div class="phone-device">
+          <div class="phone-screen">
+            <img src="assets/screens/screen_07_maint_preventive.jpg" alt="Mantenimientos Mecánicos">
+          </div>
+          <div class="phone-glare"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SCENE 4: GASTOS & DOCUMENTACIÓN (13.5s - 17.5s) ==================== -->
+    <section class="scene" id="scene4">
+      <div class="copy-col">
+        <span class="copy-kicker" style="color:#c084fc; border-color:rgba(192,132,252,0.4); background:rgba(192,132,252,0.12);">04 // GASTOS & DOCUMENTACIÓN</span>
+        <h1 class="copy-title">
+          Gestión de gastos real y <span class="grad-purple">trámites al alcance</span>
+        </h1>
+        <p class="copy-desc">
+          Dona interactiva de gastos: combustible, repuestos y taller. Escanea tu SOAT y Tecnomecánica con un solo toque y genera tu Hoja de Vida Vehicular oficial en PDF.
+        </p>
+        <div class="feature-pills">
+          <div class="f-pill">💰 Gráficas de Gastos</div>
+          <div class="f-pill">⛽ Bitácora de Tanqueo</div>
+          <div class="f-pill">📑 Exportar Hoja de Vida PDF</div>
+          <div class="f-pill">🛡️ Escáner SOAT & RTM</div>
+        </div>
+      </div>
+
+      <div class="mockup-col">
+        <div class="floating-pill" style="top: 90px; right: -20px; border-color:#a855f7;">
+          <span class="pill-icon">💵</span>
+          <div>
+            <div class="pill-title">Gastos: $218.000 COP</div>
+            <div class="pill-sub">Combustible $85k • Otros $133k</div>
+          </div>
+        </div>
+        <div class="floating-pill" style="top: 360px; left: -40px; border-color:#00e5ff; animation-delay: 1.5s;">
+          <span class="pill-icon">📷</span>
+          <div>
+            <div class="pill-title">Escáner Inteligente</div>
+            <div class="pill-sub">SOAT & RTM integrados</div>
+          </div>
+        </div>
+        <div class="floating-pill" style="bottom: 80px; right: -30px; border-color:#22c55e; animation-delay: 2.2s;">
+          <span class="pill-icon">📄</span>
+          <div>
+            <div class="pill-title">Hoja de Vida PDF</div>
+            <div class="pill-sub">Exportación en 1 click</div>
+          </div>
+        </div>
+
+        <!-- Secondary Phone (Trámites Legales) -->
+        <div class="phone-device phone-secondary">
+          <div class="phone-screen">
+            <img src="assets/screens/screen_09_docs_legal.jpg" alt="Documentos Legales">
+          </div>
+          <div class="phone-glare"></div>
+        </div>
+
+        <!-- Hero Phone (Gestión de Gastos) -->
+        <div class="phone-device">
+          <div class="phone-screen">
+            <img src="assets/screens/screen_10_expenses.jpg" alt="Gestión de Gastos">
+          </div>
+          <div class="phone-glare"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SCENE 5: ECOSISTEMA & CTA FINAL (17.5s - 22.0s) ==================== -->
+    <section class="scene" id="scene5">
+      <div class="outro-devices-row">
+        <!-- Left: Seguridad Vial -->
+        <div class="phone-device outro-phone-side">
+          <div class="phone-screen">
+            <img src="assets/screens/screen_11_road_safety_videos.jpg" alt="Seguridad Vial y Tips">
+          </div>
+          <div class="phone-glare"></div>
+        </div>
+
+        <!-- Center: Garaje Principal -->
+        <div class="phone-device outro-phone-center">
+          <div class="phone-screen">
+            <img src="assets/screens/screen_01_home.jpg" alt="Hero Garaje My Auto Guide">
+          </div>
+          <div class="phone-glare"></div>
+        </div>
+
+        <!-- Right: Fichas Técnicas -->
+        <div class="phone-device outro-phone-side">
+          <div class="phone-screen">
+            <img src="assets/screens/screen_13_manuals_specs.jpg" alt="Manuales y Fichas Técnicas">
+          </div>
+          <div class="phone-glare"></div>
+        </div>
+      </div>
+
+      <div class="outro-card">
+        <h1 class="outro-title">MY AUTO GUIDE</h1>
+        <p class="outro-tagline">El copiloto digital definitivo para tu moto o vehículo</p>
+        <button class="cta-btn" onclick="restartVideo()">
+          <span>🚀 ¡DESCARGA LA APLICACIÓN HOY!</span>
+        </button>
+        <div style="margin-top: 14px; font-size: 13px; color: #38bdf8; font-weight: 700; letter-spacing: 0.5px;">
+          ✨ Impulsado por IA &nbsp;•&nbsp; 📍 GPS & Telemetría &nbsp;•&nbsp; 📱 Android & iOS &nbsp;•&nbsp; 🇨🇴 RUNT Integrado
+        </div>
+      </div>
+    </section>
+
+    <!-- Bottom Player & Timeline Bar -->
+    <div class="bottom-timeline">
+      <div class="ctrl-btns">
+        <button class="ctrl-btn" id="playBtn" onclick="togglePlay()">⏸️ Pausar</button>
+        <button class="ctrl-btn" id="audioBtn" onclick="toggleAudio()">🔊 Audio: ON</button>
+      </div>
+
+      <div class="timeline-bar-wrapper">
+        <div class="timeline-track" id="timelineTrack" onclick="seekVideo(event)">
+          <div class="timeline-progress" id="timelineProgress"></div>
+        </div>
+        <div class="timeline-time">
+          <span id="currentTime">00:00</span>
+          <span>MY AUTO GUIDE • 22.0s</span>
+        </div>
+      </div>
+
+      <div class="ctrl-btns">
+        <button class="ctrl-btn" onclick="jumpTo(0)">01 Garaje</button>
+        <button class="ctrl-btn" onclick="jumpTo(4.5)">02 GPS</button>
+        <button class="ctrl-btn" onclick="jumpTo(9.0)">03 Taller</button>
+        <button class="ctrl-btn" onclick="jumpTo(13.5)">04 Gastos</button>
+        <button class="ctrl-btn" onclick="jumpTo(17.5)">05 Outro</button>
+      </div>
+    </div>
+  </div>
+
+  <audio id="bgAudio" src="assets/music/track.mp3" preload="auto"></audio>
+
+  <script>
+    const DURATION = 22.0;
+    let currentTime = 0;
+    let isPlaying = true;
+    let audioEnabled = true;
+    let lastTimestamp = null;
+
+    const bgAudio = document.getElementById('bgAudio');
+    const scenes = [
+      { id: 'scene1', start: 0.0, end: 4.5 },
+      { id: 'scene2', start: 4.5, end: 9.0 },
+      { id: 'scene3', start: 9.0, end: 13.5 },
+      { id: 'scene4', start: 13.5, end: 17.5 },
+      { id: 'scene5', start: 17.5, end: 22.0 }
+    ];
+
+    function updateScale() {
+      const container = document.getElementById('stage-container');
+      const scaleX = window.innerWidth / 1920;
+      const scaleY = window.innerHeight / 1080;
+      const scale = Math.min(scaleX, scaleY);
+      container.style.transform = `scale(${scale})`;
+    }
+    window.addEventListener('resize', updateScale);
+    updateScale();
+
+    function renderFrame(time) {
+      // Update Scene Visibility
+      scenes.forEach((s) => {
+        const el = document.getElementById(s.id);
+        if (time >= s.start && time < s.end) {
+          el.classList.add('active');
+        } else {
+          el.classList.remove('active');
+        }
+      });
+
+      // Ambient Lighting Transitions
+      const g1 = document.getElementById('glow1');
+      const g2 = document.getElementById('glow2');
+      if (time < 4.5) {
+        g1.style.background = '#00e5ff';
+        g2.style.background = '#7c3aed';
+      } else if (time < 9.0) {
+        g1.style.background = '#10b981';
+        g2.style.background = '#0284c7';
+      } else if (time < 13.5) {
+        g1.style.background = '#f59e0b';
+        g2.style.background = '#0284c7';
+      } else if (time < 17.5) {
+        g1.style.background = '#a855f7';
+        g2.style.background = '#10b981';
+      } else {
+        g1.style.background = '#00e5ff';
+        g2.style.background = '#2563eb';
+      }
+
+      // Update progress bar
+      const pct = Math.min(100, (time / DURATION) * 100);
+      document.getElementById('timelineProgress').style.width = pct + '%';
+      
+      const secs = Math.floor(time);
+      const dec = Math.floor((time % 1) * 10);
+      document.getElementById('currentTime').innerText = `00:${secs < 10 ? '0' : ''}${secs}.${dec}s`;
+    }
+
+    function loop(timestamp) {
+      if (!lastTimestamp) lastTimestamp = timestamp;
+      const dt = (timestamp - lastTimestamp) / 1000;
+      lastTimestamp = timestamp;
+
+      if (isPlaying) {
+        currentTime += dt;
+        if (currentTime >= DURATION) {
+          currentTime = 0;
+          if (audioEnabled) {
+            bgAudio.currentTime = 0;
+            bgAudio.play().catch(() => {});
+          }
+        }
+        renderFrame(currentTime);
+      }
+      requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+
+    function togglePlay() {
+      isPlaying = !isPlaying;
+      document.getElementById('playBtn').innerText = isPlaying ? '⏸️ Pausar' : '▶️ Reanudar';
+      if (isPlaying && audioEnabled) {
+        bgAudio.play().catch(() => {});
+      } else {
+        bgAudio.pause();
+      }
+    }
+
+    function toggleAudio() {
+      audioEnabled = !audioEnabled;
+      document.getElementById('audioBtn').innerText = audioEnabled ? '🔊 Audio: ON' : '🔇 Audio: MUTE';
+      if (audioEnabled && isPlaying) {
+        bgAudio.currentTime = currentTime;
+        bgAudio.play().catch(() => {});
+      } else {
+        bgAudio.pause();
+      }
+    }
+
+    function jumpTo(sec) {
+      currentTime = sec;
+      if (audioEnabled && isPlaying) {
+        bgAudio.currentTime = sec;
+        bgAudio.play().catch(() => {});
+      }
+      renderFrame(currentTime);
+    }
+
+    function seekVideo(e) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const pct = clickX / rect.width;
+      jumpTo(pct * DURATION);
+    }
+
+    function restartVideo() {
+      jumpTo(0);
+      if (!isPlaying) togglePlay();
+    }
+
+    // Auto-start audio on first interaction
+    window.addEventListener('click', () => {
+      if (audioEnabled && isPlaying && bgAudio.paused) {
+        bgAudio.currentTime = currentTime;
+        bgAudio.play().catch(() => {});
+      }
+    }, { once: true });
+  </script>
+</body>
+</html>

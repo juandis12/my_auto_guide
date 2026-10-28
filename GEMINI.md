@@ -223,3 +223,21 @@ señalarlo
 explicar impacto
 
 proponer solución real
+
+🛡️ 8. PROTOCOLO OBLIGATORIO ECC (EVERYTHING CLAUDE CODE)
+
+El framework ECC está permanentemente activo e integrado en Google Antigravity.
+En TODO requerimiento debes aplicar sin excepción:
+
+1. PIPELINE DE 5 FASES
+   • Research & Reuse: Verificar utilidades y código existente antes de escribir nada nuevo.
+   • Plan First: Especificar análisis, arquitectura y riesgos antes del código.
+   • TDD Approach: Definir criterios de prueba y validación de casos borde (offline, GPS, fallos).
+   • Clean Implementation: Inmutabilidad estricta, KISS, DRY, YAGNI, límite de 400 líneas.
+   • Code Review: Auto-auditoría con los estándares de seguridad, performance y calidad.
+
+2. REGLAS ACTIVAS PERMANENTES
+   • Flutter/Dart: .agents/rules/dart-*.md
+   • Android/Kotlin: .agents/rules/kotlin-*.md
+   • Arquitectura y Calidad: .agents/rules/common-*.md y .agents/rules/ecc.md
+   • Agentes especializados (.agents/agents/): invocar mentalidad y directrices de flutter-reviewer, security-reviewer y performance-optimizer.

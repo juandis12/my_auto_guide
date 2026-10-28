@@ -1,0 +1,14 @@
+# Only files required by COPY enter the build context. Never send user data,
+# credentials, Git history, environments, or browser artifacts to the builder.
+**
+!Dockerfile
+!requirements.txt
+!harvey.yaml
+!harvey/
+!harvey/**
+!prompts/
+!prompts/**
+!skills/
+!skills/**
+**/__pycache__
+**/*.pyc
