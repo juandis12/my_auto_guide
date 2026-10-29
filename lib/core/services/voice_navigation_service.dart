@@ -15,8 +15,28 @@ class VoiceNavigationService {
   String _lastSpokenInstruction = '';
   int _lastSpokenStepIndex = -1;
   DateTime _lastSpeechTime = DateTime.fromMillisecondsSinceEpoch(0);
+  DateTime _lastSpeedWarningTime = DateTime.fromMillisecondsSinceEpoch(0);
+  double _speedLimitKmh = 80.0;
 
   bool get isMuted => _isMuted;
+  double get speedLimitKmh => _speedLimitKmh;
+
+  void setSpeedLimit(double limit) {
+    _speedLimitKmh = limit;
+  }
+
+  /// Verifica si la velocidad actual sobrepasa el límite y emite alerta por voz
+  void checkSpeedLimit(double currentSpeedKmh) {
+    if (_isMuted || currentSpeedKmh <= _speedLimitKmh) return;
+    final now = DateTime.now();
+    // Cooldown de 25 segundos para evitar saturación al conductor
+    if (now.difference(_lastSpeedWarningTime).inSeconds < 25) return;
+    _lastSpeedWarningTime = now;
+    speak(
+      'Atención: ha superado el límite de velocidad de ${_speedLimitKmh.toInt()} kilómetros por hora. Reduzca la velocidad.',
+      force: true,
+    );
+  }
 
   void toggleMute() {
     _isMuted = !_isMuted;

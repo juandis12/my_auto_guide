@@ -167,6 +167,7 @@ class NavigationController extends ChangeNotifier {
       if (speedMs != null && speedMs >= 0) {
         final speedKmH = speedMs * 3.6;
         if (speedKmH > maxSpeed) maxSpeed = speedKmH;
+        VoiceNavigationService().checkSpeedLimit(speedKmH);
       }
 
       // Calcular velocidad promedio continua

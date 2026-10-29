@@ -4,6 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
+import 'package:share_plus/share_plus.dart';
 import '../../../core/logic/vehicle_expenses_logic.dart';
 import '../../../core/services/supabase_service.dart';
 import '../../../core/logic/pdf_report_logic.dart';
@@ -31,6 +32,42 @@ class GastosScreen extends StatefulWidget {
 class _GastosScreenState extends State<GastosScreen> {
   List<Map<String, dynamic>> _expenses = [];
   bool _isLoading = true;
+  String _selectedFilter = 'Todos';
+
+  List<Map<String, dynamic>> get _filteredExpenses {
+    if (_selectedFilter == 'Todos') return _expenses;
+    if (_selectedFilter == 'Mes Actual') {
+      final now = DateTime.now();
+      final prefix = '${now.year}-${now.month.toString().padLeft(2, '0')}';
+      return _expenses.where((e) {
+        final f = e['fecha']?.toString() ?? e['created_at']?.toString() ?? '';
+        return f.contains(prefix);
+      }).toList();
+    }
+    return _expenses.where((e) => (e['categoria'] ?? '') == _selectedFilter).toList();
+  }
+
+  void _exportExpensesCsv() {
+    if (_filteredExpenses.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No hay gastos registrados en el filtro seleccionado')),
+      );
+      return;
+    }
+    final buffer = StringBuffer();
+    buffer.writeln('Fecha,Categoria,Descripcion,Monto_COP');
+    for (final exp in _filteredExpenses) {
+      final fecha = exp['fecha'] ?? exp['created_at'] ?? '';
+      final cat = exp['categoria'] ?? 'Varios';
+      final desc = (exp['descripcion'] ?? '').toString().replaceAll(',', ';');
+      final monto = exp['monto'] ?? 0;
+      buffer.writeln('$fecha,$cat,$desc,$monto');
+    }
+    Share.share(
+      buffer.toString(),
+      subject: 'Reporte_Gastos_${widget.apodo}_${DateTime.now().year}.csv',
+    );
+  }
 
   @override
   void initState() {
@@ -152,8 +189,9 @@ class _GastosScreenState extends State<GastosScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final grouped = VehicleExpensesLogic.groupByValues(_expenses);
-    final total = VehicleExpensesLogic.calculateTotal(_expenses);
+    final currentList = _filteredExpenses;
+    final grouped = VehicleExpensesLogic.groupByValues(currentList);
+    final total = VehicleExpensesLogic.calculateTotal(currentList);
     final segments = VehicleExpensesLogic.getDonutSegments(grouped);
 
     return Scaffold(
@@ -162,8 +200,13 @@ class _GastosScreenState extends State<GastosScreen> {
         elevation: 0,
         actions: [
           IconButton(
+            icon: const Icon(Icons.table_chart_rounded),
+            tooltip: 'Exportar CSV',
+            onPressed: _exportExpensesCsv,
+          ),
+          IconButton(
             icon: const Icon(Icons.picture_as_pdf_rounded),
-            tooltip: 'Exportar Reporte',
+            tooltip: 'Exportar Reporte PDF',
             onPressed: () {
               PdfReportLogic.generateAndShareExpenseReport(
                 vehiculoApodo: widget.apodo,
@@ -190,22 +233,72 @@ class _GastosScreenState extends State<GastosScreen> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   children: [
+                    // --- SELECTOR DE FILTRO DINÁMICO ---
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          'Todos',
+                          'Mes Actual',
+                          'Combustible',
+                          'Mantenimiento',
+                          'Seguro',
+                          'Otros'
+                        ].map((f) {
+                          final isSel = _selectedFilter == f;
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 8, bottom: 12),
+                            child: ChoiceChip(
+                              label: Text(
+                                f,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: isSel ? FontWeight.bold : FontWeight.normal,
+                                ),
+                              ),
+                              selected: isSel,
+                              onSelected: (_) => setState(() => _selectedFilter = f),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
                     // --- SECCIÓN GRÁFICO (DASHBOARD) ---
                     _BuildFinancialDashboard(
                         total: total, segments: segments, grouped: grouped),
                     const SizedBox(height: 30),
-                    const Text(
-                      'HISTORIAL DE GASTOS',
-                      style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w900,
-                          color: Colors.grey,
-                          letterSpacing: 1.2),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'HISTORIAL DE GASTOS',
+                          style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w900,
+                              color: Colors.grey,
+                              letterSpacing: 1.2),
+                        ),
+                        Text(
+                          '${currentList.length} registros',
+                          style: const TextStyle(fontSize: 12, color: Colors.grey),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 15),
-                    // --- LISTA DE GASTOS ---
-                    ..._expenses.map((exp) =>
-                        _ExpenseTile(expense: exp, onDeleted: _fetchExpenses)),
+                    // --- LISTA DE GASTOS FILTRADA ---
+                    if (currentList.isEmpty)
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 30),
+                        child: Center(
+                          child: Text(
+                            'No hay gastos registrados en esta categoría/período.',
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        ),
+                      )
+                    else
+                      ...currentList.map((exp) =>
+                          _ExpenseTile(expense: exp, onDeleted: _fetchExpenses)),
                     const SizedBox(height: 100),
                   ],
                 ),

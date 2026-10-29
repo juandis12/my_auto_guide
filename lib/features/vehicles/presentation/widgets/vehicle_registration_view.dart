@@ -344,8 +344,15 @@ class _VehicleRegistrationViewState extends State<VehicleRegistrationView> {
                 _buildField(
                     _placaController, widget.kind.plateLabel, Icons.tag),
                 _buildField(
-                    _cedulaController, 'Cédula del propietario', Icons.badge),
-                _buildField(_kmsController, 'Kilometraje', Icons.speed),
+                    _cedulaController,
+                    'Cédula del propietario',
+                    Icons.badge,
+                    helperText: 'Cifrada de forma segura para consultas de SOAT y RUNT'),
+                _buildField(
+                    _kmsController,
+                    'Kilometraje (Odómetro)',
+                    Icons.speed,
+                    helperText: 'Kilómetros totales que marca el tablero de tu vehículo'),
                 _buildField(
                     _modeloController, 'Modelo (Año)', Icons.calendar_today),
                 _buildField(_apodoController, 'Apodo', Icons.edit),
@@ -452,7 +459,8 @@ class _VehicleRegistrationViewState extends State<VehicleRegistrationView> {
   }
 
   Widget _buildField(
-      TextEditingController controller, String label, IconData icon) {
+      TextEditingController controller, String label, IconData icon,
+      {String? helperText}) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
@@ -468,6 +476,8 @@ class _VehicleRegistrationViewState extends State<VehicleRegistrationView> {
         style: TextStyle(color: isDark ? Colors.white : Colors.black87),
         decoration: InputDecoration(
           labelText: label,
+          helperText: helperText,
+          helperMaxLines: 2,
           prefixIcon: Icon(icon, color: const Color(0xFF035880)),
           border: InputBorder.none,
           contentPadding:

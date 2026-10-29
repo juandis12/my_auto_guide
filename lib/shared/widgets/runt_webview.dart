@@ -5,6 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../shared/widgets/app_snack_bar.dart';
 
 class RuntWebViewScreen extends StatefulWidget {
@@ -31,10 +32,16 @@ class _RuntWebViewScreenState extends State<RuntWebViewScreen> {
   String fechaSoatVencimiento = "";
   String fechaTecnoExpedicion = "";
   String fechaTecnoVencimiento = "";
+  
+  String? _cachedSoat;
+  String? _cachedTecno;
+  String? _cachedDate;
+  bool _hasOfflineCache = false;
 
   @override
   void initState() {
     super.initState();
+    _loadLocalRuntCache();
 
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
@@ -43,6 +50,12 @@ class _RuntWebViewScreenState extends State<RuntWebViewScreen> {
       )
       ..setNavigationDelegate(
         NavigationDelegate(
+          onWebResourceError: (error) {
+            debugPrint("RUNT WebView error: ${error.description}");
+            if (mounted && _hasOfflineCache) {
+              setState(() => _loading = false);
+            }
+          },
           onPageFinished: (url) async {
             if (mounted) setState(() => _loading = false);
 
@@ -211,6 +224,16 @@ class _RuntWebViewScreenState extends State<RuntWebViewScreen> {
 
       debugPrint("✅ Fechas RUNT actualizadas en Supabase: $updateData");
 
+      // Guardar también en caché local SharedPreferences para disponibilidad Offline
+      final prefs = await SharedPreferences.getInstance();
+      if (fechaSoatVencimiento.isNotEmpty) {
+        await prefs.setString('runt_cached_soat_${widget.vehiculoId}', fechaSoatVencimiento);
+      }
+      if (fechaTecnoVencimiento.isNotEmpty) {
+        await prefs.setString('runt_cached_tecno_${widget.vehiculoId}', fechaTecnoVencimiento);
+      }
+      await prefs.setString('runt_cached_date_${widget.vehiculoId}', DateTime.now().toIso8601String());
+
       if (mounted) {
         AppSnackBar.show(
           context,
@@ -222,6 +245,27 @@ class _RuntWebViewScreenState extends State<RuntWebViewScreen> {
     } catch (e) {
       debugPrint("❌ Error actualizando fechas en Supabase: $e");
       if (mounted) AppSnackBar.show(context, 'Error actualizando fechas: $e');
+    }
+  }
+
+  Future<void> _loadLocalRuntCache() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final soat = prefs.getString('runt_cached_soat_${widget.vehiculoId}');
+      final tecno = prefs.getString('runt_cached_tecno_${widget.vehiculoId}');
+      final date = prefs.getString('runt_cached_date_${widget.vehiculoId}');
+      if (soat != null || tecno != null) {
+        if (mounted) {
+          setState(() {
+            _cachedSoat = soat;
+            _cachedTecno = tecno;
+            _cachedDate = date;
+            _hasOfflineCache = true;
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint("Error leyendo caché RUNT local: $e");
     }
   }
 
@@ -240,7 +284,35 @@ class _RuntWebViewScreenState extends State<RuntWebViewScreen> {
       body: Stack(
         children: [
           WebViewWidget(controller: _controller),
-          if (_loading) const Center(child: CircularProgressIndicator()),
+          if (_loading && !_hasOfflineCache) const Center(child: CircularProgressIndicator()),
+          if (_hasOfflineCache)
+            Positioned(
+              top: 10,
+              left: 16,
+              right: 16,
+              child: Card(
+                color: const Color(0xFF0F172A),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                  side: const BorderSide(color: Color(0xFF38BDF8), width: 1),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.offline_bolt_rounded, color: Color(0xFF38BDF8), size: 22),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          'Caché Local RUNT: SOAT ${_cachedSoat ?? "Al día"} • Tecno ${_cachedTecno ?? "Al día"}',
+                          style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w700),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           Positioned(
             bottom: 20,
             left: 20,
