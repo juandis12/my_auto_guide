@@ -11,10 +11,10 @@ INSERT INTO public.app_versions (
     min_supported_version
 )
 VALUES (
-    12,
+    13,
     '1.1.0',
     'https://github.com/juandis12/my_auto_guide/releases/download/v1.1.0/app-release.apk',
-    'Mejoras en la coneccion de el OBD2 para coneccion a multimarcas en ios y en android.',
+    'Mejoras de rendimiento y estabilidad.',
     true,
     1
 )
